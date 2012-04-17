@@ -1,0 +1,13 @@
+.bundle
+db/*.sqlite3
+log/*.log
+tmp/
+.sass-cache/
+config/database.yml
+config/settings.local.yml
+config/sunspot.yml
+log/*.lck
+.rvmrc
+solr/data
+solr/pids
+public/uploads
