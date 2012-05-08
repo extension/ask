@@ -1,38 +1,119 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
+source 'http://systems.extension.org/rubygems/'
 
-gem 'rails', '3.2.2'
-
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
-gem 'sqlite3'
-
+gem 'rails', "3.2.2"
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer'
-
+  gem 'sass-rails', "~> 3.2.4"
+  gem 'coffee-rails', "~> 3.2.2"
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
+# rails 3.1 default
+gem 'jquery-rails', "1.0.16"
 
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+# bootstrap in sass in rails
+gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails'
 
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
+# storage
+gem 'mysql2'
 
-# Use unicorn as the app server
-# gem 'unicorn'
+# image upload
+gem "paperclip", "~> 3.0"
+
+# image processing
+gem 'rmagick'
+
+# ip to geo mapping
+gem 'geokit'
+gem 'geoip'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano'
 
-# To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
+# xml parsing
+gem 'nokogiri'
+
+# authentication
+gem 'devise', "~> 1.5.1"
+gem 'omniauth-facebook'
+gem 'omniauth-openid'
+gem 'omniauth-twitter'
+
+# oauth integration
+gem 'omniauth', "~> 1.0"
+
+# feed retrieval and parsing
+# force curb to 0.7.15 to avoid a constant warning
+gem "curb", "0.7.15"
+gem "feedzirra", "0.1.2"
+
+# pagination
+gem 'will_paginate'
+
+# server settings
+gem "rails_config"
+
+# exception notification
+gem "airbrake"
+
+#phusion passenger
+gem 'passenger'
+
+# comment and threaded discussion support
+gem 'ancestry'
+
+# readability port
+gem "ruby-readability", "~> 0.2.4" ,:require => 'readability'
+
+# html scrubbing
+gem "loofah"
+
+# htmlentities conversion
+gem "htmlentities"
+
+# search on solr
+gem "sunspot_rails", "~> 1.3.0" 
+
+# used to post-process mail to convert styles to inline
+gem "csspool", "2.0.1ex"
+gem "inline-style", "0.5.2ex"
+
+# auto_link replacement
+gem "rinku", :require => 'rails_rinku'
+
+# require sunspot_solr for test and dev
+group :test, :development do
+  gem 'sunspot_solr', "~> 1.3.0" 
+end
+
+#god
+gem "god", :require => false
+
+# delayed_job
+gem "delayed_job"
+gem 'delayed_job_active_record'
+gem "daemons"
+
+# tropo - sms messages
+# gem "tropo-webapi-ruby"
+
+# command line scripts 
+gem "thor"
+
+group :development do
+  # require the powder gem
+  gem 'powder'
+  # rails3 compatible generators
+  gem "rails3-generators"
+end
+ 
+group :test do
+  # Pretty printed test output
+  gem 'turn', :require => false
+  # gem 'shoulda', '>= 3.0.0.beta'
+  gem 'factory_girl_rails'
+  gem 'mocha'
+end
