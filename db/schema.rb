@@ -13,10 +13,10 @@
 
 ActiveRecord::Schema.define(:version => 20120508125226) do
 
-  create_table "attachments", :force => true do |t|
+  create_table "assets", :force => true do |t|
     t.string   "type"
-    t.integer  "attachable_id"
-    t.string   "attachable_type"
+    t.integer  "assetable_id"
+    t.string   "assetable_type"
     t.string   "attachment_file_name"
     t.string   "attachment_content_type"
     t.integer  "attachment_file_size"
@@ -49,44 +49,26 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
   add_index "comments", ["ancestry"], :name => "idx_comments_on_ancestry"
   add_index "comments", ["user_id", "question_id"], :name => "idx_comments_on_user_id_and_question_id"
 
-  create_table "expertise_counties", :force => true do |t|
-    t.integer  "fipsid",                             :null => false
-    t.integer  "expertise_location_id",              :null => false
-    t.integer  "state_fipsid",                       :null => false
-    t.string   "countycode",            :limit => 3, :null => false
-    t.string   "name",                               :null => false
-    t.string   "censusclass",           :limit => 2, :null => false
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
+  create_table "counties", :force => true do |t|
+    t.integer  "fipsid",                    :null => false
+    t.integer  "location_id",               :null => false
+    t.integer  "state_fipsid",              :null => false
+    t.string   "countycode",   :limit => 3, :null => false
+    t.string   "name",                      :null => false
+    t.string   "censusclass",  :limit => 2, :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
-  add_index "expertise_counties", ["expertise_location_id"], :name => "idx_expertise_counties_on_location_id"
-  add_index "expertise_counties", ["name"], :name => "idx_expertise_counties_on_name"
+  add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
+  add_index "counties", ["name"], :name => "idx_counties_on_name"
 
-  create_table "expertise_counties_users", :id => false, :force => true do |t|
-    t.integer "expertise_county_id", :default => 0, :null => false
-    t.integer "user_id",             :default => 0, :null => false
+  create_table "counties_users", :id => false, :force => true do |t|
+    t.integer "county_id", :default => 0, :null => false
+    t.integer "user_id",   :default => 0, :null => false
   end
 
-  add_index "expertise_counties_users", ["user_id", "expertise_county_id"], :name => "fk_counties_users", :unique => true
-
-  create_table "expertise_locations", :force => true do |t|
-    t.integer  "fipsid",                     :null => false
-    t.integer  "entrytype",                  :null => false
-    t.string   "name",                       :null => false
-    t.string   "abbreviation", :limit => 10, :null => false
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-  end
-
-  add_index "expertise_locations", ["name"], :name => "idx_expertise_locations_on_name", :unique => true
-
-  create_table "expertise_locations_users", :id => false, :force => true do |t|
-    t.integer "expertise_location_id", :default => 0, :null => false
-    t.integer "user_id",               :default => 0, :null => false
-  end
-
-  add_index "expertise_locations_users", ["user_id", "expertise_location_id"], :name => "fk_locations_users", :unique => true
+  add_index "counties_users", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
 
   create_table "group_connections", :force => true do |t|
     t.integer  "user_id",                              :null => false
@@ -103,14 +85,16 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
   add_index "group_connections", ["user_id", "group_id"], :name => "fk_user_group", :unique => true
 
   create_table "group_events", :force => true do |t|
-    t.integer  "created_by"
+    t.integer  "created_by",  :null => false
     t.string   "description"
     t.integer  "event_code"
+    t.integer  "group_id",    :null => false
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
 
   add_index "group_events", ["created_by"], :name => "idx_group_events_created_by"
+  add_index "group_events", ["group_id"], :name => "idx_group_events_group_id"
 
   create_table "groups", :force => true do |t|
     t.string   "name",                                     :null => false
@@ -133,6 +117,24 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
   add_index "groups", ["widget_id"], :name => "idx_group_widget_id"
+
+  create_table "locations", :force => true do |t|
+    t.integer  "fipsid",                     :null => false
+    t.integer  "entrytype",                  :null => false
+    t.string   "name",                       :null => false
+    t.string   "abbreviation", :limit => 10, :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+  end
+
+  add_index "locations", ["name"], :name => "idx_locations_on_name", :unique => true
+
+  create_table "locations_users", :id => false, :force => true do |t|
+    t.integer "location_id", :default => 0, :null => false
+    t.integer "user_id",     :default => 0, :null => false
+  end
+
+  add_index "locations_users", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
 
   create_table "notification_exceptions", :force => true do |t|
     t.integer  "user_id"
@@ -200,6 +202,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.datetime "resolved_at"
     t.integer  "external_id"
     t.datetime "question_updated_at"
+    t.integer  "current_event_state"
     t.text     "current_response"
     t.string   "current_resolver_email"
     t.string   "question_fingerprint",                         :null => false

@@ -19,6 +19,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.datetime "resolved_at"
       t.integer  "external_id"
       t.datetime "question_updated_at"
+      t.integer  "current_event_state",        :default => nil
       t.text     "current_response"
       t.string   "current_resolver_email"     # from resolver_email
       t.string   "question_fingerprint",                         :null => false
