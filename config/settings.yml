@@ -1,0 +1,11 @@
+twitter_app_id: 'notset'
+twitter_app_secret: 'notset'
+facebook_app_id: 'notset'
+facebook_app_secret: 'notset'
+session_token: '1234567890123456789012345678901234567890'
+airbrake_api_key: 'notset'
+app_location: 'localdev'
+darmokdatabase: 'prod_darmok'
+send_notifications: false
+engineering_list: 'engineering@extension.org'
+

@@ -5,6 +5,7 @@ class CreateLocations < ActiveRecord::Migration
       t.integer "entrytype",                  :null => false
       t.string  "name",                       :null => false
       t.string  "abbreviation", :limit => 10, :null => false
+      t.string  "office_link"
       t.timestamps
     end
     

@@ -85,23 +85,24 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
   add_index "group_connections", ["user_id", "group_id"], :name => "fk_user_group", :unique => true
 
   create_table "group_events", :force => true do |t|
-    t.integer  "created_by",  :null => false
+    t.integer  "created_by",   :null => false
+    t.integer  "recipient_id"
     t.string   "description"
     t.integer  "event_code"
-    t.integer  "group_id",    :null => false
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.integer  "group_id",     :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   add_index "group_events", ["created_by"], :name => "idx_group_events_created_by"
   add_index "group_events", ["group_id"], :name => "idx_group_events_group_id"
+  add_index "group_events", ["recipient_id"], :name => "idx_group_events_recipient_id"
 
   create_table "groups", :force => true do |t|
     t.string   "name",                                     :null => false
     t.text     "description"
     t.boolean  "active",                :default => true
     t.integer  "created_by",                               :null => false
-    t.integer  "widget_id"
     t.string   "widget_fingerprint"
     t.boolean  "widget_upload_capable"
     t.boolean  "widget_show_location"
@@ -116,13 +117,14 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
-  add_index "groups", ["widget_id"], :name => "idx_group_widget_id"
+  add_index "groups", ["widget_fingerprint"], :name => "idx_group_widget_fingerprint"
 
   create_table "locations", :force => true do |t|
     t.integer  "fipsid",                     :null => false
     t.integer  "entrytype",                  :null => false
     t.string   "name",                       :null => false
     t.string   "abbreviation", :limit => 10, :null => false
+    t.string   "office_link"
     t.datetime "created_at",                 :null => false
     t.datetime "updated_at",                 :null => false
   end
@@ -147,14 +149,17 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
 
   create_table "notifications", :force => true do |t|
     t.integer  "notifiable_id"
-    t.string   "notifiable_type",  :limit => 30
-    t.boolean  "processed",                      :default => false, :null => false
-    t.integer  "notificationtype",                                  :null => false
-    t.datetime "delivery_time",                                     :null => false
-    t.integer  "offset",                         :default => 0
+    t.string   "notifiable_type",   :limit => 30
+    t.integer  "created_by",                                         :null => false
+    t.integer  "recipient_id",                                       :null => false
+    t.text     "additional_data"
+    t.boolean  "processed",                       :default => false, :null => false
+    t.integer  "notification_type",                                  :null => false
+    t.datetime "delivery_time",                                      :null => false
+    t.integer  "offset",                          :default => 0
     t.integer  "delayed_job_id"
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at",                                         :null => false
+    t.datetime "updated_at",                                         :null => false
   end
 
   create_table "question_events", :force => true do |t|
@@ -167,7 +172,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.integer  "event_state",                        :null => false
     t.integer  "contributing_content_id"
     t.text     "tags"
-    t.text     "additionaldata"
+    t.text     "additional_data"
     t.integer  "previous_event_id"
     t.integer  "duration_since_last"
     t.integer  "previous_recipient_id"
@@ -202,7 +207,6 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.datetime "resolved_at"
     t.integer  "external_id"
     t.datetime "question_updated_at"
-    t.integer  "current_event_state"
     t.text     "current_response"
     t.string   "current_resolver_email"
     t.string   "question_fingerprint",                         :null => false
@@ -295,12 +299,12 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.string   "name"
     t.string   "email"
     t.string   "title"
-    t.string   "position"
+    t.integer  "position_id"
     t.integer  "location_id",                             :default => 0
     t.integer  "county_id",                               :default => 0
     t.boolean  "retired",                                 :default => false
     t.boolean  "is_admin",                                :default => false
-    t.string   "phonenumber"
+    t.string   "phone_number"
     t.boolean  "aae_responder",                           :default => true
     t.string   "time_zone"
     t.boolean  "is_question_wrangler",                    :default => false

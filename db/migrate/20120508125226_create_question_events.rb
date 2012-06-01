@@ -10,7 +10,7 @@ class CreateQuestionEvents < ActiveRecord::Migration
       t.integer  "event_state", :null => false
       t.integer  "contributing_content_id"
       t.text     "tags"
-      t.text     "additionaldata"
+      t.text     "additional_data"
       t.integer  "previous_event_id"
       t.integer  "duration_since_last"
       t.integer  "previous_recipient_id"

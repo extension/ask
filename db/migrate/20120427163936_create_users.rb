@@ -13,12 +13,12 @@ class CreateUsers < ActiveRecord::Migration
       t.string   "name"
       t.string   "email",                    :limit => 96
       t.string   "title"
-      t.string   "position"
+      t.integer  "position_id"
       t.integer  "location_id",                            :default => 0
       t.integer  "county_id",                              :default => 0
       t.boolean  "retired",                                :default => false
       t.boolean  "is_admin",                               :default => false
-      t.string   "phonenumber"
+      t.string   "phone_number"
       t.boolean  "aae_responder",                          :default => true
       t.string   "time_zone"
       t.boolean  "is_question_wrangler",                   :default => false

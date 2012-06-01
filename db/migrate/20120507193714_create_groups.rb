@@ -5,7 +5,6 @@ class CreateGroups < ActiveRecord::Migration
       t.text    :description
       t.boolean :active, :default => 1
       t.integer :created_by, :null => false
-      t.integer :widget_id
       t.string  :widget_fingerprint
       t.boolean :widget_upload_capable
       t.boolean :widget_show_location
@@ -19,6 +18,6 @@ class CreateGroups < ActiveRecord::Migration
     end
     
     add_index :groups, ["name"], :name => "idx_group_name", :unique => true
-    add_index :groups, ["widget_id"], :name => "idx_group_widget_id"
+    add_index :groups, ["widget_fingerprint"], :name => "idx_group_widget_fingerprint"
   end
 end
