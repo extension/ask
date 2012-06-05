@@ -11,3 +11,4 @@ log/*.lck
 solr/data
 solr/pids
 public/uploads
+/*.powenv
