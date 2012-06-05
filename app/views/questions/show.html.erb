@@ -1,0 +1,13 @@
+AaE #<%= @question.id %>
+
+<% if @question.title.present? %>
+  <h3><%= format_text_for_display(@question.title) %></h3>
+<% end %>
+
+<p><%= format_text_for_display(@question.body) %></p>
+
+
+<p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
+<% if @question.submitter %>
+  by <%= @question.submitter.name %></p>
+<% end %>

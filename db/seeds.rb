@@ -180,9 +180,9 @@ end
 
 def transfer_questions
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, private, assignee_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
+  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, private, assignee_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
-         true, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
+         null, true, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
          #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.external_id, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
          #{@darmokdatabase}.submitted_questions.resolver_email, #{@darmokdatabase}.submitted_questions.question_fingerprint, #{@darmokdatabase}.submitted_questions.submitter_firstname, #{@darmokdatabase}.submitted_questions.submitter_lastname,
          #{@darmokdatabase}.submitted_questions.county_id, #{@darmokdatabase}.submitted_questions.location_id, #{@darmokdatabase}.submitted_questions.spam, #{@darmokdatabase}.submitted_questions.user_ip, #{@darmokdatabase}.submitted_questions.user_agent, 
@@ -223,47 +223,6 @@ def transfer_assets
   end
   
   puts " Assets transferred: #{benchmark.real.round(2)}s"
-end
-
-def transfer_notifications
-  # do aae notifications then group notifications
-  aae_notification_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.notifications(notifiable_id, notifiable_type, created_by, recipient_id, additional_data, processed, notification_type, delivery_time, offset, delayed_job_id, created_at, updated_at)
-  SELECT 0, 'Question', #{@darmokdatabase}.notifications.created_by, #{@darmokdatabase}.notifications.account_id, #{@darmokdatabase}.notifications.additionaldata, true, 
-         #{@darmokdatabase}.notifications.notifytype, #{@darmokdatabase}.notifications.sent_email_at, 0, null, #{@darmokdatabase}.notifications.created_at, NOW()
-  FROM   #{@darmokdatabase}.notifications
-  WHERE  #{@darmokdatabase}.notifications.notifytype BETWEEN 1000 AND 2099 
-  END_SQL
-  
-  group_notification_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.notifications(notifiable_id, notifiable_type, created_by, recipient_id, additional_data, processed, notification_type, delivery_time, offset, delayed_job_id, created_at, updated_at)
-  SELECT #{@darmokdatabase}.notifications.community_id, 'Group', #{@darmokdatabase}.notifications.created_by, #{@darmokdatabase}.notifications.account_id, #{@darmokdatabase}.notifications.additionaldata, true, 
-         #{@darmokdatabase}.notifications.notifytype, #{@darmokdatabase}.notifications.sent_email_at, 0, null, #{@darmokdatabase}.notifications.created_at, NOW()
-  FROM   #{@darmokdatabase}.notifications
-  WHERE  #{@darmokdatabase}.notifications.notifytype BETWEEN 100 AND 999
-  END_SQL
-  
-
-  benchmark = Benchmark.measure do
-    ActiveRecord::Base.connection.execute(aae_notification_transfer_query)
-    ActiveRecord::Base.connection.execute(group_notification_transfer_query)
-    
-    # we're going to have to switch db connections here so we can do some ruby processing to get the notifiable_id for questions
-    base_config = ActiveRecord::Base.connection.instance_variable_get("@config").dup
-    base_config[:database] = 'aae'
-    ActiveRecord::Base.establish_connection(base_config)
-    
-    Notification.find(:all, :conditions => {:notifiable_type => 'Question'}).each do |notification|
-      notification.update_attribute(:notifiable_id, notification.additional_data[:submitted_question_id])
-    end
-    
-    # setup initial connection to darmok db
-    base_config = ActiveRecord::Base.connection.instance_variable_get("@config").dup
-    base_config[:database] = Settings.darmokdatabase
-    ActiveRecord::Base.establish_connection(base_config)
-  end
-  
-  puts " Notifications transferred: #{benchmark.real.round(2)}s"
 end
 
 def transfer_question_events
@@ -313,7 +272,6 @@ transfer_questions
 transfer_assets
 transfer_expertise_locations
 transfer_expertise_counties
-#transfer_notifications
 transfer_question_events
 transfer_responses
 
