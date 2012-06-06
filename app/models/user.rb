@@ -12,4 +12,13 @@ class User < ActiveRecord::Base
   has_many :tags, :through => :taggings
   
   has_attached_file :avatar, :styles => { :medium => "100x100>", :thumb => "50x50>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  
+  DEFAULT_NAME = 'Anonymous'
+  
+  
+  def name
+    return self.name if self.name.present? 
+    return DEFAULT_NAME
+  end
+  
 end

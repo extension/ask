@@ -11,6 +11,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.integer  "contributing_content_id"    # keep for legacy values, may not continue this going forward
       t.string   "status",                    :default => "",    :null => false
       t.text     "body",                      :null => false # from asked_question
+      t.string   "title"
       t.boolean  "private",                   :default => false
       t.integer  "assignee_id"                # from user_id
       t.boolean  "duplicate",                 :default => false, :null => false

@@ -199,6 +199,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.integer  "contributing_content_id"
     t.string   "status",                    :default => "",    :null => false
     t.text     "body",                                         :null => false
+    t.string   "title"
     t.boolean  "private",                   :default => false
     t.integer  "assignee_id"
     t.boolean  "duplicate",                 :default => false, :null => false
