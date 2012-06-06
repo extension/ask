@@ -19,9 +19,6 @@ end
 @aae_database = ActiveRecord::Base.connection.instance_variable_get("@config")[:database]
 @darmokdatabase = Settings.darmokdatabase
 
-base_config = ActiveRecord::Base.connection.instance_variable_get("@config").dup
-base_config[:database] = Settings.darmokdatabase
-ActiveRecord::Base.establish_connection(base_config)
 
 # populate accounts
 puts "Transferring accounts."
@@ -158,11 +155,6 @@ def transfer_group_events
   
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(group_connection_insert_query)
-    # setup connection to aae db to do some ruby processing 
-    base_config = ActiveRecord::Base.connection.instance_variable_get("@config").dup
-    base_config[:database] = 'aae'
-    ActiveRecord::Base.establish_connection(base_config)
-    
     # fill in the description based on established constants in GroupEvent
     group_event_list = GroupEvent.all
     group_event_list.each do |ge|
@@ -171,11 +163,6 @@ def transfer_group_events
   end
       
   puts " Group Events transferred: #{benchmark.real.round(2)}s"
-  
-  # setup initial connection to darmok db
-  base_config = ActiveRecord::Base.connection.instance_variable_get("@config").dup
-  base_config[:database] = Settings.darmokdatabase
-  ActiveRecord::Base.establish_connection(base_config)
 end
 
 def transfer_questions
