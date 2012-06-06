@@ -12,8 +12,22 @@ class Question < ActiveRecord::Base
   has_many :responses
   has_many :question_events
   
-  
   accepts_nested_attributes_for :images
+
+
+  # sunspot/solr search
+  searchable do
+    text :title, more_like_this: true
+    text :body, more_like_this: true
+    text :response_list, more_like_this: true
+    integer :status_states, :multiple => true
+    boolean :spam
+    boolean :private
+  end  
   
+  # for purposes of solr search
+  def response_list
+    self.responses.map(&:body).join(' ')
+  end
   
 end

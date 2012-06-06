@@ -14,19 +14,12 @@ if(!Sunspot.solr_running?)
   exit(1)
 end
 
-
-
 @aae_database = ActiveRecord::Base.connection.instance_variable_get("@config")[:database]
 @darmokdatabase = Settings.darmokdatabase
 
-
-# populate accounts
-puts "Transferring accounts."
-transfer_query = "INSERT INTO #{@aae_database}.users SELECT * FROM #{@darmokdatabase}.accounts;"
-
-
 def transfer_accounts
   # import all non-retired/"valid" accounts
+  puts 'Transferring users...'
   # preserve id's here
   account_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
     INSERT INTO #{@aae_database}.users (id, darmok_id, type, login, name, email, title, position_id, location_id, county_id, retired, is_admin, phone_number, aae_responder, time_zone, is_question_wrangler, vacated_aae_at, first_aae_away_reminder, second_aae_away_reminder, created_at, updated_at)
@@ -57,6 +50,7 @@ def transfer_accounts
 end
 
 def transfer_locations
+  puts 'Transferring locations...'
   location_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.locations (id, fipsid, entrytype, name, abbreviation, office_link, created_at, updated_at)
     SELECT #{@darmokdatabase}.locations.id, #{@darmokdatabase}.locations.fipsid, #{@darmokdatabase}.locations.entrytype, #{@darmokdatabase}.locations.name, #{@darmokdatabase}.locations.abbreviation, #{@darmokdatabase}.locations.office_link, NOW(), NOW()
@@ -70,6 +64,7 @@ def transfer_locations
 end
 
 def transfer_expertise_locations
+  puts 'Transferring expertise locations ...'
   location_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.locations_users (location_id, user_id)
     SELECT #{@darmokdatabase}.expertise_locations_users.expertise_location_id, #{@darmokdatabase}.expertise_locations_users.user_id
@@ -84,6 +79,7 @@ end
 
 
 def transfer_counties
+  puts 'Transferring counties...'
   county_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.counties (id, fipsid, location_id, state_fipsid, countycode, name, censusclass, created_at, updated_at)
     SELECT #{@darmokdatabase}.counties.id, #{@darmokdatabase}.counties.fipsid, #{@darmokdatabase}.counties.location_id, #{@darmokdatabase}.counties.state_fipsid, #{@darmokdatabase}.counties.countycode, #{@darmokdatabase}.counties.name, #{@darmokdatabase}.counties.censusclass, NOW(), NOW()
@@ -97,6 +93,7 @@ def transfer_counties
 end
 
 def transfer_expertise_counties
+  puts 'Transferring expertise counties...'
   county_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.counties_users (county_id, user_id)
     SELECT #{@darmokdatabase}.expertise_counties_users.expertise_county_id, #{@darmokdatabase}.expertise_counties_users.user_id
@@ -111,6 +108,7 @@ end
 
 
 def transfer_communities_to_groups
+  puts 'Transferring communities to groups...'
   # preserve id's
   group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, creator_id, created_at, updated_at)
@@ -129,6 +127,7 @@ def transfer_communities_to_groups
 end
 
 def transfer_widget_community_connections_to_group_connections
+  puts 'Transferring group connections ...'
   group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
   SELECT #{@darmokdatabase}.communityconnections.user_id, #{@darmokdatabase}.communityconnections.community_id, #{@darmokdatabase}.communityconnections.connectiontype, #{@darmokdatabase}.communityconnections.connectioncode, #{@darmokdatabase}.communityconnections.sendnotifications,
@@ -145,6 +144,7 @@ def transfer_widget_community_connections_to_group_connections
 end
 
 def transfer_group_events
+  puts 'Transferring group events...'
   group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_events(created_by, recipient_id, description, event_code, group_id, created_at, updated_at)
   SELECT #{@darmokdatabase}.activities.created_by, #{@darmokdatabase}.activities.user_id, '', #{@darmokdatabase}.activities.activitycode, 
@@ -166,6 +166,7 @@ def transfer_group_events
 end
 
 def transfer_questions
+  puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, private, assignee_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
@@ -188,6 +189,7 @@ def transfer_questions
 end
 
 def transfer_assets
+  puts 'Transferring assets...'
   question_asset_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.assets(type, assetable_id, assetable_type, attachment_file_name, attachment_content_type, attachment_file_size, attachment_updated_at, created_at, updated_at)
   SELECT 'Question::Image', #{@darmokdatabase}.file_attachments.submitted_question_id, 'Question', #{@darmokdatabase}.file_attachments.attachment_file_name, #{@darmokdatabase}.file_attachments.attachment_content_type,
@@ -213,6 +215,7 @@ def transfer_assets
 end
 
 def transfer_question_events
+  puts 'Transferring question events...'
   question_events_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.question_events(question_id, submitter_id, initiated_by_id, recipient_id, response_id, response, event_state, contributing_content_id, tags, additional_data, previous_event_id, duration_since_last, previous_recipient_id, previous_initiator_id, previous_handling_event_id, duration_since_last_handling_event, previous_handling_event_state, previous_handling_recipient_id, previous_handling_initiator_id, previous_tags, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_question_events.submitted_question_id, #{@darmokdatabase}.submitted_question_events.submitter_id, #{@darmokdatabase}.submitted_question_events.initiated_by_id, #{@darmokdatabase}.submitted_question_events.recipient_id,
@@ -233,6 +236,7 @@ def transfer_question_events
 end
 
 def transfer_responses
+  puts 'Transferring responses...'
   responses_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.responses(resolver_id, submitter_id, question_id, body, duration_since_last, sent, contributing_content_id, signature, user_ip, user_agent, referrer, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.responses.resolver_id, #{@darmokdatabase}.responses.submitter_id, #{@darmokdatabase}.responses.submitted_question_id, #{@darmokdatabase}.responses.response, #{@darmokdatabase}.responses.duration_since_last,
