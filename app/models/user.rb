@@ -17,8 +17,12 @@ class User < ActiveRecord::Base
   
   
   def name
-    return self.name if self.name.present? 
+    return self[:name] if self[:name].present? 
     return DEFAULT_NAME
+  end
+  
+  def self.systemuserid
+    return 1
   end
   
 end

@@ -13,3 +13,15 @@
 <% if @question.submitter %>
   by <%= @question.submitter.name %></p>
 <% end %>
+
+<% if @question_responses.length > 0 %>
+  <h3>Responses</h3>
+  <% @question_responses.each do |response| %>
+    <p><%= format_text_for_display(response.body) %></p>
+  <% end %>
+<% end %>
+
+<h3>History</h3>
+<% @question.question_events.each do |event| %>
+  <li><%= stringify_question_event(event) %></li>
+<% end %>

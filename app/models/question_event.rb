@@ -10,8 +10,23 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
   
   
+  ASSIGNED_TO = 1
+  RESOLVED = 2
+  MARKED_SPAM = 3
+  MARKED_NON_SPAM = 4
+  REACTIVATE = 5
+  REJECTED = 6
+  NO_ANSWER = 7
+  RECATEGORIZED = 8
+  WORKING_ON = 9
+  EDIT_QUESTION = 10
+  PUBLIC_RESPONSE = 11
+  REOPEN = 12
+  CLOSED = 13
+  COMMENT = 14
   
+  EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 'marked as spam', 4 => 'marked as non-spam', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
+                            8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented' }
   
-  
-  
+    
 end
