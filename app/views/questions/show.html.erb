@@ -1,7 +1,9 @@
-AaE #<%= @question.id %>
+<p>AaE #<%= @question.id %></p>
 
 <% if @question.title.present? %>
-  <h3><%= format_text_for_display(@question.title) %></h3>
+  <h2><%= format_text_for_display(@question.title) %></h2>
+<% else %>
+  <h2><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
 <% end %>
 
 <p><%= format_text_for_display(@question.body) %></p>

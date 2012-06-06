@@ -1,3 +1,11 @@
 <% @recent_questions.each do |question| %>
-  <p><%= link_to(question.body, question_path(question.id)) -%></p>
+  <%= link_to question_path(question.id) do %>
+    <% if question.title.present? %>
+      <h3><%= format_text_for_display(question.title) -%></h3>
+    <% else %>
+      <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
+    <% end %>
+    <p><%= question.body -%></p>
+  <%- end -%>
+
 <% end %>
