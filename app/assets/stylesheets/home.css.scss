@@ -3,5 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 
-#main {outline:4px solid #ccc;}
-#secondary {outline:4px solid #888;}
+#main {}
+#secondary {background:#eee;}
+
+.incoming_question {margin:0 0 1em; border-bottom:2px solid #888; padding:0 0 1em;}

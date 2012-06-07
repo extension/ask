@@ -1,3 +1,4 @@
+<div id="main" class="span8">
 <p>AaE #<%= @question.id %></p>
 
 <% if @question.title.present? %>
@@ -22,6 +23,49 @@
 <% end %>
 
 <h3>History</h3>
-<% @question.question_events.each do |event| %>
-  <li><%= stringify_question_event(event) %></li>
+<% if !@question.question_events %>
+  <% @question.question_events.each do |event| %>
+    <li><%= stringify_question_event(event) %></li>
+  <% end %>
 <% end %>
+</div>
+
+
+
+<div id="secondary" class="span4">
+  <aside>
+    <p><%= link_to "View Public page" %></p>
+    <p><%= link_to "Notify me when this question has activity" %></p>
+  </aside>
+  
+  <% if @question_responses.length < 1%>
+    <aside>
+      <h3>Actions</h3>
+      <p><%= link_to "Reassign" %></p>
+      <p><%= link_to "Reject (inappropriate or duplicate)" %></p>
+    </aside>
+  
+    <aside>
+        <div class="expert">
+          <h3>Assigned to</h3>
+          <span class="avatar"></span>
+          <p>Expert Name</p>
+          <p>Expert Description</p>
+        </div>
+    </aside>
+  <% end %>
+  
+  <aside>
+    <h3>Related Questions</h3>
+    <% @fake_related.each do |question| %>
+      <%= link_to question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+    <% end %>
+  </aside>
+  
+</div>

@@ -1,11 +1,18 @@
-<% @recent_questions.each do |question| %>
-  <%= link_to question_path(question.id) do %>
-    <% if question.title.present? %>
-      <h3><%= format_text_for_display(question.title) -%></h3>
-    <% else %>
-      <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
-    <% end %>
-    <p><%= question.body -%></p>
-  <%- end -%>
-
-<% end %>
+<div id="main" class="span12">
+  <h1>eXtension Ask an Expert</h1>
+  
+  <% @recent_questions.each do |question| %>
+  <div class="incoming_question">
+    <%= link_to question_path(question.id) do %>
+      <% if question.title.present? %>
+        <h3><%= format_text_for_display(question.title) -%></h3>
+      <% else %>
+        <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
+      <% end %>
+      <p><%= question.body -%></p>
+    <%- end -%>
+    <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+    </div>
+  <% end %>
+  
+</div>
