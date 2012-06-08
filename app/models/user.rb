@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :tags, :through => :taggings
   
   has_attached_file :avatar, :styles => { :medium => "100x100>", :thumb => "50x50>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  devise :rememberable, :trackable, :database_authenticatable
   
   DEFAULT_NAME = 'Anonymous'
   

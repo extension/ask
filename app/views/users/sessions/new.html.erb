@@ -1,0 +1,25 @@
+<div id="single_col">
+  
+  <div id="signup_content">  
+    <div class="signup_option">
+      <%= image_tag("extension_logo.jpg", :size => "50x50") %>
+      <p>
+        <%= link_to "Sign in with eXtension", authmap_omniauth_authorize_path(:people, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) %>
+      </p>
+    </div>
+    
+  </div>
+  <br class="clearing" />
+</div>
+
+<script class="code" type="text/javascript">
+
+  $(document).ready(function() {
+    $('.signup_option a').one('click', function() {
+      $(this).after('<%= image_tag("spinner.gif", :size => "54x55", class: "spinner") %>');
+    });    
+  });
+
+</script>
+
+
