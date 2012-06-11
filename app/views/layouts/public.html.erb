@@ -12,6 +12,23 @@
   <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
+            
+            <% if current_user %>
+              <span class="navavatar loggedin">
+                <%= link_to do %>
+                  <span class="avatar small"></span> <%= current_user.name %>
+                <% end %>
+                &nbsp;
+                <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+                &nbsp;
+                <%= link_to("Expert Home", expert_admin_home_index_path()) %>
+              </span>  
+            <% else %>
+              <span class="navavatar">
+                <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
+              </span>
+            <% end %>
+            
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -21,11 +38,12 @@
             <div class="nav-collapse">
               <ul class="nav">
                 <li class="active"><a href="">About</a></li>
-                <li></li>
               </ul>
             </div><!--/.nav-collapse -->
+            <p><a href="" class="btn">Ask a Question</a></p>
           </div>
         </div>
+        
       </div>
 
 <div class="container-fluid">

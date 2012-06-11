@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  layout "expert"
+  layout "public"
 
   before_filter :store_location
   

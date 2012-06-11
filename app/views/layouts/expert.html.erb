@@ -3,25 +3,29 @@
 <head>
   <title>Ask an Expert - Expert View</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= stylesheet_link_tag    "expert", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body id="expert_admin">
 
   <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
             <% if current_user %>
-              <span class="navavatar">
+              <span class="navavatar loggedin">
                 <%= link_to do %>
                   <span class="avatar small"></span> <%= current_user.name %>
                 <% end %>
-                &nbsp
+                &nbsp;
                 <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+                &nbsp;
+                <%= link_to("Ask an Expert Site", root_path()) %>
               </span>  
             <% else %>
-              <span><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%></span>
+              <span class="navavatar">
+                <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
+              </span>
             <% end %>
             
             
@@ -30,7 +34,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("eXtension Ask an Expert", root_path(), :class => "brand") %>
+            <%= link_to("Expert Home", expert_admin_home_index_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li class="active"><a href="">Incoming</a></li>
