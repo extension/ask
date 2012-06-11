@@ -34,12 +34,13 @@
 
 <div id="secondary" class="span4">
   <% if current_user %>
-    <aside>
-      <p><%= link_to "Expert view", expert_admin_question_path(@question.id) %></p>
-      <p><%= link_to "Notify me when this question has activity" %></p>
-    </aside>
+      <p><%= link_to "Edit/view", expert_admin_question_path(@question.id), :class => "label btn-warning" %></p>
   <% end %>
   
+  <aside>
+    <p><%= link_to "Notify me when this question has activity" %></p>
+  </aside>
+    
   <aside>
     <h3>Related Questions</h3>
     <% @fake_related.each do |question| %>

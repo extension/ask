@@ -1,4 +1,14 @@
+
+@import "_variables";
+
 .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
 .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
 .navavatar {float:right;}
+
+
+.incoming_question .expert .avatar {float:left; margin-right:1em;}
+
+.incoming_question {border-bottom:2px solid #666; margin: 0 0 1.5em; padding:0 0 1.5em;}
+
+.navavatar.loggedin {background:#fff; padding:.5em; outline:3px solid #000;}
