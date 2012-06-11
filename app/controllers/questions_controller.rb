@@ -1,4 +1,5 @@
 class QuestionsController < ApplicationController
+  layout 'public'
   
   def show
     @question = Question.find_by_id(params[:id])
