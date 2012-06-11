@@ -23,7 +23,7 @@
 <% end %>
 
 <h3>History</h3>
-<% if !@question.question_events %>
+<% if @question.question_events.length > 0 %>
   <% @question.question_events.each do |event| %>
     <li><%= stringify_question_event(event) %></li>
   <% end %>
