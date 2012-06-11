@@ -9,7 +9,7 @@ Aae::Application.routes.draw do
 
   resources :questions
   
-  namespace :expert_admin do
+  namespace :expert do
     resources :questions
     resources :home
   end

@@ -3,7 +3,7 @@
   
   <% @recent_questions.each do |question| %>
   <div class="incoming_question">
-    <%= link_to expert_admin_question_path(question.id) do %>
+    <%= link_to expert_question_path(question.id) do %>
       <% if question.title.present? %>
         <h3><%= format_text_for_display(question.title) -%></h3>
       <% else %>
