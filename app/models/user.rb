@@ -26,4 +26,8 @@ class User < ActiveRecord::Base
     return 1
   end
   
+  def has_exid?
+    return self.darmok_id.present?
+  end
+  
 end

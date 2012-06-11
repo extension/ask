@@ -19,4 +19,10 @@ class ApplicationController < ActionController::Base
     end
     return nil
   end
+  
+  def require_exid
+    if(!(current_user && current_user.has_exid?))
+      return redirect_to(root_url)
+    end
+  end
 end

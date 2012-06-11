@@ -8,6 +8,11 @@ Aae::Application.routes.draw do
   end
 
   resources :questions
+  
+  namespace :expert_admin do
+    resources :questions
+  end
+  
   root :to => 'home#index'
   
 end
