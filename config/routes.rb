@@ -8,6 +8,7 @@ Aae::Application.routes.draw do
   end
 
   resources :questions
+  resources :users
   
   namespace :expert do
     resources :questions
