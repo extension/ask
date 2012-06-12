@@ -12,6 +12,7 @@ Aae::Application.routes.draw do
   namespace :expert do
     resources :questions
     resources :home
+    resources :users
   end
   
   root :to => 'home#index'

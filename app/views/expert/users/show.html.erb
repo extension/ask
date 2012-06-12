@@ -1,0 +1,20 @@
+<h1><%= @user.name %></h1>
+<div class="big_avatar"></div>
+
+
+<h2>Answered Questions</h2>
+
+<% @fake_answered.each do |question| %>
+  <div class="answered_question">
+
+      <%= link_to expert_question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+  
+  </div>
+<% end %>

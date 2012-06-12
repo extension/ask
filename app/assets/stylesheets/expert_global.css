@@ -14,3 +14,8 @@
 .incoming_question {border-bottom:2px solid #ccc; margin: 0 0 1.5em; padding:0 0 1.5em;}
 
 .navavatar.loggedin {background:#fff; padding:.5em; outline:3px solid #000;}
+
+
+.answered_question {border-bottom:2px solid #ccc; margin: 0 0 .5em; padding:0 0 .5em;}
+
+.big_avatar {width:150px; height:150px; background:#ccc;}
