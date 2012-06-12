@@ -1,0 +1,10 @@
+<h3>Related Questions</h3>
+<% @fake_related.each do |question| %>
+  <%= link_to question_path(question.id) do %>
+    <% if question.title.present? %>
+      <p><%= format_text_for_display(question.title) -%></p>
+    <% else %>
+      <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+    <% end %>
+  <%- end -%>
+<% end %>
