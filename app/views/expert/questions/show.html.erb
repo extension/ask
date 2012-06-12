@@ -1,5 +1,15 @@
 <div id="main" class="span8">
-<%= render :partial => 'partials/question_main' %>
+  
+  <p>AaE #<%= @question.id %></p>
+  
+  <%= render :partial => 'partials/question_main' %>
+  
+  <h3>History</h3>
+  <% if @question.question_events.length > 0 %>
+    <% @question.question_events.each do |event| %>
+      <li><%= stringify_question_event(event) %></li>
+    <% end %>
+  <% end %>
 </div>
 
 <div id="secondary" class="span4">
