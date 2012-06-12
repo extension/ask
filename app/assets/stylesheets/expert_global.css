@@ -22,3 +22,8 @@
 .big_avatar {width:150px; height:150px; background:#ccc; margin:0 0 2em;}
 
 h3 .label {font-size:.8em;}
+
+.section {margin:2em 0;}
+
+span.handling_rate {width:50%; border:1px solid #000; display:block; padding:1px}
+span.handling_rate span {width:75%; color:#555; background-color:#bbb; display:block; padding:.15em .5em;}
