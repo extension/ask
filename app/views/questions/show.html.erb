@@ -1,5 +1,12 @@
 <div id="main" class="span8">
   <%= render :partial => 'partials/question_main'%>
+  
+  <% if @question_responses.length < 1 %>
+    <div class="not_answered">
+      <h2>This question is waiting for an official answer</h2> 
+    </div>
+  <% end %>
+  
 </div>
 
 <div id="secondary" class="span4">
