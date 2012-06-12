@@ -12,4 +12,11 @@ module ApplicationHelper
        time.strftime("%B %e, %Y, %l:%M %p %Z")
      end
   end
+  
+  
+  def get_user_name(id)
+    return User.find(:first, :conditions => {:id => id}).name
+  end
+  
+  
 end

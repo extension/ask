@@ -8,14 +8,17 @@
 
 .navavatar {float:right;}
 
-
+.incoming_question .expert {padding:1em;}
 .incoming_question .expert .avatar {float:left; margin-right:1em;}
+.incoming_question .expert:hover {background:#eee;}
 
 .incoming_question {border-bottom:2px solid #ccc; margin: 0 0 1.5em; padding:0 0 1.5em;}
 
 .navavatar.loggedin {background:#fff; padding:.5em; outline:3px solid #000;}
 
 
-.answered_question {border-bottom:2px solid #ccc; margin: 0 0 .5em; padding:0 0 .5em;}
+.answered_question {margin: 0 0 .5em; padding:0 0 .5em;}
 
-.big_avatar {width:150px; height:150px; background:#ccc;}
+.big_avatar {width:150px; height:150px; background:#ccc; margin:0 0 2em;}
+
+h3 .label {font-size:.8em;}
