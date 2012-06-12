@@ -1,6 +1,8 @@
 
 @import "_variables";
 
+body#expert_admin {background:#eee;}
+
 .container-fluid {max-width:1180px; margin: 0 auto;}
 
 .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}

@@ -3,7 +3,7 @@
   <h1><%= @user.name %></h1>
   
   <% if current_user %>
-    <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-warning" %>
+    <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-info" %>
   <% end %>
   
   <h3>Short description</h3>

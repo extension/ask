@@ -14,7 +14,7 @@
 
 <div id="secondary" class="span4">
   <aside>
-    <p><%= link_to "View Public page", question_path(@question.id) %></p>
+    <p><%= link_to "View Public page", question_path(@question.id), :class => "label btn-warning" %></p>
     <p><%= link_to "Notify me when this question has activity" %></p>
   </aside>
   
@@ -26,12 +26,14 @@
     </aside>
   
     <aside>
-        <div class="expert">
-          <h3>Assigned to</h3>
-          <span class="avatar"></span>
-          <p>Expert Name</p>
-          <p>Expert Description</p>
-        </div>
+      <h3>Assigned to</h3>
+      <%= link_to expert_user_path(@question.assignee_id) do %>
+      <div class="expert">
+        <span class="avatar"></span>
+        <p><%= get_user_name(@question.assignee_id) %> Short Description</p>
+      </div>
+      <% end %>
+      
     </aside>
   <% end %>
   

@@ -2,7 +2,7 @@
 <div id="main" class="span6">
   <h1><%= @user.name %></h1>
   
-  <%= link_to "Public page", user_path(@user.id) %>
+  <%= link_to "Public page", user_path(@user.id), :class => "label btn-warning" %>
   
   <h3>Expert description</h3>
   <h3>Location</h3>
