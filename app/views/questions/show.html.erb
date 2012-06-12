@@ -1,35 +1,6 @@
 <div id="main" class="span8">
-<p>AaE #<%= @question.id %></p>
 
-<% if @question.title.present? %>
-  <h2><%= format_text_for_display(@question.title) %></h2>
-<% else %>
-  <h2><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
-<% end %>
-
-<p><%= format_text_for_display(@question.body) %></p>
-
-
-<p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
-<% if @question.submitter %>
-  by <%= @question.submitter.name %></p>
-<% end %>
-
-<% if @question_responses.length > 0 %>
-  <h3>Responses</h3>
-  <% @question_responses.each do |response| %>
-    <p><%= format_text_for_display(response.body) %></p>
-  <% end %>
-<% end %>
-
-<h3>History</h3>
-<% if @question.question_events.length > 0 %>
-  <% @question.question_events.each do |event| %>
-    <li><%= stringify_question_event(event) %></li>
-  <% end %>
-<% end %>
-</div>
-
+<%= render :partial => 'partials/question_main'%>
 
 
 <div id="secondary" class="span4">
@@ -42,16 +13,7 @@
   </aside>
     
   <aside>
-    <h3>Related Questions</h3>
-    <% @fake_related.each do |question| %>
-      <%= link_to question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
-    <% end %>
+    <%= render :partial => 'partials/related' %>
   </aside>
   
 </div>
