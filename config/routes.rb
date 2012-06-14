@@ -15,7 +15,7 @@ Aae::Application.routes.draw do
     resources :users
     
     match "settings/profile" => "settings#profile", :via => [:get, :put]
-    match "home" => "home#index", :via => [:get, :put]
+    match "home" => "home#index"
   end
     
   root :to => 'home#index'
