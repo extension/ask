@@ -29,3 +29,35 @@ h3 .label {font-size:.8em;}
 
 span.handling_rate {width:50%; border:1px solid #000; display:block; padding:1px}
 span.handling_rate span {width:75%; color:#555; background-color:#bbb; display:block; padding:.15em .5em;}
+
+.notifylink a {color:#666;}
+
+#flash_notification {
+    height:5em;
+    width:100%;
+    position:fixed;
+    text-align:center;
+    left:0px;
+    top:40px;
+    z-index:100;
+    opacity: 0.92;
+    -moz-opacity: 0.92;
+    -moz-box-shadow: #555 0px 0px 5px;
+    box-shadow: #555 0px 0px 5px;
+    background: #049cdb;
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color:#fff;
+    cursor:pointer;
+}
+#flash_notification.notice {} //default
+#flash_notification.error,
+#flash_notification.warning {
+    color: #000;
+    background: #f3e942;
+    background-image: -webkit-linear-gradient(top, #f3f1c4, #f3e942);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+}
+#flash_notification p {padding: 1em; font-size:1.5em;}

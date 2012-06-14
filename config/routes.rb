@@ -12,10 +12,12 @@ Aae::Application.routes.draw do
   
   namespace :expert do
     resources :questions
-    resources :home
     resources :users
+    
+    match "settings/profile" => "settings#profile", :via => [:get, :put]
+    match "home" => "home#index"
   end
-  
+    
   root :to => 'home#index'
   
 end
