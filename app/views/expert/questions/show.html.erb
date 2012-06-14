@@ -15,7 +15,7 @@
 <div id="secondary" class="span4">
   <aside>
     <p><%= link_to "View Public page", question_path(@question.id), :class => "label btn-warning" %></p>
-    <p><%= link_to "Notify me when this question has activity" %></p>
+    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
   
   <% if @question_responses.length < 1 %>

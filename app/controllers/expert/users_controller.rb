@@ -6,6 +6,8 @@
 
 class Expert::UsersController < ApplicationController
   layout 'expert'
+  before_filter :authenticate_user!
+  before_filter :require_exid
   
   def show
     @user = User.find(:first, :conditions => {:id => params[:id]})

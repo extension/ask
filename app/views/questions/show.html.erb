@@ -3,7 +3,8 @@
   
   <% if @question_responses.length < 1 %>
     <div class="not_answered">
-      <h2>This question is waiting for an official answer</h2> 
+      <h2>This question is waiting for an official answer</h2>
+      <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
     </div>
   <% end %>
   
@@ -15,7 +16,7 @@
   <% end %>
   
   <aside>
-    <p><%= link_to "Notify me when this question has activity" %></p>
+    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
     
   <aside>
