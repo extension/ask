@@ -8,6 +8,7 @@ Aae::Application.routes.draw do
   end
 
   resources :questions
+  resources :comments, :only => [:create, :update, :destroy, :show]
   
   namespace :expert do
     resources :questions

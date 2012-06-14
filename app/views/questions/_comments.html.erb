@@ -1,0 +1,31 @@
+<h3>Comment on this Question</h3>
+
+<div>
+  <% if current_user %>
+    <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
+      <div class="commentfield">
+      <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 5} %>
+      <%= hidden_field_tag 'comment[question_id]', @question.id %>
+      <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
+      </div>
+      <br class="clearing" />
+    <% end %>
+  <% else %>
+      <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
+      <%= render(partial: 'partials/sign_in_to_vote')%>
+        <div class="sitv_element commentfield">
+        <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 5} %>
+        <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
+        </div>
+        <br class="clearing" />
+        </div> <!-- end .sitv_element_wrapper  -->
+      <% end %>
+      
+  <% end %>
+  
+  <br class="clearing" />
+</div>
+
+<div id="comment-list">
+  <%= render :partial => 'comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
+</div>

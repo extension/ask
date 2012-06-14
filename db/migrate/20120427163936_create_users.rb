@@ -26,6 +26,7 @@ class CreateUsers < ActiveRecord::Migration
       t.boolean  "first_aae_away_reminder",                :default => false
       t.boolean  "second_aae_away_reminder",               :default => false
       t.string   "bio"
+      t.boolean  "is_blocked",                             :default => false, :null => false
       # paperclip method for generating necessary image columns
       t.has_attached_file :avatar
       

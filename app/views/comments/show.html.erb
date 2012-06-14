@@ -1,0 +1,7 @@
+
+<div id="comment-list" class="extracted_comments">
+<%= nested_comments @comment.subtree.arrange(:order => 'created_at DESC'), @comment %>
+</div>
+
+<h4>Posted to <%= link_to(@comment.question.title, @comment.question) %></h4>
+

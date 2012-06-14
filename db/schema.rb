@@ -313,6 +313,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.boolean  "first_aae_away_reminder",                 :default => false
     t.boolean  "second_aae_away_reminder",                :default => false
     t.string   "bio"
+    t.boolean  "is_blocked",                              :default => false, :null => false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
