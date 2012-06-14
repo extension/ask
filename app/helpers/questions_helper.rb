@@ -3,7 +3,7 @@ module QuestionsHelper
     if q_event.initiator.id == User.systemuserid
       initiator_full_name = "System"
     elsif q_event.initiator
-      initiator_full_name = q_event.initiator.name
+      initiator_full_name = link_to q_event.initiator.name, expert_user_path(q_event.initiator.id)
       if q_event.initiator.is_question_wrangler?
         qw = "class='qw'"
       end
@@ -15,7 +15,7 @@ module QuestionsHelper
       if q_event.recipient.is_question_wrangler?
         recipient_class = "class='qw'"
       end
-      reassign_msg = "Assigned to <strong #{recipient_class}><a href=''>#{q_event.recipient.name}</a></strong> by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>"
+      reassign_msg = "Assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>"
       reassign_msg = reassign_msg + " <span>Comments: #{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
     when QuestionEvent::RESOLVED 

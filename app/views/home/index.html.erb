@@ -1,5 +1,5 @@
 <div id="main" class="span8">
-  <h1>eXtension Ask an Expert</h1>
+  <h1>Recent Questions</h1>
   
   <% @recent_questions.each do |question| %>
   <div class="incoming_question">
@@ -13,7 +13,7 @@
     <%- end -%>
     <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago 
       <% if current_user %>
-        <%= link_to "edit/view", expert_question_path(question.id), :class => "label btn-warning" %>
+        <%= link_to "edit/view", expert_question_path(question.id), :class => "label btn-info" %>
       <% end %>
       
       </p>
@@ -29,5 +29,7 @@
     
     <h2>Extension Near You</h2>
     <div id="institution"></div>
+    
+    <h4>Show local active agents?</h4>
   </aside>
 </div>

@@ -9,12 +9,16 @@ Aae::Application.routes.draw do
 
   resources :questions
   resources :comments, :only => [:create, :update, :destroy, :show]
-  
+  resources :users
+    
   namespace :expert do
     resources :questions
-    resources :home
+    resources :users
+    
+    match "settings/profile" => "settings#profile", :via => [:get, :put]
+    match "home" => "home#index"
   end
-  
+    
   root :to => 'home#index'
   
 end

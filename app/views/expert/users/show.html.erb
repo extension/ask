@@ -1,0 +1,62 @@
+
+<div id="main" class="span6">
+  <h1><%= @user.name %></h1>
+  
+  <%= link_to "Public page", user_path(@user.id), :class => "label btn-warning" %>
+  
+  <h3>Expert description</h3>
+  <h3>Location</h3>
+  
+  <div class="big_avatar"></div>
+  
+  <p>
+    <strong>About me:</strong>
+    <% if @user.bio %>
+      <%= @user.bio %>
+    <% else %>
+      This person hasn't added a description yet...
+    <% end  %>
+  
+  <% if current_user.id == @user.id %>
+  <%= link_to 'edit', expert_settings_profile_path() %>
+  <% end %>
+  </p>
+  
+  <h3><span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span></h3>
+  
+  <div class="section">
+  <h3>Group Membership</h3>
+  <ul>
+    <li><%= link_to "The Breakfast Club" %></li>
+    <li><%= link_to "Fireants" %></li>
+    <li><%= link_to "Orange Country Master Gardeners" %></li>
+  </ul>
+  </div>
+</div>
+
+
+<div id="main" class="span6">
+  
+  <h2>Currently Assigned</h2>
+  <p>No Questions currently assigned</p>
+  
+  <h4>Handling Rate</h4>
+  <p><span class="handling_rate"><span>75</span></span></p>
+  
+  <h3>Answered Questions</h3>
+
+  <% @fake_answered.each do |question| %>
+  <div class="answered_question">
+
+      <%= link_to expert_question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+  
+  </div>
+  <% end %>
+</div>

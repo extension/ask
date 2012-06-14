@@ -12,4 +12,20 @@ module ApplicationHelper
        time.strftime("%B %e, %Y, %l:%M %p %Z")
      end
   end
+  
+  
+  def get_user_name(id)
+    return User.find(:first, :conditions => {:id => id}).name
+  end
+  
+  def flash_notifications
+    message = flash[:error] || flash[:notice] || flash[:warning]
+    return_string = ''
+    if message
+      type = flash.keys[0].to_s
+      return_string << '<div id="flash_notification" class="' + type + '"><p>' + message + '</p></div>'
+      return return_string.html_safe
+    end
+  end
+  
 end

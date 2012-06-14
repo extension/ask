@@ -1,5 +1,5 @@
 <div id="main" class="span12">
-  <h1>Expert Home</h1>
+  <h1>Incoming Questions</h1>
   
   <% @recent_questions.each do |question| %>
   <div class="incoming_question">
@@ -19,11 +19,13 @@
       </div>
       
       <div class="span4">
+        <%= link_to expert_user_path(question.assignee_id) do %>
         <div class="expert">
           <span class="avatar"></span>
-          <p>Expert Name</p>
+          <p><%= get_user_name(question.assignee_id) %></p>
           <p>Expert Description</p>
         </div>
+        <% end %>
       </div>
     
     </div>

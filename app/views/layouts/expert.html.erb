@@ -14,9 +14,11 @@
           <div class="container">
             <% if current_user %>
               <span class="navavatar loggedin">
-                <%= link_to do %>
+                <%= link_to expert_user_path(current_user.id) do %>
                   <span class="avatar small"></span> <%= current_user.name %>
                 <% end %>
+                &nbsp;
+                <%= link_to 'Settings', expert_settings_profile_path() %>
                 &nbsp;
                 <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
                 &nbsp;
@@ -34,7 +36,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("Expert Home", expert_home_index_path(), :class => "brand") %>
+            <%= link_to("Expert Home", expert_home_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li class="active"><a href="">Incoming</a></li>
@@ -49,6 +51,7 @@
       </div>
 
 <div class="container-fluid">
+  <%= flash_notifications -%>
   
   <div class="row-fluid">
     <%= yield %>
@@ -58,5 +61,18 @@
 </div>
 
   <%= javascript_include_tag "footer" %>
+  
+  <script class="code" type="text/javascript">
+  $(function() {
+     $('#flash_notification').hide().delay(500).slideDown('slow', function() {
+        $(this).delay(4000).fadeOut();
+     });
+
+     $("#flash_notification").live('click', function(){
+         $(this).stop().fadeOut();;
+     });
+
+  });
+  </script>
 </body>
 </html>

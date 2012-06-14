@@ -1,16 +1,26 @@
 <div id="main" class="span8">
-
-<%= render :partial => 'partials/question_main' %>
+  
+  <p>AaE #<%= @question.id %></p>
+  
+  <%= render :partial => 'partials/question_main' %>
+  
+  <h3>History</h3>
+  <% if @question.question_events.length > 0 %>
+    <% @question.question_events.each do |event| %>
+      <li><%= stringify_question_event(event) %></li>
+    <% end %>
+  <% end %>
+</div>
 
 <%= render :partial => 'partials/history' %>
 
 <div id="secondary" class="span4">
   <aside>
-    <p><%= link_to "View Public page", question_path(@question.id) %></p>
-    <p><%= link_to "Notify me when this question has activity" %></p>
+    <p><%= link_to "View Public page", question_path(@question.id), :class => "label btn-warning" %></p>
+    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
   
-  <% if @question_responses.length < 1%>
+  <% if @question_responses.length < 1 %>
     <aside>
       <h3>Actions</h3>
       <p><%= link_to "Reassign" %></p>
@@ -18,12 +28,14 @@
     </aside>
   
     <aside>
-        <div class="expert">
-          <h3>Assigned to</h3>
-          <span class="avatar"></span>
-          <p>Expert Name</p>
-          <p>Expert Description</p>
-        </div>
+      <h3>Assigned to</h3>
+      <%= link_to expert_user_path(@question.assignee_id) do %>
+      <div class="expert">
+        <span class="avatar"></span>
+        <p><%= get_user_name(@question.assignee_id) %> Short Description</p>
+      </div>
+      <% end %>
+      
     </aside>
   <% end %>
   

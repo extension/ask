@@ -2,22 +2,28 @@
 
 <%= render :partial => 'partials/question_main'%>
 
+<% if @question_responses.length < 1 %>
+  <div class="not_answered">
+    <h2>This question is waiting for an official answer</h2>
+    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
+  </div>
+<% end %>
+
 <br /><br />
 
 <%= render :partial => 'comments' %>
 
 <%= render :partial => 'partials/history' %>
 
-
 </div>
 
 <div id="secondary" class="span4">
   <% if current_user %>
-      <p><%= link_to "Edit/view", expert_question_path(@question.id), :class => "label btn-warning" %></p>
+      <p><%= link_to "Edit/view", expert_question_path(@question.id), :class => "label btn-info" %></p>
   <% end %>
   
   <aside>
-    <p><%= link_to "Notify me when this question has activity" %></p>
+    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
     
   <aside>
