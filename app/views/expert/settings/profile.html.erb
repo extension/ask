@@ -21,13 +21,27 @@
       <%= f.text_area :bio, :rows => "2", :maxlength => 140,  :class => "l" %>
     </p>
   </fieldset>
+  
+  <fieldset>
+    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p class="clearing">
+      <%= get_avatar(@user) %>
+      <% if @user.avatar.present? %>
+        <p class="clearing">
+          <label>
+            <%= check_box_tag 'delete_avatar' %>
+            Remove avatar
+          </label> 
+        </p>
+      <% end %>
+      <%= f.file_field :avatar %>
+    </p>
+  </fieldset>
     
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
+  </fieldset>
     
-    <fieldset>
-      <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
-    </fieldset>
-    
-  <% end %>
-
+<% end %>
 
 </div>

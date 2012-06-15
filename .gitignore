@@ -39,3 +39,6 @@
 
 # uploads
 /public/uploads
+
+# stored images
+/public/system
