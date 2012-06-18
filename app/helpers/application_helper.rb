@@ -15,7 +15,7 @@ module ApplicationHelper
   
   
   def get_user_name(id)
-    return User.find(:first, :conditions => {:id => id}).name
+    return User.find(params[:id]).name
   end
   
   def flash_notifications

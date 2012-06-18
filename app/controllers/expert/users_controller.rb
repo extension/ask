@@ -10,8 +10,7 @@ class Expert::UsersController < ApplicationController
   before_filter :require_exid
   
   def show
-    @user = User.find(:first, :conditions => {:id => params[:id]})
-    return record_not_found if !@user
+    @user = User.find(params[:id])
     
     @answered_questions = @user.answered_questions.limit(10)
   end

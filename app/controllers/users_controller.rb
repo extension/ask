@@ -8,8 +8,7 @@ class UsersController < ApplicationController
   layout 'public'
   
   def show
-    @user = User.find(:first, :conditions => {:id => params[:id]})
-    return record_not_found if !@user
+    @user = User.find(params[:id])
     
     @fake_answered = Question.find(:all, :limit => 10, :offset => rand(Question.count))
   end
