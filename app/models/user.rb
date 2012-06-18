@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_many :ratings
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
+  has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
+  has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   
   devise :rememberable, :trackable, :database_authenticatable
   

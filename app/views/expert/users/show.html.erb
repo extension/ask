@@ -45,7 +45,7 @@
   
   <h3>Answered Questions</h3>
 
-  <% @fake_answered.each do |question| %>
+  <% @answered_questions.each do |question| %>
   <div class="answered_question">
 
       <%= link_to expert_question_path(question.id) do %>

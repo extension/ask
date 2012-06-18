@@ -13,8 +13,7 @@ class Expert::UsersController < ApplicationController
     @user = User.find(:first, :conditions => {:id => params[:id]})
     return record_not_found if !@user
     
-    @fake_answered = Question.find(:all, :limit => 10, :offset => rand(Question.count))
-   
+    @answered_questions = @user.answered_questions.limit(10)
   end
   
 end
