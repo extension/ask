@@ -32,7 +32,7 @@
       <%= get_avatar(@question.assignee, :thumb) %>
       <%= link_to expert_user_path(@question.assignee_id) do %>
       <div class="expert">
-        <p><%= get_user_name(@question.assignee_id) %> Short Description</p>
+        <p><%= @question.assignee.name %> Short Description</p>
       </div>
       <% end %>
       

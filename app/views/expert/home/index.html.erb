@@ -22,7 +22,7 @@
         <%= link_to expert_user_path(question.assignee_id) do %>
         <div class="expert">
           <span class="avatar"></span>
-          <p><%= get_user_name(question.assignee_id) %></p>
+          <p><%= question.assignee.name %></p>
           <p>Expert Description</p>
         </div>
         <% end %>
