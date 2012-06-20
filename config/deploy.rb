@@ -1,7 +1,7 @@
 set :stages, %w(demo dev)
 set :default_stage, "dev"
 require 'capistrano/ext/multistage'
-#require 'capatross'
+require 'capatross'
 require "bundler/capistrano"
 require "delayed/recipes"
 require './config/boot'
