@@ -13,11 +13,6 @@ module ApplicationHelper
      end
   end
   
-  
-  def get_user_name(id)
-    return User.find(:first, :conditions => {:id => id}).name
-  end
-  
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning]
     return_string = ''
