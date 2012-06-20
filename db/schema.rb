@@ -200,7 +200,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
     t.string   "status",                    :default => "",    :null => false
     t.text     "body",                                         :null => false
     t.string   "title"
-    t.boolean  "private",                   :default => false
+    t.boolean  "is_private",                :default => false
     t.integer  "assignee_id"
     t.boolean  "duplicate",                 :default => false, :null => false
     t.string   "external_app_id"

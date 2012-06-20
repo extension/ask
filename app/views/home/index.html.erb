@@ -1,6 +1,10 @@
 <div id="main" class="span8">
+
   <h1>Recent Questions</h1>
   
+  <% if @recent_questions.length == 0 %>
+    <p>No Recent questions available at this time.</p>
+  <% else %>
   <% @recent_questions.each do |question| %>
   <div class="incoming_question">
     <%= link_to question_path(question.id) do %>
@@ -19,7 +23,7 @@
       </p>
     </div>
   <% end %>
-  
+  <% end %>
 </div>
 
 <div id="main" class="span4">

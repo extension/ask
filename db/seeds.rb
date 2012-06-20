@@ -28,7 +28,6 @@ def transfer_accounts
            #{@darmokdatabase}.accounts.is_admin, #{@darmokdatabase}.accounts.phonenumber, #{@darmokdatabase}.accounts.aae_responder, #{@darmokdatabase}.accounts.time_zone, #{@darmokdatabase}.accounts.is_question_wrangler, #{@darmokdatabase}.accounts.vacated_aae_at,
            #{@darmokdatabase}.accounts.first_aae_away_reminder, #{@darmokdatabase}.accounts.second_aae_away_reminder, #{@darmokdatabase}.accounts.created_at, NOW() 
     FROM   #{@darmokdatabase}.accounts
-    WHERE  #{@darmokdatabase}.accounts.retired = 0 and #{@darmokdatabase}.accounts.vouched = 1
   END_SQL
   
   benchmark = Benchmark.measure do
@@ -112,7 +111,7 @@ def transfer_communities_to_groups
   # preserve id's
   group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, creator_id, created_at, updated_at)
-    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.communities.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
+    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.widgets.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
            #{@darmokdatabase}.widgets.fingerprint, #{@darmokdatabase}.widgets.upload_capable, #{@darmokdatabase}.widgets.show_location, #{@darmokdatabase}.widgets.enable_tags, #{@darmokdatabase}.widgets.location_id,
            #{@darmokdatabase}.widgets.county_id, #{@darmokdatabase}.widgets.old_widget_url, #{@darmokdatabase}.widgets.group_notify, #{@darmokdatabase}.widgets.user_id, #{@darmokdatabase}.widgets.created_at, NOW()
     FROM #{@darmokdatabase}.communities
@@ -168,7 +167,7 @@ end
 def transfer_questions
   puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, private, assignee_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
+  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, assignee_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
          null, true, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
          #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.external_id, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,

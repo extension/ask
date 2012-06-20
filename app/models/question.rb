@@ -4,7 +4,7 @@ class Question < ActiveRecord::Base
   belongs_to :current_resolver, :class_name => "User"
   belongs_to :location
   belongs_to :county
-  belongs_to :widget
+  belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   
   has_many :comments
@@ -14,6 +14,7 @@ class Question < ActiveRecord::Base
   
   accepts_nested_attributes_for :images
 
+  scope :public_visible, conditions: { is_private: false }
 
   # sunspot/solr search
   searchable do
@@ -22,7 +23,7 @@ class Question < ActiveRecord::Base
     text :response_list, more_like_this: true
     integer :status_states, :multiple => true
     boolean :spam
-    boolean :private
+    boolean :is_private
   end  
   
   # for purposes of solr search

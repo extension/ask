@@ -18,6 +18,8 @@ Aae::Application.routes.draw do
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "home" => "home#index"
   end
+  
+  match "home/private_page" => "home#private_page", :via => :get
     
   root :to => 'home#index'
   

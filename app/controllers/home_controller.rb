@@ -8,6 +8,10 @@ class HomeController < ApplicationController
   layout 'public'
   
   def index
-    @recent_questions = Question.find(:all, :limit => 10, :order => 'created_at DESC')
+    @recent_questions = Question.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
   end
+  
+  def private_page
+  end
+  
 end
