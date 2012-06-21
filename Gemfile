@@ -108,6 +108,8 @@ group :development do
   gem 'powder'
   # rails3 compatible generators
   gem "rails3-generators"
+  gem 'capistrano'
+  gem 'capatross'
 end
  
 group :test do
