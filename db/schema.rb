@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120508125226) do
+ActiveRecord::Schema.define(:version => 20120621171908) do
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -69,6 +69,22 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
   end
 
   add_index "counties_users", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "group_connections", :force => true do |t|
     t.integer  "user_id",                              :null => false
@@ -295,7 +311,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "kind",                                    :default => "",    :null => false
+    t.string   "type",                                    :default => "",    :null => false
     t.string   "login",                    :limit => 80
     t.string   "name"
     t.string   "email"
