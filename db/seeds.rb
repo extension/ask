@@ -22,7 +22,7 @@ def transfer_accounts
   puts 'Transferring users...'
   # preserve id's here
   account_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-    INSERT INTO #{@aae_database}.users (id, darmok_id, type, login, name, email, title, position_id, location_id, county_id, retired, is_admin, phone_number, aae_responder, time_zone, is_question_wrangler, vacated_aae_at, first_aae_away_reminder, second_aae_away_reminder, created_at, updated_at)
+    INSERT INTO #{@aae_database}.users (id, darmok_id, kind, login, name, email, title, position_id, location_id, county_id, retired, is_admin, phone_number, aae_responder, time_zone, is_question_wrangler, vacated_aae_at, first_aae_away_reminder, second_aae_away_reminder, created_at, updated_at)
     SELECT #{@darmokdatabase}.accounts.id, #{@darmokdatabase}.accounts.id, #{@darmokdatabase}.accounts.type, #{@darmokdatabase}.accounts.login, CONCAT(#{@darmokdatabase}.accounts.first_name,' ', #{@darmokdatabase}.accounts.last_name), 
            #{@darmokdatabase}.accounts.email, #{@darmokdatabase}.accounts.title, #{@darmokdatabase}.accounts.position_id, #{@darmokdatabase}.accounts.location_id, #{@darmokdatabase}.accounts.county_id, #{@darmokdatabase}.accounts.retired,
            #{@darmokdatabase}.accounts.is_admin, #{@darmokdatabase}.accounts.phonenumber, #{@darmokdatabase}.accounts.aae_responder, #{@darmokdatabase}.accounts.time_zone, #{@darmokdatabase}.accounts.is_question_wrangler, #{@darmokdatabase}.accounts.vacated_aae_at,

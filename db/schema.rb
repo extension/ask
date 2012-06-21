@@ -295,7 +295,7 @@ ActiveRecord::Schema.define(:version => 20120508125226) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "type",                                    :default => "",    :null => false
+    t.string   "kind",                                    :default => "",    :null => false
     t.string   "login",                    :limit => 80
     t.string   "name"
     t.string   "email"

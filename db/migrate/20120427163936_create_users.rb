@@ -8,7 +8,7 @@ class CreateUsers < ActiveRecord::Migration
   def change 
     create_table "users" do |t|
       t.integer  "darmok_id"
-      t.string   "type",                                   :default => "",    :null => false
+      t.string   "kind",                                   :default => "",    :null => false
       t.string   "login",                    :limit => 80
       t.string   "name"
       t.string   "email",                    :limit => 96
