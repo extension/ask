@@ -7,7 +7,7 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body id="public">
 
   <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
@@ -58,20 +58,5 @@
   
 
 </div>
-
-  <%= javascript_include_tag "footer" %>
-  
-  <script class="code" type="text/javascript">
-  $(function() {
-     $('#flash_notification').hide().delay(500).slideDown('slow', function() {
-        $(this).delay(4000).fadeOut();
-     });
-
-     $("#flash_notification").live('click', function(){
-         $(this).stop().fadeOut();;
-     });
-
-  });
-  </script>
 </body>
 </html>

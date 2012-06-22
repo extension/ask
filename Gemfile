@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 source 'http://systems.extension.org/rubygems/'
 
-gem 'rails', "3.2.5"
+gem 'rails', "3.2.6"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -108,6 +108,8 @@ group :development do
   gem 'powder'
   # rails3 compatible generators
   gem "rails3-generators"
+  gem 'capistrano'
+  gem 'capatross'
 end
  
 group :test do
