@@ -35,7 +35,7 @@ class Authmap < ActiveRecord::Base
       return authmap.user
     end
     
-    new_user = user.create
+    new_user = User.create
     new_user.email = access_token['info']['email'] if access_token['info']['email'].present?
     new_user.name = access_token['info']['name'] if access_token['info']['name'].present?
     new_user.authmaps << self.new(:authname => user_screen_name, :source => user_provider)
