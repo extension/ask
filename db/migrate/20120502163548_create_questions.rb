@@ -14,6 +14,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.string   "title"
       t.boolean  "is_private",                :default => false
       t.integer  "assignee_id"                # from user_id
+      t.integer  "assigned_group_id",         :null => true
       t.boolean  "duplicate",                 :default => false, :null => false
       t.string   "external_app_id"
       t.string   "submitter_email"
@@ -54,6 +55,7 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["status_state"], :name => "status_state_idx"
     add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
     add_index "questions", ["assignee_id"], :name => "fk_assignee"
+    add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
     add_index "questions", ["widget_name"], :name => "widget_name_idx"
     add_index "questions", ["widget_id"], :name => "fk_widget_id"
   end

@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.integer  "widget_county_id"
     t.string   "old_widget_url"
     t.boolean  "group_notify",          :default => false
-    t.integer  "creator_id",                               :null => false
+    t.integer  "darmok_expertise_id"
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
   end
@@ -218,6 +218,7 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.string   "title"
     t.boolean  "is_private",                :default => false
     t.integer  "assignee_id"
+    t.integer  "assigned_group_id"
     t.boolean  "duplicate",                 :default => false, :null => false
     t.string   "external_app_id"
     t.string   "submitter_email"
@@ -249,6 +250,7 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.datetime "updated_at",                                   :null => false
   end
 
+  add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
   add_index "questions", ["assignee_id"], :name => "fk_assignee"
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
@@ -311,7 +313,7 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "type",                                    :default => "",    :null => false
+    t.string   "kind",                                    :default => "",    :null => false
     t.string   "login",                    :limit => 80
     t.string   "name"
     t.string   "email"

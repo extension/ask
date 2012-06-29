@@ -13,7 +13,7 @@ class CreateGroups < ActiveRecord::Migration
       t.integer :widget_county_id
       t.string  :old_widget_url
       t.boolean :group_notify, :default => 0
-      t.integer :creator_id, :null => false  
+      t.integer :darmok_expertise_id, :null => true, :default => nil
       t.timestamps
     end
     
