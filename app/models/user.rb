@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :counties
   has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
+  has_many :group_memberships, :through => :group_connections, :source => :group, :conditions => "connection_type IN ('leader', 'member')", :order => "groups.name", :uniq => true
   has_many :ratings
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings

@@ -2,6 +2,7 @@ class Group < ActiveRecord::Base
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :questions
+  has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   
   has_many :users, :through => :group_connections
@@ -17,15 +18,12 @@ class Group < ActiveRecord::Base
   has_many :notifications, :as => :notifiable, dependent: :destroy
   has_many :notification_exceptions
   
+  # will_paginate per page default 
+  self.per_page = 15
   
   CONNECTIONS = {'member' => 'Community Member',
     'leader' => 'Community Leader',
     'wantstojoin' => 'Wants to Join Community',
     'invited' => 'Community Invitation'}
-
-  
-  
-  
-  
   
 end

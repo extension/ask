@@ -26,6 +26,15 @@ class Question < ActiveRecord::Base
     boolean :is_private
   end  
   
+  # status numbers (for status_state)     
+  STATUS_SUBMITTED = 1
+  STATUS_RESOLVED = 2
+  STATUS_NO_ANSWER = 3
+  STATUS_REJECTED = 4
+  STATUS_CLOSED = 5
+  
+  
+  
   # for purposes of solr search
   def response_list
     self.responses.map(&:body).join(' ')

@@ -1,0 +1,18 @@
+<h1><%= @group.name %></h1>
+
+
+<h3>Open Questions</h3>
+
+<% if @open_questions.length == 0 %>
+  <p>There are currently no open questions assigned to this group.</p>
+<% else %>
+  <% @open_questions.each do |q| %> 
+    <%= link_to expert_question_path(q.id) do %>
+      <% if q.title.present? %>
+        <h3><%= format_text_for_display(q.title) -%></h3>
+      <% else %>
+        <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

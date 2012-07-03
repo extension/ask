@@ -14,6 +14,7 @@ Aae::Application.routes.draw do
   namespace :expert do
     resources :questions
     resources :users
+    resources :groups, :except => [:destroy]
     
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "home" => "home#index"
