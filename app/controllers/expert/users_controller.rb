@@ -10,9 +10,9 @@ class Expert::UsersController < ApplicationController
   before_filter :require_exid
   
   def show
-    @user = User.find(params[:id])
-    
+    @user = User.find(params[:id])    
     @answered_questions = @user.answered_questions.limit(10)
+    @my_groups = @user.group_memberships
   end
   
 end
