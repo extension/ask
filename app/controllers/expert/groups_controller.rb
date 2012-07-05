@@ -21,6 +21,12 @@ class Expert::GroupsController < ApplicationController
     end
     
     @open_questions = @group.open_questions
+    @group_members = @group.joined.limit(5)
+  end
+  
+  def members
+    @group = Group.find(params[:id])
+    @group_members = @group.joined
   end
   
   

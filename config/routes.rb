@@ -16,6 +16,7 @@ Aae::Application.routes.draw do
     resources :users
     resources :groups, :except => [:destroy]
     
+    match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "home" => "home#index"
   end
