@@ -3,8 +3,8 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :questions
   has_many :responses
-  has_many :locations
-  has_many :counties
+  has_and_belongs_to_many :locations
+  has_and_belongs_to_many :counties
   has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
   has_many :group_memberships, :through => :group_connections, :source => :group, :conditions => "connection_type IN ('leader', 'member')", :order => "groups.name", :uniq => true
