@@ -27,9 +27,13 @@
   <div class="section">
   <h3>Group Membership</h3>
   <ul>
-    <li><%= link_to "The Breakfast Club" %></li>
-    <li><%= link_to "Fireants" %></li>
-    <li><%= link_to "Orange Country Master Gardeners" %></li>
+    <% if @my_groups.length == 0 %>
+      <li>You currently are not a member or leader of a group.</li>
+    <% else %>
+      <% @my_groups.each do |group| %>  
+        <li><%= link_to group.name, expert_group_path(group.id) %></li>
+      <% end %>
+    <% end %>
   </ul>
   </div>
 </div>
