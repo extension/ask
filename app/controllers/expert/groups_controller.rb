@@ -22,6 +22,7 @@ class Expert::GroupsController < ApplicationController
     
     @open_questions = @group.open_questions
     @group_members = @group.joined.limit(5)
+    @group_tags = @group.tags
   end
   
   def members

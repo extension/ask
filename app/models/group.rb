@@ -15,6 +15,9 @@ class Group < ActiveRecord::Base
   has_many :interest, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'interest' and users.retired = 0"
   has_many :interested, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type IN ('interest','wantstojoin','leader') and users.retired = 0"
   
+  has_many :taggings, :as => :taggable, dependent: :destroy
+  has_many :tags, :through => :taggings
+  
   has_many :notifications, :as => :notifiable, dependent: :destroy
   has_many :notification_exceptions
   
