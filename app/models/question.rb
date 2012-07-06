@@ -12,9 +12,16 @@ class Question < ActiveRecord::Base
   has_many :responses
   has_many :question_events
   
+  has_many :taggings, :as => :taggable, dependent: :destroy
+  has_many :tags, :through => :taggings
+  
   accepts_nested_attributes_for :images
 
   scope :public_visible, conditions: { is_private: false }
+  scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
+  scope :tagged_with, lambda {|tag_id| 
+    {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
+  }
 
   # sunspot/solr search
   searchable do

@@ -1,0 +1,25 @@
+<h1>Questions in <%= @group.name %> tagged with '<%= @tag.name %>'</h1>
+
+<% if @questions.length > 0 %>
+  <table>
+    <tr>
+      <th>Status</th>
+      <th>Question</th>  
+    </tr>
+  <% @questions.each do |question| %>
+    <tr>
+      <td><%= question.status %></td>
+      <td>
+        <% # ToDo: Override title method in question to take care of this instead of repeating this logic. %>
+        <% if question.title.present? %>
+          <%= format_text_for_display(question.title) %>
+        <% else %>
+          <%= link_to format_text_for_display(question.body.truncate(80, separator: ' ')), expert_question_path(question) %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+<% else %>
+  <p>There are no questions in this group with this tag</p>
+<% end %>

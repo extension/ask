@@ -14,7 +14,11 @@ Aae::Application.routes.draw do
   namespace :expert do
     resources :questions
     resources :users
-    resources :groups, :except => [:destroy]
+    resources :groups, :except => [:destroy] do
+      collection do
+        get 'questions_by_tag'
+      end
+    end
     
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
