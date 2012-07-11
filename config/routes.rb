@@ -18,6 +18,12 @@ Aae::Application.routes.draw do
     
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
+    match "settings/location" => "settings#location", :via => [:get, :put]
+    match "settings/addlocation" => "settings#addlocation", :via => [:post]
+    match "settings/removelocation" => "settings#removelocation", :via => [:post]
+    match "settings/addcounty" => "settings#addcounty", :via => [:post]
+    match "settings/removecounty" => "settings#removecounty", :via => [:post]
+    match "settings/counties" => "settings#counties", :via => [:get]
     match "home" => "home#index"
   end
   

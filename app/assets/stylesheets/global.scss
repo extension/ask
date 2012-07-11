@@ -73,5 +73,25 @@ body#expert {
         background-image: -o-linear-gradient(top, #049cdb, #0064cd);
         background-image: linear-gradient(top, #049cdb, #0064cd);
     }
-    #flash_notification p {padding: 1em; font-size:1.5em;}   
+    #flash_notification p {padding: 1em; font-size:1.5em;}
+    
+    .location_block {border:2px solid #aaa; padding:1em; width: 30%; margin-bottom:1em;}
+    #selected_state {border:2px solid #aaa; padding:1em; width: 30%;}
+    p.feedback {padding:.75em;}
+    p.feedback span {background:yellow; padding:.5em;}
+    .cancel.btn.left {float:left; margin-left:2em;}
+    .cancel.btn.right {float:right;}
+    #location_option {float:left;}
+    .clearing {clear:both;}
+    #location_picker {margin-bottom:3em;}
+    #add_location {margin-bottom:1em;}
+    #selected_state {margin-bottom:3em;}
+    #location_list li {list-style:none; padding:.5em;}
+    #location_list li:hover {color:#000; background:#eee;}
+    .location_block h4 {padding:1em;}
+    .location_block h4 span {display:none;}
+    .location_block h4:hover span {display:inline;}
+    .location_block li span {display:none;}
+    .location_block li:hover span {display:inline;}
+//    #location_block h4:hover span {display:block;}
 }

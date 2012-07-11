@@ -1,0 +1,157 @@
+<h1>Location</h1>
+
+<%= render :partial => 'expert/settings/settings_navigation' %>
+
+<h3>Your locations</h3>
+
+<p><a id="add_location" class="btn">Add a Location</a></p>
+
+<div id="location_picker">
+  <select id="location_option" name="location_option">
+    <% # TODO: figure out a better way to generate the select dropdown %>
+    <option value="">Pick a location</option>
+    <% @locations.each do |l| %>
+      <option value="<%= l.id %>"><%= l.name %></option>
+      <% end %>
+  </select>
+  <p><a class="cancel btn left">cancel</a></p>
+  <br class="clearing" />
+</div>
+
+
+<div id="selected_state">
+  <h3>State name</h3>
+  <p><a class="cancel btn right">close</a></p>
+  
+  <p>Choose your coverage area</p>
+  
+  <%= form_tag(expert_settings_addlocation_path, :id => 'location_form', remote: true) do -%>
+    <%= hidden_field_tag('requested_location', "") %>
+    <p><%= submit_tag "All counties", {:id => '', :class => 'submittable'} %></p>
+  <% end %>
+  
+  <p id="pick_counties"  class="btn">Pick counties</p>
+  
+  <div id="county_picker">
+    <input class="input" id="countyfield" name="countyfield" placeholder="Type and select a county" type="text" value="" />
+  </div>  
+</div>
+
+
+<div id="user_locations">
+  <%= render :partial => 'show_locations' %>
+</div>
+
+
+
+
+
+
+
+<script class="code" type="text/javascript">
+  $('#countyfield').autocomplete({
+    source: function(request, response) {
+        $.getJSON("/expert/settings/counties", { term: request.term, location_id: $("#selected_state #requested_location").val() }, 
+                  response);
+      },
+    minLength: 1,
+    select: function(name, ui) { 
+      $.ajax({
+        type: "POST",
+          url: "<%= expert_settings_addcounty_path %>",
+          cache: false,
+          data: {requested_county: ui.item.id}
+      })
+      .done(function() {
+         // actions
+      })
+      .fail(function() { alert("error"); })
+      // .always(function() { alert("complete"); });
+    } 
+  });
+
+
+  
+  $('#county_form').bind('railsAutocomplete.select', function(event, data){
+    $('#county_form').submit();
+    $("#county_form #county").val('')
+  });
+  
+  $("#location_form")
+      .bind("ajax:loading",  $("#status_report").html('Submitting...'))
+      .bind("ajax:complete", $("#status_report").html(''))
+      .bind("ajax:success", function(event, data, status, xhr) {
+        resetPicker();
+      });
+  
+  var resetPicker = function() {
+    $("#add_location").show();
+    $('#location_picker').hide();
+    $('#location_option').val("");
+    $('#selected_state').hide();
+    $('#county_picker').hide();
+    $("#location_form").show();
+  }
+  
+  // initialize
+  resetPicker();
+   
+  $(".cancel").on("click", function(){
+    resetPicker();
+  });
+   
+  $("#pick_counties").on("click", function(){
+    $('#county_picker').show();
+    $("#location_form").hide();
+  });
+  
+  
+  $("#user_locations").on("click", ".removestate", function(){
+    var locationBlock = $(this).closest("div");
+    $.ajax({
+      type: "POST",
+        url: "<%= expert_settings_removelocation_path %>",
+        cache: false,
+        data: {location_id: $(this).attr("id").replace('location_', '')}
+    })
+    .done(function() {
+      locationBlock.fadeOut(500);
+    })
+  });
+  
+  $("#user_locations").on("click", ".removecounty", function(){
+    var countyItem = $(this).closest("li");
+    $.ajax({
+      type: "POST",
+        url: "<%= expert_settings_removecounty_path %>",
+        cache: false,
+        data: {county_id: $(this).attr("id").replace('county_', '')}
+    })
+    .done(function() {
+      countyItem.fadeOut(500);
+    })
+  });
+
+   
+  $("#add_location").live('click', function(){
+    $('#location_picker').show();
+    $('#location_option').focus();
+    $(this).hide();
+  });
+    
+   $('#location_option').change(function() {
+     var str = "";
+     $("select option:selected").each(function () {
+       str += $(this).text() + " ";
+       id = $(this).val()
+     });
+     $("#selected_state h3").text(str);
+     $("#selected_state #requested_location").val(id);
+     $('#selected_state').show();
+     $('#location_picker').hide();
+     $('#county_picker').hide();
+   });
+
+
+
+</script>
