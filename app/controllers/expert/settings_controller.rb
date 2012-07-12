@@ -43,7 +43,9 @@ class Expert::SettingsController < ApplicationController
   
   def removelocation
     location = Location.find(params[:location_id])
-    current_user.counties.where(location_id: location.id).destroy_all
+    current_user.counties.where("location_id = ?", params[:location_id]).each do |c|
+      current_user.counties.delete(c)
+    end
     current_user.locations.delete(location)
   end
   
