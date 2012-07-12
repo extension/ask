@@ -8,7 +8,7 @@
           <h4><%= l.name %> <span id="location_<%= l.id %>" class="removestate btn">X</span></h4>
           
           <ul>
-            <% current_user.counties.find_all_by_location_id(l.id).each do |c| %>
+            <% current_user.counties.where("location_id = ?", l.id).each do |c| %>
               <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
             <% end %>
           </ul>

@@ -29,7 +29,7 @@ class Expert::SettingsController < ApplicationController
   def location
     @counties = ""
     @user = current_user
-    @locations = Location.find(:all, :order => 'fipsid ASC')
+    @locations = Location.order('fipsid ASC')
   end
   
   
