@@ -49,11 +49,14 @@
 
 
 <script class="code" type="text/javascript">
+  
+  // built-in jQuery autocomplete function. processes actions with ajax
   $('#countyfield').autocomplete({
     source: function(request, response) {
-        $.getJSON("/expert/settings/counties", { term: request.term, location_id: $("#selected_state #requested_location").val() }, 
-                  response);
-      },
+        $.getJSON("/expert/settings/counties", { 
+          term: request.term, 
+          location_id: $("#selected_state #requested_location").val() }, 
+          response);},
     minLength: 1,
     select: function(name, ui) { 
       $.ajax({
@@ -63,23 +66,18 @@
           data: {requested_county: ui.item.id}
       })
       .done(function() {
+        $("#countyfield").val("");
          // actions
       })
       .fail(function() { alert("error"); })
       // .always(function() { alert("complete"); });
     } 
   });
-
-
   
-  $('#county_form').bind('railsAutocomplete.select', function(event, data){
-    $('#county_form').submit();
-    $("#county_form #county").val('')
-  });
-  
+
   $("#location_form")
-      .bind("ajax:loading",  $("#status_report").html('Submitting...'))
-      .bind("ajax:complete", $("#status_report").html(''))
+      // .bind("ajax:loading",  $("#status_report").html('Submitting...'))
+      // .bind("ajax:complete", $("#status_report").html(''))
       .bind("ajax:success", function(event, data, status, xhr) {
         resetPicker();
       });
@@ -95,7 +93,8 @@
   
   // initialize
   resetPicker();
-   
+  
+  // simple links
   $(".cancel").on("click", function(){
     resetPicker();
   });
@@ -103,9 +102,30 @@
   $("#pick_counties").on("click", function(){
     $('#county_picker').show();
     $("#location_form").hide();
+    $('#countyfield').focus();
   });
   
+  $("#add_location").on('click', function(){
+    $('#location_picker').show();
+    $('#location_option').focus();
+    $(this).hide();
+  });
   
+  // get the location selection and populate location options module 
+  $('#location_option').change(function() {
+     var str = "";
+     $("select option:selected").each(function () {
+       str += $(this).text() + " ";
+       id = $(this).val()
+     });
+     $("#selected_state h3").text(str);
+     $("#selected_state #requested_location").val(id);
+     $('#selected_state').show();
+     $('#location_picker').hide();
+     $('#county_picker').hide();
+   });
+  
+  // delete locations
   $("#user_locations").on("click", ".removestate", function(){
     var locationBlock = $(this).closest("div");
     $.ajax({
@@ -119,6 +139,7 @@
     })
   });
   
+  // delete counties
   $("#user_locations").on("click", ".removecounty", function(){
     var countyItem = $(this).closest("li");
     $.ajax({
@@ -131,27 +152,5 @@
       countyItem.fadeOut(500);
     })
   });
-
-   
-  $("#add_location").live('click', function(){
-    $('#location_picker').show();
-    $('#location_option').focus();
-    $(this).hide();
-  });
-    
-   $('#location_option').change(function() {
-     var str = "";
-     $("select option:selected").each(function () {
-       str += $(this).text() + " ";
-       id = $(this).val()
-     });
-     $("#selected_state h3").text(str);
-     $("#selected_state #requested_location").val(id);
-     $('#selected_state').show();
-     $('#location_picker').hide();
-     $('#county_picker').hide();
-   });
-
-
 
 </script>
