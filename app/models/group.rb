@@ -4,6 +4,8 @@ class Group < ActiveRecord::Base
   has_many :questions
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
+  belongs_to :widget_location, :foreign_key => "widget_location_id", :class_name => "Location"
+  belongs_to :widget_county, :foreign_key => "widget_county_id", :class_name => "County"
   
   has_many :users, :through => :group_connections
   has_many :validusers, :through => :group_connections, :source => :user, :conditions => "users.retired = 0"
@@ -28,5 +30,20 @@ class Group < ActiveRecord::Base
     'leader' => 'Community Leader',
     'wantstojoin' => 'Wants to Join Community',
     'invited' => 'Community Invitation'}
+    
+  # hardcoded for widget layout difference
+  BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'
+
+  # hardcoded for support purposes
+  SUPPORT_GROUP = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
+  
+  def self.support_group
+    self.find_by_widget_fingerprint(SUPPORT_GROUP)
+  end
+  
+  def is_bonnie_plants?
+    (self.widget_fingerprint == BONNIE_PLANTS_GROUP)
+  end
+  
   
 end
