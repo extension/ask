@@ -33,13 +33,15 @@ Aae::Application.routes.draw do
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
   # Route for named/tracked widget w/ no location *unused is a catcher for /location and /location/county for
   # existing widgets, since we aren't using that in the URL anymore
-  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get
+  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get, :as => 'widget_tracking'
   # recognize widget/index as well
   match 'widget/index/:fingerprint/*unused' => "widget#index", :via => :get
   # Widget route for unnamed/untracked widgets
   match 'widget' => "widget#index", :via => :get
   # creation of question from widget
   match 'widget/create_from_widget' => 'widget#create_from_widget', :via => :post
+  # get counties for widget
+  match 'widget/get_counties/:location_id' => 'widget#get_counties', :via => :get
   
   
     

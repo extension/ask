@@ -6,6 +6,7 @@ class Question < ActiveRecord::Base
   belongs_to :county
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
+  belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
   
   has_many :comments
   has_many :ratings
@@ -40,6 +41,13 @@ class Question < ActiveRecord::Base
   STATUS_REJECTED = 4
   STATUS_CLOSED = 5
   
+  # status text (to be used when a text version of the status is needed)
+  SUBMITTED_TEXT = 'submitted'
+  RESOLVED_TEXT = 'resolved'
+  ANSWERED_TEXT = 'answered'
+  NO_ANSWER_TEXT = 'not_answered'
+  REJECTED_TEXT = 'rejected'
+  CLOSED_TEXT = 'closed'
   
   
   # for purposes of solr search

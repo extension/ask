@@ -12,7 +12,12 @@ class WidgetController < ApplicationController
 
   # ask widget pulled from remote iframe
   def index
-    @group = Group.find_by_widget_fingerprint(params[:widget])
+    #TODO: Need to change this, including this for the time being.
+    @personal = {}
+    @personal[:location] = nil
+    @personal[:county] = nil
+    
+    @group = Group.find_by_widget_fingerprint(params[:fingerprint])
     
     if !@group.blank?
       if !@group.active?
@@ -26,8 +31,6 @@ class WidgetController < ApplicationController
       
     @question = Question.new
     if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))      
-      @first_name = @submitter.first_name
-      @last_name = @submitter.last_name
       @email = @submitter.email
       @email_confirmation = @email
     end
@@ -45,7 +48,7 @@ class WidgetController < ApplicationController
   end
   
   def get_counties
-    
+    render :partial => "counties"
   end
   
 end

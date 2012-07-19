@@ -31,7 +31,7 @@
        	-->
         </style>
         
-        <!-- TODO: Remember to put js reference here -->
+        <%= javascript_include_tag "application" %>
 </head> 
 
 <body>
@@ -58,40 +58,40 @@
         </label>
     </p>
     
-    <%- if @group.widget_show_location? -%>
+    <% if @group.widget_show_location %>
         <p>
-            <label>Location and County
+          <label>Location and County
             <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
-            </label>
+          </label>
         </p>
-
-        	<%= observe_field('question_location_id',
-        	                  :update    => :county_list,
-        	                  :url       => { :controller => 'aae/search', :action => :get_counties },
-        	                  :with      => "'location_id='+value") %>
-
+        
         <p id="county_list">
-          <%- if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) -%>
-          	<label>
-          	<%= select_tag 'county_id', options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id)) %>
-              </label>
-          <%- end -%>
+          <% if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
+            <label>
+              	<%= f.select(:county_id, options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id))) %>
+            </label>
+          <% end %>
         </p>
-    <%- end -%>
+    <% end %>
     
-    <%- if @group.widget_upload_capable? -%>
+    <% if @group.widget_upload_capable? %>
       <p>
       <label>Image (optional)</label>
       <p><em>You can upload .jpg .png or .gif. Max size of 2MB each.</em></p>
-      <p class="image_upload"><%= file_field_tag :image %></p>
+      
+      <%= f.fields_for :images do |image_form| %>
+          <p>
+            <%= image_form.file_field :image %>
+          </p>
+      <% end %>
       </p>
-    <%- end -%>
+    <% end %>
     
     <br />
 
     <p>
         <label for="email">Email <small>(please type it twice to confirm)</small>
-        <%= text_field_tag(:email, @email, { :type => "email", :autocapitalize => "off" }) %>
+        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
     
@@ -101,5 +101,20 @@
     
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
+    
+    <script class="code" type="text/javascript">
+      $(document).ready(function () {
+      
+        $("#question_location_id").change(function() {
+          var location_id = $('select#question_location_id :selected').val();
+          if(location == "") location="0";
+          jQuery.get('/widget/get_counties/' + location_id, function(data){
+              $("#county_list").html(data);
+          })
+          return false;
+        });
+      });
+    </script>
+    
 </body>
 </html>
