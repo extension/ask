@@ -52,12 +52,14 @@
     <% end %>
     </div><!-- .grid_16 -->
 
-    <p>
-        <label for="question">Question
-        <%= f.text_area :body, :rows => 4  %>
-        </label>
-    </p>
-    
+    <%= f.fields_for :responses do |response| %>
+      <p>
+          <label for="question">Question
+          <%= response.text_area :body, :rows => 4  %>
+          </label>
+      </p>
+    <% end %>
+
     <% if @group.widget_show_location %>
         <p>
           <label>Location and County

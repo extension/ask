@@ -28,5 +28,17 @@ class QuestionEvent < ActiveRecord::Base
   EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 'marked as spam', 4 => 'marked as non-spam', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
                             8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented' }
   
+  
+  
+  def self.log_resolution(question)
+    question.contributing_content ? contributing_content = question.contributing_content : contributing_content = nil
+
+    return self.log_event({:question => question,
+                           :initiated_by => question.resolved_by,
+                           :event_state => RESOLVED,
+                           :response => question.current_response,
+                           :contributing_content => contributing_content})
+  end
+  
     
 end
