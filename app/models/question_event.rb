@@ -40,5 +40,47 @@ class QuestionEvent < ActiveRecord::Base
                            :contributing_content => contributing_content})
   end
   
+  
+  def self.log_event(create_attributes = {})
+    time_of_this_event = Time.now.utc
+    question = create_attributes[:question]
+    if create_attributes[:event_state] == ASSIGNED_TO
+      question.update_attribute(:last_assigned_at, time_of_this_event)
+    end
+
+    # get last event
+    if(last_events = question.question_events.latest && !last_events.empty?)
+      last_event = last_events[0]
+      create_attributes[:duration_since_last] = (time_of_this_event - last_event.created_at).to_i
+      create_attributes[:previous_recipient_id] = last_event.recipient_id
+      create_attributes[:previous_initiator_id] = last_event.initiated_by_id
+      create_attributes[:previous_event_id] = last_event.id
+      # if not a handling event, get the last handling event
+      if(!last_event.is_handling_event?)
+        if(last_handling_events = question.question_events.latest_handling && !last_handling_events.empty?)
+          last_handling_event = last_handling_events[0]
+          create_attributes[:previous_handling_event_id] = last_handling_event.id          
+          create_attributes[:duration_since_last_handling_event] = (time_of_this_event - last_handling_event.created_at).to_i
+          create_attributes[:previous_handling_event_state] = last_handling_event.event_state
+          create_attributes[:previous_handling_recipient_id] = last_handling_event.recipient_id
+          create_attributes[:previous_handling_initiator_id] = last_handling_event.initiated_by_id
+        end
+      else
+        # last_event was a handling event - so use the last_event details to fill those values in
+        create_attributes[:previous_handling_event_id] = last_event.id
+        create_attributes[:duration_since_last_handling_event] = (time_of_this_event - last_event.created_at).to_i
+        create_attributes[:previous_handling_event_state] = last_event.event_state
+        create_attributes[:previous_handling_recipient_id] = last_event.recipient_id
+        create_attributes[:previous_handling_initiator_id] = last_event.initiated_by_id
+      end
+    end
+
+    return QuestionEvent.create(create_attributes)    
+  end
+  
+  def is_handling_event?
+    return ((self.event_state == ASSIGNED_TO) or (self.event_state == RESOLVED) or (self.event_state==REJECTED) or (self.event_state==NO_ANSWER))
+  end
+  
     
 end

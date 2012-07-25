@@ -10,12 +10,5 @@ class CreateLocations < ActiveRecord::Migration
     end
     
     add_index "locations", ["name"], :name => "idx_locations_on_name", :unique => true
-    
-    create_table :locations_users, :id => false do |t|
-      t.integer "location_id",           :default => 0, :null => false
-      t.integer "user_id",               :default => 0, :null => false
-    end
-
-    add_index "locations_users", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
   end
 end

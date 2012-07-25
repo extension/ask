@@ -1,6 +1,6 @@
 module QuestionsHelper
   def stringify_question_event(q_event)
-    if q_event.initiator.id == User.systemuserid
+    if q_event.initiator.id == User.system_user_id
       initiator_full_name = "System"
     elsif q_event.initiator
       initiator_full_name = link_to q_event.initiator.name, expert_user_path(q_event.initiator.id)

@@ -63,13 +63,6 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
   add_index "counties", ["name"], :name => "idx_counties_on_name"
 
-  create_table "counties_users", :id => false, :force => true do |t|
-    t.integer "county_id", :default => 0, :null => false
-    t.integer "user_id",   :default => 0, :null => false
-  end
-
-  add_index "counties_users", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
-
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
     t.integer  "attempts",   :default => 0
@@ -100,6 +93,13 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   add_index "group_connections", ["connection_type"], :name => "idx_group_connections_on_connection_type"
   add_index "group_connections", ["user_id", "group_id"], :name => "fk_user_group", :unique => true
 
+  create_table "group_counties", :force => true do |t|
+    t.integer "county_id", :default => 0, :null => false
+    t.integer "group_id",  :default => 0, :null => false
+  end
+
+  add_index "group_counties", ["group_id", "county_id"], :name => "fk_counties_groups", :unique => true
+
   create_table "group_events", :force => true do |t|
     t.integer  "created_by",   :null => false
     t.integer  "recipient_id"
@@ -114,11 +114,19 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   add_index "group_events", ["group_id"], :name => "idx_group_events_group_id"
   add_index "group_events", ["recipient_id"], :name => "idx_group_events_recipient_id"
 
+  create_table "group_locations", :force => true do |t|
+    t.integer "location_id", :default => 0, :null => false
+    t.integer "group_id",    :default => 0, :null => false
+  end
+
+  add_index "group_locations", ["group_id", "location_id"], :name => "fk_locations_groups", :unique => true
+
   create_table "groups", :force => true do |t|
-    t.string   "name",                                     :null => false
+    t.string   "name",                                            :null => false
     t.text     "description"
-    t.boolean  "active",                :default => true
-    t.integer  "created_by",                               :null => false
+    t.boolean  "active",                       :default => true
+    t.boolean  "assignment_outside_locations", :default => true
+    t.integer  "created_by",                                      :null => false
     t.string   "widget_fingerprint"
     t.boolean  "widget_upload_capable"
     t.boolean  "widget_show_location"
@@ -126,10 +134,10 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.integer  "widget_location_id"
     t.integer  "widget_county_id"
     t.string   "old_widget_url"
-    t.boolean  "group_notify",          :default => false
+    t.boolean  "group_notify",                 :default => false
     t.integer  "darmok_expertise_id"
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
@@ -146,13 +154,6 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   end
 
   add_index "locations", ["name"], :name => "idx_locations_on_name", :unique => true
-
-  create_table "locations_users", :id => false, :force => true do |t|
-    t.integer "location_id", :default => 0, :null => false
-    t.integer "user_id",     :default => 0, :null => false
-  end
-
-  add_index "locations_users", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
 
   create_table "notification_exceptions", :force => true do |t|
     t.integer  "user_id"
@@ -223,7 +224,6 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.string   "external_app_id"
     t.string   "submitter_email"
     t.datetime "resolved_at"
-    t.integer  "external_id"
     t.datetime "question_updated_at"
     t.text     "current_response"
     t.string   "current_resolver_email"
@@ -236,10 +236,10 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
     t.string   "user_ip",                   :default => "",    :null => false
     t.string   "user_agent",                :default => "",    :null => false
     t.string   "referrer",                  :default => "",    :null => false
-    t.string   "widget_name"
+    t.string   "group_name"
     t.integer  "status_state",                                 :null => false
     t.string   "zip_code"
-    t.integer  "widget_id"
+    t.integer  "original_group_id"
     t.integer  "submitter_id",              :default => 0
     t.boolean  "show_publicly",             :default => true
     t.datetime "last_assigned_at"
@@ -255,13 +255,13 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver"], :name => "fk_current_resolver"
+  add_index "questions", ["group_name"], :name => "group_name_idx"
   add_index "questions", ["location_id"], :name => "fk_question_location"
+  add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
   add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"
   add_index "questions", ["resolved_at"], :name => "resolved_at_idx"
   add_index "questions", ["status_state"], :name => "status_state_idx"
   add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
-  add_index "questions", ["widget_id"], :name => "fk_widget_id"
-  add_index "questions", ["widget_name"], :name => "widget_name_idx"
 
   create_table "ratings", :force => true do |t|
     t.integer  "rateable_id",   :null => false
@@ -310,6 +310,20 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   end
 
   add_index "tags", ["name"], :name => "idx_tags_on_name", :unique => true
+
+  create_table "user_counties", :force => true do |t|
+    t.integer "county_id", :default => 0, :null => false
+    t.integer "user_id",   :default => 0, :null => false
+  end
+
+  add_index "user_counties", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
+
+  create_table "user_locations", :force => true do |t|
+    t.integer "location_id", :default => 0, :null => false
+    t.integer "user_id",     :default => 0, :null => false
+  end
+
+  add_index "user_locations", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"

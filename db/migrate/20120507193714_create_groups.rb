@@ -4,6 +4,7 @@ class CreateGroups < ActiveRecord::Migration
       t.string  :name, :null => false
       t.text    :description
       t.boolean :active, :default => 1
+      t.boolean :assignment_outside_locations, :default => 1
       t.integer :created_by, :null => false
       t.string  :widget_fingerprint
       t.boolean :widget_upload_capable

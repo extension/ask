@@ -65,7 +65,7 @@ end
 def transfer_expertise_locations
   puts 'Transferring expertise locations ...'
   location_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.locations_users (location_id, user_id)
+  INSERT INTO #{@aae_database}.user_locations (location_id, user_id)
     SELECT #{@darmokdatabase}.expertise_locations_users.expertise_location_id, #{@darmokdatabase}.expertise_locations_users.user_id
     FROM #{@darmokdatabase}.expertise_locations_users
   END_SQL
@@ -94,7 +94,7 @@ end
 def transfer_expertise_counties
   puts 'Transferring expertise counties...'
   county_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.counties_users (county_id, user_id)
+  INSERT INTO #{@aae_database}.user_counties (county_id, user_id)
     SELECT #{@darmokdatabase}.expertise_counties_users.expertise_county_id, #{@darmokdatabase}.expertise_counties_users.user_id
     FROM #{@darmokdatabase}.expertise_counties_users
   END_SQL
@@ -121,7 +121,7 @@ def transfer_widget_communities_to_groups
   ## While we're inserting groups here, let's add a generic group that will be assigned questions with unaffiliated groups
   orphan_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
-    VALUES (99999, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.systemuserid}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
+    VALUES (99999, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
   END_SQL
   
   benchmark = Benchmark.measure do
@@ -137,7 +137,7 @@ def transfer_expertise_areas_to_groups
   puts 'Transferring expertise areas to groups...'
   expertise_to_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT IGNORE INTO #{@aae_database}.groups (name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, darmok_expertise_id, created_at, updated_at)
-    SELECT  #{@darmokdatabase}.categories.name, '', false, #{User.systemuserid}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
+    SELECT  #{@darmokdatabase}.categories.name, '', false, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
     FROM #{@darmokdatabase}.categories
     WHERE #{@darmokdatabase}.categories.parent_id IS NULL
   END_SQL
@@ -177,7 +177,7 @@ def fill_in_group_connections_for_areas_of_expertise
   puts 'Filling in group connections for areas of expertise ...'
   expertise_group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
-  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', 0, false, #{User.systemuserid}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
+  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', 0, false, #{User.system_user_id}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
   FROM   #{@darmokdatabase}.expertise_areas
   JOIN   #{@aae_database}.groups ON #{@darmokdatabase}.expertise_areas.category_id = #{@aae_database}.groups.darmok_expertise_id 
   GROUP BY #{@darmokdatabase}.expertise_areas.user_id, #{@darmokdatabase}.expertise_areas.category_id
