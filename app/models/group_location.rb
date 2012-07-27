@@ -1,4 +1,4 @@
 class GroupLocation < ActiveRecord::Base
-  has_many :locations
-  has_many :groups
+  belongs_to :location
+  belongs_to :group
 end

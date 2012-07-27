@@ -81,7 +81,7 @@ class Question < ActiveRecord::Base
     
     ##############################################################################################
     group = self.group
-    if group.assignment_outside_locations
+    if group.assignment_outside_locations || group.expertise_locations.include?(self.location)
       if self.county.present?
         assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
       end
@@ -89,12 +89,16 @@ class Question < ActiveRecord::Base
         assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
       end
       if !assignee 
-        assignee = pick_user_from_list()
+        assignee = pick_user_from_list(group.assignees.can_route_outside_location)
       end
       # still aint got no one? wrangle that bad boy.
       if !assignee
         assignee = pick_user_from_list(qw_group.assignees)
       end
+    else
+      # send to the question wrangler group if the location of the question is not in the location of the group and 
+      # the group is not receiving questions from outside their defined locations.
+      assignee = pick_user_from_list(qw_group.assignees)
     end
     
     

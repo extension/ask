@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621171908) do
+ActiveRecord::Schema.define(:version => 20120727213558) do
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -324,6 +324,16 @@ ActiveRecord::Schema.define(:version => 20120621171908) do
   end
 
   add_index "user_locations", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
+
+  create_table "user_preferences", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.string   "name",       :null => false
+    t.text     "setting",    :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_preferences", ["user_id"], :name => "fk_user_prefs_user_id"
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"

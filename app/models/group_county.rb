@@ -1,4 +1,4 @@
 class GroupCounty < ActiveRecord::Base
-  has_many :groups
-  has_many :counties
+  belongs_to :county
+  belongs_to :group
 end

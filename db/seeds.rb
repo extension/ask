@@ -410,6 +410,24 @@ def transfer_question_source
   puts " Group references transferred to questions: #{benchmark.real.round(2)}s"
 end
 
+# transfer all aae preferences from darmok
+def transfer_aae_user_prefs
+  puts 'Transferring user prefs...'
+  
+  aae_user_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  INSERT INTO #{@aae_database}.user_preferences(id, user_id, name, setting, created_at, updated_at)
+  SELECT #{@darmokdatabase}.user_preferences.id, #{@darmokdatabase}.user_preferences.user_id, #{@darmokdatabase}.user_preferences.name, #{@darmokdatabase}.user_preferences.setting, #{@darmokdatabase}.user_preferences.created_at, #{@darmokdatabase}.user_preferences.updated_at
+  FROM #{@darmokdatabase}.user_preferences
+  WHERE  #{@darmokdatabase}.user_preferences.name IN ('filter.widget.id', 'signature', 'aae_location_only', 'aae_county_only', 'expert.source.filter', 'expert.category.filter', 'expert.county.filter', 'expert.location.filter')
+  END_SQL
+  
+  benchmark = Benchmark.measure do
+    ActiveRecord::Base.connection.execute(aae_user_pref_transfer_query)
+  end
+  
+  puts " AaE user prefs transferred: #{benchmark.real.round(2)}s"  
+end
+
 def generate_widget_fingerprint(expertise_area_name, expertise_area_id)
   create_time = Time.now.to_s
   return Digest::SHA1.hexdigest(create_time + expertise_area_name + expertise_area_id.to_s)
@@ -435,3 +453,4 @@ transfer_personal_taggings
 transfer_group_tags
 transfer_question_taggings
 transfer_question_source
+transfer_aae_user_prefs

@@ -24,6 +24,9 @@ class Group < ActiveRecord::Base
   has_many :notifications, :as => :notifiable, dependent: :destroy
   has_many :notification_exceptions
   
+  has_many :expertise_locations, :through => :group_locations, :source => :location
+  has_many :expertise_counties, :through => :group_counties, :source => :county
+  
   # will_paginate per page default 
   self.per_page = 15
   
