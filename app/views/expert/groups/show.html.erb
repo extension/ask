@@ -32,6 +32,15 @@
 </div>
 
 <div id="secondary" class="span4">
+  
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Edit group', expert_group_profile_path() %></li>
+  </ul>
+  
+  <% if  @group.description? %>
+    <p><%= @group.description %></p>
+  <% end %>
+  
   <h3>Group Members</h3>
 
   <% @group_members.each do |member| %>
