@@ -38,10 +38,10 @@
   </ul>
   
   <% if  @group.description? %>
-    <p><%= @group.description %></p>
+    <p><%= format_text_for_display(@group.description).html_safe %></p>
   <% end %>
   
-  <h3>Group Members</h3>
+  <h3>Group Members (<%= @group_members_total %>)</h3>
 
   <% @group_members.each do |member| %>
     <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>
