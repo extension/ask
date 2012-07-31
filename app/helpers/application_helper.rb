@@ -26,17 +26,29 @@ module ApplicationHelper
   def get_avatar(user, image_size = :medium)
     case image_size
         when :medium    then image_size_in_px = "100x100"
-        when :thumb     then image_size_in_px = "50x50"
+        when :thumb     then image_size_in_px = "40x40"
     end
     
     if user.avatar.present? 
       return_string = image_tag(user.avatar.url(image_size))
     # no avatar for user
     else
-      return_string = image_tag("avatar_placeholder.png", :size => image_size_in_px)
+      # if no avatar, show a random one each time
+      return_string = image_tag("avatar_placeholder_0" + rand(1..2).to_s + ".png", :size => image_size_in_px)
     end
     
     return link_to(return_string, expert_user_path(user.id), {:title => user.name}).html_safe  
+  end
+  
+  def get_group_avatar(group, image_size = :medium)
+    case image_size
+        when :medium    then image_size_in_px = "100x100"
+        when :thumb     then image_size_in_px = "40x40"
+    end
+    # if no avatar, show a random one each time
+    return_string = image_tag("group_avatar_placeholder_0" + rand(1..3).to_s + ".png", :size => image_size_in_px)
+    
+    return link_to(return_string, expert_group_path(group.id), {:title => group.name}).html_safe  
   end
   
   def default_location_id(fallback_location_id = nil)

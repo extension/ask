@@ -4,6 +4,16 @@
   
   <%= render :partial => 'partials/question_main' %>
   
+  <p>   
+    <% if @question.tags.length > 0 %>
+      <% @question.tags.each do |tag| %>
+        <span class="label"><%= tag.name %></span>
+      <% end %>
+    <% else %>
+      <span class="label label-inverse">needs tags</span>
+    <% end %>
+  </p>
+  
   <h3>History</h3>
   <% if @question.question_events.length > 0 %>
     <% @question.question_events.each do |event| %>
