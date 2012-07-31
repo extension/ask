@@ -1,4 +1,4 @@
-<h1>Members of <%= @group.name %></h1>
+<h1><%= link_to @group.name, expert_group_path() %> Members</h1>
 
 <% @group_members.each do |member| %>
   <p><%= get_avatar(member) %> <%= link_to member.name, expert_user_path(member.id) %></p>
