@@ -30,8 +30,7 @@
       <div class="span4">
         <%= link_to expert_user_path(question.assignee_id) do %>
         <div class="expert">
-          <span class="avatar"></span>
-          <p><%= question.assignee.name %></p>
+          <%= get_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %>
           <p>Expert Description</p>
         </div>
         <% end %>
