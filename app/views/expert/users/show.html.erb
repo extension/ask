@@ -22,7 +22,16 @@
   <% end %>
   </p>
   
-  <h3><span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span></h3>
+  <% if @user.tags.length > 0 %>
+    <h3>
+    <% @user.tags.each do |tag| %>
+      <span class="label"><%= tag.name %></span>
+    <% end %>
+    </h3>
+  <% else %>
+    <p>There are no tags at this time.</p>
+  <% end %>
+  
   
   <div class="section">
   <h3>Group Membership</h3>
@@ -59,8 +68,24 @@
           <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
         <% end %>
       <%- end -%>
-      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+      <p>Location   
+        <% if question.tags.length > 0 %>
+          <% question.tags.each do |tag| %>
+            <span class="label"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+          <%= time_ago_in_words(question.created_at) %> ago
+      </p>
   
   </div>
   <% end %>
 </div>
+
+
+
+
+
+
+
+
+
