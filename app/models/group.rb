@@ -35,6 +35,8 @@ class Group < ActiveRecord::Base
     'wantstojoin' => 'Wants to Join Community',
     'invited' => 'Community Invitation'}
     
+  QUESTION_WRANGLER_GROUP_ID = 38
+    
   # hardcoded for widget layout difference
   BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'
 
@@ -47,6 +49,29 @@ class Group < ActiveRecord::Base
   
   def is_bonnie_plants?
     (self.widget_fingerprint == BONNIE_PLANTS_GROUP)
+  end
+  
+  def self.question_wrangler_group
+    self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
+  end
+  
+  def self.get_wrangler_assignees(question_location = nil, question_county = nil)
+    assignees = nil
+    wrangler_group = self.question_wrangler_group
+    
+    if question_county.present?
+      assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
+    end
+    
+    if assignees.blank? && question_location.present?
+      assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
+    end
+    
+    if assignees.blank?
+      assignees = wrangler_group.assignees.can_route_outside_location(wrangler_group.assignees.map{|ga| ga.id})
+    end
+    
+    return assignees
   end
   
   
