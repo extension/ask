@@ -30,9 +30,18 @@ def transfer_accounts
     FROM   #{@darmokdatabase}.accounts
   END_SQL
   
+  # all public accounts should have the aae_responder field set to false, they were set to true in darmok
+  account_aae_responder_update_query = <<-END_SQL.gsub(/\s+/, " ").strip
+    UPDATE #{@aae_database}.users
+    SET    #{@aae_database}.users.aae_responder = 0 
+    WHERE  #{@aae_database}.users.kind = 'PublicUser'
+  END_SQL
+  
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(account_insert_query)
+    ActiveRecord::Base.connection.execute(account_aae_responder_update_query)
   end
+  
   puts " Accounts transferred : #{benchmark.real.round(2)}s"
   
   authmap_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
@@ -65,7 +74,7 @@ end
 def transfer_expertise_locations
   puts 'Transferring expertise locations ...'
   location_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.locations_users (location_id, user_id)
+  INSERT INTO #{@aae_database}.user_locations (location_id, user_id)
     SELECT #{@darmokdatabase}.expertise_locations_users.expertise_location_id, #{@darmokdatabase}.expertise_locations_users.user_id
     FROM #{@darmokdatabase}.expertise_locations_users
   END_SQL
@@ -94,7 +103,7 @@ end
 def transfer_expertise_counties
   puts 'Transferring expertise counties...'
   county_expertise_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.counties_users (county_id, user_id)
+  INSERT INTO #{@aae_database}.user_counties (county_id, user_id)
     SELECT #{@darmokdatabase}.expertise_counties_users.expertise_county_id, #{@darmokdatabase}.expertise_counties_users.user_id
     FROM #{@darmokdatabase}.expertise_counties_users
   END_SQL
@@ -118,17 +127,32 @@ def transfer_widget_communities_to_groups
     JOIN #{@darmokdatabase}.widgets ON #{@darmokdatabase}.widgets.id = #{@darmokdatabase}.communities.widget_id
   END_SQL
   
+  # we need to add the Question Wrangler community to groups which is a special case. the question wrangler community does not have a widget
+  # and they're not a selectable area of expertise, but will be a formal and emphasized group in this AaE application and will have a widget.
+  wrangler_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
+    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.communities.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
+           NULL, true, true, false, NULL, NULL, NULL, true, #{@darmokdatabase}.communities.created_at, NOW()
+    FROM #{@darmokdatabase}.communities
+    WHERE #{@darmokdatabase}.communities.name = 'eXtension Question Wranglers'
+  END_SQL
+  
   ## While we're inserting groups here, let's add a generic group that will be assigned questions with unaffiliated groups
   orphan_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
-    VALUES (99999, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.systemuserid}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
+    VALUES (99999, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
   END_SQL
   
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(group_insert_query)
+    ActiveRecord::Base.connection.execute(wrangler_group_insert_query)
     ActiveRecord::Base.connection.execute(orphan_group_insert_query)
   end
   
+  # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
+  wrangler_group = Group.find(:first, :conditions => "name = 'eXtension Question Wranglers'")
+  wrangler_group.update_attribute(:widget_fingerprint, generate_widget_fingerprint(wrangler_group.name, wrangler_group.id))
+
   puts " Groups transferred: #{benchmark.real.round(2)}s"
 end
 
@@ -137,7 +161,7 @@ def transfer_expertise_areas_to_groups
   puts 'Transferring expertise areas to groups...'
   expertise_to_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT IGNORE INTO #{@aae_database}.groups (name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, darmok_expertise_id, created_at, updated_at)
-    SELECT  #{@darmokdatabase}.categories.name, '', false, #{User.systemuserid}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
+    SELECT  #{@darmokdatabase}.categories.name, '', false, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
     FROM #{@darmokdatabase}.categories
     WHERE #{@darmokdatabase}.categories.parent_id IS NULL
   END_SQL
@@ -156,6 +180,7 @@ end
 
 
 def transfer_widget_community_connections_to_group_connections
+  # this also creates the group connections for the newly created Question Wrangler group.
   puts 'Transferring group connections ...'
   group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
@@ -177,7 +202,7 @@ def fill_in_group_connections_for_areas_of_expertise
   puts 'Filling in group connections for areas of expertise ...'
   expertise_group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
-  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', 0, false, #{User.systemuserid}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
+  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', 0, false, #{User.system_user_id}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
   FROM   #{@darmokdatabase}.expertise_areas
   JOIN   #{@aae_database}.groups ON #{@darmokdatabase}.expertise_areas.category_id = #{@aae_database}.groups.darmok_expertise_id 
   GROUP BY #{@darmokdatabase}.expertise_areas.user_id, #{@darmokdatabase}.expertise_areas.category_id
@@ -215,10 +240,10 @@ end
 def transfer_questions
   puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, external_id, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, widget_name, status_state, zip_code, widget_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
+  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
-         null, true, #{@darmokdatabase}.submitted_questions.user_id, NULL, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
-         #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.external_id, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
+         null, true, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
+         #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
          #{@darmokdatabase}.submitted_questions.resolver_email, #{@darmokdatabase}.submitted_questions.question_fingerprint, #{@darmokdatabase}.submitted_questions.submitter_firstname, #{@darmokdatabase}.submitted_questions.submitter_lastname,
          #{@darmokdatabase}.submitted_questions.county_id, #{@darmokdatabase}.submitted_questions.location_id, #{@darmokdatabase}.submitted_questions.spam, #{@darmokdatabase}.submitted_questions.user_ip, #{@darmokdatabase}.submitted_questions.user_agent, 
          #{@darmokdatabase}.submitted_questions.referrer, #{@darmokdatabase}.submitted_questions.widget_name, #{@darmokdatabase}.submitted_questions.status_state, #{@darmokdatabase}.submitted_questions.zip_code,
@@ -388,6 +413,46 @@ def transfer_question_taggings
   puts " Question taggings transferred: #{benchmark.real.round(2)}s"
 end
 
+# fill in assigned_group_id for questions that were not from a widget, but had a 
+# category (which is now a group), assigned_group_id has already been taken care of for questions
+# from a widget as part of the question transfer.
+def transfer_question_source
+  puts 'Transferring group id references to questions...'
+  
+  question_group_reference_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.questions 
+  JOIN   #{@darmokdatabase}.categories_submitted_questions ON #{@darmokdatabase}.categories_submitted_questions.submitted_question_id = #{@aae_database}.questions.id
+  JOIN   #{@darmokdatabase}.categories ON #{@darmokdatabase}.categories_submitted_questions.category_id = #{@darmokdatabase}.categories.id
+  JOIN   #{@aae_database}.groups ON #{@aae_database}.groups.darmok_expertise_id = #{@darmokdatabase}.categories.id
+  SET    #{@aae_database}.questions.assigned_group_id = #{@aae_database}.groups.id
+  WHERE  #{@aae_database}.questions.original_group_id IS NULL AND #{@darmokdatabase}.categories.parent_id IS NULL
+  END_SQL
+  
+  benchmark = Benchmark.measure do
+    ActiveRecord::Base.connection.execute(question_group_reference_transfer_query)
+  end
+  
+  puts " Group references transferred to questions: #{benchmark.real.round(2)}s"
+end
+
+# transfer all aae preferences from darmok
+def transfer_aae_user_prefs
+  puts 'Transferring user prefs...'
+  
+  aae_user_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  INSERT INTO #{@aae_database}.user_preferences(id, user_id, name, setting, created_at, updated_at)
+  SELECT #{@darmokdatabase}.user_preferences.id, #{@darmokdatabase}.user_preferences.user_id, #{@darmokdatabase}.user_preferences.name, #{@darmokdatabase}.user_preferences.setting, #{@darmokdatabase}.user_preferences.created_at, #{@darmokdatabase}.user_preferences.updated_at
+  FROM #{@darmokdatabase}.user_preferences
+  WHERE  #{@darmokdatabase}.user_preferences.name IN ('filter.widget.id', 'signature', 'aae_location_only', 'aae_county_only', 'expert.source.filter', 'expert.category.filter', 'expert.county.filter', 'expert.location.filter')
+  END_SQL
+  
+  benchmark = Benchmark.measure do
+    ActiveRecord::Base.connection.execute(aae_user_pref_transfer_query)
+  end
+  
+  puts " AaE user prefs transferred: #{benchmark.real.round(2)}s"  
+end
+
 def generate_widget_fingerprint(expertise_area_name, expertise_area_id)
   create_time = Time.now.to_s
   return Digest::SHA1.hexdigest(create_time + expertise_area_name + expertise_area_id.to_s)
@@ -412,4 +477,5 @@ transfer_categories_to_tags
 transfer_personal_taggings
 transfer_group_tags
 transfer_question_taggings
-
+transfer_question_source
+transfer_aae_user_prefs

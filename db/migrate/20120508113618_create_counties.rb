@@ -12,12 +12,5 @@ class CreateCounties < ActiveRecord::Migration
     
     add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
     add_index "counties", ["name"], :name => "idx_counties_on_name"
-    
-    create_table "counties_users", :id => false do |t|
-      t.integer "county_id", :default => 0, :null => false
-      t.integer "user_id",             :default => 0, :null => false
-    end
-
-    add_index "counties_users", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
   end
 end

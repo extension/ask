@@ -1,6 +1,6 @@
 module QuestionsHelper
   def stringify_question_event(q_event)
-    if q_event.initiator.id == User.systemuserid
+    if q_event.initiator.id == User.system_user_id
       initiator_full_name = "System"
     elsif q_event.initiator
       initiator_full_name = link_to q_event.initiator.name, expert_user_path(q_event.initiator.id)
@@ -59,7 +59,7 @@ module QuestionsHelper
       comment_msg = comment_msg + " <div class='comment_icon'>#{format_text_for_display(q_event.response)}</div>" if q_event.response
       return comment_msg.html_safe
     else
-      return "Question #{q_event.question.id.to_s} #{Question::EVENT_TO_TEXT_MAPPING[q_event.event_state] ||= nil} #{((q_event.recipient) ? q_event.recipient.name : '')} by #{initiator_full_name} <span> #{humane_date(q_event.created_at)} </span>".html_safe
+      return "Question #{q_event.question.id.to_s} #{QuestionEvent::EVENT_TO_TEXT_MAPPING[q_event.event_state] ||= nil} #{((q_event.recipient) ? q_event.recipient.name : '')} by #{initiator_full_name} <span> #{humane_date(q_event.created_at)} </span>".html_safe
     end
   end
   

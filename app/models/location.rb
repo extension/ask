@@ -1,5 +1,8 @@
 class Location < ActiveRecord::Base
-  has_and_belongs_to_many :users
+  has_many :user_locations
+  has_many :users, :through => :user_locations
+  has_many :group_locations
+  has_many :groups, :through => :group_locations
   has_many :counties
   
   

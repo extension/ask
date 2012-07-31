@@ -8,4 +8,4 @@ app_location: 'localdev'
 darmokdatabase: 'prod_darmok'
 send_notifications: false
 engineering_list: 'engineering@extension.org'
-
+auto_assign_incoming_questions: true

@@ -19,7 +19,6 @@ class CreateQuestions < ActiveRecord::Migration
       t.string   "external_app_id"
       t.string   "submitter_email"
       t.datetime "resolved_at"
-      t.integer  "external_id"
       t.datetime "question_updated_at"
       t.text     "current_response"
       t.string   "current_resolver_email"     # from resolver_email
@@ -32,10 +31,10 @@ class CreateQuestions < ActiveRecord::Migration
       t.string   "user_ip",                   :default => "",    :null => false
       t.string   "user_agent",                :default => "",    :null => false
       t.string   "referrer",                  :default => "",    :null => false
-      t.string   "widget_name"
+      t.string   "group_name"
       t.integer  "status_state",                                 :null => false
       t.string   "zip_code"
-      t.integer  "widget_id"
+      t.integer  "original_group_id"
       t.integer  "submitter_id",              :default => 0
       t.boolean  "show_publicly",             :default => true
       t.datetime "last_assigned_at"
@@ -56,7 +55,7 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
     add_index "questions", ["assignee_id"], :name => "fk_assignee"
     add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
-    add_index "questions", ["widget_name"], :name => "widget_name_idx"
-    add_index "questions", ["widget_id"], :name => "fk_widget_id"
+    add_index "questions", ["group_name"], :name => "group_name_idx"
+    add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
   end
 end
