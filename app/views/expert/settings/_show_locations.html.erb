@@ -3,15 +3,9 @@
 <% end %>
 
 <div id="location_list">
-  <% current_user.locations.each do |l| %> 
-      <div class="location_block" id="location_block_<%= l.id %>">
-          <h4><%= l.name %> <span id="location_<%= l.id %>" class="removestate btn">X</span></h4>
-          
-          <ul>
-            <% current_user.counties.where("location_id = ?", l.id).each do |c| %>
-              <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
-            <% end %>
-          </ul>
-      </div>
+  <% current_user.locations.each do |l| %>
+    <div class="location template wrapper location_block" id="location_<%= l.id %>">
+      <%= render :partial => 'show_location', :locals => {:location => l} %>
+    </div>
   <% end %>
 </div>

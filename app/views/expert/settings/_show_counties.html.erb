@@ -1,0 +1,13 @@
+<% if defined?(location_id) %>
+  <ul>
+    <% current_user.counties.where("location_id = ?", location_id).each do |c| %>
+      <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>no location passed</p>
+<% end %>
+
+
+
+<!-- <i>_show_counties.html.erb</i> -->

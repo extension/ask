@@ -32,9 +32,32 @@ class Expert::SettingsController < ApplicationController
     @locations = Location.order('fipsid ASC')
   end
   
+  def show_counties
+    @location_id = params[:location_id]
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  def editlocation
+    render :partial => 'location_edit'
+  end
+  
+  def edit_location
+    @location = Location.find(params[:requested_location])
+    render :partial => 'edit_location', :locals => {:location => @location}
+  end
+  
+  def show_location
+    @location = Location.find(params[:requested_location])
+    render :partial => 'show_location', :locals => {:location => @location}
+  end
   
   def addlocation
     @location = Location.find(params[:requested_location])
+    current_user.counties.where("location_id = ?", params[:requested_location]).each do |c|
+      current_user.counties.delete(c)
+    end
     if !current_user.locations.include?(@location)
       current_user.locations << @location
       current_user.save
