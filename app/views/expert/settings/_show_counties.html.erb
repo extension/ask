@@ -1,6 +1,6 @@
 <% if defined?(location_id) %>
   <ul>
-    <% current_user.counties.where("location_id = ?", location_id).each do |c| %>
+    <% current_user.expertise_counties.where("location_id = ?", location_id).each do |c| %>
       <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
     <% end %>
   </ul>

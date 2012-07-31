@@ -55,34 +55,34 @@ class Expert::SettingsController < ApplicationController
   
   def addlocation
     @location = Location.find(params[:requested_location])
-    current_user.counties.where("location_id = ?", params[:requested_location]).each do |c|
-      current_user.counties.delete(c)
+    current_user.expertise_counties.where("location_id = ?", params[:requested_location]).each do |c|
+      current_user.expertise_counties.delete(c)
     end
-    if !current_user.locations.include?(@location)
-      current_user.locations << @location
+    if !current_user.expertise_locations.include?(@location)
+      current_user.expertise_locations << @location
       current_user.save
     end
   end
   
   def removelocation
     location = Location.find(params[:location_id])
-    current_user.counties.where("location_id = ?", params[:location_id]).each do |c|
-      current_user.counties.delete(c)
+    current_user.expertise_counties.where("location_id = ?", params[:location_id]).each do |c|
+      current_user.expertise_counties.delete(c)
     end
-    current_user.locations.delete(location)
+    current_user.expertise_locations.delete(location)
   end
   
   def removecounty
     county = County.find(params[:county_id])
-    current_user.counties.delete(county)
+    current_user.expertise_counties.delete(county)
   end
   
   def addcounty
      @county = County.find(params[:requested_county])
-     if !current_user.counties.include?(@county)
-       current_user.counties << @county
-       if !current_user.locations.include?(@county.location)
-         current_user.locations << @county.location
+     if !current_user.expertise_counties.include?(@county)
+       current_user.expertise_counties << @county
+       if !current_user.expertise_locations.include?(@county.location)
+         current_user.expertise_locations << @county.location
        end
        current_user.save
      end

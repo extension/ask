@@ -28,6 +28,10 @@ Aae::Application.routes.draw do
     match "settings/addcounty" => "settings#addcounty", :via => [:post]
     match "settings/removecounty" => "settings#removecounty", :via => [:post]
     match "settings/counties" => "settings#counties", :via => [:get]
+    match "settings/show_counties" => "settings#show_counties", :via => [:get]
+    match "settings/show_location" => "settings#show_location", :via => [:post]
+    match "settings/editlocation" => "settings#editlocation", :via => [:get]
+    match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
   end
   
