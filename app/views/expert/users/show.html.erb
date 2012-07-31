@@ -31,7 +31,7 @@
       <li>You currently are not a member or leader of a group.</li>
     <% else %>
       <% @my_groups.each do |group| %>  
-        <li><%= link_to group.name, expert_group_path(group.id) %></li>
+        <li><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
       <% end %>
     <% end %>
   </ul>

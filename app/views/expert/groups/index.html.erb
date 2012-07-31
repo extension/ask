@@ -5,7 +5,7 @@
   <p>You currently are not a member or leader of a group.</p>
 <% else %>
   <% @my_groups.each do |group| %>  
-    <p><%= link_to group.name, expert_group_path(group.id) %></p>
+    <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
   <% end %>
 <% end %>
 
@@ -13,7 +13,7 @@
 <%= will_paginate @groups %>
 
 <% @groups.each do |group| %>
-  <p><%= link_to group.name, expert_group_path(group.id) %></p>
+  <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
 <% end %>
 
 <%= will_paginate @groups %>
