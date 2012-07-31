@@ -15,7 +15,17 @@
         <% end %>
         <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
       <% end %>
-      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(q.created_at) %> ago </p>
+      
+      <p>Location 
+      <% if q.tags.length > 0 %>
+        <% q.tags.each do |tag| %>
+          <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse">needs tags</span>
+      <% end %>
+      
+      
     <% end %>
   <% end %>  
 

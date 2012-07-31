@@ -1,13 +1,13 @@
 
 <div id="main" class="span6">
-  <h1><%= @user.name %></h1>
+  <p><%= link_to "View public page", user_path(@user.id), :class => "label btn-warning" %></p>
   
-  <%= link_to "Public page", user_path(@user.id), :class => "label btn-warning" %>
+  <h1><%= @user.name %></h1>
+  <%= get_avatar(@user) %>
   
   <h3>Expert description</h3>
-  <h3>Location</h3>
   
-  <%= get_avatar(@user) %>
+  <h3>Location</h3>
   
   <p>
     <strong>About me:</strong>
@@ -21,6 +21,7 @@
   <%= link_to 'edit', expert_settings_profile_path() %>
   <% end %>
   </p>
+
   
   <% if @user.tags.length > 0 %>
     <h3>
