@@ -1,37 +1,43 @@
-<h1><%= @group.name %></h1>
+<div id="main" class="span8">
+  <%= get_group_avatar(@group) %>
+  <h1><%= @group.name %></h1>
 
-
-<h3>Group Members</h3>
-
-<% @group_members.each do |member| %>
-  <p><%= get_avatar(member) %> <%= link_to member.name, expert_user_path(member.id) %></p>
-<% end %>
-<p><%= link_to 'view all', expert_group_members_path(@group) %></p>
-
-
-<h3>Open Questions</h3>
-
-<% if @open_questions.length == 0 %>
-  <p>There are currently no open questions assigned to this group.</p>
-<% else %>
-  <% @open_questions.each do |q| %> 
-    <%= link_to expert_question_path(q.id) do %>
-      <% if q.title.present? %>
-        <h3><%= format_text_for_display(q.title) -%></h3>
-      <% else %>
-        <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
+  <% if @open_questions.length == 0 %>
+    <h3>There are currently no open questions assigned to this group.</h3>
+  <% else %>
+  <h3>Open Questions</h3>
+    <% @open_questions.each do |q| %> 
+      <%= link_to expert_question_path(q.id) do %>
+        <% if q.title.present? %>
+          <h3><%= format_text_for_display(q.title) -%></h3>
+        <% else %>
+          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
+        <% end %>
+        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
       <% end %>
+      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(q.created_at) %> ago </p>
     <% end %>
+  <% end %>  
+
+</div>
+
+<div id="secondary" class="span4">
+  <h3>Group Members</h3>
+
+  <% @group_members.each do |member| %>
+    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>
   <% end %>
-<% end %>
+  <p><%= link_to 'view all', expert_group_members_path(@group) %></p>
+  
+  
+  <h3>Tags</h3>
 
-<h3>Tags</h3>
-
-<% if @group_tags.length > 0 %>
-  <% @group_tags.each do |tag| %>
-    <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></p>
+  <% if @group_tags.length > 0 %>
+    <% @group_tags.each do |tag| %>
+      <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></p>
+    <% end %>
+  <% else %>
+    <p>There are no tags at this time.</p>
   <% end %>
-<% else %>
-  <p>There are no tags at this time.</p>
-<% end %>
-
+  
+</div>
