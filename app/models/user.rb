@@ -30,12 +30,10 @@ class User < ActiveRecord::Base
   scope :with_expertise_county, lambda {|county_id| {:include => :expertise_counties, :conditions => "user_counties.county_id = #{county_id}"}}
   scope :with_expertise_location, lambda {|location_id| {:include => :expertise_locations, :conditions => "user_locations.location_id = #{location_id}"}}
   
-  # TODO: make this more efficient
-  scope :can_route_outside_location, lambda {
-   location_routers = UserPreference.find(:all, :conditions => "name = '#{UserPreference::AAE_LOCATION_ONLY}' OR name = '#{UserPreference::AAE_COUNTY_ONLY}'").collect{|up| up.user_id}.uniq.join(',')
+  scope :can_route_outside_location, lambda { |user_ids|
+   location_routers = UserPreference.where("(name = '#{UserPreference::AAE_LOCATION_ONLY}' OR name = '#{UserPreference::AAE_COUNTY_ONLY}') AND (user_id IN (#{user_ids.join(',')}))").uniq.pluck('user_id').join(',')
    {:conditions => "users.id NOT IN (#{location_routers}) AND users.aae_responder = true", :order => "name ASC"}
   }
-  
   
   def name
     return self[:name] if self[:name].present? 

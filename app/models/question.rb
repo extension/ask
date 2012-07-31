@@ -89,10 +89,12 @@ class Question < ActiveRecord::Base
         assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
       end
       if !assignee 
-        assignee = pick_user_from_list(group.assignees.can_route_outside_location)
+        group_assignee_ids = group.assignees.collect{|ga| ga.id}
+        assignee = pick_user_from_list(group.assignees.can_route_outside_location(group_assignee_ids))
       end
       # still aint got no one? wrangle that bad boy.
       if !assignee
+        wrangler_group = Group.find_by_id(Group::QUESTIONWRANGLERID)
         assignee = pick_user_from_list(qw_group.assignees)
       end
     else

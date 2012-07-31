@@ -30,9 +30,18 @@ def transfer_accounts
     FROM   #{@darmokdatabase}.accounts
   END_SQL
   
+  # all public accounts should have the aae_responder field set to false, they were set to true in darmok
+  account_aae_responder_update_query = <<-END_SQL.gsub(/\s+/, " ").strip
+    UPDATE #{@aae_database}.users
+    SET    #{@aae_database}.users.aae_responder = 0 
+    WHERE  #{@aae_database}.users.kind = 'PublicUser'
+  END_SQL
+  
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(account_insert_query)
+    ActiveRecord::Base.connection.execute(account_aae_responder_update_query)
   end
+  
   puts " Accounts transferred : #{benchmark.real.round(2)}s"
   
   authmap_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
@@ -118,6 +127,16 @@ def transfer_widget_communities_to_groups
     JOIN #{@darmokdatabase}.widgets ON #{@darmokdatabase}.widgets.id = #{@darmokdatabase}.communities.widget_id
   END_SQL
   
+  # we need to add the Question Wrangler community to groups which is a special case. the question wrangler community does not have a widget
+  # and they're not a selectable area of expertise, but will be a formal and emphasized group in this AaE application and will have a widget.
+  wrangler_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
+    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.communities.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
+           NULL, true, true, false, NULL, NULL, NULL, true, #{@darmokdatabase}.communities.created_at, NOW()
+    FROM #{@darmokdatabase}.communities
+    WHERE #{@darmokdatabase}.communities.name = 'eXtension Question Wranglers'
+  END_SQL
+  
   ## While we're inserting groups here, let's add a generic group that will be assigned questions with unaffiliated groups
   orphan_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
@@ -126,9 +145,14 @@ def transfer_widget_communities_to_groups
   
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(group_insert_query)
+    ActiveRecord::Base.connection.execute(wrangler_group_insert_query)
     ActiveRecord::Base.connection.execute(orphan_group_insert_query)
   end
   
+  # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
+  wrangler_group = Group.find(:first, :conditions => "name = 'eXtension Question Wranglers'")
+  wrangler_group.update_attribute(:widget_fingerprint, generate_widget_fingerprint(wrangler_group.name, wrangler_group.id))
+
   puts " Groups transferred: #{benchmark.real.round(2)}s"
 end
 
@@ -156,6 +180,7 @@ end
 
 
 def transfer_widget_community_connections_to_group_connections
+  # this also creates the group connections for the newly created Question Wrangler group.
   puts 'Transferring group connections ...'
   group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
