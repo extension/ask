@@ -24,9 +24,9 @@
       <% else %>
         <span class="label label-inverse">needs tags</span>
       <% end %>
-      
-      
+       <%= time_ago_in_words(q.created_at) %> ago
     <% end %>
+	</p>
   <% end %>  
 
 </div>

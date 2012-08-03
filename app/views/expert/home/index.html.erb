@@ -31,7 +31,11 @@
         <%= link_to expert_user_path(question.assignee_id) do %>
         <div class="expert">
           <%= get_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %>
-          <p>Expert Description</p>
+		<% if question.assigned_group %>
+	      <p><%= get_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
+		<% else %>
+			<p><strong>This question is groupless</strong></p>
+		<% end %>
         </div>
         <% end %>
       </div>
