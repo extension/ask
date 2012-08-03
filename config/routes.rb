@@ -37,10 +37,14 @@ Aae::Application.routes.draw do
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
+  # route for current url structure for accessing a widget
+  match 'widget/tracking/:fingerprint' => "widget#index", :via => :get
+  # recognize widget/index as well
+  match 'widget/index/:fingerprint' => "widget#index", :via => :get
   # Route for named/tracked widget w/ no location *unused is a catcher for /location and /location/county for
   # existing widgets, since we aren't using that in the URL anymore
-  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get, :as => 'widget_tracking'
-  # recognize widget/index as well
+  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get
+  # recognize widget/index as well with unused parameters
   match 'widget/index/:fingerprint/*unused' => "widget#index", :via => :get
   # Widget route for unnamed/untracked widgets
   match 'widget' => "widget#index", :via => :get

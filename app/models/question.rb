@@ -1,5 +1,5 @@
 class Question < ActiveRecord::Base
-  has_many :images, :as => :assetable, :class_name => "Response::Image", :dependent => :destroy
+  has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User"
   belongs_to :location
@@ -259,6 +259,10 @@ class Question < ActiveRecord::Base
     user_id = assignment_dates.sort{ |a, b| a[1] <=> b[1] }[0][0]
 
     return User.find(user_id)
+  end
+  
+  class Question::Image < Asset
+    has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
   
     

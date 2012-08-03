@@ -30,6 +30,8 @@ class WidgetController < ApplicationController
     end
       
     @question = Question.new
+    @question.images.build
+    
     if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))      
       @email = @submitter.email
       @email_confirmation = @email
