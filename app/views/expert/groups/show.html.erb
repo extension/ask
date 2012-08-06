@@ -33,6 +33,14 @@
 
 <div id="secondary" class="span4">
   
+  <p><%= link_to "View public page", group_path(@group.id), :class => "label btn-warning" %></p>
+  
+  <% if @group.active %>
+		<p><%= link_to "Group Ask an Expert page", ask_group_path(@group.id) %></p>
+	<% else  %>
+		<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
+	<% end %>
+  
   <ul class="nav nav-tabs">
     <li><%= link_to 'Edit group', expert_group_profile_path() %></li>
   </ul>
@@ -40,12 +48,6 @@
   <% if  @group.description? %>
     <p><%= format_text_for_display(@group.description).html_safe %></p>
   <% end %>
-  
-	<% if @group.active %>
-		<p>Link to widget form (need to decide on URL)</p>
-	<% else  %>
-		<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
-	<% end %>
 
   <h3>Group Members (<%= @group_members_total %>)</h3>
 

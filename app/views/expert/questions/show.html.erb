@@ -22,6 +22,12 @@
 <div id="secondary" class="span4">
   <aside>
     <p><%= link_to "View Public page", question_path(@question.id), :class => "label btn-warning" %></p>
+    <% if @question.is_private %>
+      <p><i class="icon-lock"></i> This question is private</p>
+    <% else %>
+      <p><i class="icon-globe"></i> This question is public</p>
+    <% end %>
+    
     <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
   

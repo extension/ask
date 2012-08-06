@@ -1,24 +1,36 @@
 
 <div id="main" class="span6">
   <h1><%= @user.name %></h1>
-  
-  <% if current_user %>
-    <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-info" %>
-  <% end %>
-  
   <h3>Short description</h3>
   <h3>Location</h3>
   
   <%= get_avatar(@user) %>
   
-  <p><strong>About me:</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>
+    <strong>About me:</strong>
+    <% if @user.bio %>
+      <%= @user.bio %>
+    <% else %>
+      This person hasn't added a description yet...
+    <% end  %>
+  </p>
   
-  <h3><span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span></h3>
+  <% if @user.tags.length > 0 %>
+    <h3>
+    <% @user.tags.each do |tag| %>
+      <span class="label"><%= tag.name %></span>
+    <% end %>
+    </h3>
+  <% end %>
   
 </div>
 
 
-<div id="main" class="span6">  
+<div id="main" class="span6">
+  <% if current_user %>
+    <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-inverse" %>
+  <% end %>
+  
   <h3>Answered Questions</h3>
 
   <% @fake_answered.each do |question| %>

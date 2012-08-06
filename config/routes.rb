@@ -10,6 +10,11 @@ Aae::Application.routes.draw do
   resources :questions
   resources :comments, :only => [:create, :update, :destroy, :show]
   resources :users
+  resources :groups do
+    member do
+      get 'ask'
+    end
+  end
     
   namespace :expert do
     resources :questions

@@ -1,0 +1,52 @@
+<div id="main" class="span8">
+  <div class="groupmasthead">
+    <% if @group.active %>
+      <h2 class="right"><%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn large btn-primary" %></h2>
+    <% end %>
+    
+    <%= get_group_avatar(@group) %>
+    
+    <h1><%= @group.name %></h1>
+    
+    <% if  @group.description? %>
+      <p><%= format_text_for_display(@group.description).html_safe %></p>
+    <% end %>
+  </div>
+  
+  <% if @open_questions.length == 0 %>
+    <h3>This group does not currently have any public questions.</h3>
+  <% else %>
+  <h3>Open Questions</h3>
+    <% @open_questions.each do |q| %> 
+      <%= link_to expert_question_path(q.id) do %>
+        <% if q.title.present? %>
+          <h3><%= format_text_for_display(q.title) -%></h3>
+        <% else %>
+          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
+        <% end %>
+        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
+      <% end %>
+      
+      <p>Location 
+      <% if q.tags.length > 0 %>
+        <% q.tags.each do |tag| %>
+          <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse">needs tags</span>
+      <% end %>
+       <%= time_ago_in_words(q.created_at) %> ago
+    <% end %>
+	</p>
+  <% end %>
+  
+  
+</div>
+
+<div id="secondary" class="span4">
+
+  <% if current_user %>
+    <%= link_to "expert view", expert_group_path(@group.id), :class => "label btn-inverse" %>
+  <% end %>
+  
+</div>

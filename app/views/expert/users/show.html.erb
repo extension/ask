@@ -1,7 +1,5 @@
 
-<div id="main" class="span6">
-  <p><%= link_to "View public page", user_path(@user.id), :class => "label btn-warning" %></p>
-  
+<div id="main" class="span6">  
   <h1><%= @user.name %></h1>
   <%= get_avatar(@user) %>
   
@@ -50,7 +48,7 @@
 
 
 <div id="main" class="span6">
-  
+  <p><%= link_to "View public page", user_path(@user.id), :class => "label btn-warning" %></p>
   <h2>Currently Assigned</h2>
   <p>No Questions currently assigned</p>
   

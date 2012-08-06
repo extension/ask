@@ -1,0 +1,14 @@
+<div id="main" class="span8">
+  <div class="groupmasthead">
+    <%= get_group_avatar(@group) %>
+    
+    <h1><%= link_to @group.name, group_path(@group.id) %></h1>
+    
+    <% if  @group.description? %>
+      <p><%= format_text_for_display(@group.description).html_safe %></p>
+    <% end %>
+    
+    <iframe style="border:0;" width="100%" src="http://www.extension.org/widget/tracking/<%= @group.widget_fingerprint %>" height="500px">
+    
+  </div>
+</div>
