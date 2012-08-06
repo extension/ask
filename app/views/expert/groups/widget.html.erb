@@ -3,3 +3,56 @@
 <h3>Group Settings > Widget</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
+
+<%= form_tag(expert_group_widget_path) do -%>
+
+  <div class="form_subgroup">
+    
+
+    <fieldset>
+		<p>
+        <label>
+          <strong><%= check_box_tag 'active', '1', @group.active? %>  Active</strong>
+			(When a widget is not active, questions can not be submitted through it. The widget code should be removed from any web page.)
+        </label>
+		</p>
+
+		<p>
+        <label>        
+          <strong><%= check_box_tag '', '1' %>  Enable "public display" option</strong>
+			(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted through the widget will be private.)
+        </label>
+    </p>
+
+	<p>
+        <label>        
+          <strong><%= check_box_tag 'widget_upload_capable', '1', @group.widget_upload_capable? %>  Enable photo upload option</strong>
+        </label>
+    </p>
+
+	<p>
+        <label>        
+          <strong><%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option</strong>
+			(Note: if enabled, any provided location will override the default locations for this widget.)
+        </label>
+		</p>
+    </fieldset>
+
+
+  </div>
+  
+  <fieldset>
+    <p><%= submit_tag "Save Changes", :class => "btn btn-primary btn-large" %></p>
+  </fieldset>
+  
+<%- end -%>
+
+</div>
+
+
+
+
+
+
+<h4>Widget iFrame Code</h4>
+<div id="widgetcode"><textarea><%= h('<iframe style="border:0;" width="100%" src="http://www.extension.org/widget/tracking/' +  @group.widget_fingerprint + '" height="300px">') %></textarea></div>

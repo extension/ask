@@ -67,6 +67,32 @@ class Expert::GroupsController < ApplicationController
   
   def widget
     @group = Group.find_by_id(params[:id])
+    if request.post?
+      
+      if params[:active].present? && params[:active] == '1'
+        @group.active = true
+      else
+        @group.active = false
+      end
+      
+      if params[:widget_upload_capable].present? && params[:widget_upload_capable] == '1'
+        @group.widget_upload_capable = true
+      else
+        @group.widget_upload_capable = false
+      end
+      
+      if params[:widget_show_location].present? && params[:widget_show_location] == '1'
+        @group.widget_show_location = true
+      else
+        @group.widget_show_location = false
+      end
+      
+      if @group.save
+        redirect_to(expert_group_widget_path, :notice => 'Widget settings successfully updated.')
+      else
+        render :action => 'widget'
+      end
+    end
   end
   
   def history
