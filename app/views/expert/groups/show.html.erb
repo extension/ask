@@ -33,10 +33,10 @@
 
 <div id="secondary" class="span4">
   
-  <p><%= link_to "View public page", group_path(@group.id), :class => "label btn-warning" %></p>
+  <p><%= link_to "Public page", group_path(@group.id), :class => "label btn-warning" %></p>
   
   <% if @group.active %>
-		<p><%= link_to "Group Ask an Expert page", ask_group_path(@group.id) %></p>
+		<p><%= link_to "Group Ask an Expert page", ask_group_path(@group.id), :class => "label btn-warning" %></p>
 	<% else  %>
 		<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
 	<% end %>

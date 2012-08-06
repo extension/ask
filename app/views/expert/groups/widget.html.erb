@@ -44,15 +44,14 @@
   <fieldset>
     <p><%= submit_tag "Save Changes", :class => "btn btn-primary btn-large" %></p>
   </fieldset>
+
+  <h4>Widget iFrame Code</h4>
+  <p>You can embed this group's Ask form on any web page using the following code, or you can link directly to this <%= link_to "group's Ask form", ask_group_path(@group.id) %>.</p>
+  <div id="widgetcode"><textarea><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
+
+</div>
   
 <%- end -%>
 
-</div>
 
 
-
-
-
-
-<h4>Widget iFrame Code</h4>
-<div id="widgetcode"><textarea><%= h('<iframe style="border:0;" width="100%" src="http://www.extension.org/widget/tracking/' +  @group.widget_fingerprint + '" height="300px">') %></textarea></div>
