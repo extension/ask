@@ -63,6 +63,15 @@ class Expert::GroupsController < ApplicationController
   
   def assignment_options
     @group = Group.find_by_id(params[:id])
+    if request.put?
+      @group.attributes = params[:group]
+      
+      if @group.save
+        redirect_to(expert_group_assignment_options_path, :notice => 'Assignment preferences updated.')
+      else
+        render :action => 'assignment_options'
+      end
+    end
   end
   
   def widget

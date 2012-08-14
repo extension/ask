@@ -3,3 +3,59 @@
 <h3>Group Settings > Assignment Options</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
+
+
+
+<%= form_for @group, :url => expert_group_assignment_options_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+    <div>
+      <h3>Where can questions come from?</h3>
+      <p>
+        <label>
+          <%= f.radio_button :assignment_outside_locations, true %>
+          Questions can come from any location
+          <span>(Best for groups who want to be aware of every question that comes in through their widget.)</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <%= f.radio_button :assignment_outside_locations, false %>
+          Questions must come from this group's locations
+          <span>(Best for groups that don't want to answer questions outside a specific geographic area.)</span>
+        </label>
+      </p>
+    </div>
+
+  </fieldset>
+  
+  <fieldset>
+    <div>
+      <h3>How should questions be assigned?</h3>
+      <p>
+        <label>
+          <% #TODO replace with correct attribute once created  %>
+          <%= f.radio_button :assignment_outside_locations, true %>
+          Assign questions to the group
+          <span>(Leaders will make assignments or members will pick questions. Best for groups with lots of volunteers.)</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <% #TODO replace with correct attribute once created  %>
+          <%= f.radio_button :assignment_outside_locations, false %>
+          Assign questions directly to group members
+          <span>(Assignments respect individual member location preferences)</span>
+        </label>
+      </p>
+    </div>
+
+  </fieldset>
+  
+  
+  <p>How else are questions assigned?
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>

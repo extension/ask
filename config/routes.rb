@@ -28,7 +28,7 @@ Aae::Application.routes.draw do
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
-    match "groups/:id/assignment_options" => "groups#assignment_options", :via => [:get, :put], :as => 'group_assignment_options'
+    match "groups/:id/assignment_options" => "groups#assignment_options", :via => [:get, :put, :post], :as => 'group_assignment_options'
     match "groups/:id/tags" => "groups#tags", :via => [:get, :put], :as => 'group_tags'
     match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
