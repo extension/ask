@@ -1,0 +1,69 @@
+<h1><%= link_to @group.name, expert_group_path() %></h1>
+
+<h3>Group Settings > Assignment Options</h3>
+
+<%= render :partial => 'expert/groups/settings_navigation' %>
+
+
+
+<%= form_for @group, :url => expert_group_assignment_options_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+
+  <div class="info right">
+    <h3>More info...</h3>
+    <h4>How else are questions assigned?</h4>
+    <p>Experts can manually assign questions to any group or individual.</p>
+  </div>
+  
+  
+  <fieldset>
+    <div>
+      <h3>Where can questions come from?</h3>
+      <div class="radio_options">
+      <p>
+        <label>
+          <%= f.radio_button :assignment_outside_locations, true %>
+          Questions can come from any location
+          <span>(Best for groups who want to be aware of every question that comes in through their widget.)</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <%= f.radio_button :assignment_outside_locations, false %>
+          Questions must come from this group's locations
+          <span>(Best for groups that don't want to answer questions outside a specific geographic area.)</span>
+        </label>
+      </p>
+      </div>
+    </div>
+  </fieldset>
+  
+  <fieldset>
+    <div>
+      <h3>How should questions be assigned? <i class="todo">TODO</i></h3>
+      <div class="radio_options">
+      <p>
+        <label>
+          <% #TODO replace with correct attribute once created  %>
+
+          Assign questions to the group
+          <span>(Leaders will make assignments or members will pick questions. Best for groups with lots of volunteers.)</span>
+        </label>
+      </p>
+      <p>
+        <label>
+          <% #TODO replace with correct attribute once created  %>
+
+          Assign questions directly to group members
+          <span>(Assignments respect individual member location preferences)</span>
+        </label>
+      </p>
+    </div>
+    </div>
+  </fieldset>
+  
+  
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>

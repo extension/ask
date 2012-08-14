@@ -9,14 +9,21 @@ body#public {
 .navbar {height:80px !important;}
 .navbar-inner {height:80px !important;}
 .navbar-inner .container {height:80px !important;}
-
-
+.container-fluid {max-width:1180px; margin: 0 auto;}
+.right {float:right;}
 }
 
 
 body#expert {
-    
-    #content_wrapper {margin-top:3em;}
+	
+	background:#ddd;
+	.row-fluid {background:#fff;}
+	#widgetcode { margin:1em 0; padding:.5em 0;}
+	#widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
+	label strong {font-size:1.2em; display:block}
+    span.label a {color:#fff;}
+	fieldset p {margin-bottom:2em}
+    #content_wrapper {margin:3em 1.5em 1em;}
     .container-fluid {max-width:1180px; margin: 0 auto;}
 
     .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
@@ -100,4 +107,12 @@ body#expert {
     .location.template {border:2px solid red;}
     .right {float:right;}
     i {color:#ccc; font-size:.8em;}
+
+	div.info {background:#FFFFD2; padding:1em; margin:0 0 2em; width:18em; color:#777;}
+	div.info h3 {font-size:1.2em; margin:0 0 .5em; color:#444;}
+	.right  {float:right;}
+	.todo {background:yellow; padding:.05em .25em}
+	label span {display:block; font-weight:normal; color:#777;}
+	label {font-weight:bold; font-size:1.1em}
+	.radio_options {padding:1em;}
 }

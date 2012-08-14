@@ -15,7 +15,7 @@ class QuestionsController < ApplicationController
   # TODO: incorporate title into this.
   def create  
     if request.post?
-      @group = Group.find_by_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
+      @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
         @status_message = "Unknown widget specified."
         return render(:template => '/widget/status', :layout => false)
@@ -32,7 +32,7 @@ class QuestionsController < ApplicationController
           raise ArgumentError
         end
 
-        if!(@submitter = User.find_by_email(@question.email))
+        if !(@submitter = User.find_by_email(@question.email))
           @submitter = User.create({:email => @question.email})
           if !@submitter.valid?
             @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))

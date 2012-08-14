@@ -15,14 +15,41 @@
         <% end %>
         <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
       <% end %>
-      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(q.created_at) %> ago </p>
+      
+      <p>Location 
+      <% if q.tags.length > 0 %>
+        <% q.tags.each do |tag| %>
+          <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse">needs tags</span>
+      <% end %>
+       <%= time_ago_in_words(q.created_at) %> ago
     <% end %>
+	</p>
   <% end %>  
 
 </div>
 
 <div id="secondary" class="span4">
-  <h3>Group Members</h3>
+  
+  <p><%= link_to "Public page", group_path(@group.id), :class => "label btn-warning" %></p>
+  
+  <% if @group.active %>
+		<p><%= link_to "Group Ask an Expert page", ask_group_path(@group.id), :class => "label btn-warning" %></p>
+	<% else  %>
+		<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
+	<% end %>
+  
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Edit group', expert_group_profile_path() %></li>
+  </ul>
+  
+  <% if  @group.description? %>
+    <p><%= format_text_for_display(@group.description).html_safe %></p>
+  <% end %>
+
+  <h3>Group Members (<%= @group_members_total %>)</h3>
 
   <% @group_members.each do |member| %>
     <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>

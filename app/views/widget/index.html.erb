@@ -52,13 +52,12 @@
     <% end %>
     </div><!-- .grid_16 -->
 
-    <%= f.fields_for :responses do |response| %>
-      <p>
-          <label for="question">Question
-          <%= response.text_area :body, :rows => 4  %>
-          </label>
-      </p>
-    <% end %>
+    <p>
+      <label for="question">Question
+      <%= f.text_area :body, :rows => 4  %>
+      </label>
+    </p>
+    
 
     <% if @group.widget_show_location %>
         <p>
@@ -83,7 +82,7 @@
       
       <%= f.fields_for :images do |image_form| %>
           <p>
-            <%= image_form.file_field :image %>
+            <%= image_form.file_field :attachment %>
           </p>
       <% end %>
       </p>

@@ -1,0 +1,29 @@
+<h1><%= link_to @group.name, expert_group_path() %></h1>
+
+<h3>Group Settings > Profile</h3>
+
+<%= render :partial => 'expert/groups/settings_navigation' %>
+
+<div class="form_group">
+
+<%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+    <p>
+      <%= f.label :name, 'Group Name' %>
+      <%= f.text_field :name,  :class => "xl" %>
+    </p>
+    
+    <p>
+      <%= f.label :description, 'Group Description (optional)' %>
+      <%= f.text_area :description, :rows => "2",  :class => "xl" %>
+    </p>
+  </fieldset>
+      
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>
+
+</div>

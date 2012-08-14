@@ -5,6 +5,7 @@ require 'capatross'
 require "bundler/capistrano"
 require "delayed/recipes"
 require './config/boot'
+require 'airbrake/capistrano'
  
 set :application, "aae"
 set :repository,  "git@github.com:extension/aae.git"

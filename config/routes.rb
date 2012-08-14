@@ -10,6 +10,11 @@ Aae::Application.routes.draw do
   resources :questions
   resources :comments, :only => [:create, :update, :destroy, :show]
   resources :users
+  resources :groups do
+    member do
+      get 'ask'
+    end
+  end
     
   namespace :expert do
     resources :questions
@@ -21,6 +26,12 @@ Aae::Application.routes.draw do
     end
     
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
+    match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
+    match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
+    match "groups/:id/assignment_options" => "groups#assignment_options", :via => [:get, :put, :post], :as => 'group_assignment_options'
+    match "groups/:id/tags" => "groups#tags", :via => [:get, :put], :as => 'group_tags'
+    match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
+    match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
     match "settings/addlocation" => "settings#addlocation", :via => [:post]
@@ -41,10 +52,14 @@ Aae::Application.routes.draw do
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
+  # route for current url structure for accessing a widget
+  match 'widget/tracking/:fingerprint' => "widget#index", :via => :get, :as => 'group_widget'
+  # recognize widget/index as well
+  match 'widget/index/:fingerprint' => "widget#index", :via => :get
   # Route for named/tracked widget w/ no location *unused is a catcher for /location and /location/county for
   # existing widgets, since we aren't using that in the URL anymore
-  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get, :as => 'widget_tracking'
-  # recognize widget/index as well
+  match 'widget/tracking/:fingerprint/*unused' => "widget#index", :via => :get
+  # recognize widget/index as well with unused parameters
   match 'widget/index/:fingerprint/*unused' => "widget#index", :via => :get
   # Widget route for unnamed/untracked widgets
   match 'widget' => "widget#index", :via => :get

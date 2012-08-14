@@ -33,7 +33,8 @@ module ApplicationHelper
       return_string = image_tag(user.avatar.url(image_size))
     # no avatar for user
     else
-      return_string = image_tag("avatar_placeholder.png", :size => image_size_in_px)
+      # if no avatar, show a random one each time
+      return_string = image_tag("avatar_placeholder_0" + rand(1..2).to_s + ".png", :size => image_size_in_px)
     end
     
     return link_to(return_string, expert_user_path(user.id), {:title => user.name}).html_safe  
@@ -43,6 +44,7 @@ module ApplicationHelper
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
+        when :mini     then image_size_in_px = "20x20"
     end
     # if no avatar, show a random one each time
     return_string = image_tag("group_avatar_placeholder_0" + rand(1..3).to_s + ".png", :size => image_size_in_px)

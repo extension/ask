@@ -1,0 +1,57 @@
+<h1><%= link_to @group.name, expert_group_path() %></h1>
+
+<h3>Group Settings > Widget</h3>
+
+<%= render :partial => 'expert/groups/settings_navigation' %>
+
+<%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
+
+  <div class="form_subgroup">
+    
+
+    <fieldset>
+		<p>
+        <label>
+          <%= check_box_tag 'active', '1', @group.active? %>  Active
+			    <span>(When a widget is not active, questions can not be submitted through it. The widget code should be removed from any web page.)</span>
+        </label>
+		</p>
+
+		<p>
+        <label>        
+          <%= check_box_tag '', '1' %>  Enable "public display" option <i class="todo">TODO</i>
+			    <span>(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted will be private.)</span>
+        </label>
+    </p>
+
+	<p>
+        <label>        
+          <%= check_box_tag 'widget_upload_capable', '1', @group.widget_upload_capable? %>  Enable photo upload option
+        </label>
+    </p>
+
+	<p>
+        <label>        
+          <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option
+			    <span>(If enabled, the selected location will override the default location.)</span>
+        </label>
+		</p>
+    </fieldset>
+
+
+  </div>
+  
+  <fieldset>
+    <p><%= submit_tag "Save Changes", :class => "btn btn-primary btn-large" %></p>
+  </fieldset>
+
+  <h4>Widget iFrame Code</h4>
+  <p>You can embed this group's Ask form on any web page using the following code, or you can link directly to this <%= link_to "group's Ask form", ask_group_path(@group.id) %>.</p>
+  <div id="widgetcode"><textarea><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
+
+</div>
+  
+<%- end -%>
+
+
+

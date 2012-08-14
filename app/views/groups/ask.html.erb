@@ -1,0 +1,23 @@
+<div id="main" class="span8">
+
+  <div class="groupmasthead">
+    <%= get_group_avatar(@group) %>
+    
+    <h1><%= link_to @group.name, group_path(@group.id) %></h1>
+    
+    <% if  @group.description? %>
+      <p><%= format_text_for_display(@group.description).html_safe %></p>
+    <% end %>
+  
+    <iframe width="80%" style="border:0;" src="<%= group_widget_url(@group.widget_fingerprint) %>" height="400px" /></iframe>
+    
+  </div>
+</div>
+
+<div id="secondary" class="span4">
+
+  <% if current_user %>
+    <%= link_to "expert view", expert_group_path(@group.id), :class => "label btn-inverse" %>
+  <% end %>
+
+</div>

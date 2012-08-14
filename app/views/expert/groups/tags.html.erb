@@ -1,0 +1,14 @@
+<h1><%= link_to @group.name, expert_group_path() %></h1>
+
+<h3>Group Settings > Tags</h3>
+
+<%= render :partial => 'expert/groups/settings_navigation' %>
+
+
+<% if @group_tags.length > 0 %>
+  <% @group_tags.each do |tag| %>
+    <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></p>
+  <% end %>
+<% else %>
+  <p>There are no tags at this time.</p>
+<% end %>

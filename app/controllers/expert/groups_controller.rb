@@ -22,6 +22,7 @@ class Expert::GroupsController < ApplicationController
     
     @open_questions = @group.open_questions
     @group_members = @group.joined.limit(5)
+    @group_members_total = @group.joined.count
     @group_tags = @group.tags
   end
   
@@ -39,6 +40,73 @@ class Expert::GroupsController < ApplicationController
     @questions = Question.from_group(@group.id).tagged_with(@tag.id).order("questions.status_state ASC")
   end
   
+  def profile
+    @group = Group.find_by_id(params[:id])
+    if request.put?
+      @group.attributes = params[:group]
+      
+      if @group.save
+        redirect_to(expert_group_profile_path, :notice => 'Profile was successfully updated.')
+      else
+        render :action => 'profile'
+      end
+    end
+  end
   
+  def locations
+    @group = Group.find_by_id(params[:id])
+  end
+  
+  def tags
+    @group = Group.find_by_id(params[:id])
+    @group_tags = @group.tags
+  end
+  
+  def assignment_options
+    @group = Group.find_by_id(params[:id])
+    if request.put?
+      @group.attributes = params[:group]
+      
+      if @group.save
+        redirect_to(expert_group_assignment_options_path, :notice => 'Assignment preferences updated.')
+      else
+        render :action => 'assignment_options'
+      end
+    end
+  end
+  
+  def widget
+    @group = Group.find_by_id(params[:id])
+    if request.post?
+      
+      if params[:active].present? && params[:active] == '1'
+        @group.active = true
+      else
+        @group.active = false
+      end
+      
+      if params[:widget_upload_capable].present? && params[:widget_upload_capable] == '1'
+        @group.widget_upload_capable = true
+      else
+        @group.widget_upload_capable = false
+      end
+      
+      if params[:widget_show_location].present? && params[:widget_show_location] == '1'
+        @group.widget_show_location = true
+      else
+        @group.widget_show_location = false
+      end
+      
+      if @group.save
+        redirect_to(expert_group_widget_path, :notice => 'Widget settings successfully updated.')
+      else
+        render :action => 'widget'
+      end
+    end
+  end
+  
+  def history
+    @group = Group.find_by_id(params[:id])
+  end
   
 end

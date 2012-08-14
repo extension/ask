@@ -1,5 +1,5 @@
 class Question < ActiveRecord::Base
-  has_many :images, :as => :assetable, :class_name => "Response::Image", :dependent => :destroy
+  has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User"
   belongs_to :location
@@ -79,7 +79,6 @@ class Question < ActiveRecord::Base
   def auto_assign
     assignee = nil
     
-    ##############################################################################################
     group = self.group
     if group.assignment_outside_locations || group.expertise_locations.include?(self.location)
       if self.county.present?
@@ -94,72 +93,57 @@ class Question < ActiveRecord::Base
       end
       # still aint got no one? wrangle that bad boy.
       if !assignee
-        wrangler_group = Group.find_by_id(Group::QUESTIONWRANGLERID)
-        assignee = pick_user_from_list(qw_group.assignees)
+        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
       # the group is not receiving questions from outside their defined locations.
-      assignee = pick_user_from_list(qw_group.assignees)
+      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
     end
     
-    
-    ##############################################################################################
-    
-    # first, check to see if it's from a named widget 
-    # and route accordingly
-    if widget = self.widget
-      assignee = pick_user_from_list(widget.assignees)
-    end
-
-    if !assignee
-      if !self.categories || self.categories.length == 0
-        question_categories = nil
-      else
-        question_categories = self.categories
-        parent_category = question_categories.detect{|c| !c.parent_id}
-      end
-
-      # if a state and county were provided when the question was asked
-      # update: if there is location data supplied and there is not a category 
-      # associated with the question, then route to the uncategorized question wranglers 
-      # that chose that location or county in their location preferences
-      if self.county and self.location
-        assignee = pick_user_from_county(self.county, question_categories) 
-      #if a state and no county were provided when the question was asked
-      elsif self.location
-        assignee = pick_user_from_state(self.location, question_categories)
-      end
-    end
-
-    # if a user cannot be found yet...
-    if !assignee
-      if !question_categories
-        # if no category, wrangle it
-        assignee = pick_user_from_list(User.uncategorized_wrangler_routers)
-      else
-        # got category, first, look for a user with specified category
-        assignee = pick_user_from_category(question_categories)
-        # still ain't got no one? send to the wranglers to wrangle
-        assignee = pick_user_from_list(User.uncategorized_wrangler_routers) if not assignee
-      end  
-    end
-
     if assignee
-      systemuser = User.systemuser
-      assign_to(assignee, systemuser, nil)
+      system_user = User.system_user
+      assign_to(assignee, system_user, nil)
     else
       return
     end
   end
   
-  
-  
-  
-  
-  
-  
-  
+  # Assigns the question to the user, logs the assignment, and sends an email
+  # to the assignee letting them know that the question has been assigned to
+  # them.
+  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil)
+    raise ArgumentError unless user and user.instance_of?(User)  
+
+    # don't bother doing anything if this is assignment to the person already assigned unless it's 
+    # a question that's been responded to by the public after it's been resolved that then gets 
+    # assigned to whomever the question was last assigned to.
+    return true if self.assignee && user.id == assignee.id && public_reopen == false
+
+    if(self.assignee.present? && (assigned_by != self.assignee))
+      is_reassign = true
+      previously_assigned_to = self.assignee
+    else
+      is_reassign = false
+    end
+
+    # update and log
+    self.update_attribute(:assignee, user)  
+    QuestionEvent.log_assignment(self,user,assigned_by,comment)    
+    # if this is a reopen reassignment due to the public user commenting on the sq                                  
+    if public_comment
+      asker_comment = public_comment.response
+    else
+      asker_comment = nil
+    end
+    
+    # TODO: Put New Notification Logic Here
+    # create notifications
+    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
+    #     if(is_reassign and public_reopen == false)
+    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
+    #     end
+  end
   
   # updates the question, creates a response and  
   # calls the function to log a new resolved question event 
@@ -275,6 +259,10 @@ class Question < ActiveRecord::Base
     user_id = assignment_dates.sort{ |a, b| a[1] <=> b[1] }[0][0]
 
     return User.find(user_id)
+  end
+  
+  class Question::Image < Asset
+    has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
   
     

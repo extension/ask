@@ -4,19 +4,30 @@
   
   <%= render :partial => 'partials/question_main' %>
   
-  <h3>History</h3>
-  <% if @question.question_events.length > 0 %>
-    <% @question.question_events.each do |event| %>
-      <li><%= stringify_question_event(event) %></li>
+  <p>   
+    <% if @question.tags.length > 0 %>
+      <% @question.tags.each do |tag| %>
+        <span class="label"><%= tag.name %></span>
+      <% end %>
+    <% else %>
+      <span class="label label-inverse">needs tags</span>
     <% end %>
-  <% end %>
+  </p>
+  
+	<%= render :partial => 'partials/history' %>
+  
 </div>
 
-<%= render :partial => 'partials/history' %>
 
 <div id="secondary" class="span4">
   <aside>
     <p><%= link_to "View Public page", question_path(@question.id), :class => "label btn-warning" %></p>
+    <% if @question.is_private %>
+      <p><i class="icon-lock"></i> This question is private</p>
+    <% else %>
+      <p><i class="icon-globe"></i> This question is public</p>
+    <% end %>
+    
     <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   </aside>
   
@@ -25,9 +36,9 @@
       <h3>Actions</h3>
       <p><%= link_to "Reassign" %></p>
       <p><%= link_to "Reject (inappropriate or duplicate)" %></p>
-    </aside>
+	</aside>
   
-    <aside>
+	<aside>
       <h3>Assigned to</h3>
       <%= get_avatar(@question.assignee, :thumb) %>
       <%= link_to expert_user_path(@question.assignee_id) do %>
@@ -35,7 +46,13 @@
         <p><%= @question.assignee.name %> Short Description</p>
       </div>
       <% end %>
-      
+	
+	<% if @question.assigned_group %>
+      <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
+		<p>This question is associated with the above group. To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
+	<% else %>
+		<p><strong>This question is groupless :(</strong> To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
+	<% end %>
     </aside>
   <% end %>
   

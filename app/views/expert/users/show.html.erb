@@ -1,13 +1,11 @@
 
-<div id="main" class="span6">
+<div id="main" class="span6">  
   <h1><%= @user.name %></h1>
-  
-  <%= link_to "Public page", user_path(@user.id), :class => "label btn-warning" %>
+  <%= get_avatar(@user) %>
   
   <h3>Expert description</h3>
-  <h3>Location</h3>
   
-  <%= get_avatar(@user) %>
+  <h3>Location</h3>
   
   <p>
     <strong>About me:</strong>
@@ -21,8 +19,18 @@
   <%= link_to 'edit', expert_settings_profile_path() %>
   <% end %>
   </p>
+
   
-  <h3><span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span></h3>
+  <% if @user.tags.length > 0 %>
+    <h3>
+    <% @user.tags.each do |tag| %>
+      <span class="label"><%= tag.name %></span>
+    <% end %>
+    </h3>
+  <% else %>
+    <p>There are no tags at this time.</p>
+  <% end %>
+  
   
   <div class="section">
   <h3>Group Membership</h3>
@@ -40,7 +48,7 @@
 
 
 <div id="main" class="span6">
-  
+  <p><%= link_to "View public page", user_path(@user.id), :class => "label btn-warning" %></p>
   <h2>Currently Assigned</h2>
   <p>No Questions currently assigned</p>
   
@@ -59,8 +67,24 @@
           <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
         <% end %>
       <%- end -%>
-      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+      <p>Location   
+        <% if question.tags.length > 0 %>
+          <% question.tags.each do |tag| %>
+            <span class="label"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+          <%= time_ago_in_words(question.created_at) %> ago
+      </p>
   
   </div>
   <% end %>
 </div>
+
+
+
+
+
+
+
+
+

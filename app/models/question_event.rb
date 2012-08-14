@@ -40,6 +40,14 @@ class QuestionEvent < ActiveRecord::Base
                            :contributing_content => contributing_content})
   end
   
+  def self.log_assignment(question, recipient, initiated_by, assignment_comment)
+    return self.log_event({:question => question,
+      :initiated_by => initiated_by,
+      :recipient => recipient,
+      :event_state => ASSIGNED_TO,
+      :response => assignment_comment})
+  end
+  
   
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
