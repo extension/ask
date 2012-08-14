@@ -4,7 +4,7 @@
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
-<%= form_tag(expert_group_widget_path) do -%>
+<%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
 
   <div class="form_subgroup">
     
@@ -12,28 +12,28 @@
     <fieldset>
 		<p>
         <label>
-          <strong><%= check_box_tag 'active', '1', @group.active? %>  Active</strong>
-			(When a widget is not active, questions can not be submitted through it. The widget code should be removed from any web page.)
+          <%= check_box_tag 'active', '1', @group.active? %>  Active
+			    <span>(When a widget is not active, questions can not be submitted through it. The widget code should be removed from any web page.)</span>
         </label>
 		</p>
 
 		<p>
         <label>        
-          <strong><%= check_box_tag '', '1' %>  Enable "public display" option</strong>
-			(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted through the widget will be private.)
+          <%= check_box_tag '', '1' %>  Enable "public display" option <i class="todo">TODO</i>
+			    <span>(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted will be private.)</span>
         </label>
     </p>
 
 	<p>
         <label>        
-          <strong><%= check_box_tag 'widget_upload_capable', '1', @group.widget_upload_capable? %>  Enable photo upload option</strong>
+          <%= check_box_tag 'widget_upload_capable', '1', @group.widget_upload_capable? %>  Enable photo upload option
         </label>
     </p>
 
 	<p>
         <label>        
-          <strong><%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option</strong>
-			(Note: if enabled, any provided location will override the default locations for this widget.)
+          <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option
+			    <span>(If enabled, the selected location will override the default location.)</span>
         </label>
 		</p>
     </fieldset>

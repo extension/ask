@@ -81,5 +81,13 @@ body#expert {
         background-image: -o-linear-gradient(top, #049cdb, #0064cd);
         background-image: linear-gradient(top, #049cdb, #0064cd);
     }
-    #flash_notification p {padding: 1em; font-size:1.5em;}   
+    #flash_notification p {padding: 1em; font-size:1.5em;}
+
+	div.info {background:#FFFFD2; padding:1em; margin:0 0 2em; width:18em; color:#777;}
+	div.info h3 {font-size:1.2em; margin:0 0 .5em; color:#444;}
+	.right  {float:right;}
+	.todo {background:yellow; padding:.05em .25em}
+	label span {display:block; font-weight:normal; color:#777;}
+	label {font-weight:bold; font-size:1.1em}
+	.radio_options {padding:1em;}
 }

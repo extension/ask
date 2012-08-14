@@ -59,6 +59,7 @@ class Expert::GroupsController < ApplicationController
   
   def tags
     @group = Group.find_by_id(params[:id])
+    @group_tags = @group.tags
   end
   
   def assignment_options

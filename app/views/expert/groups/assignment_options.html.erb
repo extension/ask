@@ -8,9 +8,17 @@
 
 <%= form_for @group, :url => expert_group_assignment_options_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
+  <div class="info right">
+    <h3>More info...</h3>
+    <h4>How else are questions assigned?</h4>
+    <p>Experts can manually assign questions to any group or individual.</p>
+  </div>
+  
+  
   <fieldset>
     <div>
       <h3>Where can questions come from?</h3>
+      <div class="radio_options">
       <p>
         <label>
           <%= f.radio_button :assignment_outside_locations, true %>
@@ -25,17 +33,18 @@
           <span>(Best for groups that don't want to answer questions outside a specific geographic area.)</span>
         </label>
       </p>
+      </div>
     </div>
-
   </fieldset>
   
   <fieldset>
     <div>
-      <h3>How should questions be assigned?</h3>
+      <h3>How should questions be assigned? <i class="todo">TODO</i></h3>
+      <div class="radio_options">
       <p>
         <label>
           <% #TODO replace with correct attribute once created  %>
-          <%= f.radio_button :assignment_outside_locations, true %>
+
           Assign questions to the group
           <span>(Leaders will make assignments or members will pick questions. Best for groups with lots of volunteers.)</span>
         </label>
@@ -43,19 +52,18 @@
       <p>
         <label>
           <% #TODO replace with correct attribute once created  %>
-          <%= f.radio_button :assignment_outside_locations, false %>
+
           Assign questions directly to group members
           <span>(Assignments respect individual member location preferences)</span>
         </label>
       </p>
     </div>
-
+    </div>
   </fieldset>
   
   
-  <p>How else are questions assigned?
   <fieldset>
-    <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
+    <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
   </fieldset>
     
 <% end %>
