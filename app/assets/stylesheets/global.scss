@@ -1,16 +1,27 @@
 @import "_variables";
 
 body#public {
-    padding-top:100px;
-.avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
-.avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
+    padding-top:140px;
+	.avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
+	.avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
-.navavatar {float:right;}
-.navbar {height:80px !important;}
-.navbar-inner {height:80px !important;}
-.navbar-inner .container {height:80px !important;}
-.container-fluid {max-width:1180px; margin: 0 auto;}
-.right {float:right;}
+	.navavatar {float:right;}
+	.navbar {height:80px !important;}
+	.navbar-inner {height:80px !important;}
+	.navbar-inner .container {height:80px !important;}
+	.container-fluid {max-width:1180px; margin: 0 auto;}
+	.right {float:right;}
+	
+	.demo.navbar-fixed-top {top:40px;}
+	#app_location {height:40px;position:fixed;right:0;left:0;top:0}
+	#app_location.demo {background:yellow; padding:1em 1em .5em ; text-align:center;}
+	#app_location.demo p {font-size:1.3em; color:#000;}
+	#app_location.demo p a {color:#000; text-decoration:underline;}
+	
+	@media screen and (max-width: 979px) {
+		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
+		padding-top:0;
+	}
 }
 
 
@@ -90,4 +101,14 @@ body#expert {
 	label span {display:block; font-weight:normal; color:#777;}
 	label {font-weight:bold; font-size:1.1em}
 	.radio_options {padding:1em;}
+
+	.demo.navbar-fixed-top {top:40px;}
+	#app_location {height:40px;position:fixed;right:0;left:0;top:0}
+	#app_location.demo {background:yellow; padding:1em 1em .5em ; text-align:center;}
+	#app_location.demo p {font-size:1.3em; color:#000;}
+	#app_location.demo p a {color:#000; text-decoration:underline;}
+	
+	@media screen and (max-width: 979px) {
+		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
+	}
 }
