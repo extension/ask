@@ -8,8 +8,14 @@
   <%= csrf_meta_tags %>
 </head>
 <body id="expert">
+  
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>You are viewing <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong>. The data on this site is regularly deleted for development purposes. <strong><%= link_to("Visit the real AaE site", "http://aae.extension.org") -%></strong>.</p>
+    </div>
+  <% end %>
 
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
         <div class="navbar-inner">
           <div class="container">
             <% if current_user %>
