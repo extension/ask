@@ -33,6 +33,16 @@ Aae::Application.routes.draw do
     match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
+    match "settings/location" => "settings#location", :via => [:get, :put]
+    match "settings/addlocation" => "settings#addlocation", :via => [:post]
+    match "settings/removelocation" => "settings#removelocation", :via => [:post]
+    match "settings/addcounty" => "settings#addcounty", :via => [:post]
+    match "settings/removecounty" => "settings#removecounty", :via => [:post]
+    match "settings/counties" => "settings#counties", :via => [:get]
+    match "settings/show_counties" => "settings#show_counties", :via => [:get]
+    match "settings/show_location" => "settings#show_location", :via => [:post]
+    match "settings/editlocation" => "settings#editlocation", :via => [:get]
+    match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
     match "ajax/tags" => "ajax#tags", :via => :get
   end
