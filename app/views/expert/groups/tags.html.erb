@@ -12,3 +12,100 @@
 <% else %>
   <p>There are no tags at this time.</p>
 <% end %>
+
+<div class="ui-widget" style="display:none;">
+	<label>Tags: </label>
+	<input id="tag_picker_single" size="200" style="width:20em; font-size:1.2em; padding:.25em;"/>
+</div>
+
+
+
+<div class="demo">
+
+<div class="ui-widget">
+	<label for="birds">Tags: </label>
+	<input id="tag_picker" />
+</div>
+
+<div class="ui-widget" style="margin-top:2em; font-family:Arial">
+	<div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>
+</div>
+
+</div><!-- End demo -->
+
+<script class="code" type="text/javascript">
+$(function() {
+		function log( message ) {
+			$( "<div/>" ).text( message ).prependTo( "#log" );
+			$( "#log" ).scrollTop( 0 );
+		}
+
+		$("#tag_picker").autocomplete({
+			source: "/expert/ajax/tags",
+			minLength: 2,
+			select: function( event, ui ) {
+				log( ui.item ?
+					ui.item.value + " (* aka " + ui.item.id + ")" :
+					"Nothing selected, input was " + this.value );
+				$(this).val('');
+				return false;
+			}
+		}).keypress(function(e, ui) {
+      if (e.keyCode === 13) // enter
+        {
+    				log( this.value ?
+    					this.value + " (aka " + this.value + ")" :
+    					"Nothing selected");
+    					$('#tag_picker').autocomplete('close').val('');
+      				return false;
+        }
+      });
+	});  
+
+	$(function() {
+		function split( val ) {
+			return val.split( /,\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#tag_picker2" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+			  source: function( request, response ) {
+        					$.getJSON( "/expert/ajax/tags", {
+        						term: extractLast( request.term )
+        					}, response );
+        				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( ", " );
+					return false;
+				}
+			});
+	});
+</script>

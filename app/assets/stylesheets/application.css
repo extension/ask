@@ -12,5 +12,6 @@
  *= require bootstrap
  *= require bootstrap_override
  *= require responsive
+ *= require autocomplete
  *= require_tree .
 */

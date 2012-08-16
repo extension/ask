@@ -34,9 +34,12 @@ Aae::Application.routes.draw do
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "home" => "home#index"
+    match "ajax/tags" => "ajax#tags", :via => :get
   end
   
   match "home/private_page" => "home#private_page", :via => :get
+  
+  
   
   
   ### Widget iFrame ###

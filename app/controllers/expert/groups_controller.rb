@@ -60,6 +60,16 @@ class Expert::GroupsController < ApplicationController
   def tags
     @group = Group.find_by_id(params[:id])
     @group_tags = @group.tags
+    
+    if request.put?
+      @group.attributes = params[:group]
+      
+      if @group.save
+        redirect_to(expert_group_assignment_options_path, :notice => 'Assignment preferences updated.')
+      else
+        render :action => 'assignment_options'
+      end
+    end
   end
   
   def assignment_options
