@@ -39,73 +39,35 @@ $(function() {
 			$( "<div/>" ).text( message ).prependTo( "#log" );
 			$( "#log" ).scrollTop( 0 );
 		}
+		
+		function add_tag(tag) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_groups_add_tag_path(:id => @group.id) %>",
+        cache: false,
+        data: {tag: tag}
+      })
+      .done(function() {
+        log( tag ?
+					tag + " (* aka " + tag + ")" :
+					"Nothing selected, input was " + tag );
+				$("#tag_picker").autocomplete(close)
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function() { alert("error"); })
+		}
 
 		$("#tag_picker").autocomplete({
 			source: "/expert/ajax/tags",
 			minLength: 2,
-			select: function( event, ui ) {
-				log( ui.item ?
-					ui.item.value + " (* aka " + ui.item.id + ")" :
-					"Nothing selected, input was " + this.value );
-				$(this).val('');
-				return false;
+			select: function(e) {
+			  add_tag(this.value);
 			}
-		}).keypress(function(e, ui) {
-      if (e.keyCode === 13) // enter
-        {
-    				log( this.value ?
-    					this.value + " (aka " + this.value + ")" :
-    					"Nothing selected");
-    					$('#tag_picker').autocomplete('close').val('');
-      				return false;
-        }
-      });
-	});  
-
-	$(function() {
-		function split( val ) {
-			return val.split( /,\s*/ );
-		}
-		function extractLast( term ) {
-			return split( term ).pop();
-		}
-
-		$( "#tag_picker2" )
-			// don't navigate away from the field on tab when selecting an item
-			.bind( "keydown", function( event ) {
-				if ( event.keyCode === $.ui.keyCode.TAB &&
-						$( this ).data( "autocomplete" ).menu.active ) {
-					event.preventDefault();
-				}
-			})
-			.autocomplete({
-			  source: function( request, response ) {
-        					$.getJSON( "/expert/ajax/tags", {
-        						term: extractLast( request.term )
-        					}, response );
-        				},
-				search: function() {
-					// custom minLength
-					var term = extractLast( this.value );
-					if ( term.length < 2 ) {
-						return false;
-					}
-				},
-				focus: function() {
-					// prevent value inserted on focus
-					return false;
-				},
-				select: function( event, ui ) {
-					var terms = split( this.value );
-					// remove the current input
-					terms.pop();
-					// add the selected item
-					terms.push( ui.item.value );
-					// add placeholder to get the comma-and-space at the end
-					terms.push( "" );
-					this.value = terms.join( ", " );
-					return false;
-				}
-			});
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        add_tag(this.value);
+      }
+    });
 	});
 </script>
