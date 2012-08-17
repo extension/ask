@@ -19,7 +19,7 @@
 
 		<p>
         <label>        
-          <%= check_box_tag '', '1' %>  Enable "public display" option <i class="todo">TODO</i>
+          <%= check_box_tag 'all_questions_public', '1', @group.all_questions_public %>  Enable "public display" option
 			    <span>(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted will be private.)</span>
         </label>
     </p>

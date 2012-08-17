@@ -104,6 +104,12 @@ class Expert::GroupsController < ApplicationController
         @group.widget_upload_capable = false
       end
       
+      if params[:all_questions_public].present? && params[:all_questions_public] == '1'
+        @group.all_questions_public = true
+      else
+        @group.all_questions_public = false
+      end
+      
       if params[:widget_show_location].present? && params[:widget_show_location] == '1'
         @group.widget_show_location = true
       else
