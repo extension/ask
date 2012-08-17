@@ -4,42 +4,23 @@
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
+<div class="ui-widget">
+	<label for="tag_picker">Tags: </label>
+	<input id="tag_picker" />
+</div>
 
+<div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @group_tags.length > 0 %>
   <% @group_tags.each do |tag| %>
-    <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></p>
+    <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %> [x]</p>
   <% end %>
 <% else %>
   <p>There are no tags at this time.</p>
 <% end %>
-
-<div class="ui-widget" style="display:none;">
-	<label>Tags: </label>
-	<input id="tag_picker_single" size="200" style="width:20em; font-size:1.2em; padding:.25em;"/>
 </div>
-
-
-
-<div class="demo">
-
-<div class="ui-widget">
-	<label for="birds">Tags: </label>
-	<input id="tag_picker" />
-</div>
-
-<div class="ui-widget" style="margin-top:2em; font-family:Arial">
-	<div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>
-</div>
-
-</div><!-- End demo -->
 
 <script class="code" type="text/javascript">
 $(function() {
-		function log( message ) {
-			$( "<div/>" ).text( message ).prependTo( "#log" );
-			$( "#log" ).scrollTop( 0 );
-		}
-		
 		function add_tag(tag) {
 		  $.ajax({
         type: "POST",
@@ -48,9 +29,6 @@ $(function() {
         data: {tag: tag}
       })
       .done(function() {
-        log( tag ?
-					tag + " (* aka " + tag + ")" :
-					"Nothing selected, input was " + tag );
 				$("#tag_picker").autocomplete(close)
 				$("#tag_picker").val('');
 				return false;
