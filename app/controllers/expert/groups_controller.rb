@@ -59,8 +59,21 @@ class Expert::GroupsController < ApplicationController
   
   def tags
     @group = Group.find_by_id(params[:id])
-    @group_tags = @group.tags
+    @group_tags = @group.tags.order('name ASC')
   end
+  
+  def add_tag
+    @group = Group.find_by_id(params[:id])
+    @group.set_tag(params[:tag])
+    @tag = Tag.where(:name => params[:tag]).first
+  end
+  
+  def remove_tag
+    @group = Group.find_by_id(params[:id])
+    tag = Tag.find(params[:tag_id])
+    @group.tags.delete(tag)
+  end
+  
   
   def assignment_options
     @group = Group.find_by_id(params[:id])

@@ -11,6 +11,8 @@
  *= require_self
  *= require bootstrap
  *= require bootstrap_override
+ *= require vendor
  *= require responsive
+ *= require autocomplete
  *= require_tree .
 */
