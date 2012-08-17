@@ -8,9 +8,9 @@ class AjaxController < ApplicationController
   def tags
     if params[:term]
       like= "%".concat(params[:term].concat("%"))
-      tags = Tag.where("name like ?", like)
+      tags = Tag.where("name like ?", like).limit(15)
     else
-      tags = Tag.find(:all, :limit => 15, :order => 'created_at DESC')
+      tags = Tag.order('created_at DESC').limit(15)
     end
     list = tags.map {|t| Hash[ id: t.id, label: t.name, name: t.name]}
     render json: list
