@@ -124,8 +124,10 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
   create_table "groups", :force => true do |t|
     t.string   "name",                                            :null => false
     t.text     "description"
+    t.boolean  "all_questions_public",         :default => true
     t.boolean  "active",                       :default => true
     t.boolean  "assignment_outside_locations", :default => true
+    t.boolean  "individual_assignment",        :default => true
     t.integer  "created_by",                                      :null => false
     t.string   "widget_fingerprint"
     t.boolean  "widget_upload_capable"
@@ -218,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
     t.text     "body",                                         :null => false
     t.string   "title"
     t.boolean  "is_private",                :default => false
+    t.integer  "is_private_reason"
     t.integer  "assignee_id"
     t.integer  "assigned_group_id"
     t.boolean  "duplicate",                 :default => false, :null => false
@@ -256,6 +259,7 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver"], :name => "fk_current_resolver"
   add_index "questions", ["group_name"], :name => "group_name_idx"
+  add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
   add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"

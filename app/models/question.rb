@@ -58,6 +58,14 @@ class Question < ActiveRecord::Base
   REJECTED_TEXT = 'rejected'
   CLOSED_TEXT = 'closed'
   
+  # privacy reasons
+  PRIVACY_CODE_TO_TEXT = {
+   1 => "public",
+   2 => "private by submitter",
+   3 => "private by expert",
+   4 => "private because of spam/offensive",
+   5 => "private because of rejected/duplicate"
+  }
   
   # for purposes of solr search
   def response_list

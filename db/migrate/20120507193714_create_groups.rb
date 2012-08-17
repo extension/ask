@@ -3,8 +3,10 @@ class CreateGroups < ActiveRecord::Migration
     create_table :groups do |t|
       t.string  :name, :null => false
       t.text    :description
+      t.boolean :all_questions_public, :default => 1
       t.boolean :active, :default => 1
       t.boolean :assignment_outside_locations, :default => 1
+      t.boolean :individual_assignment, :default => 1
       t.integer :created_by, :null => false
       t.string  :widget_fingerprint
       t.boolean :widget_upload_capable

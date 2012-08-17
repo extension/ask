@@ -13,6 +13,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.text     "body",                      :null => false # from asked_question
       t.string   "title"
       t.boolean  "is_private",                :default => false
+      t.integer  "is_private_reason"
       t.integer  "assignee_id"                # from user_id
       t.integer  "assigned_group_id",         :null => true
       t.boolean  "duplicate",                 :default => false, :null => false
@@ -44,7 +45,6 @@ class CreateQuestions < ActiveRecord::Migration
       t.timestamps
     end
 
-    #add_index "questions", ["body", "current_response"], :name => "question_response_full_index"
     add_index "questions", ["county_id"], :name => "fk_question_county"
     add_index "questions", ["created_at"], :name => "created_at_idx"
     add_index "questions", ["location_id"], :name => "fk_question_location"
@@ -57,5 +57,6 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
     add_index "questions", ["group_name"], :name => "group_name_idx"
     add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
+    add_index "questions", ["is_private"], :name => "fk_is_private"
   end
 end
