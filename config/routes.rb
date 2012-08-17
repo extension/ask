@@ -45,6 +45,7 @@ Aae::Application.routes.draw do
     match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
+    match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
   end
   
   match "home/private_page" => "home#private_page", :via => :get

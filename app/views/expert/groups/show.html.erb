@@ -57,7 +57,7 @@
   <p><%= link_to 'view all', expert_group_members_path(@group) %></p>
   
   
-  <h3>Tags</h3>
+  <h3>Tags <%= link_to 'edit', expert_group_tags_path() %></h3> 
 
   <% if @group_tags.length > 0 %>
     <% @group_tags.each do |tag| %>

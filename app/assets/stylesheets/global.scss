@@ -136,4 +136,6 @@ body#expert {
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
 	}
+	
+	span.removetag {padding:.1em .25em; background:#eee; color:#999; margin-left:1em; cursor:pointer;}
 }

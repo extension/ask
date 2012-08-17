@@ -68,6 +68,12 @@ class Expert::GroupsController < ApplicationController
     @tag = Tag.where(:name => params[:tag]).first
   end
   
+  def remove_tag
+    @group = Group.find_by_id(params[:id])
+    tag = Tag.find(params[:tag_id])
+    @group.tags.delete(tag)
+  end
+  
   
   def assignment_options
     @group = Group.find_by_id(params[:id])

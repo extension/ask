@@ -12,7 +12,7 @@
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @group_tags.length > 0 %>
   <% @group_tags.each do |tag| %>
-    <p><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %> [x]</p>
+    <p id="tag_<%= tag.id %>"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %> <span class="removetag">[x]</span></p>
   <% end %>
 <% else %>
   <p>There are no tags at this time.</p>
@@ -20,7 +20,7 @@
 </div>
 
 <script class="code" type="text/javascript">
-$(function() {
+
 		function add_tag(tag) {
 		  $.ajax({
         type: "POST",
@@ -34,13 +34,15 @@ $(function() {
 				return false;
       })  
       .fail(function() {
+        // TODO: need to handle the fail instance for when user tries to adding existing tag. should not be a fail.
         alert("error");
         $("#tag_picker").autocomplete("close");
   			$("#tag_picker").val('');
   			return false;
       })
 		}
-
+    
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
 		$("#tag_picker").autocomplete({
 			source: "/ajax/tags",
 			minLength: 2,
@@ -52,5 +54,19 @@ $(function() {
         add_tag(this.value);
       }
     });
-	});
+    
+    // remove tags
+     $("#tag_list").on("click", ".removetag", function(){
+       var tag = $(this).closest("p");
+       $.ajax({
+         type: "POST",
+           url: "<%= expert_groups_remove_tag_path(:id => @group.id) %>",
+           cache: false,
+           data: {tag_id: tag.attr("id").replace('tag_', '')}
+       })
+       .done(function() {
+         tag.fadeOut(500);
+       })
+     });
+
 </script>
