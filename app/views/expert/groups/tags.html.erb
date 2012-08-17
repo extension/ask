@@ -46,8 +46,8 @@
 		$("#tag_picker").autocomplete({
 			source: "/ajax/tags",
 			minLength: 2,
-			select: function(e) {
-			  add_tag(this.value);
+			select: function(e, ui) {
+			  add_tag(ui.item.name);
 			}
 		}).keypress(function(e) {
       if (e.keyCode === 13) {
