@@ -29,11 +29,16 @@ $(function() {
         data: {tag: tag}
       })
       .done(function() {
-				$("#tag_picker").autocomplete(close)
+				$("#tag_picker").autocomplete("close");
 				$("#tag_picker").val('');
 				return false;
       })  
-      .fail(function() { alert("error"); })
+      .fail(function() {
+        alert("error");
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
 		}
 
 		$("#tag_picker").autocomplete({
