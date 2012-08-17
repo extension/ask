@@ -44,12 +44,11 @@ Aae::Application.routes.draw do
     match "settings/editlocation" => "settings#editlocation", :via => [:get]
     match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
-    match "ajax/tags" => "ajax#tags", :via => [:get]
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
   end
   
   match "home/private_page" => "home#private_page", :via => :get
-  
+  match "ajax/tags" => "ajax#tags", :via => [:get]
   
   
   

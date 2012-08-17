@@ -42,7 +42,7 @@ $(function() {
 		}
 
 		$("#tag_picker").autocomplete({
-			source: "/expert/ajax/tags",
+			source: "/ajax/tags",
 			minLength: 2,
 			select: function(e) {
 			  add_tag(this.value);
