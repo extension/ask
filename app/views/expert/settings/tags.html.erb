@@ -1,8 +1,7 @@
-<h1><%= link_to @group.name, expert_group_path() %></h1>
+<h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+<h1>Tags</h1>
 
-<h3>Group Settings > Tags</h3>
-
-<%= render :partial => 'expert/groups/settings_navigation' %>
+<%= render :partial => 'expert/settings/settings_navigation' %>
 
 <div class="ui-widget">
 	<label for="tag_picker">Tags: </label>
@@ -10,9 +9,9 @@
 </div>
 
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
-<% if @group_tags.length > 0 %>
-  <% @group_tags.each do |tag| %>
-    <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
+<% if @user.tags.length > 0 %>
+  <% @user.tags.each do |tag| %>
+    <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name %></span> <span class="removetag">[x]</span></p>
   <% end %>
 <% else %>
   <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
@@ -24,7 +23,7 @@
 		function add_tag(tag) {
 		  $.ajax({
         type: "POST",
-        url: "<%= expert_groups_add_tag_path(:id => @group.id) %>",
+        url: "<%= expert_settings_add_tag_path(:id => @user.id) %>",
         cache: false,
         data: {tag: tag}
       })
@@ -41,7 +40,7 @@
   			return false;
       })
 		}
-    
+
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
 		$("#tag_picker").autocomplete({
 			source: "/ajax/tags",
@@ -54,13 +53,13 @@
         add_tag(this.value);
       }
     });
-    
+
     // remove tags
      $("#tag_list").on("click", ".removetag", function(){
        var tag = $(this).closest("p");
        $.ajax({
          type: "POST",
-           url: "<%= expert_groups_remove_tag_path(:id => @group.id) %>",
+           url: "<%= expert_settings_remove_tag_path(:id => @user.id) %>",
            cache: false,
            data: {tag_id: tag.attr("id").replace('tag_', '')}
        })

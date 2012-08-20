@@ -4,15 +4,74 @@
   
   <%= render :partial => 'partials/question_main' %>
   
-  <p>   
-    <% if @question.tags.length > 0 %>
-      <% @question.tags.each do |tag| %>
-        <span class="label"><%= tag.name %></span>
-      <% end %>
-    <% else %>
-      <span class="label label-inverse">needs tags</span>
+  <div class="ui-widget">
+  	<label for="tag_picker">Tags: </label>
+  	<input id="tag_picker" /> <small>(All tags are public if the question is public)</small>
+  </div>
+  
+  <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
+  <% if @question.tags.length > 0 %>
+    <% @question.tags.each do |tag| %>
+      <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name %></span> <span class="removetag">[x]</span></p>
     <% end %>
-  </p>
+  <% else %>
+    <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
+  <% end %>
+  </div>
+
+  <script class="code" type="text/javascript">
+
+  		function add_tag(tag) {
+  		  $.ajax({
+          type: "POST",
+          url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
+          cache: false,
+          data: {tag: tag}
+        })
+        .done(function() {
+  				$("#tag_picker").autocomplete("close");
+  				$("#tag_picker").val('');
+  				return false;
+        })  
+        .fail(function() {
+          // TODO: need to handle the fail instance for when user tries to adding existing tag. should not be a fail.
+          alert("error");
+          $("#tag_picker").autocomplete("close");
+    			$("#tag_picker").val('');
+    			return false;
+        })
+  		}
+
+      // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+  		$("#tag_picker").autocomplete({
+  			source: "/ajax/tags",
+  			minLength: 2,
+  			select: function(e, ui) {
+  			  add_tag(ui.item.name);
+  			}
+  		}).keypress(function(e) {
+        if (e.keyCode === 13) {
+          add_tag(this.value);
+        }
+      });
+
+      // remove tags
+       $("#tag_list").on("click", ".removetag", function(){
+         var tag = $(this).closest("p");
+         $.ajax({
+           type: "POST",
+             url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
+             cache: false,
+             data: {tag_id: tag.attr("id").replace('tag_', '')}
+         })
+         .done(function() {
+           tag.fadeOut(500);
+         })
+       });
+
+  </script>
+  
+  
   
 	<%= render :partial => 'partials/history' %>
   

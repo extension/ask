@@ -26,6 +26,22 @@ class Expert::SettingsController < ApplicationController
     end
   end
   
+  def tags
+    @user = current_user
+  end
+  
+  def add_tag
+    @user = current_user
+    @user.set_tag(params[:tag])
+    @tag = Tag.where(:name => params[:tag]).first
+  end
+  
+  def remove_tag
+    @user = current_user
+    tag = Tag.find(params[:tag_id])
+    @user.tags.delete(tag)
+  end
+  
   def location
     @counties = ""
     @user = current_user
