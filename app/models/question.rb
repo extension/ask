@@ -203,6 +203,11 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def set_question_tag(tag)
+    if(tag = Tag.find_or_create_by_name(tag))
+      self.tags << tag
+    end  
+  end
   
   
   private
