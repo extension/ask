@@ -19,7 +19,52 @@
   <%= link_to 'edit', expert_settings_profile_path() %>
   <% end %>
   </p>
+  
+  
+  <% if @answered_questions.length == 0 %>
+    <h3>This person hasn't answered any questions</h3>
+  <% else %>
+  <h3>Answered Questions</h3>
+    <% @answered_questions.each do |q| %> 
+      <%= link_to expert_question_path(q.id) do %>
+        <% if q.title.present? %>
+          <h3><%= format_text_for_display(q.title) -%></h3>
+        <% else %>
+          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
+        <% end %>
+        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
+      <% end %>
+      
+      <p>Location 
+      <% if q.tags.length > 0 %>
+        <% q.tags.each do |tag| %>
+          <span class="label"><%= link_to tag.name %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse">needs tags</span>
+      <% end %>
+       <%= time_ago_in_words(q.created_at) %> ago
+    <% end %>
+	</p>
+  <% end %>
 
+</div>
+
+
+<div id="main" class="span6">
+  <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
+  
+  <% if current_user.id == @user.id %>
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Edit settings', expert_settings_profile_path() %></li>
+  </ul>
+  <% end %>
+  
+  <h2>Currently Assigned</h2>
+  <p>No Questions currently assigned</p>
+  
+  <h4>Handling Rate</h4>
+  <p><span class="handling_rate"><span>75</span></span></p>
   
   <p>
     <% if @user.tags.length > 0 %>
@@ -47,47 +92,7 @@
     <% end %>
   </ul>
   </div>
-</div>
-
-
-<div id="main" class="span6">
-  <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
   
-  <% if current_user.id == @user.id %>
-  <ul class="nav nav-tabs">
-    <li><%= link_to 'Edit settings', expert_settings_profile_path() %></li>
-  </ul>
-  <% end %>
-  
-  <h2>Currently Assigned</h2>
-  <p>No Questions currently assigned</p>
-  
-  <h4>Handling Rate</h4>
-  <p><span class="handling_rate"><span>75</span></span></p>
-  
-  <h3>Answered Questions</h3>
-
-  <% @answered_questions.each do |question| %>
-  <div class="answered_question">
-
-      <%= link_to expert_question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
-      <p>Location   
-        <% if question.tags.length > 0 %>
-          <% question.tags.each do |tag| %>
-            <span class="label"><%= tag.name %></span>
-          <% end %>
-        <% end %>
-          <%= time_ago_in_words(question.created_at) %> ago
-      </p>
-  
-  </div>
-  <% end %>
 </div>
 
 
