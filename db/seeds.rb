@@ -239,14 +239,14 @@ end
 def transfer_questions
   puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, show_publicly, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
+  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
          null, true, 2, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
          #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
          #{@darmokdatabase}.submitted_questions.resolver_email, #{@darmokdatabase}.submitted_questions.question_fingerprint, #{@darmokdatabase}.submitted_questions.submitter_firstname, #{@darmokdatabase}.submitted_questions.submitter_lastname,
          #{@darmokdatabase}.submitted_questions.county_id, #{@darmokdatabase}.submitted_questions.location_id, #{@darmokdatabase}.submitted_questions.spam, #{@darmokdatabase}.submitted_questions.user_ip, #{@darmokdatabase}.submitted_questions.user_agent, 
          #{@darmokdatabase}.submitted_questions.referrer, #{@darmokdatabase}.submitted_questions.widget_name, #{@darmokdatabase}.submitted_questions.status_state, #{@darmokdatabase}.submitted_questions.zip_code,
-         #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.submitter_id, #{@darmokdatabase}.submitted_questions.show_publicly, #{@darmokdatabase}.submitted_questions.last_assigned_at,
+         #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.submitter_id, #{@darmokdatabase}.submitted_questions.last_assigned_at,
          #{@darmokdatabase}.submitted_questions.last_opened_at, #{@darmokdatabase}.submitted_questions.is_api, #{@darmokdatabase}.submitted_questions.contributing_content_type, #{@darmokdatabase}.submitted_questions.created_at, NOW()       
   FROM  #{@darmokdatabase}.submitted_questions
   LEFT JOIN #{@darmokdatabase}.communities ON #{@darmokdatabase}.communities.widget_id = #{@darmokdatabase}.submitted_questions.widget_id
@@ -254,6 +254,18 @@ def transfer_questions
   
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(question_transfer_query)
+    
+    # we need to mark the is_private_reason for spam and rejected questions
+    spam_questions = Question.where(:spam => true)
+    spam_questions.each do |sq|
+      sq.update_attribute(:is_private_reason, 4)
+    end
+    
+    # search for spam = false, b/c spam questions are a subset of rejected questions and they've been handled above
+    rejected_questions = Question.where({:status_state => 4, :spam => false})
+    rejected_questions.each do |rq|
+      rq.update_attribute(:is_private_reason, 5)
+    end
   end
   
   puts " Questions transferred: #{benchmark.real.round(2)}s"

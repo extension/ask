@@ -37,7 +37,6 @@ class CreateQuestions < ActiveRecord::Migration
       t.string   "zip_code"
       t.integer  "original_group_id"
       t.integer  "submitter_id",              :default => 0
-      t.boolean  "show_publicly",             :default => true
       t.datetime "last_assigned_at"
       t.datetime "last_opened_at",                               :null => false
       t.boolean  "is_api"

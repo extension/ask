@@ -38,7 +38,7 @@ class Question < ActiveRecord::Base
     text :title, more_like_this: true
     text :body, more_like_this: true
     text :response_list, more_like_this: true
-    integer :status_states, :multiple => true
+    integer :status_state
     boolean :spam
     boolean :is_private
   end  
@@ -66,6 +66,13 @@ class Question < ActiveRecord::Base
    4 => "private because of spam/offensive",
    5 => "private because of rejected/duplicate"
   }
+  
+  # privacy constants
+  PRIVACY_REASON_PUBLIC = 1
+  PRIVACY_REASON_SUBMITTER = 2
+  PRIVACY_REASON_EXPERT = 3
+  PRIVACY_REASON_SPAM = 4
+  PRIVACY_REASON_REJECTED = 5
   
   # for purposes of solr search
   def response_list
@@ -181,7 +188,7 @@ class Question < ActiveRecord::Base
         @response.save
         QuestionEvent.log_no_answer(self)  
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :resolved_by => resolver, :resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :show_publicly => false, :is_private => true)
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :resolved_by => resolver, :resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
         QuestionEvent.log_rejection(self)
     end
 
