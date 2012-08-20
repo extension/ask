@@ -52,4 +52,10 @@ class User < ActiveRecord::Base
     return self.darmok_id.present?
   end
   
+  def set_tag(tag)
+    if(tag = Tag.find_or_create_by_name(tag))
+      self.tags << tag
+    end  
+  end
+  
 end

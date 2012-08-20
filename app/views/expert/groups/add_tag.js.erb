@@ -1,2 +1,3 @@
-$( "<p id='tag_<%= escape_javascript(@tag.id.to_s) %>'><%= escape_javascript(link_to @tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => @tag.id)) %> <span class='removetag'>[x]</span></p>" ).prependTo( "#tag_list" );
+$( "<p id='tag_<%= escape_javascript(@tag.id.to_s) %>'><span class='label'><%= escape_javascript(link_to @tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => @tag.id)) %></span> <span class='removetag'>[x]</span></p>" ).prependTo( "#tag_list" );
+$("#needs_tags").remove();
 $( "#tag_list" ).scrollTop( 0 );

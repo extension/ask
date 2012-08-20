@@ -21,16 +21,19 @@
   </p>
 
   
-  <% if @user.tags.length > 0 %>
-    <h3>
-    <% @user.tags.each do |tag| %>
-      <span class="label"><%= tag.name %></span>
+  <p>
+    <% if @user.tags.length > 0 %>
+      <% @user.tags.each do |tag| %>
+        <span class="label"><%= tag.name %></span>
+      <% end %>
+    <% else %>
+      There are no tags at this time.
     <% end %>
-    </h3>
-  <% else %>
-    <p>There are no tags at this time.</p>
-  <% end %>
   
+    <% if current_user.id == @user.id %>
+      <%= link_to 'edit', expert_settings_tags_path() %>
+    <% end %>
+  </p>
   
   <div class="section">
   <h3>Group Membership</h3>
@@ -48,7 +51,12 @@
 
 
 <div id="main" class="span6">
-  <p><%= link_to "View public page", user_path(@user.id), :class => "label btn-warning" %></p>
+  <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
+  
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Edit settings', expert_settings_profile_path() %></li>
+  </ul>
+  
   <h2>Currently Assigned</h2>
   <p>No Questions currently assigned</p>
   

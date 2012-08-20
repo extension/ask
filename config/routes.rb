@@ -34,6 +34,7 @@ Aae::Application.routes.draw do
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
+    match "settings/tags" => "settings#tags", :via => [:get, :put]
     match "settings/addlocation" => "settings#addlocation", :via => [:post]
     match "settings/removelocation" => "settings#removelocation", :via => [:post]
     match "settings/addcounty" => "settings#addcounty", :via => [:post]
@@ -48,6 +49,8 @@ Aae::Application.routes.draw do
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
+    match "settings/add_tag" => "settings#add_tag", :via => [:post]
+    match "settings/remove_tag" => "settings#remove_tag", :via => [:post]
   end
   
   match "home/private_page" => "home#private_page", :via => :get
