@@ -39,20 +39,18 @@
   
   <fieldset>
     <div>
-      <h3>How should questions be assigned? <i class="todo">TODO</i></h3>
+      <h3>How should questions be assigned?</h3>
       <div class="radio_options">
       <p>
         <label>
-          <% #TODO replace with correct attribute once created  %>
-
+          <%= f.radio_button :individual_assignment, false %>
           Assign questions to the group
           <span>(Leaders will make assignments or members will pick questions. Best for groups with lots of volunteers.)</span>
         </label>
       </p>
       <p>
         <label>
-          <% #TODO replace with correct attribute once created  %>
-
+          <%= f.radio_button :individual_assignment, true %>
           Assign questions directly to group members
           <span>(Assignments respect individual member location preferences)</span>
         </label>

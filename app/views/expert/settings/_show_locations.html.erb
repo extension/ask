@@ -1,0 +1,11 @@
+<% if current_user.expertise_locations.length == 0 %>
+  <p>You have not selected any locations</p>
+<% end %>
+
+<div id="location_list">
+  <% current_user.expertise_locations.each do |l| %>
+    <div class="location template wrapper location_block" id="location_<%= l.id %>">
+      <%= render :partial => 'show_location', :locals => {:location => l} %>
+    </div>
+  <% end %>
+</div>

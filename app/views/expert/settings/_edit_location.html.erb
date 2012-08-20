@@ -1,0 +1,20 @@
+<h3><%= location.name %></h3>
+
+<div class="ux_actions">
+  <p class="edit_location_close btn right">close</p>
+
+  <p>Choose your coverage area</p>
+
+  <p class="add_all_counties btn">All counties</p>
+
+  <p class="pick_counties btn">Pick counties</p>
+
+  <div id="county_picker" style="display:none;">
+    <input class="input countyfield" id="countyfield" name="countyfield" placeholder="Type and select a county" type="text" value="" />
+  </div>
+</div>
+
+<div class="show_counties">
+  <%= render :partial => 'show_counties', :locals => {:location_id => location.id} %>
+</div>
+

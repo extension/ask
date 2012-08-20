@@ -93,6 +93,31 @@ body#expert {
         background-image: linear-gradient(top, #049cdb, #0064cd);
     }
     #flash_notification p {padding: 1em; font-size:1.5em;}
+    
+    .location_block {border:2px solid #aaa; padding:.15em; width: 30%; margin-bottom:1em;}
+    .location {border:2px solid #aaa; padding:1em; width: 30%;}
+    p.feedback {padding:.75em;}
+    p.feedback span {background:yellow; padding:.5em;}
+    .cancel.btn.left {float:left; margin-left:2em;}
+    .cancel.btn.right {float:right;}
+    #location_option {float:left;}
+    .clearing {clear:both;}
+    #location_picker {margin-bottom:3em;}
+    #add_location {margin-bottom:1em;}
+    .location {margin-bottom:3em;}
+    #location_list li {list-style:none; padding:.5em;}
+    #location_list li:hover {color:#000; background:#eee;}
+    .location_block h3:hover {color:#000; background:#eee; }
+    .location_block h4 {padding:1em;}
+    .location_block h3 span {display:none;}
+    .location_block h3:hover span {display:inline; }
+    .location_block li span {display:none;}
+    .location_block li:hover span {display:inline;}
+//    .ux_actions {border:2px solid #e5e5e5; padding:.5em;}
+    #user_locations {border:1px solid lime; margin-bottom:2em; padding:.1em;}
+    .location.template {border:2px solid red;}
+    .right {float:right;}
+    i {color:#ccc; font-size:.8em;}
 
 	div.info {background:#FFFFD2; padding:1em; margin:0 0 2em; width:18em; color:#777;}
 	div.info h3 {font-size:1.2em; margin:0 0 .5em; color:#444;}
@@ -111,4 +136,6 @@ body#expert {
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
 	}
+	
+	span.removetag {padding:.1em .25em; background:#eee; color:#999; margin-left:1em; cursor:pointer;}
 }
