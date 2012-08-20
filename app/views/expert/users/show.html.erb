@@ -53,9 +53,11 @@
 <div id="main" class="span6">
   <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
   
+  <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">
     <li><%= link_to 'Edit settings', expert_settings_profile_path() %></li>
   </ul>
+  <% end %>
   
   <h2>Currently Assigned</h2>
   <p>No Questions currently assigned</p>
