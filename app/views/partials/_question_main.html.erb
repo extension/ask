@@ -6,6 +6,11 @@
 
 <p><%= format_text_for_display(@question.body) %></p>
 
+  <% @question.images.each do |image| %>
+    <%= image_tag image.url(:thumb) %>
+  <% end %>
+
+  <p>Location: <%= "#{@question.county.name} County, " if @question.county.present? && @question.location.present? %> <%= @question.location.present? ? @question.location.abbreviation : 'not specified' %></p>
 
 <p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
 <% if @question.submitter %>
