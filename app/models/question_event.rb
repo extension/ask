@@ -9,6 +9,8 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_handling_recipient, :class_name => "User", :foreign_key => "previous_handling_recipient_id"
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
   
+  scope :latest, {:order => "created_at desc", :limit => 1}
+  
   
   ASSIGNED_TO = 1
   RESOLVED = 2
@@ -42,7 +44,7 @@ class QuestionEvent < ActiveRecord::Base
   
   def self.log_assignment(question, recipient, initiated_by, assignment_comment)
     return self.log_event({:question => question,
-      :initiated_by => initiated_by,
+      :initiated_by_id => initiated_by,
       :recipient => recipient,
       :event_state => ASSIGNED_TO,
       :response => assignment_comment})
@@ -57,8 +59,8 @@ class QuestionEvent < ActiveRecord::Base
     end
 
     # get last event
-    if(last_events = question.question_events.latest && !last_events.empty?)
-      last_event = last_events[0]
+    last_event = question.question_events.latest[0]
+    if last_event.present?
       create_attributes[:duration_since_last] = (time_of_this_event - last_event.created_at).to_i
       create_attributes[:previous_recipient_id] = last_event.recipient_id
       create_attributes[:previous_initiator_id] = last_event.initiated_by_id

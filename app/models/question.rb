@@ -94,8 +94,8 @@ class Question < ActiveRecord::Base
   def auto_assign
     assignee = nil
     
-    group = self.group
-    if group.assignment_outside_locations || group.expertise_locations.include?(self.location)
+    group = self.assigned_group
+    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location)) && group.assignees.length > 0
       if self.county.present?
         assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
       end
@@ -225,7 +225,7 @@ class Question < ActiveRecord::Base
 
   def generate_fingerprint
     create_time = Time.now.to_s
-    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body + self.submitter_email)
+    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.submitter_email)
   end
   
   # TODO: probably needs to be changed, not sure to what yet.
@@ -261,7 +261,7 @@ class Question < ActiveRecord::Base
     # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
     # so if all experts that made the cut have zero questions assigned, pick a random person in that group to assign to
     if questions_floor == 0
-      return possible_users.rand 
+      return possible_users.sample 
     end
 
     assignment_dates = Hash.new
@@ -283,6 +283,16 @@ class Question < ActiveRecord::Base
     user_id = assignment_dates.sort{ |a, b| a[1] <=> b[1] }[0][0]
 
     return User.find(user_id)
+  end
+  
+  # TODO: setup notifications here
+  def notify_submitter
+    return
+  end
+  
+  # TODO: setup notifications here
+  def send_global_widget_notifications
+    return
   end
   
   class Question::Image < Asset

@@ -27,13 +27,13 @@ class QuestionsController < ApplicationController
         @email_confirmation = params[:email_confirmation].strip
         
         # make sure email and confirmation email match up
-        if @question.email != @email_confirmation
+        if @question.submitter_email != @email_confirmation
           @argument_errors = "Email address does not match the confirmation email address."
           raise ArgumentError
         end
 
-        if !(@submitter = User.find_by_email(@question.email))
-          @submitter = User.create({:email => @question.email})
+        if !(@submitter = User.find_by_email(@question.submitter_email))
+          @submitter = User.create({:email => @question.submitter_email})
           if !@submitter.valid?
             @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
             raise ArgumentError
@@ -48,8 +48,6 @@ class QuestionsController < ApplicationController
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
-        @question.submitter_email = @submitter.email
-        @question.body = @question 
         
         # TODO: Need to update this
         # # location and county - separate from params[:submitted_question], but probably shouldn't be
@@ -109,7 +107,7 @@ class QuestionsController < ApplicationController
           #             end
           #           end
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
-          return redirect_to widget_tracking_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
         else
           raise InternalError
         end
@@ -122,18 +120,18 @@ class QuestionsController < ApplicationController
         else
           return render(:template => 'widget/index', :layout => false)
         end
-      rescue Exception => e
-        flash[:notice] = 'An internal error has occured. Please check back later.'
-        @host_name = request.host_with_port
-        if(@group.is_bonnie_plants?)
-          return render(:template => 'widget/bonnie_plants', :layout => false)
-        else
-          return render(:template => 'widget/index', :layout => false)
-        end
+      #rescue Exception => e
+      #  flash[:notice] = 'An internal error has occured. Please check back later.'
+      #  @host_name = request.host_with_port
+      #  if(@group.is_bonnie_plants?)
+      #    return render(:template => 'widget/bonnie_plants', :layout => false)
+      #  else
+      #    return render(:template => 'widget/index', :layout => false)
+      #  end
       end
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
-      return redirect_to widget_tracking_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
     end
   end
 end
