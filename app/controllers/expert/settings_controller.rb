@@ -32,8 +32,10 @@ class Expert::SettingsController < ApplicationController
   
   def add_tag
     @user = current_user
-    @user.set_tag(params[:tag])
-    @tag = Tag.where(:name => params[:tag]).first
+    @tag = @user.set_tag(params[:tag])
+    if @tag == false
+      render :nothing => true
+    end
   end
   
   def remove_tag

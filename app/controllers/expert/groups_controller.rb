@@ -64,8 +64,10 @@ class Expert::GroupsController < ApplicationController
   
   def add_tag
     @group = Group.find_by_id(params[:id])
-    @group.set_tag(params[:tag])
-    @tag = Tag.where(:name => params[:tag]).first
+    @tag = @group.set_tag(params[:tag])
+    if @tag == false
+      render :nothing => true
+    end
   end
   
   def remove_tag

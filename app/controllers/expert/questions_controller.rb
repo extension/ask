@@ -17,8 +17,10 @@ class Expert::QuestionsController < ApplicationController
   
   def add_tag
     @question = Question.find_by_id(params[:id])
-    @question.set_question_tag(params[:tag])
-    @tag = Tag.where(:name => params[:tag]).first
+    @tag = @question.set_tag(params[:tag])
+    if @tag == false
+      render :nothing => true
+    end
   end
   
   def remove_tag

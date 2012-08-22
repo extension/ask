@@ -53,9 +53,14 @@ class User < ActiveRecord::Base
   end
   
   def set_tag(tag)
-    if(tag = Tag.find_or_create_by_name(tag))
-      self.tags << tag
-    end  
+    if self.tags.collect{|t| t.name}.include?(tag)
+      return false
+    else 
+      if(tag = Tag.find_or_create_by_name(tag))
+        self.tags << tag
+        return tag
+      end
+    end
   end
   
 end

@@ -210,12 +210,16 @@ class Question < ActiveRecord::Base
     end
   end
   
-  def set_question_tag(tag)
-    if(tag = Tag.find_or_create_by_name(tag))
-      self.tags << tag
-    end  
-  end
-  
+  def set_tag(tag)
+    if self.tags.collect{|t| t.name}.include?(tag)
+      return false
+    else 
+      if(tag = Tag.find_or_create_by_name(tag))
+        self.tags << tag
+        return tag
+      end
+    end
+  end  
   
   private
 
