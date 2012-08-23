@@ -11,7 +11,17 @@ end
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', '<%= @gaprofile %>']);
   _gaq.push(['_setDomainName', 'ask.extension.org']);
+  _gaq.push(['_setCustomVar', 1, 'Site', '<%= controller.send(:_layout) %>', 3]);
+
+<% if current_user %>  
+  _gaq.push(['_setCustomVar', 2, 'Visitor Type', 'eXID', 1]);
+<%- end -%>
+    
+<%- if !flash[:googleanalytics].nil? -%>
+  _gaq.push(['_trackPageview', '<%= flash[:googleanalytics] %>']);
+<%- else  -%>
   _gaq.push(['_trackPageview']);
+<%- end -%>  
 
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;

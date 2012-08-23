@@ -13,6 +13,24 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     @question_responses = @question.responses
     @fake_related = Question.find(:all, :limit => 3, :offset => rand(Question.count))
+
+    ga_tracking = []
+    
+    if @question.tags.length > 0
+      ga_tracking = ["|tags"] + @question.tags.map(&:name)
+    end
+    
+    if @question.question_events.where('event_state = 2').length > 0
+      ga_tracking += ["|experts"] + @question.question_events.where('event_state = 2').map{|es| es.initiator.login}.uniq
+    end
+    
+    if @question.assigned_group
+      ga_tracking += ["|group"] + [@question.assigned_group.name]
+    end
+    
+    if ga_tracking.length > 0
+      flash.now[:googleanalytics] = expert_question_url(@question.id) + "?" + ga_tracking.join(",")
+    end
   end
   
   def add_tag
