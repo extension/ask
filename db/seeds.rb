@@ -152,7 +152,7 @@ def transfer_widget_communities_to_groups
   # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
   wrangler_group = Group.find(:first, :conditions => "name = 'eXtension Question Wranglers'")
   wrangler_group.update_attribute(:widget_fingerprint, generate_widget_fingerprint(wrangler_group.name, wrangler_group.id))
-
+  
   puts " Groups transferred: #{benchmark.real.round(2)}s"
 end
 
@@ -160,7 +160,7 @@ def transfer_expertise_areas_to_groups
   puts 'Transferring expertise areas to groups...'
   expertise_to_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, darmok_expertise_id, created_at, updated_at)
-    SELECT  #{@darmokdatabase}.categories.name, '', false, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
+    SELECT  #{@darmokdatabase}.categories.name, '', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, #{@darmokdatabase}.categories.id, NOW(), NOW()
     FROM #{@darmokdatabase}.categories
     WHERE #{@darmokdatabase}.categories.parent_id IS NULL
   END_SQL
@@ -212,6 +212,14 @@ def fill_in_group_connections_for_areas_of_expertise
   end
   
   puts " Expertise Group Connections transferred: #{benchmark.real.round(2)}s"
+end
+
+def inactivate_widgets_with_no_active_assignees
+  # Need to use a little Ruby/Rails here to inactivate widgets for which there are no active assignees signed up for it 
+  # (ie. there are either no assignees or all assignees have their vacation prefs on)
+  Group.where("active = ?", true).each do |group|
+    group.update_attribute(:active, false) if group.assignees.length == 0
+  end
 end
 
 def transfer_group_events
@@ -477,6 +485,7 @@ transfer_widget_communities_to_groups
 transfer_expertise_areas_to_groups
 transfer_widget_community_connections_to_group_connections
 fill_in_group_connections_for_areas_of_expertise
+inactivate_widgets_with_no_active_assignees
 transfer_group_events
 transfer_questions
 transfer_assets
