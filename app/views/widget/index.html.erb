@@ -28,6 +28,7 @@
        span {line-height: 100%;display: block;font-weight:normal;color: #888;}
        #flash_notice.notice {color:green;}
        #flash_notice.warning {color:red;}
+       #app_location {background:yellow; padding:1em; margin-bottom:1em;}
        	-->
         </style>
         
@@ -35,6 +36,7 @@
 </head> 
 
 <body>
+  
     <%= form_for @question, :html => {:multipart => true} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
       
@@ -99,6 +101,13 @@
     <p>
         <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
     </p>
+    
+    <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+      <div id="app_location" class="demo">
+        <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
+      </div>
+    <% end %>
+    
     
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
     <% end %>
