@@ -20,8 +20,10 @@ class Expert::QuestionsController < ApplicationController
       ga_tracking = ["|tags"] + @question.tags.map(&:name)
     end
     
-    if @question.question_events.where('event_state = 2').length > 0
-      ga_tracking += ["|experts"] + @question.question_events.where('event_state = 2').map{|es| es.initiator.login}.uniq
+    question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
+    
+    if question_resolves_with_resolver.length > 0
+      ga_tracking += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
     end
     
     if @question.assigned_group
