@@ -60,7 +60,14 @@
       </label>
     </p>
     
-
+   <% if @group.widget_public_option %>
+    <p>
+	  <label for="is_private">Make this question private (others cannot view or learn from it)?
+	  <%= f.check_box :is_private  %>
+	  </label>
+	</p>
+   <% end %>
+    
     <% if @group.widget_show_location %>
         <p>
           <label>Location and County

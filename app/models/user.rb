@@ -32,7 +32,11 @@ class User < ActiveRecord::Base
   
   scope :can_route_outside_location, lambda { |user_ids|
    location_routers = UserPreference.where("(name = '#{UserPreference::AAE_LOCATION_ONLY}' OR name = '#{UserPreference::AAE_COUNTY_ONLY}') AND (user_id IN (#{user_ids.join(',')}))").uniq.pluck('user_id').join(',')
-   {:conditions => "users.id NOT IN (#{location_routers}) AND users.aae_responder = true", :order => "name ASC"}
+   if location_routers.blank?
+     {:conditions => "users.aae_responder = true", :order => "name ASC"}
+   else
+     {:conditions => "users.id NOT IN (#{location_routers}) AND users.aae_responder = true", :order => "name ASC"}
+   end
   }
   
   def name

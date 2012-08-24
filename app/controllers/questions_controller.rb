@@ -49,6 +49,16 @@ class QuestionsController < ApplicationController
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
         
+        if !@group.widget_public_option
+          @question.is_private = true
+          # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
+          # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what 
+          # the submitter wanted, we default to the safest thing, privacy by the submitter.
+          @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+        else
+          @question.is_private ? (@question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER) : (@question.is_private_reason = Question::PRIVACY_REASON_PUBLIC)
+        end  
+        
         # TODO: Need to update this
         # # location and county - separate from params[:submitted_question], but probably shouldn't be
         #         if(params[:location_id] and location = Location.find_by_id(params[:location_id].strip.to_i))
@@ -120,14 +130,14 @@ class QuestionsController < ApplicationController
         else
           return render(:template => 'widget/index', :layout => false)
         end
-      rescue Exception => e
-        flash[:notice] = 'An internal error has occured. Please check back later.'
-        @host_name = request.host_with_port
-        if(@group.is_bonnie_plants?)
-          return render(:template => 'widget/bonnie_plants', :layout => false)
-        else
-          return render(:template => 'widget/index', :layout => false)
-        end
+      #rescue Exception => e
+      #  flash[:notice] = 'An internal error has occured. Please check back later.'
+      #  @host_name = request.host_with_port
+      #  if(@group.is_bonnie_plants?)
+      #    return render(:template => 'widget/bonnie_plants', :layout => false)
+      #  else
+      #    return render(:template => 'widget/index', :layout => false)
+      #  end
       end
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
