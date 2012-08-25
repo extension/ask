@@ -130,14 +130,14 @@ class QuestionsController < ApplicationController
         else
           return render(:template => 'widget/index', :layout => false)
         end
-      #rescue Exception => e
-      #  flash[:notice] = 'An internal error has occured. Please check back later.'
-      #  @host_name = request.host_with_port
-      #  if(@group.is_bonnie_plants?)
-      #    return render(:template => 'widget/bonnie_plants', :layout => false)
-      #  else
-      #    return render(:template => 'widget/index', :layout => false)
-      #  end
+      rescue Exception => e
+        flash[:notice] = 'An internal error has occured. Please check back later.'
+        @host_name = request.host_with_port
+        if(@group.is_bonnie_plants?)
+          return render(:template => 'widget/bonnie_plants', :layout => false)
+        else
+          return render(:template => 'widget/index', :layout => false)
+        end
       end
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
