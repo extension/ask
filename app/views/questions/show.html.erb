@@ -1,3 +1,5 @@
+<% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
+
 <div id="main" class="span8">
 
 <%= render :partial => 'partials/question_main'%>
