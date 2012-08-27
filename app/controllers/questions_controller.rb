@@ -94,19 +94,6 @@ class QuestionsController < ApplicationController
           raise ArgumentError
         end
         
-        # TODO: Update this    
-        # # handle image upload
-        #         if !params[:image].blank?
-        #           photo_to_upload = FileAttachment.create({:attachment => params[:image]}) 
-        #           if !photo_to_upload.valid?
-        #             @argument_errors = "Errors occured when uploading your image:<br />" + photo_to_upload.errors.full_messages.join('<br />')        
-        #             raise ArgumentError
-        #           else
-        #             @question.file_attachments << photo_to_upload
-        #           end   
-        #         end
-        #         # end of handling image upload
-        
         if @question.save
           #session[:account_id] = @submitter.id
           #TODO: keep???
