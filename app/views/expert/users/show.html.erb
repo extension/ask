@@ -38,14 +38,29 @@
       <p>Location 
       <% if q.tags.length > 0 %>
         <% q.tags.each do |tag| %>
-          <span class="label"><%= link_to tag.name %></span>
+          <% if q.assigned_group %>
+            <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
+          <% else %>
+            <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+          <% end %>
         <% end %>
       <% else %>
-        <span class="label label-inverse">needs tags</span>
+        <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
       <% end %>
        <%= time_ago_in_words(q.created_at) %> ago
+      </p>
+      
+       
+       <% if q.assigned_group %>
+   	      <p><%= get_group_avatar(q.assigned_group, :mini) %> <%= link_to q.assigned_group.name, expert_group_path(q.assigned_group.id) %></p>
+   		<% else %>
+   			<p><strong>This question is groupless</strong></p>
+   		<% end %>
+       
     <% end %>
-	</p>
+	    
+	    
+	    
   <% end %>
 
 </div>
@@ -69,7 +84,7 @@
   <p>
     <% if @user.tags.length > 0 %>
       <% @user.tags.each do |tag| %>
-        <span class="label"><%= tag.name %></span>
+      <span class="label"><%= link_to tag.name, expert_users_tags_path(:user_id => @user.id, :tag_id => tag.id) %></span>
       <% end %>
     <% else %>
       There are no tags at this time.

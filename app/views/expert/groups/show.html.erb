@@ -22,7 +22,7 @@
           <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
         <% end %>
       <% else %>
-        <span class="label label-inverse">needs tags</span>
+        <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
       <% end %>
        <%= time_ago_in_words(q.created_at) %> ago
     <% end %>
