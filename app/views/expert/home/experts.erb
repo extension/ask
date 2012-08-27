@@ -4,11 +4,14 @@
   <table>
     <tr>
       <th>Name</th>
-      <th>Location</th>  
+      <th>Most recent sign-in</th>  
     </tr>
   <% @experts.each do |expert| %>
     <tr>
       <td><%= get_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %></td>
+      <td>
+        <%= expert.try(:last_sign_in_at) ? time_ago_in_words(expert.last_sign_in_at) : "no record of sign-in"%>
+      </td>
     </tr>
   <% end %>
   </table>
