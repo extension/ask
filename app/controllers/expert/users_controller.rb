@@ -10,9 +10,16 @@ class Expert::UsersController < ApplicationController
   before_filter :require_exid
   
   def show
-    @user = User.find(params[:id])    
+    @user = User.find(params[:id])
     @answered_questions = @user.answered_questions.limit(10)
     @my_groups = @user.group_memberships
+  end
+  
+  def tags
+    @tag = Tag.find_by_id(params[:tag_id])
+    @user = User.find_by_id(params[:user_id])
+    return record_not_found if (!@user || !@tag)
+    @questions = @user.answered_questions.tagged_with(@tag.id).order("questions.status_state ASC")
   end
   
 end

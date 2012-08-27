@@ -1,0 +1,20 @@
+<h1>Experts tagged with '<%= @tag.name %>'</h1>
+
+<% if @experts.length > 0 %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Most recent sign-in</th>  
+    </tr>
+  <% @experts.each do |expert| %>
+    <tr>
+      <td><%= get_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %></td>
+      <td>
+        <%= expert.try(:last_sign_in_at) ? time_ago_in_words(expert.last_sign_in_at) : "no record of sign-in"%>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+<% else %>
+  <p>There are no experts with this tag</p>
+<% end %>

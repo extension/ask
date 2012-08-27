@@ -1,4 +1,4 @@
-<h1><%= get_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %> questions tagged with '<%= @tag.name %>'</h1>
+<h1>Questions tagged with '<%= @tag.name %>'</h1>
 
 <% if @questions.length > 0 %>
   <table>

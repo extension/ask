@@ -1,3 +1,5 @@
+<% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
+
 <div id="main" class="span8">
   
   <p>AaE #<%= @question.id %></p>
@@ -12,7 +14,11 @@
   <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
   <% if @question.tags.length > 0 %>
     <% @question.tags.each do |tag| %>
-      <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name %></span> <span class="removetag">[x]</span></p>
+      <% if @question.assigned_group %>
+        <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
+      <% else %>
+        <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
+      <% end %>
     <% end %>
   <% else %>
     <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
@@ -103,9 +109,14 @@
       <p><%= link_to "Reassign" %></p>
       <p><%= link_to "Reject (inappropriate or duplicate)" %></p>
 	</aside>
+  <% end %>
   
 	<aside>
+	  <% if @question_responses.length < 1 %>
       <h3>Assigned to</h3>
+    <% else %>
+      <h3>Last response by</h3>
+    <% end %>
       <%= get_avatar(@question.assignee, :thumb) %>
       <%= link_to expert_user_path(@question.assignee_id) do %>
       <div class="expert">
@@ -114,13 +125,12 @@
       <% end %>
 	
 	<% if @question.assigned_group %>
-      <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
+    <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
 		<p>This question is associated with the above group. To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
 	<% else %>
 		<p><strong>This question is groupless :(</strong> To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
 	<% end %>
     </aside>
-  <% end %>
   
   <aside>
     <%= render :partial => 'partials/related' %>

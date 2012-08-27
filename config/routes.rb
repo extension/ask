@@ -18,7 +18,11 @@ Aae::Application.routes.draw do
     
   namespace :expert do
     resources :questions
-    resources :users
+    resources :users, :except => [:destroy] do
+      collection do
+        get 'tags'
+      end
+    end
     resources :groups, :except => [:destroy] do
       collection do
         get 'questions_by_tag'
@@ -45,6 +49,8 @@ Aae::Application.routes.draw do
     match "settings/editlocation" => "settings#editlocation", :via => [:get]
     match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
+    match "home/tags" => "home#tags"
+    match "home/experts" => "home#experts"
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions/add_tag" => "questions#add_tag", :via => [:post]

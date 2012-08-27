@@ -18,10 +18,14 @@
         <p>Location   
           <% if question.tags.length > 0 %>
             <% question.tags.each do |tag| %>
-              <span class="label"><%= tag.name %></span>
+              <% if question.assigned_group %>
+                <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
+              <% else %>
+                <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+              <% end %>
             <% end %>
           <% else %>
-            <span class="label label-inverse">needs tags</span>
+            <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(question.id) %></span>
           <% end %>
             <%= time_ago_in_words(question.created_at) %> ago
         </p>
