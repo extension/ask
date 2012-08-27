@@ -84,7 +84,7 @@
   <p>
     <% if @user.tags.length > 0 %>
       <% @user.tags.each do |tag| %>
-      <span class="label"><%= link_to tag.name, expert_users_tags_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+      <span class="label"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
       <% end %>
     <% else %>
       There are no tags at this time.
