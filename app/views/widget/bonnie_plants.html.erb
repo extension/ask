@@ -33,14 +33,13 @@
        	-->
         </style>
         
-        <script type="text/javascript" src="http://<%= @host_name %>/javascripts/prototype.js"></script>
-        <script type="text/javascript" src="http://<%= @host_name %>/javascripts/effects.js"></script>
+       <%= javascript_include_tag "application" %>
 </head> 
 
 <body>
   
-    <% form_tag(widget_submit_question_url, { :id => 'myForm', :multipart => true }) do %>
-      <%= hidden_field_tag(:widget, @group.fingerprint) %>
+    <%= form_for @question, :html => {:multipart => true} do |f| %>
+      <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
     <h2>Ask an Expert</h2>
@@ -59,68 +58,90 @@
     <div id="myFormOutput"></div>
 
     <p>
-        <label for="first_name">First Name:
-        <%= text_field_tag(:first_name, @first_name) %>
+        <label for="submitter_first_name">First Name:
+        <%= f.text_field :submitter_firstname %>
         </label>
     </p>
 
     <p>
-        <label for="last_name">Last Name:
-        <%= text_field_tag(:last_name, @last_name) %>
+        <label for="submitter_last_name">Last Name:
+        <%= f.text_field :submitter_lastname %>
         </label>
     </p>
     
     <p>
         <label for="email">Email: <span>Type it carefully; this is how you'll receive your answer.</span>
-        <%= text_field_tag(:email, @email) %>
+        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
+        </label>
+    </p>
+
+    <p>
+        <label for="email_confirmation">Confirm Your Email:
+        <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
     
-    <p>
-        <label for="email_confirmation">Confirm Your Email:
-        <%= text_field_tag(:email_confirmation, @email_confirmation) %>
-        </label>
-    </p>
-
-    <p>Where does your question take place? (optional, but it helps us give a more precise answer)</p>
+    <% if @group.widget_show_location %>
+      <p>Where does your question take place? (optional, but it helps us give a more precise answer)</p>
       <p>
           <label>Location and County
-          <%= select_tag 'location_id', options_for_select(get_location_options, default_location_id(@group.widget_location_id)) %>
+          <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
           </label>
       </p>
 
-      	<%= observe_field('location_id',
-      	                  :update    => :county_list,
-      	                  :url       => { :controller => 'aae/search', :action => :get_counties },
-      	                  :with      => "'location_id='+value") %>
-
       <p id="county_list">
-        <%- if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) -%>
+        <% if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
         	<label>
-        	<%= select_tag 'county_id', options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id)) %>
+	        <%= f.select(:county_id, options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id))) %>
             </label>
-        <%- end -%>
+        <% end %>
       </p>
-        
-    <%- if @group.widget_upload_capable? -%>
-        
+    <% end %>  
+  
+    <% if @group.widget_upload_capable? %>  
       <p>
       <label>Image (optional)</label>
       <p><em>You can upload .jpg .png or .gif. Max size of 2MB each.</em></p>
-      <p class="image_upload"><%= file_field_tag :image %></p>
-      </p>
-      
+      <%= f.fields_for :images do |image_form| %>
+          <p>
+            <%= image_form.file_field :attachment %>
+          </p>
+      <% end %>
+      </p>  
     <% end %>
 
       <br />
 
     <p>
         <label for="question">Question
-        <%= text_area_tag :question, @question, :rows => 4  %>
+        <%= f.text_area :body, :rows => 4  %>
         </label>
     </p>
 
+    <% if @group.widget_public_option %>
+	  <p>
+		<label for="is_private">Make this question private (others cannot view or learn from it)?
+		<%= f.check_box :is_private  %>
+		</label>
+      </p>
+	<% end %>
+
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
+
+    <script class="code" type="text/javascript">
+      $(document).ready(function () {
+      
+        $("#question_location_id").change(function() {
+          var location_id = $('select#question_location_id :selected').val();
+          if(location == "") location="0";
+          jQuery.get('/widget/get_counties/' + location_id, function(data){
+              $("#county_list").html(data);
+          })
+          return false;
+        });
+      });
+    </script>
+    
 </body>
 </html>
