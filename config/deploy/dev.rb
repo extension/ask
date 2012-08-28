@@ -5,3 +5,7 @@ else
   set :branch, 'development'
 end
 server 'dev.ask.extension.org', :app, :web, :db, :primary => true
+
+if(ENV['REBUILD'] == 'true')
+  after "deploy:update_code", "db:rebuild"
+end
