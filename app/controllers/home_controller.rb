@@ -14,4 +14,9 @@ class HomeController < ApplicationController
   def private_page
   end
   
+  def ask
+    # the Question Wrangler group id is 38
+    @group = Group.find_by_id("38")
+  end
+  
 end
