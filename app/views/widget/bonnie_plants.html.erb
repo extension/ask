@@ -117,15 +117,15 @@
         <%= f.text_area :body, :rows => 4  %>
         </label>
     </p>
-
+ 
     <% if @group.widget_public_option %>
 	  <p>
-		<label for="is_private">Make this question private (others cannot view or learn from it)?
-		<%= f.check_box :is_private  %>
+		<label for="is_private">Share my question on Ask an Expert? (sharing may help others learn from the answer)
+		<%= check_box_tag :is_public  %>
 		</label>
-      </p>
+	  </p>
 	<% end %>
-
+	
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
 

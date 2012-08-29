@@ -55,9 +55,14 @@ class QuestionsController < ApplicationController
           # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what 
           # the submitter wanted, we default to the safest thing, privacy by the submitter.
           @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+        elsif params[:is_public].present? && params[:is_public] == '1'
+          # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public 
+          @question.is_private = false
+          @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
         else
-          @question.is_private ? (@question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER) : (@question.is_private_reason = Question::PRIVACY_REASON_PUBLIC)
-        end  
+          @question.is_private = true
+          @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+        end
         
         # TODO: Need to update this
         # # location and county - separate from params[:submitted_question], but probably shouldn't be
