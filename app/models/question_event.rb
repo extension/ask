@@ -50,6 +50,15 @@ class QuestionEvent < ActiveRecord::Base
       :response => assignment_comment})
   end
   
+  def self.log_reopen(question, recipient, initiated_by, assignment_comment)
+    question.update_attribute(:last_opened_at, Time.now)
+    
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by,
+      :recipient => recipient,
+      :event_state => REOPEN,
+      :response => assignment_comment})
+  end
   
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
