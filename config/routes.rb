@@ -17,12 +17,18 @@ Aae::Application.routes.draw do
   end
     
   namespace :expert do
-    resources :questions
+    resources :questions do
+      member do
+        post 'assign'
+      end
+    end
+    
     resources :users, :except => [:destroy] do
       collection do
         get 'tags'
       end
     end
+    
     resources :groups, :except => [:destroy] do
       collection do
         get 'questions_by_tag'
