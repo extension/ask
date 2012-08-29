@@ -85,3 +85,11 @@ namespace :deploy do
     
   end  
 end
+
+namespace :db do
+  desc "drop the database, create the database, run migrations, seed"
+  task :rebuild, :roles => :db, :only => {:primary => true} do
+    run "cd #{deploy_to}current && #{rake} db:demo_rebuild RAILS_ENV=production"
+  end
+end  
+
