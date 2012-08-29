@@ -60,6 +60,7 @@ Aae::Application.routes.draw do
   end
   
   match "home/private_page" => "home#private_page", :via => :get
+  match "ask" => "home#ask"
   match "ajax/tags" => "ajax#tags", :via => [:get]
   
   

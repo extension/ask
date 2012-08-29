@@ -14,4 +14,7 @@ class HomeController < ApplicationController
   def private_page
   end
   
+  def ask
+  end
+  
 end
