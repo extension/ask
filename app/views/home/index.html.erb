@@ -1,11 +1,22 @@
 <div id="main" class="span8">
 
-  <h1>Recent Questions</h1>
+  
   
   <% if @recent_questions.length == 0 %>
-    <p>No Recent questions available at this time.</p>
+    
+    <div id="day_one">
+      <h1>Welcome to the new Ask an Expert</h1>
+      
+      <h2>Where's the Questions?</h2>
+      <p>There are not any publicly viewable questions yet because the previous Ask an Expert system did not allow any public sharing. So when we migrated the existing questions to this version, we had to mark them all as "private."</p>
+      <p>This page will fill up as new questions are submitted and submitters choose to share. Please check back soon!</p>
+    </div>
+    
   <% else %>
   <% @recent_questions.each do |question| %>
+  
+  <h1>Recent Questions</h1>
+  
   <div class="incoming_question">
     <%= link_to question_path(question.id) do %>
       <% if question.title.present? %>
@@ -42,6 +53,6 @@
     <h2>Extension Near You</h2>
     <div id="institution"></div>
     
-    <h4>Show local active agents?</h4>
+    <h4>(Do we want to show local agents here?)</h4>
   </aside>
 </div>
