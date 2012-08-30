@@ -21,14 +21,18 @@
        
        fieldset {margin: 1em 0 .5em;border:0;padding:0;color:#666;}
        textarea, input, select {width: 95%;margin: 0 0 7px;}
+       input, select {max-width: 20em;}
        input, textarea {padding: .15em .3em;}
        p.submit input {width:auto; margin-bottom:4px;}
-       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em;}
+       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em; color:#000;}
        label small {color:#555; font-weight:normal; font-size:.9em;}
        span {line-height: 100%;display: block;font-weight:normal;color: #888;}
+       label .checkbox {float:left; width:auto; margin-right:1em;}
+        .label {float:left;}
        #flash_notice.notice {color:green;}
        #flash_notice.warning {color:red;}
        #app_location {background:yellow; padding:1em; margin-bottom:1em;}
+       fieldset {margin:1em 0 2em;}
        	-->
         </style>
         
@@ -59,14 +63,6 @@
       <%= f.text_area :body, :rows => 4  %>
       </label>
     </p>
-    
-   <% if @group.widget_public_option %>
-    <p>
-	  <label for="is_private">Share my question on Ask an Expert? (sharing may help others learn from the answer)
-	  <%= check_box_tag :is_public  %>
-	  </label>
-	</p>
-   <% end %>
     
     <% if @group.widget_show_location %>
         <p>
@@ -100,22 +96,29 @@
     <br />
 
     <p>
-        <label for="email">Email <small>(please type it twice to confirm)</small>
+        <label for="email">Email 
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
     
-    <p>
-        <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
-    </p>
+    <% if @group.widget_public_option %>
+       <fieldset>
+       <p>
+         <label for="is_public">
+         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
+         Share my question on Ask an Expert
+  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
+         </label>
+       </p>
+       </fieldset>
+     <% end %>
     
-    <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-      <div id="app_location" class="demo">
-        <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
-      </div>
-    <% end %>
-    
-    
+     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+       <div id="app_location" class="demo">
+         <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
+       </div>
+     <% end %>
+     
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
     <% end %>
     

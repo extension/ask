@@ -13,9 +13,9 @@
     </div>
     
   <% else %>
-  <% @recent_questions.each do |question| %>
   
   <h1>Recent Questions</h1>
+  <% @recent_questions.each do |question| %>  
   
   <div class="incoming_question">
     <%= link_to question_path(question.id) do %>
