@@ -1,12 +1,14 @@
 module QuestionsHelper
   def stringify_question_event(q_event)
-    if q_event.initiator.id == User.system_user_id
+    if q_event.initiator.present? && (q_event.initiator.id == User.system_user_id)
       initiator_full_name = "System"
     elsif q_event.initiator
       initiator_full_name = link_to q_event.initiator.name, expert_user_path(q_event.initiator.id)
       if q_event.initiator.is_question_wrangler?
         qw = "class='qw'"
       end
+    else
+      initiator_full_name = "anonymous"
     end
 
     case q_event.event_state
@@ -47,7 +49,7 @@ module QuestionsHelper
     when QuestionEvent::WORKING_ON
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>".html_safe
     when QuestionEvent::EDIT_QUESTION
-      return "Question edited by <strong>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>".html_safe
+      return "Question edited by <strong>Submitter</strong> <span> #{humane_date(q_event.created_at)} </span>".html_safe
     when QuestionEvent::REOPEN
       return "Question reopened by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>".html_safe
     when QuestionEvent::CLOSED
