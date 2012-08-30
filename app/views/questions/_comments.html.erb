@@ -1,5 +1,7 @@
 <h3>Comment on this Question</h3>
+<% if current_user %>
 <%= get_avatar(current_user, :thumb) %>
+<% end %>
 <div>
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
