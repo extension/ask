@@ -13,7 +13,10 @@ class QuestionsController < ApplicationController
   end
   
   # TODO: incorporate title into this.
-  def create  
+  def create
+    @personal = {}
+    @personal[:location] = nil
+    @personal[:county] = nil
     if request.post?
       @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
