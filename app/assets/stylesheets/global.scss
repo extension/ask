@@ -107,7 +107,7 @@ body#expert {
     .location {margin-bottom:3em;}
     #location_list li {list-style:none; padding:.5em;}
     #location_list li:hover {color:#000; background:#eee;}
-    .location_block h3:hover {color:#000; background:#eee; }
+    .location_block h3:hover {color:#000; background:#eee;}
     .location_block h4 {padding:1em;}
     .location_block h3 span {display:none;}
     .location_block h3:hover span {display:inline; }
@@ -117,6 +117,8 @@ body#expert {
     #user_locations {border:1px solid lime; margin-bottom:2em; padding:.1em;}
     .location.template {border:2px solid red;}
     .right {float:right;}
+	.new_location {border: 6px solid #aaa !important;}
+	.all_counties_added {background:yellow;}
     i {color:#ccc; font-size:.8em;}
 
 	div.info {background:#FFFFD2; padding:1em; margin:0 0 2em; width:18em; color:#777;}

@@ -63,6 +63,7 @@ class Expert::SettingsController < ApplicationController
   
   def edit_location
     @location = Location.find(params[:requested_location])
+    @event_type = params[:event_type]
     render :partial => 'edit_location', :locals => {:location => @location}
   end
   
