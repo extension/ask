@@ -82,28 +82,26 @@
         })
         .done(function() {
           $("#countyfield").val("");
-          $('.show_counties').prepend('<li>'+inputField+' <span id="county_" class="removecounty btn">X</span></li>');
+          $('.all_counties').hide();
+          $('.show_edited_counties').prepend('<li>'+ui.item.name+' <span id="county_" class="removecounty btn">X</span></li>');
         })  
         .fail(function() { alert("error"); })
         }
     });
   });
   
-  $("#location_form")
-      // .bind("ajax:loading",  $("#status_report").html('Submitting...'))
-      // .bind("ajax:complete", $("#status_report").html(''))
-      .bind("ajax:success", function(event, data, status, xhr) {
-        $(".ux_actions").hide();
-        // resetPicker();
-      });
-  
   var resetPicker = function() {
-    // $("#add_location").show();
     $('#location_picker').slideDown();
     $('#location_option').val("");
     $('#selected_state').hide();
     $('#county_picker').hide();
-    $("#location_form").show();
+  }
+  
+  var resetPickerOnCancel = function() {
+    $('#location_picker').fadeIn();
+    $('#location_option').val("");
+    $('#selected_state').hide();
+    $('#county_picker').hide();
   }
   
   // initialize
@@ -161,14 +159,11 @@
   });
   
   $("#loc_wrapper").on("click", ".new_location_close", function(e){
-    $(this).closest(".location").remove();
-    resetPicker();
+    $(this).closest(".location").fadeOut('fast', function() {
+      resetPickerOnCancel();
+    });
   });
-  
-  
-  
-  
-  
+
   
   var editLocation = function(locationID) {
     $.ajax({
@@ -181,9 +176,7 @@
         }
     });
   }
-  
-  
-  
+
   
   $(".cancel_location").live("click", function(event) {
       event.stopPropagation();
@@ -192,8 +185,6 @@
   });
     
   $("body").on("click", ".pick_counties", function(){
-    // var locationBlock = $(this).closest("div");
-    $("#location_form").hide();
     $('#county_picker').show();
     $('#countyfield').focus();
   });

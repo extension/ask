@@ -1,7 +1,7 @@
 <% if (params[:event_type] == "new") %>
   <p class="new_location_close btn right">cancel</p>
 <% else %>
-  <p class="edit_location_close btn right">cancel</p>
+  <p class="edit_location_close btn right">done</p>
 <% end %>
 
 <h3><%= location.name %></h3>
@@ -22,13 +22,11 @@
 </div>
 
 
-<% if (params[:event_type] == "new") %>
 
-<% else %>
-  <div class="show_counties">
+  <div class="show_edited_counties">
     <%= render :partial => 'show_counties', :locals => {:location_id => location.id} %>
   </div>
-<% end %>
+
 
 
 
