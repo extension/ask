@@ -95,13 +95,9 @@
     <br />
 
     <p>
-        <label for="email">Email <small>(please type it twice to confirm)</small>
+        <label for="email">Email 
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
-    </p>
-    
-    <p>
-        <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
     </p>
     
     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>

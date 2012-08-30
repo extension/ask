@@ -24,7 +24,9 @@ class QuestionsController < ApplicationController
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
         @question = Question.new(params[:question])
-        @email_confirmation = params[:email_confirmation].strip
+        
+        # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
+        @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : @question.submitter_email
         
         # make sure email and confirmation email match up
         if @question.submitter_email != @email_confirmation
