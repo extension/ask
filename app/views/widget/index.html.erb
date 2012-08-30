@@ -23,12 +23,15 @@
        textarea, input, select {width: 95%;margin: 0 0 7px;}
        input, textarea {padding: .15em .3em;}
        p.submit input {width:auto; margin-bottom:4px;}
-       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em;}
+       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em; color:#000;}
        label small {color:#555; font-weight:normal; font-size:.9em;}
        span {line-height: 100%;display: block;font-weight:normal;color: #888;}
+       label .checkbox {float:left; width:auto; margin-right:1em;}
+        .label {float:left;}
        #flash_notice.notice {color:green;}
        #flash_notice.warning {color:red;}
        #app_location {background:yellow; padding:1em; margin-bottom:1em;}
+       fieldset {margin:1em 0 2em;}
        	-->
         </style>
         
@@ -59,14 +62,6 @@
       <%= f.text_area :body, :rows => 4  %>
       </label>
     </p>
-    
-   <% if @group.widget_public_option %>
-    <p>
-	  <label for="is_private">Share my question on Ask an Expert? (sharing may help others learn from the answer)
-	  <%= check_box_tag :is_public  %>
-	  </label>
-	</p>
-   <% end %>
     
     <% if @group.widget_show_location %>
         <p>
@@ -115,7 +110,18 @@
       </div>
     <% end %>
     
-    
+    <% if @group.widget_public_option %>
+       <fieldset>
+       <p>
+         <label for="is_public">
+         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
+         Share my question on Ask an Expert
+  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
+         </label>
+       </p>
+       </fieldset>
+     <% end %>
+     
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
     <% end %>
     
