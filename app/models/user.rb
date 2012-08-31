@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :responses
   has_many :user_locations
   has_many :user_counties
+  has_many :user_preferences
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
   has_many :notification_exceptions
@@ -57,6 +58,10 @@ class User < ActiveRecord::Base
   
   def has_exid?
     return self.darmok_id.present?
+  end
+  
+  def retired?
+    return self.retired
   end
   
   def set_tag(tag)

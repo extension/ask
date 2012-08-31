@@ -1,0 +1,70 @@
+<% @page_title = "Reply to question ##{@question.id}"%>
+
+<h3><%= link_to "AaE ##{@question.id}", expert_question_path(@question) %></h3>
+
+<p>
+    <strong>Submitter's Name:</strong> <%= @question.submitter_name %><br />
+    <% if location = @question.location %>
+      <strong>Location of Question:</strong> <%= location.name %><br />
+    <% end %>
+    <% if location and county = @question.county %>
+      <strong>County of Question:</strong> <%= county.name %><br />
+    <% end %>
+    <strong>Question Submitted At:</strong> <%= humane_date(@question.created_at) %><br />
+</p>
+
+<h1>Write a Reply</h1>
+
+<div id="response_form">
+    <h2>Your response will be sent via email and posted to the submitter's AaE question page</h2>
+    <%= form_tag answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]) do %>
+    <p class="save_it"><%= submit_tag 'Send Reply' %></p>
+    <div id="email_content">
+        <div class="headerinfo">
+            <p><strong>Subject:</strong> [Message from eXtension] Your question has been responded to by one of our experts.
+                <br /><strong>From:</strong> noreplies@extension.org</p>
+        </div>
+        <div class="bodyinfo">
+            <p>There is a response to the question you asked via eXtension's 'Ask an Expert' tool!</p>
+            
+            <p>View your question and response:<br />
+	            <!-- TODO: Replace this with privacy conditions -->
+                <%= link_to("https://www.extension.org/questions/#{@question.id}", "https://www.extension.org/questions/#{@question.id}") %></p>
+
+            <p>Please don't reply to this no-reply email. Instead, click the link above to send a reply. Thanks!</p>
+            <br />
+            
+            <p>Your question:<br /><%= @question.body %></p>
+
+            <p><label for="current_response">Response:</label>
+            
+            <!-- TODO: Change this from current_response to something else to be determined. Maybe all official responses can be inserted here. -->
+            <% if (@sampletext || @related_question) %>
+                <% @answer = (@sampletext ? @sampletext : @question.current_response)%>
+            <% end %>
+            
+            <!-- TODO: Change this fittextarea stuff, jquery probably has something -->
+            <%= text_area_tag 'current_response', @answer ? @answer : nil, 
+            "onChange" => "fitTextArea(this)", "onKeyUp" => "fitTextArea(this)", "rows" => 6 %>
+            </p>
+
+            <p><label for="signature" class="helptext">Your default email signature can be set in your preferences</label> 
+            <%= text_area_tag 'signature', @signature, "rows" => 3 %></p>
+            
+            
+            <p>Thank you for using our 'Ask an Expert' system.</p>
+            <p>Have another question? Please ask!
+                <br />http://www.extension.org/ask/</p>
+            
+            <p>***PLEASE DO NOT REPLY TO THIS MESSAGE***</p/>
+            
+            <p><%= Question::EXPERT_DISCLAIMER %></p>
+            
+            <p><span class="helptext">-- end of email message --</span></p>
+        </div>
+    </div>
+    <p class="save_it"><%= submit_tag 'Send Reply' %></p>
+</div>
+
+
+<% end %>

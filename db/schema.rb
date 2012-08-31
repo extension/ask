@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
     t.integer  "response_id"
     t.text     "response"
     t.integer  "event_state",                        :null => false
-    t.integer  "contributing_content_id"
+    t.integer  "contributing_question_id"
     t.text     "tags"
     t.text     "additional_data"
     t.integer  "previous_event_id"
@@ -202,11 +202,11 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
     t.integer  "previous_handling_recipient_id"
     t.integer  "previous_handling_initiator_id"
     t.text     "previous_tags"
-    t.string   "contributing_content_type"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
   end
 
+  add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
   add_index "question_events", ["created_at", "event_state", "previous_handling_recipient_id"], :name => "idx_handling"
   add_index "question_events", ["initiated_by_id"], :name => "idx_initiated_by"
   add_index "question_events", ["question_id"], :name => "idx_question_id"
@@ -215,45 +215,45 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
 
   create_table "questions", :force => true do |t|
     t.integer  "current_resolver"
-    t.integer  "contributing_content_id"
-    t.string   "status",                    :default => "",    :null => false
-    t.text     "body",                                         :null => false
+    t.integer  "contributing_question_id"
+    t.string   "status",                   :default => "",    :null => false
+    t.text     "body",                                        :null => false
     t.string   "title"
-    t.boolean  "is_private",                :default => false
+    t.boolean  "is_private",               :default => false
     t.integer  "is_private_reason"
     t.integer  "assignee_id"
     t.integer  "assigned_group_id"
-    t.boolean  "duplicate",                 :default => false, :null => false
+    t.boolean  "duplicate",                :default => false, :null => false
     t.string   "external_app_id"
     t.string   "submitter_email"
     t.datetime "resolved_at"
     t.datetime "question_updated_at"
     t.text     "current_response"
     t.string   "current_resolver_email"
-    t.string   "question_fingerprint",                         :null => false
-    t.string   "submitter_firstname",       :default => "",    :null => false
-    t.string   "submitter_lastname",        :default => "",    :null => false
+    t.string   "question_fingerprint",                        :null => false
+    t.string   "submitter_firstname",      :default => "",    :null => false
+    t.string   "submitter_lastname",       :default => "",    :null => false
     t.integer  "county_id"
     t.integer  "location_id"
-    t.boolean  "spam",                      :default => false, :null => false
-    t.string   "user_ip",                   :default => "",    :null => false
-    t.string   "user_agent",                :default => "",    :null => false
-    t.string   "referrer",                  :default => "",    :null => false
+    t.boolean  "spam",                     :default => false, :null => false
+    t.string   "user_ip",                  :default => "",    :null => false
+    t.string   "user_agent",               :default => "",    :null => false
+    t.string   "referrer",                 :default => "",    :null => false
     t.string   "group_name"
-    t.integer  "status_state",                                 :null => false
+    t.integer  "status_state",                                :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
-    t.integer  "submitter_id",              :default => 0
+    t.integer  "submitter_id",             :default => 0
     t.datetime "last_assigned_at"
-    t.datetime "last_opened_at",                               :null => false
+    t.datetime "last_opened_at",                              :null => false
     t.boolean  "is_api"
-    t.string   "contributing_content_type"
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
   add_index "questions", ["assignee_id"], :name => "fk_assignee"
+  add_index "questions", ["contributing_question_id"], :name => "fk_contributing_question"
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver"], :name => "fk_current_resolver"
@@ -278,21 +278,20 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
   create_table "responses", :force => true do |t|
     t.integer  "resolver_id"
     t.integer  "submitter_id"
-    t.integer  "question_id",                                  :null => false
-    t.text     "body",                                         :null => false
-    t.integer  "duration_since_last",                          :null => false
-    t.boolean  "sent",                      :default => false, :null => false
-    t.integer  "contributing_content_id"
+    t.integer  "question_id",                                 :null => false
+    t.text     "body",                                        :null => false
+    t.integer  "duration_since_last",                         :null => false
+    t.boolean  "sent",                     :default => false, :null => false
+    t.integer  "contributing_question_id"
     t.text     "signature"
     t.string   "user_ip"
     t.string   "user_agent"
     t.string   "referrer"
-    t.string   "contributing_content_type"
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
   end
 
-  add_index "responses", ["contributing_content_id", "contributing_content_type"], :name => "idx_contributing_content"
+  add_index "responses", ["contributing_question_id"], :name => "idx_contributing_question"
   add_index "responses", ["question_id"], :name => "idx_question_id"
   add_index "responses", ["resolver_id"], :name => "idx_resolver_id"
   add_index "responses", ["submitter_id"], :name => "idx_submitter_id"

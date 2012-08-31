@@ -7,6 +7,8 @@ class Question < ActiveRecord::Base
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
+  belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
+  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
   has_many :comments
   has_many :ratings
@@ -73,6 +75,18 @@ class Question < ActiveRecord::Base
   PRIVACY_REASON_EXPERT = 3
   PRIVACY_REASON_SPAM = 4
   PRIVACY_REASON_REJECTED = 5
+  
+  # disclaimer info
+  EXPERT_DISCLAIMER = "This message for informational purposes only. " +  
+                      "It is not intended to be a substitute for personalized professional advice. For specific local information, " + 
+                      "contact your local county Cooperative Extension office or other qualified professionals." + 
+                      "eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information " + 
+                      "that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other " + 
+                      "third parties through eXtension is solely at the user's own risk. All eXtension content and communication is subject to  the terms of " + 
+                      "use http://www.extension.org/main/termsofuse which may be revised at any time."
+  
+  
+  DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
   
   # for purposes of solr search
   def response_list
@@ -162,36 +176,40 @@ class Question < ActiveRecord::Base
   
   # updates the question, creates a response and  
   # calls the function to log a new resolved question event 
-  def add_resolution(q_status, resolver, response, signature = nil, contributing_content = nil)
+  def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil)
 
     t = Time.now
 
     case q_status
       when STATUS_RESOLVED    
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :resolved_by => resolver, :current_response => response, :resolver_email => resolver.email, :contributing_content => contributing_content, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :current_resolver_email => resolver.email, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         @response = Response.new(:resolver => resolver, 
                                  :question => self, 
                                  :body => response,
                                  :sent => true, 
-                                 :contributing_content => contributing_content, 
+                                 :contributing_question => contributing_question, 
                                  :signature => signature)
         @response.save
         QuestionEvent.log_resolution(self)    
       when STATUS_NO_ANSWER
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :resolved_by => resolver, :current_response => response, :resolver_email => resolver.email, :contributing_content => contributing_content, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :current_resolver_email => resolver.email, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         @response = Response.new(:resolver => resolver, 
                                  :submitted_question => self, 
                                  :body => response, 
                                  :sent => true, 
-                                 :contributing_content => contributing_content, 
+                                 :contributing_question => contributing_question, 
                                  :signature => signature)
         @response.save
         QuestionEvent.log_no_answer(self)  
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :resolved_by => resolver, :resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :current_resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
         QuestionEvent.log_rejection(self)
     end
 
+  end
+  
+  def resolved?
+    !self.status_state == STATUS_SUBMITTED
   end
   
   # utility function to convert status_state numbers to status strings
@@ -208,6 +226,20 @@ class Question < ActiveRecord::Base
     else
       return nil
     end
+  end
+  
+  def submitter_name
+    if self.submitter_firstname.present? && self.submitter_lastname.present?
+      submitter_name = self.submitter_firstname + " " + self.submitter_lastname
+    else
+      submitter_name = self.submitter.name if self.submitter
+    end
+    
+    if submitter_name.blank?
+      submitter_name = DEFAULT_SUBMITTER_NAME 
+    end
+
+    return submitter_name
   end
   
   def set_tag(tag)

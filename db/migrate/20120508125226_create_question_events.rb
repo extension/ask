@@ -5,10 +5,9 @@ class CreateQuestionEvents < ActiveRecord::Migration
       t.integer  "submitter_id"
       t.integer  "initiated_by_id"
       t.integer  "recipient_id"
-      t.integer  "response_id"
       t.text     "response"
       t.integer  "event_state", :null => false
-      t.integer  "contributing_content_id"
+      t.integer  "contributing_question_id"
       t.text     "tags"
       t.text     "additional_data"
       t.integer  "previous_event_id"
@@ -21,7 +20,6 @@ class CreateQuestionEvents < ActiveRecord::Migration
       t.integer  "previous_handling_recipient_id"
       t.integer  "previous_handling_initiator_id"
       t.text     "previous_tags"
-      t.string   "contributing_content_type"
       t.timestamps
     end
   
@@ -30,5 +28,6 @@ class CreateQuestionEvents < ActiveRecord::Migration
     add_index "question_events", ["recipient_id"], :name => "idx_recipient_id"
     add_index "question_events", ["question_id"], :name => "idx_question_id"
     add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
+    add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
   end
 end

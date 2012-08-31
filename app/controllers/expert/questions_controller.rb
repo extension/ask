@@ -54,7 +54,7 @@ class Expert::QuestionsController < ApplicationController
       return
     end
       
-    user = User.where(:login => params[:assignee_login])
+    user = User.where(:login => params[:assignee_login]).first
       
     if !user || user.retired?
       !user ? err_msg = "User does not exist." : err_msg = "User is retired from the system"
@@ -77,6 +77,51 @@ class Expert::QuestionsController < ApplicationController
     end
       
     redirect_to expert_question_url(@question)
+  end
+  
+  # show the expert form to answer a question
+  def answer
+    @question = Question.where(:id => params[:id]).first
+    
+    if !@question
+      flash[:failure] = "Invalid question."
+      return redirect_to expert_question_url(@question)
+    end
+    
+    if @question.resolved?
+      flash[:failure] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />We appreciate your help in resolving these questions!"
+      return redirect_to expert_question_url(@question)
+    end
+    
+    @status = params[:status_state]
+    
+    # if expert chose a Question to answer this with, find that so that we can 
+    # attach that to the question as a contributing question
+    @related_question = Question.find_by_id(params[:related_question]) if params[:related_question].present?
+  
+    @sampletext = params[:sample] if params[:sample]
+    signature_pref = current_user.user_preferences.find_by_name('signature')
+    signature_pref ? @signature = signature_pref.setting : @signature = "-#{current_user.name}"
+    
+    if request.post?
+      answer = params[:current_response]
+      (params[:signature] and params[:signature].strip != '') ? @signature = params[:signature] : @signature = ''
+      
+      if !answer or '' == answer.strip 
+        flash[:failure] = "You must not leave the answer blank."
+        return
+      end
+      
+      @related_question ? contributing_question = @related_question : contributing_question = nil
+      (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
+      
+      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question)   
+      
+      # TODO: Add new notification logic here.
+      #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })  	    
+      flash[:success] = "Thanks for answering this question."
+      redirect_to expert_question_url(@question)
+    end
   end
   
   def assign_to_wrangler

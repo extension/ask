@@ -20,6 +20,8 @@ Aae::Application.routes.draw do
     resources :questions do
       member do
         post 'assign'
+        get  'answer'
+        post 'answer'
       end
     end
     

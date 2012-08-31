@@ -247,21 +247,30 @@ end
 def transfer_questions
   puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver, contributing_content_id, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, last_assigned_at, last_opened_at, is_api, contributing_content_type, created_at, updated_at)
-  SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.contributing_content_id, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
+  INSERT INTO #{@aae_database}.questions(id, current_resolver, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, current_resolver_email, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, last_assigned_at, last_opened_at, is_api, created_at, updated_at)
+  SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
          null, true, 2, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
          #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
          #{@darmokdatabase}.submitted_questions.resolver_email, #{@darmokdatabase}.submitted_questions.question_fingerprint, #{@darmokdatabase}.submitted_questions.submitter_firstname, #{@darmokdatabase}.submitted_questions.submitter_lastname,
          #{@darmokdatabase}.submitted_questions.county_id, #{@darmokdatabase}.submitted_questions.location_id, #{@darmokdatabase}.submitted_questions.spam, #{@darmokdatabase}.submitted_questions.user_ip, #{@darmokdatabase}.submitted_questions.user_agent, 
          #{@darmokdatabase}.submitted_questions.referrer, #{@darmokdatabase}.submitted_questions.widget_name, #{@darmokdatabase}.submitted_questions.status_state, #{@darmokdatabase}.submitted_questions.zip_code,
          #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.submitter_id, #{@darmokdatabase}.submitted_questions.last_assigned_at,
-         #{@darmokdatabase}.submitted_questions.last_opened_at, #{@darmokdatabase}.submitted_questions.is_api, #{@darmokdatabase}.submitted_questions.contributing_content_type, #{@darmokdatabase}.submitted_questions.created_at, NOW()       
+         #{@darmokdatabase}.submitted_questions.last_opened_at, #{@darmokdatabase}.submitted_questions.is_api, #{@darmokdatabase}.submitted_questions.created_at, NOW()       
   FROM  #{@darmokdatabase}.submitted_questions
   LEFT JOIN #{@darmokdatabase}.communities ON #{@darmokdatabase}.communities.widget_id = #{@darmokdatabase}.submitted_questions.widget_id
   END_SQL
   
+  # transferring partially phased out contributing question field, only have question now and getting rid of contributing faqs, pages, etc.
+  transfer_contributing_question_id_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.questions 
+  JOIN #{@darmokdatabase}.submitted_questions ON #{@aae_database}.questions.id = #{@darmokdatabase}.submitted_questions.id
+  SET #{@aae_database}.questions.contributing_question_id = #{@darmokdatabase}.submitted_questions.contributing_content_id
+  WHERE #{@darmokdatabase}.submitted_questions.contributing_content_type = 'SubmittedQuestion'
+  END_SQL
+  
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(question_transfer_query)
+    ActiveRecord::Base.connection.execute(transfer_contributing_question_id_query)
     
     # we need to mark the is_private_reason for spam and rejected questions
     spam_questions = Question.where(:spam => true)
@@ -308,19 +317,28 @@ end
 def transfer_question_events
   puts 'Transferring question events...'
   question_events_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.question_events(question_id, submitter_id, initiated_by_id, recipient_id, response_id, response, event_state, contributing_content_id, tags, additional_data, previous_event_id, duration_since_last, previous_recipient_id, previous_initiator_id, previous_handling_event_id, duration_since_last_handling_event, previous_handling_event_state, previous_handling_recipient_id, previous_handling_initiator_id, previous_tags, contributing_content_type, created_at, updated_at)
-  SELECT #{@darmokdatabase}.submitted_question_events.submitted_question_id, #{@darmokdatabase}.submitted_question_events.submitter_id, #{@darmokdatabase}.submitted_question_events.initiated_by_id, #{@darmokdatabase}.submitted_question_events.recipient_id,
-         #{@darmokdatabase}.submitted_question_events.response_id, #{@darmokdatabase}.submitted_question_events.response, #{@darmokdatabase}.submitted_question_events.event_state, 
-         #{@darmokdatabase}.submitted_question_events.contributing_content_id, #{@darmokdatabase}.submitted_question_events.category, #{@darmokdatabase}.submitted_question_events.additionaldata, 
+  INSERT INTO #{@aae_database}.question_events(id, question_id, submitter_id, initiated_by_id, recipient_id, response, event_state, tags, additional_data, previous_event_id, duration_since_last, previous_recipient_id, previous_initiator_id, previous_handling_event_id, duration_since_last_handling_event, previous_handling_event_state, previous_handling_recipient_id, previous_handling_initiator_id, previous_tags, created_at, updated_at)
+  SELECT #{@darmokdatabase}.submitted_question_events.id, #{@darmokdatabase}.submitted_question_events.submitted_question_id, #{@darmokdatabase}.submitted_question_events.submitter_id, #{@darmokdatabase}.submitted_question_events.initiated_by_id, #{@darmokdatabase}.submitted_question_events.recipient_id,
+         #{@darmokdatabase}.submitted_question_events.response, #{@darmokdatabase}.submitted_question_events.event_state, 
+         #{@darmokdatabase}.submitted_question_events.category, #{@darmokdatabase}.submitted_question_events.additionaldata, 
          #{@darmokdatabase}.submitted_question_events.previous_event_id, #{@darmokdatabase}.submitted_question_events.duration_since_last, #{@darmokdatabase}.submitted_question_events.previous_recipient_id,
          #{@darmokdatabase}.submitted_question_events.previous_initiator_id, #{@darmokdatabase}.submitted_question_events.previous_handling_event_id, #{@darmokdatabase}.submitted_question_events.duration_since_last_handling_event,
          #{@darmokdatabase}.submitted_question_events.previous_handling_event_state, #{@darmokdatabase}.submitted_question_events.previous_handling_recipient_id, #{@darmokdatabase}.submitted_question_events.previous_handling_initiator_id,
-         #{@darmokdatabase}.submitted_question_events.previous_category, #{@darmokdatabase}.submitted_question_events.contributing_content_type, #{@darmokdatabase}.submitted_question_events.created_at, NOW()       
+         #{@darmokdatabase}.submitted_question_events.previous_category, #{@darmokdatabase}.submitted_question_events.created_at, NOW()       
   FROM  #{@darmokdatabase}.submitted_question_events
+  END_SQL
+  
+  # transferring partially phased out contributing question field, only have question now and getting rid of contributing faqs, pages, etc.
+  transfer_contributing_question_id_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.question_events 
+  JOIN #{@darmokdatabase}.submitted_question_events ON #{@aae_database}.question_events.id = #{@darmokdatabase}.submitted_question_events.id
+  SET #{@aae_database}.question_events.contributing_question_id = #{@darmokdatabase}.submitted_question_events.contributing_content_id
+  WHERE #{@darmokdatabase}.submitted_question_events.contributing_content_type = 'SubmittedQuestion'
   END_SQL
   
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(question_events_transfer_query)
+    ActiveRecord::Base.connection.execute(transfer_contributing_question_id_query)
   end
   
   puts " Question Events transferred: #{benchmark.real.round(2)}s"
@@ -329,15 +347,24 @@ end
 def transfer_responses
   puts 'Transferring responses...'
   responses_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.responses(resolver_id, submitter_id, question_id, body, duration_since_last, sent, contributing_content_id, signature, user_ip, user_agent, referrer, contributing_content_type, created_at, updated_at)
-  SELECT #{@darmokdatabase}.responses.resolver_id, #{@darmokdatabase}.responses.submitter_id, #{@darmokdatabase}.responses.submitted_question_id, #{@darmokdatabase}.responses.response, #{@darmokdatabase}.responses.duration_since_last,
-         #{@darmokdatabase}.responses.sent, #{@darmokdatabase}.responses.contributing_content_id, #{@darmokdatabase}.responses.signature, #{@darmokdatabase}.responses.user_ip, #{@darmokdatabase}.responses.user_agent, 
-         #{@darmokdatabase}.responses.referrer, #{@darmokdatabase}.responses.contributing_content_type, #{@darmokdatabase}.responses.created_at, NOW()
+  INSERT INTO #{@aae_database}.responses(id, resolver_id, submitter_id, question_id, body, duration_since_last, sent, signature, user_ip, user_agent, referrer, created_at, updated_at)
+  SELECT #{@darmokdatabase}.responses.id, #{@darmokdatabase}.responses.resolver_id, #{@darmokdatabase}.responses.submitter_id, #{@darmokdatabase}.responses.submitted_question_id, #{@darmokdatabase}.responses.response, #{@darmokdatabase}.responses.duration_since_last,
+         #{@darmokdatabase}.responses.sent, #{@darmokdatabase}.responses.signature, #{@darmokdatabase}.responses.user_ip, #{@darmokdatabase}.responses.user_agent, 
+         #{@darmokdatabase}.responses.referrer, #{@darmokdatabase}.responses.created_at, NOW()
   FROM   #{@darmokdatabase}.responses
+  END_SQL
+  
+  # transferring partially phased out contributing question field, only have question now and getting rid of contributing faqs, pages, etc.
+  transfer_contributing_question_id_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.responses 
+  JOIN #{@darmokdatabase}.responses ON #{@aae_database}.responses.id = #{@darmokdatabase}.responses.id
+  SET #{@aae_database}.responses.contributing_question_id = #{@darmokdatabase}.responses.contributing_content_id
+  WHERE #{@darmokdatabase}.responses.contributing_content_type = 'SubmittedQuestion'
   END_SQL
 
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(responses_transfer_query)
+    ActiveRecord::Base.connection.execute(transfer_contributing_question_id_query)
   end
   
   puts " Responses transferred: #{benchmark.real.round(2)}s"

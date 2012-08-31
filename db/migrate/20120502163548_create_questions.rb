@@ -8,7 +8,7 @@ class CreateQuestions < ActiveRecord::Migration
   def change
     create_table :questions do |t|
       t.integer  "current_resolver"           # from resolved_by
-      t.integer  "contributing_content_id"    # keep for legacy values, may not continue this going forward
+      t.integer  "contributing_question_id"   # keep for legacy values, may not continue this going forward
       t.string   "status",                    :default => "",    :null => false
       t.text     "body",                      :null => false # from asked_question
       t.string   "title"
@@ -40,7 +40,6 @@ class CreateQuestions < ActiveRecord::Migration
       t.datetime "last_assigned_at"
       t.datetime "last_opened_at",                               :null => false
       t.boolean  "is_api"
-      t.string   "contributing_content_type"
       t.timestamps
     end
 
@@ -57,5 +56,6 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["group_name"], :name => "group_name_idx"
     add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
     add_index "questions", ["is_private"], :name => "fk_is_private"
+    add_index "questions", ["contributing_question_id"], :name => "fk_contributing_question"
   end
 end
