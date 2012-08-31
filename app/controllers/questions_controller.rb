@@ -9,7 +9,7 @@ class QuestionsController < ApplicationController
     end
     
     @question_responses = @question.responses
-    @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.count))
+    @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.public_visible.count))
   end
   
   # TODO: incorporate title into this.
