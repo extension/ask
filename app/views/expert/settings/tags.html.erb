@@ -4,8 +4,8 @@
 <%= render :partial => 'expert/settings/settings_navigation' %>
 
 <div class="ui-widget">
-	<label for="tag_picker">Tags: </label>
-	<input id="tag_picker" />
+	<label for="tag_picker">Add Tags</label>
+	<input id="tag_picker" placeholder="Type and select a tag" />
 </div>
 
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
@@ -33,7 +33,6 @@
 				return false;
       })  
       .fail(function() {
-        // TODO: need to handle the fail instance for when user tries to adding existing tag. should not be a fail.
         alert("error");
         $("#tag_picker").autocomplete("close");
   			$("#tag_picker").val('');
@@ -43,7 +42,7 @@
 
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
 		$("#tag_picker").autocomplete({
-			source: "/ajax/tags",
+      source: "/ajax/tags",
 			minLength: 2,
 			select: function(e, ui) {
 			  add_tag(ui.item.name);

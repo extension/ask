@@ -1,13 +1,14 @@
-<% if defined?(location_id) %>
-  <ul>
-    <% current_user.expertise_counties.where("location_id = ?", location_id).each do |c| %>
-      <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>no location passed</p>
+<% if current_user.expertise_locations.where("location_id = ?", location_id).length > 0 %>
+  
+  <% if current_user.expertise_counties.where("location_id = ?", location_id).length > 0 %>
+    <ul>
+      <% current_user.expertise_counties.where("location_id = ?", location_id).each do |c| %>
+        <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
+      <% end %>
+    </ul>
+  
+  <% else %>
+    <p class="all_counties">All counties</p>
+  <% end %>
+  
 <% end %>
-
-
-
-<!-- <i>_show_counties.html.erb</i> -->

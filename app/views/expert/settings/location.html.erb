@@ -2,12 +2,12 @@
 <h1>Locations</h1>
 
 <div id="loc_wrapper">
-  
 
   <%= render :partial => 'expert/settings/settings_navigation' %>
-
-  <h3>Your locations</h3>
-
+  
+  <h3>Add a Location</h3>
+  
+  
   <div id="location_picker">
     <select id="location_option" name="location_option">
       <% # TODO: figure out a better way to generate the select dropdown %>
@@ -19,6 +19,7 @@
     <br class="clearing" />
   </div>
 
+  <div id="new_loc_template_holder"></div>
 
   <div id="user_locations">
     <%= render :partial => 'show_locations' %>
@@ -28,17 +29,42 @@
 
 <script class="code" type="text/javascript">
   
-  $(".edit_location_block").on("click", function(event){
-    $(".ux_actions").load('<%= expert_settings_editlocation_path %>');
-  });
+  // get the selected location
+  $('#location_option').change(function() {
+     var str = "";
+     $("select option:selected").each(function () {
+       str += $(this).text() + " ";
+       id = $(this).val()
+     });
+     newLocation(id);
+     $('#your_locations').slideDown().fadeOut('slow');
+   });
   
+  // get the partial which acts as a template
+   var newLocation = function(locationID) {
+     $.ajax({
+         url: "/expert/settings/edit_location",
+         type: "POST",
+         cache: false,
+         data: {requested_location: locationID, event_type: "new"},
+         success: function(html){
+           var loc = $('<div class="location_block new_location" id="location_'+locationID+'">'+html+'</div>').hide();
+           $('#location_picker').hide();
+           loc.prependTo($("#new_loc_template_holder")).fadeIn('fast', function() {
+             $('#county_picker').hide();
+           });
+         }
+     });
+   }  
+  
+  // Pick individual counties
   $(".countyfield:not(.ui-autocomplete-input)").live("focus", function (event) { // http://stackoverflow.com/a/6193792/823202
     inputField = $(this);
     $(this).autocomplete({
       source: function(request, response) {
         $.getJSON("/expert/settings/counties", { 
           term: request.term,
-          location_id: inputField.closest(".location").attr("id").replace('location_', '') }, 
+          location_id: inputField.closest(".location_block").attr("id").replace('location_', '') }, 
           response);},
       minLength: 1,
       select: function(name, ui) { 
@@ -49,44 +75,22 @@
           data: {requested_county: ui.item.id}
         })
         .done(function() {
-          $("#countyfield").val("");
-          $('.show_counties').prepend('<li>'+inputField+' <span id="county_" class="removecounty btn">X</span></li>');
+          $(".countyfield").val("");
+          $('.all_counties').hide();
+          $('.show_edited_counties').prepend('<li>'+ui.item.name+' <span id="county_'+ui.item.id+'" class="removecounty btn">X</span></li>');
+          $('.pick_counties').html("done").removeClass("pick_counties").addClass("done_picking_counties");
+          $('.new_location_close').html("done").removeClass("new_location_close").addClass("done_picking_counties");
         })  
         .fail(function() { alert("error"); })
         }
     });
   });
   
-  $("#location_form")
-      // .bind("ajax:loading",  $("#status_report").html('Submitting...'))
-      // .bind("ajax:complete", $("#status_report").html(''))
-      .bind("ajax:success", function(event, data, status, xhr) {
-        $(".ux_actions").hide();
-        // resetPicker();
-      });
-  
-  var resetPicker = function() {
-    $("#add_location").show();
-    $('#location_picker').show();
-    $('#location_option').val("");
-    $('#selected_state').hide();
-    $('#county_picker').hide();
-    $("#location_form").show();
-  }
-  
-  // initialize
-  resetPicker();
-  
-  // simple links
-  $(".cancel").on("click", function(){
-    resetPicker();
-  });
-  
-  
+ 
   // Add all counties
   $("#loc_wrapper").on("click", ".add_all_counties", function(){
-    alert("clicked");
-    var locationID = $(this).closest(".location").attr("id").replace('location_', '')
+    location_block = $(this).closest(".location_block")
+    var locationID = $(location_block).attr("id").replace('location_', '')
     $.ajax({
       type: "POST",
       url: "<%= expert_settings_addlocation_path %>",
@@ -94,34 +98,18 @@
       data: {requested_location: locationID}
     })
     .done(function() {
-      showLocation(locationID)
+      location_block.find(".ux_actions").hide();
+      location_block.find(".all_counties_added").fadeIn('slow', function() {
+        resetPicker();
+        // $('h3', location_block).append(' <span id="location_'+locationID+'" class="removestate btn">X</span>');
+        showLocation(locationID, function() {
+          location_block.removeClass("new_location");
+        });
+      });
     })
   });  
   
-  $("#loc_wrapper").on("click", ".edit_location", function(e){
-    var locationID = $(this).closest(".location").attr("id").replace('location_', '')
-    editLocation(locationID);
-  });
-  
-  $("#loc_wrapper").on("click", ".edit_location_close", function(e){
-    var locationID = $(this).closest(".location").attr("id").replace('location_', '')
-    showLocation(locationID);
-  });
-  
-  
-  // get selection
-  $('#location_option').change(function() {
-     var str = "";
-     $("select option:selected").each(function () {
-       str += $(this).text() + " ";
-       id = $(this).val()
-     });
-     newLocation(id);
-     $('#location_picker').hide();
-     $('#county_picker').hide();
-   });
-  
-  var showLocation = function(locationID) {
+  var showLocation = function(locationID, callback) {
     $.ajax({
         url: "/expert/settings/show_location",
         type: "POST",
@@ -129,52 +117,85 @@
         data: {requested_location: locationID},
         success: function(html){
           $("#location_"+locationID).html(html);
-          resetPicker();
+          
+          callback();
         }
     });
   }
   
-  var editLocation = function(locationID) {
-    $.ajax({
-        url: "/expert/settings/edit_location",
-        type: "POST",
-        cache: false,
-        data: {requested_location: locationID},
-        success: function(html){
-          $("#location_"+locationID).html(html);
-        }
-    });
-  }
+  var resetPicker = function() {
+     $('#location_picker').slideDown();
+     $('#location_option').val("");
+     $('#selected_state').hide();
+     $('#county_picker').hide();
+   }
+
+   var resetPickerOnCancel = function() {
+     $('#location_picker').fadeIn();
+     $('#location_option').val("");
+     $('#selected_state').hide();
+     $('#county_picker').hide();
+   }
+
+   // initialize
+   resetPicker();
+   
+   var editLocation = function(locationID) {
+     $.ajax({
+         url: "/expert/settings/edit_location",
+         type: "POST",
+         cache: false,
+         data: {requested_location: locationID},
+         success: function(html){
+           $("#location_"+locationID).html(html);
+         }
+     });
+   }
+   
   
-  var newLocation = function(locationID) {
-    $.ajax({
-        url: "/expert/settings/edit_location",
-        type: "POST",
-        cache: false,
-        data: {requested_location: locationID},
-        success: function(html){
-          $("#user_locations").prepend('<div class="location template wrapper location_block" id="location_'+locationID+'">'+html+'</div>');
-        }
-    });
-  }
   
+  $("#loc_wrapper").on("click", ".edit_location", function(e){
+    var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
+    editLocation(locationID);
+  });
+  
+  $("#loc_wrapper").on("click", ".edit_location_close", function(e){
+    var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
+    showLocation(locationID);
+  });
+  
+  $("#loc_wrapper").on("click", ".new_location_close", function(e){
+    $(this).closest(".location_block").fadeOut('fast', function() {
+      resetPickerOnCancel();
+    });
+  });
+  
+  $("#loc_wrapper").on("click", ".done_picking_counties", function(e){
+    var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
+    var location_block = $(this).closest(".location_block");
+    location_block.find(".ux_actions").hide();
+    resetPicker();
+    showLocation(locationID, function() {
+      location_block.removeClass("new_location");
+    });
+  });
   
   $(".cancel_location").live("click", function(event) {
       event.stopPropagation();
-      $(this).closest(".location").remove();
+      $(this).closest(".location_block").remove();
       resetPicker();
   });
     
   $("body").on("click", ".pick_counties", function(){
-    // var locationBlock = $(this).closest("div");
-    $("#location_form").hide();
-    $('#county_picker').show();
-    $('#countyfield').focus();
+    var picker = $(this).next(".county_picker").show();
+    $(".countyfield", picker).focus();
   });
+  
+  
 
   
   // delete locations
-  $("#user_locations").on("click", ".removestate", function(){
+  $("#loc_wrapper").on("click", ".removestate", function(){
     var locationBlock = $(this).closest("div");
     $.ajax({
       type: "POST",
@@ -188,7 +209,7 @@
   });
   
   // delete counties
-  $("#user_locations").on("click", ".removecounty", function(){
+  $("#loc_wrapper").on("click", ".removecounty", function(){
     var countyItem = $(this).closest("li");
     $.ajax({
       type: "POST",

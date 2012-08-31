@@ -7,8 +7,8 @@
   <%= render :partial => 'partials/question_main' %>
   
   <div class="ui-widget">
-  	<label for="tag_picker">Tags: </label>
-  	<input id="tag_picker" /> <small>(All tags are public if the question is public)</small>
+    <label for="tag_picker">Add Tags</label>
+  	<input id="tag_picker" placeholder="Type and select a tag" /> <small>(All tags are public if the question is public)</small>
   </div>
   
   <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
@@ -23,12 +23,6 @@
   <% else %>
     <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
   <% end %>
-
-  <% @question.images.each do |image| %>
-    <%= image_tag image.url(:thumb) %>
-  <% end %>
-
-  <p>Location: <%= "#{@question.county.name} County, " if @question.county.present? && @question.location.present? %> <%= @question.location.present? ? @question.location.abbreviation : 'not specified' %></p>
 
   </div>
 
@@ -47,7 +41,6 @@
   				return false;
         })  
         .fail(function() {
-          // TODO: need to handle the fail instance for when user tries to adding existing tag. should not be a fail.
           alert("error");
           $("#tag_picker").autocomplete("close");
     			$("#tag_picker").val('');
@@ -138,7 +131,17 @@
     </aside>
   
   <aside>
-    <%= render :partial => 'partials/related' %>
+    <h3>Related Questions</h3>
+    <h4>TODO: Replace with actual related questions. This is just a placeholder.</h4>
+    <% @fake_related.each do |question| %>
+      <%= link_to expert_question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+    <% end %>
   </aside>
   
 </div>
