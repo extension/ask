@@ -133,7 +133,17 @@
     </aside>
   
   <aside>
-    <%= render :partial => 'partials/related' %>
+    <h3>Related Questions</h3>
+    <h4>TODO: Replace with actual related questions. This is just a placeholder.</h4>
+    <% @fake_related.each do |question| %>
+      <%= link_to expert_question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+    <% end %>
   </aside>
   
 </div>
