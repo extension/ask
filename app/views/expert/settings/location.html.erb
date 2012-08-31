@@ -20,8 +20,6 @@
   </div>
 
   <div id="new_loc_template_holder"></div>
-  
-  <h3>Your locations</h3>
 
   <div id="user_locations">
     <%= render :partial => 'show_locations' %>
@@ -39,6 +37,7 @@
        id = $(this).val()
      });
      newLocation(id);
+     $('#your_locations').slideDown().fadeOut('slow');
    });
   
   // get the partial which acts as a template
@@ -49,13 +48,11 @@
          cache: false,
          data: {requested_location: locationID, event_type: "new"},
          success: function(html){
-           var loc = $('<div class="location template wrapper location_block new_location" id="location_'+locationID+'">'+html+'</div>').hide();
+           var loc = $('<div class="location_block new_location" id="location_'+locationID+'">'+html+'</div>').hide();
            $('#location_picker').hide();
            loc.prependTo($("#new_loc_template_holder")).fadeIn('fast', function() {
              $('#county_picker').hide();
-              
            });
-           
          }
      });
    }
@@ -70,7 +67,7 @@
       source: function(request, response) {
         $.getJSON("/expert/settings/counties", { 
           term: request.term,
-          location_id: inputField.closest(".location").attr("id").replace('location_', '') }, 
+          location_id: inputField.closest(".location_block").attr("id").replace('location_', '') }, 
           response);},
       minLength: 1,
       select: function(name, ui) { 
@@ -112,12 +109,10 @@
     resetPicker();
   });
   
-  
-  
-  
+
   // Add all counties
   $("#loc_wrapper").on("click", ".add_all_counties", function(){
-    location_block = $(this).closest(".location")
+    location_block = $(this).closest(".location_block")
     var locationID = $(location_block).attr("id").replace('location_', '')
     $.ajax({
       type: "POST",
@@ -128,13 +123,14 @@
     .done(function() {
       location_block.find(".ux_actions").hide();
       location_block.find(".all_counties_added").fadeIn('slow', function() {
-             // Animation complete
-             showLocation(locationID)
-           });
+        showLocation(locationID, function() {
+          location_block.removeClass("new_location");
+        });
+      });
     })
   });  
   
-  var showLocation = function(locationID) {
+  var showLocation = function(locationID, callback) {
     $.ajax({
         url: "/expert/settings/show_location",
         type: "POST",
@@ -143,23 +139,24 @@
         success: function(html){
           $("#location_"+locationID).html(html);
           resetPicker();
+          callback();
         }
     });
   }
   
   
   $("#loc_wrapper").on("click", ".edit_location", function(e){
-    var locationID = $(this).closest(".location").attr("id").replace('location_', '')
+    var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
     editLocation(locationID);
   });
   
   $("#loc_wrapper").on("click", ".edit_location_close", function(e){
-    var locationID = $(this).closest(".location").attr("id").replace('location_', '')
+    var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
     showLocation(locationID);
   });
   
   $("#loc_wrapper").on("click", ".new_location_close", function(e){
-    $(this).closest(".location").fadeOut('fast', function() {
+    $(this).closest(".location_block").fadeOut('fast', function() {
       resetPickerOnCancel();
     });
   });
@@ -180,7 +177,7 @@
   
   $(".cancel_location").live("click", function(event) {
       event.stopPropagation();
-      $(this).closest(".location").remove();
+      $(this).closest(".location_block").remove();
       resetPicker();
   });
     

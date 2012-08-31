@@ -94,8 +94,9 @@ body#expert {
     }
     #flash_notification p {padding: 1em; font-size:1.5em;}
     
-    .location_block {border:2px solid #aaa; padding:.15em; width: 30%; margin-bottom:1em;}
-    .location {border:2px solid #aaa; padding:1em; width: 30%;}
+
+    .location_block {margin-bottom:3em; padding:1em; width: 30%; margin-bottom:1em; border:2px solid #aaa;}
+	.new_location {border: 6px solid #aaa;}
     p.feedback {padding:.75em;}
     p.feedback span {background:yellow; padding:.5em;}
     .cancel.btn.left {float:left; margin-left:2em;}
@@ -104,21 +105,19 @@ body#expert {
     .clearing {clear:both;}
     #location_picker {margin-bottom:3em;}
     #add_location {margin-bottom:1em;}
-    .location {margin-bottom:3em;}
     #location_list li {list-style:none; padding:.5em;}
     #location_list li:hover {color:#000; background:#eee;}
-    .location_block h3:hover {color:#000; background:#eee;}
-    .location_block h4 {padding:1em;}
-    .location_block h3 span {display:none;}
-    .location_block h3:hover span {display:inline; }
-    .location_block li span {display:none;}
-    .location_block li:hover span {display:inline;}
-//    .ux_actions {border:2px solid #e5e5e5; padding:.5em;}
-    #user_locations {border:1px solid lime; margin-bottom:2em; padding:.1em;}
-    .location.template {border:2px solid red;}
+
+	.show_location .location_block h3:hover {color:#000; background:#eee;}
+	.show_location .location_block h4 {padding:1em;}
+	.show_location .location_block h3 span {display:none;}
+	.show_location .location_block h3:hover span {display:inline; }
+	.show_location .location_block li span {display:none;}
+	.show_location .location_block li:hover span {display:inline;}
+    #user_locations {border:1px solid #eee; margin-bottom:2em; padding:.1em;}
     .right {float:right;}
 	
-	.new_location {border: 6px solid #aaa !important;}
+	
 	
 	.all_counties_added {background:yellow;}
     i {color:#ccc; font-size:.8em;}
