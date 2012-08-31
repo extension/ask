@@ -24,12 +24,6 @@
     <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
   <% end %>
 
-  <% @question.images.each do |image| %>
-    <%= image_tag image.url(:thumb) %>
-  <% end %>
-
-  <p>Location: <%= "#{@question.county.name} County, " if @question.county.present? && @question.location.present? %> <%= @question.location.present? ? @question.location.abbreviation : 'not specified' %></p>
-
   </div>
 
   <script class="code" type="text/javascript">
