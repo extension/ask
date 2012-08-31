@@ -7,8 +7,8 @@
   <%= render :partial => 'partials/question_main' %>
   
   <div class="ui-widget">
-  	<label for="tag_picker">Tags: </label>
-  	<input id="tag_picker" /> <small>(All tags are public if the question is public)</small>
+    <label for="tag_picker">Add Tags</label>
+  	<input id="tag_picker" placeholder="Type and select a tag" /> <small>(All tags are public if the question is public)</small>
   </div>
   
   <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
@@ -47,7 +47,6 @@
   				return false;
         })  
         .fail(function() {
-          // TODO: need to handle the fail instance for when user tries to adding existing tag. should not be a fail.
           alert("error");
           $("#tag_picker").autocomplete("close");
     			$("#tag_picker").val('');
