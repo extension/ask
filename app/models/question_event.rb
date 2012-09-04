@@ -44,8 +44,8 @@ class QuestionEvent < ActiveRecord::Base
   
   def self.log_assignment(question, recipient, initiated_by, assignment_comment)
     return self.log_event({:question => question,
-      :initiated_by_id => initiated_by,
-      :recipient => recipient,
+      :initiated_by_id => initiated_by.id,
+      :recipient_id => recipient.id,
       :event_state => ASSIGNED_TO,
       :response => assignment_comment})
   end
@@ -54,10 +54,17 @@ class QuestionEvent < ActiveRecord::Base
     question.update_attribute(:last_opened_at, Time.now)
     
     return self.log_event({:question => question,
-      :initiated_by_id => initiated_by,
-      :recipient => recipient,
+      :initiated_by_id => initiated_by.id,
+      :recipient_id => recipient.id,
       :event_state => REOPEN,
       :response => assignment_comment})
+  end
+  
+  def self.log_rejection(question)
+    return self.log_event({:question => question,
+      :initiated_by_id => question.current_resolver.id,
+      :event_state => REJECTED,
+      :response => question.current_response})
   end
   
   def self.log_event(create_attributes = {})

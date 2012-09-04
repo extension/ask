@@ -75,7 +75,8 @@ class Expert::QuestionsController < ApplicationController
       @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
       QuestionEvent.log_reopen(@question, user, current_user, assign_comment)
     end
-      
+    
+    flash[:notice] = "Question successfully reassigned!"
     redirect_to expert_question_url(@question)
   end
   
@@ -137,10 +138,34 @@ class Expert::QuestionsController < ApplicationController
       return redirect_to expert_questions_url
     end
     
-    flash[:notice] = "Question successfully assigned to a question wrangler."
+    flash[:notice] = "Question successfully assigned to a question wrangler!"
     redirect_to expert_question_url(question)
   end
   
+  def reject
+    if params[:id].present? && @question = Question.find_by_id(params[:id])
+      if @question.resolved?
+        flash[:failure] = "This question has already been resolved."
+        return redirect_to expert_question_url(@question)
+      end
+      
+      if request.post?
+        if (message = params[:reject_message]).present?
+          @question.add_resolution(Question::STATUS_REJECTED, current_user, message)
+          flash[:success] = "The question has been rejected."
+          redirect_to expert_question_url(@question)    
+        else
+          flash.now[:failure] = "Please document a reason for rejecting this question"
+          render nil
+          return
+        end
+      end
+    else
+      flash[:failure] = "Question specified does not exist."
+      redirect_to expert_questions_url
+    end
+  end
+    
   def add_tag
     @question = Question.find_by_id(params[:id])
     @tag = @question.set_tag(params[:tag])

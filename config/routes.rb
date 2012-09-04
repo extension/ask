@@ -23,6 +23,8 @@ Aae::Application.routes.draw do
         get  'answer'
         post 'answer'
         post 'assign_to_wrangler'
+        get  'reject'
+        post 'reject'
       end
     end
     

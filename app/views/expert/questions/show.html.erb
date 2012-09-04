@@ -105,7 +105,7 @@
     <% end %>
     <p><%= link_to "Reassign" %></p>
     <% if @question.assignee == current_user %>
-    <p><%= link_to "Reject (inappropriate or duplicate)" %></p>
+    <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
     <% end %>
     <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id) %></p>
   </aside>

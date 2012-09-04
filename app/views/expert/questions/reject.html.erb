@@ -1,0 +1,27 @@
+<% @page_title = "Reject this Question" %>
+
+<div id="reject">
+    <h3><%= link_to "Question #{@question.id}", expert_question_url(@question) %></h3>
+    <h1><%= @page_title %></h1>
+
+<p><strong>note:</strong> No information will be sent to the question submitter.</p>
+
+<p class="bekind">Please don't reject valid questions. If no one can answer this question, respond and suggest their local office.</p>
+
+<%= form_tag reject_expert_question_path(@question) do %>
+    <p>
+        <label for="reject_message">Reason for rejecting question</label>
+        <%= text_field_tag :reject_message %>
+    </p>
+    <p>
+        <%= submit_tag 'Reject'%>
+    </p>
+<% end %>
+
+
+<div id="inc_body" class="aaedelete">
+	<h2 class="inc_question"><span><%= @question.body %></span></h2>
+	<p class="inc_descriptive clear"><strong><%= @question.submitter_name %></strong> submitted this question <%= time_ago_in_words(@question.created_at) %> ago</p>
+</div>
+
+</div>
