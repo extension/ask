@@ -96,7 +96,7 @@ body#expert {
     
 
     .location_block {margin-bottom:3em; padding:1em; width: 30%; margin-bottom:1em; border:2px solid #aaa;}
-	.new_location {border: 6px solid #aaa;}
+	.new_location {border: 2px solid #444; margin:1em 0 2em;}
 	.county_picker {padding-top:1em;}
 	.location_block li {font-size:1.1em; list-style:none; font-weight:bold; padding:.35em;}
 	.location_block ul {margin:0; padding:.1em;}
@@ -109,15 +109,11 @@ body#expert {
     .clearing {clear:both;}
     #location_picker {margin-bottom:3em;}
     #add_location {margin-bottom:1em;}
-/*    #location_list li {list-style:none; padding:.5em;}*/
-    #location_list li:hover {color:#000; background:#eee;}
+	.ux_actions.edit {margin:.5em 0 1em;}
 
-	.show_location .location_block h3:hover {color:#000; background:#eee;}
 	.show_location .location_block h4 {padding:1em;}
 	.show_location .location_block h3 span {display:none;}
-	.show_location .location_block h3:hover span {display:inline; }
 	.show_location .location_block li span {display:none;}
-	.show_location .location_block li:hover span {display:inline;}
     #user_locations {margin-bottom:2em; padding:.1em;}
     .right {float:right;}
 	

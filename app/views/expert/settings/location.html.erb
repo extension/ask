@@ -101,7 +101,6 @@
       location_block.find(".ux_actions").hide();
       location_block.find(".all_counties_added").fadeIn('slow', function() {
         resetPicker();
-        // $('h3', location_block).append(' <span id="location_'+locationID+'" class="removestate btn">X</span>');
         showLocation(locationID, function() {
           location_block.removeClass("new_location");
         });
