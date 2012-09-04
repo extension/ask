@@ -1,14 +1,14 @@
 <% if (params[:event_type] == "new") %>
   <p class="new_location_close btn right">cancel</p>
+  <h3><%= location.name %></h3>
 <% else %>
   <p class="edit_location_close btn right">done</p>
+  <h3><%= location.name %> <span id="location_<%= location.id %>" class="removestate btn">X</span></h3>
 <% end %>
-
-<h3><%= location.name %></h3>
 
 <h4 class="all_counties_added" style="display:none;"><span>All counties added</span></h4>
 
-<div class="ux_actions">
+<div class="ux_actions edit">
   
   <p>Choose your coverage area</p>
 
@@ -21,12 +21,6 @@
   </div>
 </div>
 
-
-
-  <div class="show_edited_counties">
-    <%= render :partial => 'show_counties', :locals => {:location_id => location.id} %>
-  </div>
-
-
-
-
+<div class="show_edited_counties">
+  <%= render :partial => 'show_counties', :locals => {:location_id => location.id} %>
+</div>

@@ -1,12 +1,10 @@
 <% @page_title = @user.name %>
 
-<div id="main" class="span6">  
+<div id="main" class="span8">
   <h1><%= @user.name %></h1>
   <%= get_avatar(@user) %>
   
   <h3>Expert description</h3>
-  
-  <h3>Location</h3>
   
   <p>
     <strong>About me:</strong>
@@ -67,7 +65,7 @@
 </div>
 
 
-<div id="main" class="span6">
+<div id="secondary" class="span4">
   <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
   
   <% if current_user.id == @user.id %>
@@ -79,35 +77,53 @@
   <h2>Currently Assigned</h2>
   <p>No Questions currently assigned</p>
   
-  <h4>Handling Rate</h4>
-  <p><span class="handling_rate"><span>75</span></span></p>
-  
-  <p>
+  <aside>
+    <h4>Handling Rate</h4>
+    <p><span class="handling_rate"><span>75 (fake data)</span></span></p>
+  </aside>
+
+
+  <aside>
+    <%= render :partial => 'location_summary' %>
+  </aside>
+
+
+  <aside>
     <% if @user.tags.length > 0 %>
-      <% @user.tags.each do |tag| %>
-      <span class="label"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+      <p class="tags">  
+        <% @user.tags.each do |tag| %>
+        <span class="label"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <% end %>
+      </p>
+      <% if current_user.id == @user.id %>
+        <p><%= link_to 'edit', expert_settings_tags_path() %></p>
       <% end %>
+      <br class="clearing" />
+      
     <% else %>
-      There are no tags at this time.
-    <% end %>
-  
-    <% if current_user.id == @user.id %>
-      <%= link_to 'edit', expert_settings_tags_path() %>
-    <% end %>
-  </p>
-  
-  <div class="section">
-  <h3>Group Membership</h3>
-  <ul>
-    <% if @my_groups.length == 0 %>
-      <li>You currently are not a member or leader of a group.</li>
-    <% else %>
-      <% @my_groups.each do |group| %>  
-        <li><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
+    
+      <% if current_user.id == @user.id %>
+        <h4>Help improve your question assignments<h4>
+          <%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => 'btn-primary btn' %>
+      <% else %>
+        <p>No tags selected</p>
       <% end %>
+        
     <% end %>
-  </ul>
-  </div>
+  </aside>
+
+  <aside>
+    <h3>Group Membership</h3>
+    <ul class="groups">
+      <% if @my_groups.length == 0 %>
+        <li>You currently are not a member or leader of a group.</li>
+      <% else %>
+        <% @my_groups.each do |group| %>  
+          <li><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </aside>
   
 </div>
 

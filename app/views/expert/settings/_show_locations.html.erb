@@ -1,7 +1,7 @@
 <div id="location_list">
   <% current_user.expertise_locations.each do |l| %>
     <div class="location location_block show_location" id="location_<%= l.id %>">
-      <%= render :partial => 'show_location', :locals => {:location => l} %>
+      <%= render :partial => 'expert/settings/show_location', :locals => {:location => l} %>
     </div>
   <% end %>
 </div>
