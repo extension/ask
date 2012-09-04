@@ -1,0 +1,19 @@
+// Place all the styles related to the questions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "_variables";
+
+#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
+
+#secondary .expert aside {padding:0; background:none; margin-bottom:2em;}
+.expert aside p {background:#eee; padding:.5em; @include rounded10;}
+
+.expert aside a {color:#666;}
+
+.not_answered {background:#ddd; padding:2em;}
+
+.groupmasthead {border:1px solid #ddd; background:#eee; padding:2em; margin-bottom:3em;}
+
+.groups {margin:0;padding:1em;}
+.groups li {margin-bottom:1em; list-style:none;}

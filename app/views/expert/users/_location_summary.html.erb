@@ -1,0 +1,44 @@
+<div id="location_list">
+
+<% if @user.expertise_locations.length > 0 %>
+  
+  <h3>Locations</h3>
+    <% @user.expertise_locations.each do |l| %>
+      <div class="location">
+
+        <h4><%= l.name %></h4>
+
+        <% if current_user.expertise_locations.where("location_id = ?", l.id).length > 0 %>
+          <% if current_user.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+            <ul>
+              <% current_user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                <li><%= c.name %></li>
+              <% end %>
+            </ul>
+          <% else %>
+              <ul>
+                <li class="all_counties">All counties</li>
+              </ul>
+            <% end %>
+          <% end %>
+
+      </div>
+    <% end %>
+    
+    <% if current_user.id == @user.id %>
+      <%= link_to 'edit', expert_settings_location_path() %>
+    <% end %>
+  
+<% else %>
+
+  
+    <% if current_user.id == @user.id %>
+      <h4>Help improve your question assignments<h4>
+      <p><%= link_to 'Set your location', expert_settings_location_path(), :class => 'btn-primary btn' %></p>
+    <% else %>
+    <p>No locations selected</p>
+    <% end %>
+  
+<% end %>
+
+</div>

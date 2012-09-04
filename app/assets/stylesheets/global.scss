@@ -33,6 +33,10 @@ body#expert {
 	#widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
 	label strong {font-size:1.2em; display:block}
     span.label a {color:#fff;}
+	.tags {float:left;}
+	.tags .label {display:block; float:left; margin:.25em; padding:.35em}
+	.tags .label:hover {background:#000;}
+	.tags .label a:hover {text-decoration:none !important;}
 	fieldset p {margin-bottom:2em}
     #content_wrapper {margin:3em 1.5em 1em;}
     .container-fluid {max-width:1180px; margin: 0 auto;}
@@ -145,4 +149,7 @@ body#expert {
 	span.removetag {padding:.1em .25em; background:#eee; color:#999; margin-left:1em; cursor:pointer;}
 	
 	span.label {font-size:.9em;}
+	
+/*	#location_list {padding:1em; margin:1em 0;}*/
+	#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
 }
