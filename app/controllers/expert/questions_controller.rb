@@ -125,21 +125,20 @@ class Expert::QuestionsController < ApplicationController
   end
   
   def assign_to_wrangler
-    if request.post? and params[:squid]
-      submitted_question = SubmittedQuestion.find_by_id(params[:squid])
-      recipient = submitted_question.assign_to_question_wrangler(@currentuser)
+    if params[:id].present? && question = Question.find_by_id(params[:id]) 
+      recipient = question.assign_to_question_wrangler(current_user)
       # re-open the question if it's reassigned after resolution
-      if submitted_question.status_state == SubmittedQuestion::STATUS_RESOLVED or submitted_question.status_state == SubmittedQuestion::STATUS_NO_ANSWER
-        submitted_question.update_attributes(:status => SubmittedQuestion::SUBMITTED_TEXT, :status_state => SubmittedQuestion::STATUS_SUBMITTED)
-        SubmittedQuestionEvent.log_reopen(submitted_question, recipient, @currentuser, SubmittedQuestion::WRANGLER_REASSIGN_COMMENT)
-      end
-      
+      if question.status_state == Question::STATUS_RESOLVED || question.status_state == Question::STATUS_NO_ANSWER
+        question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
+        QuestionEvent.log_reopen(question, recipient, current_user, Question::WRANGLER_REASSIGN_COMMENT)
+      end  
     else
-      do_404
-      return
+      flash[:error] = "Question specified does not exist."
+      return redirect_to expert_questions_url
     end
     
-    redirect_to :action => :index, :id => submitted_question.id
+    flash[:notice] = "Question successfully assigned to a question wrangler."
+    redirect_to expert_question_url(question)
   end
   
   def add_tag

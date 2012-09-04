@@ -87,6 +87,7 @@ class Question < ActiveRecord::Base
   
   
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
+  WRANGLER_REASSIGN_COMMENT = "This question has been assigned to you because the previous assignee clicked the 'Hand off to a Question Wrangler' button."
   
   # for purposes of solr search
   def response_list
@@ -205,7 +206,15 @@ class Question < ActiveRecord::Base
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :current_resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
         QuestionEvent.log_rejection(self)
     end
+  end
+  
+  # for the 'Hand off to a Question Wrangler' functionality
+  def assign_to_question_wrangler(assigned_by)
+    assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+    comment = WRANGLER_REASSIGN_COMMENT
 
+    assign_to(assignee, assigned_by, comment)
+    return assignee
   end
   
   def resolved?
