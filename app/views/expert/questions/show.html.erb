@@ -105,11 +105,13 @@
     <% end %>
     <p><%= link_to "Reassign" %></p>
     <% if @question.assignee == current_user %>
-    <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
+      <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
+    <% end %>
+    <% if !@question.body.index("http://").blank? %>
+        <p><%= link_to "Report As Spam", report_spam_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as spam?", :method => :post %></p>
     <% end %>
     <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id) %></p>
   </aside>
-  
   
 	<aside>
 	  <% if @question_responses.length < 1 %>

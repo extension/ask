@@ -38,14 +38,14 @@ class Expert::QuestionsController < ApplicationController
   def assign
     if !params[:id]
       flash[:failure] = "You must select a question to assign."
-      return redirect_to expert_questions_url
+      return redirect_to expert_home_url
     end
     
     @question = Question.find_by_id(params[:id])
         
     if !@question
       flash[:failure] = "Invalid question."
-      return redirect_to expert_questions_url
+      return redirect_to expert_home_url
     end
     
     if !params[:assignee_login]
@@ -135,7 +135,7 @@ class Expert::QuestionsController < ApplicationController
       end  
     else
       flash[:error] = "Question specified does not exist."
-      return redirect_to expert_questions_url
+      return redirect_to expert_home_url
     end
     
     flash[:notice] = "Question successfully assigned to a question wrangler!"
@@ -162,8 +162,22 @@ class Expert::QuestionsController < ApplicationController
       end
     else
       flash[:failure] = "Question specified does not exist."
-      redirect_to expert_questions_url
+      redirect_to expert_home_url
     end
+  end
+  
+  def report_spam
+    question = Question.find_by_id(params[:id])
+    if question.blank?
+      flash[:failure] = "Question specified does not exist."
+      return redirect_to expert_home_url
+    end
+      
+    question.update_attributes(:spam => true, :is_private => true, :is_private_reason => Question::PRIVACY_REASON_SPAM)
+    QuestionEvent.log_spam(question, current_user)       
+        
+    flash[:success] = "Incoming question has been successfully marked as spam."
+    redirect_to expert_home_url
   end
     
   def add_tag

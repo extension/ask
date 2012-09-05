@@ -67,6 +67,12 @@ class QuestionEvent < ActiveRecord::Base
       :response => question.current_response})
   end
   
+  def self.log_spam(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => MARKED_SPAM})
+  end
+  
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]

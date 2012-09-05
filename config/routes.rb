@@ -17,7 +17,7 @@ Aae::Application.routes.draw do
   end
     
   namespace :expert do
-    resources :questions do
+    resources :questions, :only => [:show] do
       member do
         post 'assign'
         get  'answer'
@@ -25,6 +25,7 @@ Aae::Application.routes.draw do
         post 'assign_to_wrangler'
         get  'reject'
         post 'reject'
+        post 'report_spam'
       end
     end
     
