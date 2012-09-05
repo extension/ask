@@ -19,4 +19,93 @@ class AjaxController < ApplicationController
     list.unshift(Hash[id: nil, label: search_term, name: search_term])
     render json: list
   end
+
+  
+  def counties
+    if params[:term]
+      like= "%".concat(params[:term].concat("%"))
+      counties = County.where("name like ?", like).where(:location_id => params[:location_id])
+    else
+      counties = County.where(:location_id => params[:location_id])
+    end
+    list = counties.map {|c| Hash[ id: c.id, label: c.name, name: c.name]}
+    render json: list
+  end
+
+
+  def show_location
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    location = Location.find(params[:requested_location])
+    render :partial => 'show_location', :locals => {:location => location}
+  end
+
+  
+  def edit_location
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    location = Location.find(params[:requested_location])
+    render :partial => 'ajax/edit_location', :locals => {:location => location}
+  end
+
+
+  def add_county
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    @county = County.find(params[:requested_county])
+    
+    if !@object.expertise_counties.include?(@county)
+      @object.expertise_counties << @county
+      if !@object.expertise_locations.include?(@county.location)
+        @object.expertise_locations << @county.location
+      end
+      @object.save
+    end
+  end
+ 
+   
+  def add_location
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    location = Location.find(params[:requested_location])
+    @object.expertise_counties.where("location_id = ?", params[:requested_location]).each do |c|
+      @object.expertise_counties.delete(c)
+    end
+    if !@object.expertise_locations.include?(location)
+      @object.expertise_locations << location
+      @object.save
+    end
+  end  
+
+
+  def remove_location
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    location = Location.find(params[:location_id])
+    @object.expertise_counties.where("location_id = ?", params[:location_id]).each do |c|
+      @object.expertise_counties.delete(c)
+    end
+    @object.expertise_locations.delete(location)
+  end
+
+
+  def remove_county
+    case params[:object_type]
+      when "group"    then @object = Group.find_by_id(params[:object_id])
+      when "user"     then @object = User.find_by_id(params[:object_id])
+    end
+    county = County.find(params[:county_id])
+    @object.expertise_counties.delete(county)
+  end
+  
 end

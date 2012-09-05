@@ -5,11 +5,11 @@
 <div class="ux_actions"></div>
   
 <div class="show_counties">
-  <% if current_user.expertise_locations.where("location_id = ?", location.id).length > 0 %>
+  <% if @object.expertise_locations.where("location_id = ?", location.id).length > 0 %>
 
-    <% if current_user.expertise_counties.where("location_id = ?", location.id).length > 0 %>
+    <% if @object.expertise_counties.where("location_id = ?", location.id).length > 0 %>
       <ul>
-        <% current_user.expertise_counties.where("location_id = ?", location.id).each do |c| %>
+        <% @object.expertise_counties.where("location_id = ?", location.id).each do |c| %>
           <li><%= c.name %></li>
         <% end %>
       </ul>
