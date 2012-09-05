@@ -1,0 +1,34 @@
+<div id="location_list">
+
+<% if @group.expertise_locations.length > 0 %>
+  
+  <h3>Locations</h3>
+    <% @group.expertise_locations.each do |l| %>
+      <div class="location">
+
+        <h4><%= l.name %></h4>
+
+        <% if @group.expertise_locations.where("location_id = ?", l.id).length > 0 %>
+          <% if @group.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+            <ul>
+              <% @group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                <li><%= c.name %></li>
+              <% end %>
+            </ul>
+          <% else %>
+              <ul>
+                <li class="all_counties">All counties</li>
+              </ul>
+            <% end %>
+          <% end %>
+
+      </div>
+    <% end %>
+      
+<% else %>
+  <p>No locations selected.</p>
+  <!-- TODO: either need to prompt to add locations or assume absence of location == National -->
+  
+<% end %>
+
+</div>
