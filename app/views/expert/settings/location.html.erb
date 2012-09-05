@@ -1,30 +1,9 @@
 <h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
-<h1>Locations</h1>
 
-<div id="loc_wrapper">
+<h3>Locations</h3>
 
-  <%= render :partial => 'expert/settings/settings_navigation' %>
-  
-  <h3>Add a Location</h3>
-  
-  
-  <div id="location_picker">
-    <select id="location_option" name="location_option">
-      <% # TODO: figure out a better way to generate the select dropdown %>
-      <option value="">Add a location</option>
-      <% @locations.each do |l| %>
-        <option value="<%= l.id %>"><%= l.name %></option>
-        <% end %>
-    </select>
-    <br class="clearing" />
-  </div>
+<%= render :partial => 'expert/settings/settings_navigation' %>
 
-  <div id="new_loc_template_holder"></div>
-
-  <div id="user_locations">
-    <%= render :partial => 'show_locations' %>
-  </div>
-
+<div id="loc_wrapper" class="user" data-object="user" data-id="<%= @user.id %>">
+  <%= render :partial => 'ajax/location_picker' %>
 </div>
-
-<%= render :partial => 'partials/location_picker' %>

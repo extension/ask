@@ -2,6 +2,8 @@ class Group < ActiveRecord::Base
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :questions
+  has_many :group_locations
+  has_many :group_counties
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   belongs_to :widget_location, :foreign_key => "widget_location_id", :class_name => "Location"

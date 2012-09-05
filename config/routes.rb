@@ -48,15 +48,6 @@ Aae::Application.routes.draw do
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
     match "settings/tags" => "settings#tags", :via => [:get, :put]
-    match "settings/addlocation" => "settings#addlocation", :via => [:post]
-    match "settings/removelocation" => "settings#removelocation", :via => [:post]
-    match "settings/addcounty" => "settings#addcounty", :via => [:post]
-    match "settings/removecounty" => "settings#removecounty", :via => [:post]
-    match "settings/counties" => "settings#counties", :via => [:get]
-    match "settings/show_counties" => "settings#show_counties", :via => [:get]
-    match "settings/show_location" => "settings#show_location", :via => [:post]
-    match "settings/editlocation" => "settings#editlocation", :via => [:get]
-    match "settings/edit_location" => "settings#edit_location", :via => [:post]
     match "home" => "home#index"
     match "home/tags" => "home#tags"
     match "home/experts" => "home#experts"
@@ -71,6 +62,13 @@ Aae::Application.routes.draw do
   match "home/private_page" => "home#private_page", :via => :get
   match "ask" => "home#ask"
   match "ajax/tags" => "ajax#tags", :via => [:get]
+  match "ajax/counties" => "ajax#counties", :via => [:get]
+  match "ajax/show_location" => "ajax#show_location", :via => [:get, :post]
+  match "ajax/edit_location" => "ajax#edit_location", :via => [:get, :post]
+  match "ajax/add_county" => "ajax#add_county", :via => [:post]
+  match "ajax/add_location" => "ajax#add_location", :via => [:post]
+  match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
+  match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
   
   
   

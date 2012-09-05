@@ -55,6 +55,8 @@ class Expert::GroupsController < ApplicationController
   
   def locations
     @group = Group.find_by_id(params[:id])
+    @locations = Location.order('fipsid ASC')
+    @object = @group
   end
   
   def tags
