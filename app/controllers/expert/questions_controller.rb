@@ -194,4 +194,33 @@ class Expert::QuestionsController < ApplicationController
     @question.tags.delete(tag)
   end
   
+  def reassign
+    @question = Question.find_by_id(params[:id])
+    @location_experts = ''
+    @county_experts = ''
+    @tag_experts = ''
+    @tag_and_county_experts = ''
+    @tag_and_location_experts = ''
+    
+    if @question.location_id?
+      @location_experts = User.with_expertise_location(@question.location_id).limit(5)
+    end
+    
+    if @question.county_id?
+      @county_experts = User.with_expertise_county(@question.county_id).limit(5)
+    end
+    
+    if @question.tags.length > 0
+      @tag_experts = User.tagged_with(@question.tags.first.id).limit(5)
+      if @question.county_id?
+        @tag_and_county_experts = User.with_expertise_county(@question.county_id).tagged_with(@question.tags.first.id).limit(5)
+      end
+      if @question.location_id?
+        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(5)
+      end
+    end
+    # tags_names = ["horses", "horticulture"]
+    # @tag_experts = User.joins{tags}.where{tags.name.in tags_names}.group{User.id}.having("count(User.id) = #{tags_names.size}")
+  end
+  
 end
