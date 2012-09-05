@@ -1,3 +1,33 @@
+<h3>Add a Location</h3>
+
+<div id="location_picker">
+  <select id="location_option" name="location_option">
+    <% # TODO: figure out a better way to generate the select dropdown %>
+    <option value="">Add a location</option>
+    <% @locations.each do |l| %>
+      <option value="<%= l.id %>"><%= l.name %></option>
+      <% end %>
+  </select>
+  <br class="clearing" />
+</div>
+
+
+<div id="new_loc_template_holder"></div>
+
+
+<div id="user_locations">
+  <div id="location_list">
+    <% @object.expertise_locations.each do |l| %>
+      <div class="location location_block show_location" id="location_<%= l.id %>">
+        <%= render :partial => 'ajax/show_location', :locals => {:location => l, :object => @object} %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+
 <script class="code" type="text/javascript">
   
   // get the selected location
@@ -14,10 +44,10 @@
   // get the partial which acts as a template
    var newLocation = function(locationID) {
      $.ajax({
-         url: "/expert/settings/edit_location",
+         url: "/ajax/edit_location",
          type: "POST",
          cache: false,
-         data: {requested_location: locationID, event_type: "new"},
+         data: {requested_location: locationID, event_type: "new", object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")},
          success: function(html){
            var loc = $('<div class="location_block new_location" id="location_'+locationID+'">'+html+'</div>').hide();
            $('#location_picker').hide();
@@ -33,7 +63,7 @@
     inputField = $(this);
     $(this).autocomplete({
       source: function(request, response) {
-        $.getJSON("/expert/settings/counties", { 
+        $.getJSON("/ajax/counties", { 
           term: request.term,
           location_id: inputField.closest(".location_block").attr("id").replace('location_', '') }, 
           response);},
@@ -41,9 +71,9 @@
       select: function(name, ui) { 
         $.ajax({
           type: "POST",
-          url: "<%= expert_settings_addcounty_path %>",
+          url: "<%= ajax_add_county_path %>",
           cache: false,
-          data: {requested_county: ui.item.id}
+          data: {requested_county: ui.item.id, object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")}
         })
         .done(function() {
           $(".countyfield").val("");
@@ -64,9 +94,9 @@
     var locationID = $(location_block).attr("id").replace('location_', '')
     $.ajax({
       type: "POST",
-      url: "<%= expert_settings_addlocation_path %>",
+      url: "<%= ajax_add_location_path %>",
       cache: false,
-      data: {requested_location: locationID}
+      data: {requested_location: locationID, object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")}
     })
     .done(function() {
       location_block.find(".ux_actions").hide();
@@ -81,10 +111,10 @@
   
   var showLocation = function(locationID, callback) {
     $.ajax({
-        url: "/expert/settings/show_location",
+        url: "/ajax/show_location",
         type: "POST",
         cache: false,
-        data: {requested_location: locationID},
+        data: {requested_location: locationID,object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")},
         success: function(html){
           $("#location_"+locationID).html(html);
           
@@ -112,10 +142,10 @@
    
    var editLocation = function(locationID) {
      $.ajax({
-         url: "/expert/settings/edit_location",
+         url: "/ajax/edit_location",
          type: "POST",
          cache: false,
-         data: {requested_location: locationID},
+         data: {requested_location: locationID, object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")},
          success: function(html){
            $("#location_"+locationID).html(html);
          }
@@ -169,9 +199,9 @@
     var locationBlock = $(this).closest("div");
     $.ajax({
       type: "POST",
-        url: "<%= expert_settings_removelocation_path %>",
+        url: "<%= ajax_remove_location_path %>",
         cache: false,
-        data: {location_id: $(this).attr("id").replace('location_', '')}
+        data: {location_id: $(this).attr("id").replace('location_', ''), object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")}
     })
     .done(function() {
       locationBlock.fadeOut(500);
@@ -183,9 +213,9 @@
     var countyItem = $(this).closest("li");
     $.ajax({
       type: "POST",
-        url: "<%= expert_settings_removecounty_path %>",
+        url: "<%= ajax_remove_county_path %>",
         cache: false,
-        data: {county_id: $(this).attr("id").replace('county_', '')}
+        data: {county_id: $(this).attr("id").replace('county_', ''), object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")}
     })
     .done(function() {
       countyItem.fadeOut(500);

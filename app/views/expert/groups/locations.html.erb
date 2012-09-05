@@ -3,3 +3,8 @@
 <h3>Group Settings > Locations</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
+
+
+<div id="loc_wrapper" class="group" data-object="group" data-id="<%= @group.id %>">
+  <%= render :partial => 'ajax/location_picker' %>
+</div>
