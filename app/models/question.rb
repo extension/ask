@@ -214,6 +214,8 @@ class Question < ActiveRecord::Base
     comment = WRANGLER_REASSIGN_COMMENT
 
     assign_to(assignee, assigned_by, comment)
+    self.assigned_group = Group.question_wrangler_group
+    self.save
     return assignee
   end
   
