@@ -103,11 +103,11 @@
     <% else %>
       <p><%= link_to "Answer this question", answer_expert_question_path(@question.id) %></p>
     <% end %>
-    <p><%= link_to "Reassign" %></p>
+    <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %></p>
     <% if @question.assignee == current_user %>
     <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
     <% end %>
-    <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id) %></p>
+    <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn" %></p>
   </aside>
   
   

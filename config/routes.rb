@@ -25,6 +25,8 @@ Aae::Application.routes.draw do
         post 'assign_to_wrangler'
         get  'reject'
         post 'reject'
+        get  'reassign'
+        post 'reassign'
       end
     end
     
