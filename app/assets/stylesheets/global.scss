@@ -152,4 +152,22 @@ body#expert {
 	
 /*	#location_list {padding:1em; margin:1em 0;}*/
 	#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
+/*	#filter_terms td p {-webkit-transform: rotate(-45deg);}*/
+	
+	/*rotate 30 degrees*/
+	.rotate30 {
+	/*General*/
+	transform: rotate(-30deg);
+	/*Firefox*/
+	-moz-transform: rotate(-30deg);
+	/*Microsoft Internet Explorer*/
+	-ms-transform: rotate(-30deg);
+	/*Chrome, Safari*/
+	-webkit-transform: rotate(-30deg);
+	/*Opera*/
+	-o-transform: rotate(-30deg);
+	}
+	
+	
+	
 }

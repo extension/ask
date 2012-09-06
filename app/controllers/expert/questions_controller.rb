@@ -203,20 +203,20 @@ class Expert::QuestionsController < ApplicationController
     @tag_and_location_experts = ''
     
     if @question.location_id?
-      @location_experts = User.with_expertise_location(@question.location_id).limit(5)
+      @location_experts = User.with_expertise_location(@question.location_id).limit(6)
     end
     
     if @question.county_id?
-      @county_experts = User.with_expertise_county(@question.county_id).limit(5)
+      @county_experts = User.with_expertise_county(@question.county_id).limit(6)
     end
     
     if @question.tags.length > 0
-      @tag_experts = User.tagged_with(@question.tags.first.id).limit(5)
+      @tag_experts = User.tagged_with(@question.tags.first.id).limit(6)
       if @question.county_id?
-        @tag_and_county_experts = User.with_expertise_county(@question.county_id).tagged_with(@question.tags.first.id).limit(5)
+        @tag_and_county_experts = User.with_expertise_county(@question.county_id).tagged_with(@question.tags.first.id).limit(6)
       end
       if @question.location_id?
-        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(5)
+        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(6)
       end
     end
     # tags_names = ["horses", "horticulture"]

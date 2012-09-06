@@ -3,70 +3,48 @@
 <p><%= link_to "AaE ##{@question.id}", expert_question_path(@question.id) %></p>
 <h1>Reassign this question</h1>
 
-<div id="tag_list" style="margin-top:1em; font-size:1.2em;">
-  <h4>Filtering on these options...</h4>
-  <br>
- <% if @question.tags.length > 0 %>
-   <% @question.tags.each do |tag| %>
-       <p id="tag_<%= tag.id %>"><span class="label"><%= tag.name %></span> <span class="removetag">[x]</span></p>
-   <% end %>
- <% end %>
+<h4>Filtering on these options...</h4>
 
-<% if @question.county.present? %>
-  <p><span class="label label-success"><%= "#{@question.county.name} County" %></span> <span class="removetag">[x]</span></p>
-<% end %>
+<table class="table table-bordered">
 
-<% if @question.location.present? %>
-  <p><span class="label label-success"><%= @question.location.abbreviation %></span> <span class="removetag">[x]</span></p>
-<% end %>
+  <tr id="filter_terms">
+    <td><%= link_to "shuffle", "/", {:class => "btn"} %></td>
+    <% filter_terms = [] %>
+    <% if @question.county.present? %>
+      <% filter_terms <<  @question.county.name %> 
+      <td><p class="rotate30"><span class="label label-success"><%= "#{@question.county.name} County" %></span> <span class="removetag">[x]</span></p></td>
+    <% end %>
 
-</div>
+    <% if @question.location.present? %>
+      <% filter_terms <<  @question.location.name %> 
+      <td><p class="rotate30"><span class="label label-success"><%= @question.location.abbreviation %></span> <span class="removetag">[x]</span></p></td>
+    <% end %>
 
-
-<% if @tag_and_county_experts.length > 0 %>
-  <h4>County and Tag Matches</h4>
-  <% @tag_and_county_experts.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-      <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %></p>
-  <% end %>
-<% else %>
-  <p>No County and Tag Matches</p>
-<% end %>
+    <% if @question.tags.length > 0 %>
+      <% @question.tags.each do |tag| %>
+        <% filter_terms <<  tag.name %> 
+        <td><p id="tag_<%= tag.id %>" class="rotate30"><span class="label"><%= tag.name %></span> <span class="removetag">[x]</span></p></td>
+      <% end %>
+    <% end %>
+  </tr>
 
 
 <% if @tag_and_location_experts.length > 0 %>
-  <h4>Location and Tag Matches</h4>
-  <% @tag_and_location_experts.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %> 
-      <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %></p>
-  <% end %>
+      <% @tag_and_location_experts.each do |member| %>
+        <tr>
+        <td>
+          <p>
+            <%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
+            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %>
+          </p>
+          <% filter_terms.each do |i| %>
+            <td><i class="icon-ok"></i></td>
+          <% end %>
+        </td>
+        </tr>
+      <% end %>
+    </tr>
 <% else %>
-  <p>No Location and Tag Matches</p>
+  <p>No County and Tag Matches</p>
 <% end %>
-
-
-<% if @county_experts.length > 0 %>
-  <h4>County Matches</h4>
-  <% @county_experts.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-      <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %></p>
-  <% end %>
-<% else %>
-  <p>No County matches</p>
-<% end %>
-
-<h4>Location Matches</h4>
-<% if @location_experts.length > 0 %>
-  <% @location_experts.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-      <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %></p>
-  <% end %>
-<% end %>
-
-<h4>Tag Matches</h4>
-<% if @tag_experts.length > 0 %>
-  <% @tag_experts.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-      <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %></p>
-  <% end %>
-<% end %>
+</table>
