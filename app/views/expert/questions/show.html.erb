@@ -100,7 +100,7 @@
 	<% if !@question.spam %>
       <h3>Actions</h3>
       <% if @question.assignee != current_user %>
-        <p><%= link_to "Assign me this question", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post %></p>
+        <p><%= link_to "Assign me this question", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post, :class => "btn" %></p>
       <% else %>
 
         <p><%= link_to "Answer this question", answer_expert_question_path(@question.id), :class => "btn" %></p>
