@@ -97,20 +97,25 @@
   </aside>
   
   <aside>
-    <h3>Actions</h3>
-    <% if @question.assignee != current_user %>
-      <p><%= link_to "Assign me this question", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post %></p>
-    <% else %>
-      <p><%= link_to "Answer this question", answer_expert_question_path(@question.id) %></p>
-    <% end %>
-    <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %></p>
-    <% if @question.assignee == current_user %>
-      <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
-    <% end %>
-    <% if !@question.body.index("http://").blank? %>
-        <p><%= link_to "Report As Spam", report_spam_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as spam?", :method => :post %></p>
-    <% end %>
-    <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn" %></p>
+	<% if !@question.spam %>
+      <h3>Actions</h3>
+      <% if @question.assignee != current_user %>
+        <p><%= link_to "Assign me this question", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post %></p>
+      <% else %>
+        <p><%= link_to "Answer this question", answer_expert_question_path(@question.id) %></p>
+      <% end %>
+      <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %></p>
+      <% if @question.assignee == current_user %>
+        <p><%= link_to "Reject (inappropriate or duplicate)", reject_expert_question_path(@question.id) %></p>
+      <% end %>
+      <% if !@question.body.index("http://").blank? %>
+          <p><%= link_to "Report As Spam", report_spam_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as spam?", :method => :post %></p>
+      <% end %>
+      <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn" %></p>
+     <% else %>
+       <p><strong>This question has been marked as spam.</strong></p>
+       <p><%= link_to "This is not spam", report_ham_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as not spam?", :method => :post %></p>
+     <% end %>
   </aside>
   
 	<aside>

@@ -26,6 +26,7 @@ Aae::Application.routes.draw do
         get  'reject'
         post 'reject'
         post 'report_spam'
+        post 'report_ham'
         get  'reassign'
         post 'reassign'
       end

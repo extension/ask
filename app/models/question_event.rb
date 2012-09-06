@@ -9,9 +9,6 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
-  scope :latest, {:order => "created_at desc", :limit => 1}
-  
-  
   ASSIGNED_TO = 1
   RESOLVED = 2
   MARKED_SPAM = 3
@@ -30,8 +27,10 @@ class QuestionEvent < ActiveRecord::Base
   EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 'marked as spam', 4 => 'marked as non-spam', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
                             8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented' }
   
+  scope :latest, {:order => "created_at desc", :limit => 1}
+  scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
   
-  
+
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
 
@@ -73,6 +72,12 @@ class QuestionEvent < ActiveRecord::Base
       :event_state => MARKED_SPAM})
   end
   
+  def self.log_ham(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => MARKED_NON_SPAM})
+  end
+  
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]
@@ -89,7 +94,7 @@ class QuestionEvent < ActiveRecord::Base
       create_attributes[:previous_event_id] = last_event.id
       # if not a handling event, get the last handling event
       if(!last_event.is_handling_event?)
-        if(last_handling_events = question.question_events.latest_handling && !last_handling_events.empty?)
+        if(last_handling_events = question.question_events.latest_handling && !last_handling_events.blank?)
           last_handling_event = last_handling_events[0]
           create_attributes[:previous_handling_event_id] = last_handling_event.id          
           create_attributes[:duration_since_last_handling_event] = (time_of_this_event - last_handling_event.created_at).to_i

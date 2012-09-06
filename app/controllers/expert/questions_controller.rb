@@ -179,6 +179,22 @@ class Expert::QuestionsController < ApplicationController
     flash[:success] = "Incoming question has been successfully marked as spam."
     redirect_to expert_home_url
   end
+  
+  def report_ham
+    question = Question.find_by_id(params[:id])
+    if question.blank?
+      flash[:failure] = "Question specified does not exist."
+      return redirect_to expert_home_url
+    end
+    
+    # we don't know at this point whether the submitter marked it as public or private originally before it was marked as spam, so 
+    # we do the safe thing here and mark it as private by the submitter.  
+    question.update_attributes(:spam => false, :is_private => true, :is_private_reason => Question::PRIVACY_REASON_SUBMITTER)
+    QuestionEvent.log_ham(question, current_user)       
+        
+    flash[:success] = "Incoming question has been successfully marked as not spam."
+    redirect_to expert_question_url(question)
+  end
     
   def add_tag
     @question = Question.find_by_id(params[:id])
