@@ -103,6 +103,10 @@
         <p><%= link_to "Assign me this question", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post %></p>
       <% else %>
         <p><%= link_to "Answer this question", answer_expert_question_path(@question.id) %></p>
+        <p>
+	      <strong>No Answer?</strong><br />If this question is outside of eXtension's expertise, please 
+          <%= link_to "use this sample text to suggest their local office.", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER) %>
+        </p>
       <% end %>
       <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %></p>
       <% if @question.assignee == current_user %>

@@ -89,6 +89,11 @@ class Question < ActiveRecord::Base
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
   WRANGLER_REASSIGN_COMMENT = "This question has been assigned to you because the previous assignee clicked the 'Hand off to a Question Wrangler' button."
   
+  PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = "This question has been reassigned to you because a new comment has been posted to your response. Please " +
+  "reply using the link below or close the question out if no reply is needed. Thank You."
+  
+  DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the local office in your neighborhood. We apologize for this inconvenience but please come back to eXtension to check in as we grow and add experts."
+  
   # for purposes of solr search
   def response_list
     self.responses.map(&:body).join(' ')
@@ -195,7 +200,7 @@ class Question < ActiveRecord::Base
       when STATUS_NO_ANSWER
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :current_resolver_email => resolver.email, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         @response = Response.new(:resolver => resolver, 
-                                 :submitted_question => self, 
+                                 :question => self, 
                                  :body => response, 
                                  :sent => true, 
                                  :contributing_question => contributing_question, 

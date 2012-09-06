@@ -66,6 +66,13 @@ class QuestionEvent < ActiveRecord::Base
       :response => question.current_response})
   end
   
+  def self.log_no_answer(question)
+    return self.log_event({:question => question,
+      :initiator => question.current_resolver,
+      :event_state => NO_ANSWER,
+      :response => question.current_response})
+  end
+  
   def self.log_spam(question, initiated_by)
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,

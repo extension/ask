@@ -97,7 +97,9 @@ class Expert::QuestionsController < ApplicationController
     @status = params[:status_state]
     
     # if expert chose a Question to answer this with, find that so that we can 
-    # attach that to the question as a contributing question
+    # attach that to the question as a contributing question.
+    # UPDATE: we're not going to be using related questions for the time being, but will leave this for now in case 
+    # we add it back in the future.
     @related_question = Question.find_by_id(params[:related_question]) if params[:related_question].present?
   
     @sampletext = params[:sample] if params[:sample]
@@ -108,7 +110,7 @@ class Expert::QuestionsController < ApplicationController
       answer = params[:current_response]
       (params[:signature] and params[:signature].strip != '') ? @signature = params[:signature] : @signature = ''
       
-      if !answer or '' == answer.strip 
+      if answer.blank? 
         flash[:failure] = "You must not leave the answer blank."
         return
       end
