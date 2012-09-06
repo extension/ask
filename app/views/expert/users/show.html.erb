@@ -19,35 +19,44 @@
   <% end %>
   </p>
   
-  
   <% if @answered_questions.length == 0 %>
     <h3>This person hasn't answered any questions</h3>
   <% else %>
-  <h3>Answered Questions</h3>
+  
+    <h3>Answered Questions</h3>
     <% @answered_questions.each do |q| %> 
-      <%= link_to expert_question_path(q.id) do %>
-        <% if q.title.present? %>
-          <h3><%= format_text_for_display(q.title) -%></h3>
-        <% else %>
-          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
-        <% end %>
-        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
-      <% end %>
-      
-      <p>Location 
-      <% if q.tags.length > 0 %>
-        <% q.tags.each do |tag| %>
-          <% if q.assigned_group %>
-            <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
+      <div class="question list">
+        <%= link_to expert_question_path(q.id) do %>
+          <% if q.title.present? %>
+            <h3><%= format_text_for_display(q.title) -%></h3>
           <% else %>
-            <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+            <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
           <% end %>
+          <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
         <% end %>
-      <% else %>
-        <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
-      <% end %>
-       <%= time_ago_in_words(q.created_at) %> ago
-      </p>
+      
+        <p>
+        <% if q.county.present? %>
+          <span class="label label-success"><%= "#{q.county.name} County" %></span>
+        <% end %>
+        <% if q.location.present? %>
+          <span class="label label-success"><%= q.location.abbreviation %></span>
+        <% end %>
+
+        
+        <% if q.tags.length > 0 %>
+          <% q.tags.each do |tag| %>
+            <% if q.assigned_group %>
+              <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
+            <% else %>
+              <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+            <% end %>
+          <% end %>
+        <% else %>
+          <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
+        <% end %>
+         <%= time_ago_in_words(q.created_at) %> ago
+        </p>
       
        
        <% if q.assigned_group %>
@@ -55,7 +64,7 @@
    		<% else %>
    			<p><strong>This question is groupless</strong></p>
    		<% end %>
-       
+      </div>
     <% end %>
 	    
 	    
@@ -74,8 +83,56 @@
   </ul>
   <% end %>
   
-  <h2>Currently Assigned</h2>
-  <p>No Questions currently assigned</p>
+  <aside>
+  
+  <% if @open_questions.length == 0 %>
+    <h2>Currently Assigned</h2>
+      <p>No Questions currently assigned</p>
+  <% else %>
+    
+    
+  <h2>Currently Assigned (<%= @open_questions.length %>)</h2>
+      <% @open_questions.each do |q| %> 
+      <div class="question list">
+        <%= link_to expert_question_path(q.id) do %>
+          <% if q.title.present? %>
+            <h4><%= format_text_for_display(q.title) -%></h4>
+          <% else %>
+            <h4><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h4>
+          <% end %>
+        <% end %>
+
+        <p>Location 
+        <% if q.tags.length > 0 %>
+          <% q.tags.each do |tag| %>
+            <% if q.assigned_group %>
+              <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
+            <% else %>
+              <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+            <% end %>
+          <% end %>
+        <% else %>
+          <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
+        <% end %>
+         <%= time_ago_in_words(q.created_at) %> ago
+        </p>
+
+
+         <% if q.assigned_group %>
+     	      <p><%= get_group_avatar(q.assigned_group, :mini) %> <%= link_to q.assigned_group.name, expert_group_path(q.assigned_group.id) %></p>
+     		<% else %>
+     			<p><strong>This question is groupless</strong></p>
+     		<% end %>
+     		</div>
+<% end %>
+
+  
+   
+       
+  <% end %>
+  </aside>
+  
+
   
   <aside>
     <h4>Handling Rate</h4>

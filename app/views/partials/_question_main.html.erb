@@ -10,7 +10,14 @@
     <%= image_tag image.url(:thumb) %>
   <% end %>
 
-  <p>Location: <%= "#{@question.county.name} County, " if @question.county.present? && @question.location.present? %> <%= @question.location.present? ? @question.location.abbreviation : 'not specified' %></p>
+<p>  
+  <% if @question.county.present? %>
+    <span class="label label-success"><%= "#{@question.county.name} County" %></span>
+  <% end %>
+  <% if @question.location.present? %>
+    <span class="label label-success"><%= @question.location.abbreviation %></span>
+  <% end %>
+</p>
 
 <p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
 <% if @question.submitter %>

@@ -10,7 +10,7 @@ class Expert::HomeController < ApplicationController
   before_filter :require_exid
   
   def index
-    @recent_questions = Question.find(:all, :limit => 10, :order => 'created_at DESC')
+    @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
   end
   
   def tags
