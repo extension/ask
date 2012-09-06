@@ -8,7 +8,7 @@
 <table class="table table-bordered">
 
   <tr id="filter_terms">
-    <td><%= link_to "shuffle", reassign_expert_question_path(@question.id), :class => "btn" %></td>
+    <td><%= link_to "Mix it up", reassign_expert_question_path(@question.id), :class => "btn" %></td>
     <% filter_terms = [] %>
     <% if @question.county.present? %>
       <% filter_terms <<  @question.county.name %> 

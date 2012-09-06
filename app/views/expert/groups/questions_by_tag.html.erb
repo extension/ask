@@ -1,5 +1,11 @@
 <h1><%= get_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %> questions tagged with '<%= @tag.name %>'</h1>
 
+<br>
+<br>
+<h4>TODO: until pagination is turned on, only returning 25 tags.</h4>
+<br>
+<br>
+
 <% if @questions.length > 0 %>
   <table>
     <tr>

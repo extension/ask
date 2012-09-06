@@ -37,7 +37,7 @@ class Expert::GroupsController < ApplicationController
     
     return record_not_found if (!@group || !@tag)
     
-    @questions = Question.from_group(@group.id).tagged_with(@tag.id).order("questions.status_state ASC")
+    @questions = Question.from_group(@group.id).tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
   end
   
   def profile
