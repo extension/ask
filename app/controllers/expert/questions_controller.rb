@@ -216,7 +216,7 @@ class Expert::QuestionsController < ApplicationController
         @tag_and_county_experts = User.with_expertise_county(@question.county_id).tagged_with(@question.tags.first.id).limit(6)
       end
       if @question.location_id?
-        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(6)
+        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(6).offset(rand(6))
       end
     end
     # tags_names = ["horses", "horticulture"]
