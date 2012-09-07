@@ -66,6 +66,12 @@ class QuestionEvent < ActiveRecord::Base
       :response => question.current_response})
   end
   
+  def self.log_reactivate(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => REACTIVATE})
+  end
+  
   def self.log_no_answer(question)
     return self.log_event({:question => question,
       :initiator => question.current_resolver,

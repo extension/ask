@@ -198,6 +198,14 @@ class Expert::QuestionsController < ApplicationController
     redirect_to expert_question_url(question)
   end
     
+  def reactivate
+    question = Question.find_by_id(params[:id])
+    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver => nil, :current_response => nil, :resolved_at => nil, :current_resolver_email => nil)
+    QuestionEvent.log_reactivate(question, current_user)
+    flash[:success] = "Question re-activated"
+    redirect_to expert_question_url(question)
+  end  
+    
   def add_tag
     @question = Question.find_by_id(params[:id])
     @tag = @question.set_tag(params[:tag])
