@@ -3,51 +3,13 @@
 <div id="main" class="span8">
   <%= get_group_avatar(@group) %>
   <h1><%= @group.name %></h1>
-
   
   <ul class="nav nav-tabs">
     <li><%= link_to 'Unanswered', expert_group_path(@group) %></li>
-    <li><%= link_to 'Answered', expert_group_path(@group) %></li>
+    <li><%= link_to 'Answered', expert_group_answered_path(@group) %></li>
   </ul>
 
-  <% if @open_questions.length == 0 %>
-    <h3>There are currently no open questions assigned to this group.</h3>
-  <% else %>
-    <h3>Unanswered</h3>
-    <% @open_questions.each do |q| %>
-      <div class="question list">
-        
-          <%= link_to expert_question_path(q.id) do %>
-            <% if q.title.present? %>
-              <h3><%= format_text_for_display(q.title) -%></h3>
-            <% else %>
-              <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
-            <% end %>
-            <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
-          <% end %>
-      
-          <p>
-            <% if q.county.present? %>
-              <span class="label label-success"><%= "#{q.county.name} County" %></span>
-            <% end %>
-            <% if q.location.present? %>
-              <span class="label label-success"><%= q.location.abbreviation %></span>
-            <% end %>
-          </p>
-      
-          <p>
-          <% if q.tags.length > 0 %>
-            <% q.tags.each do |tag| %>
-              <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
-            <% end %>
-          <% else %>
-            <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
-          <% end %>
-           <%= time_ago_in_words(q.created_at) %> ago
-           </p>
-      </div>
-    <% end %>
-  <% end %>  
+  <%= render :partial => 'question_list' %>
 
 </div>
 
