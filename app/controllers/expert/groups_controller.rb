@@ -20,10 +20,21 @@ class Expert::GroupsController < ApplicationController
       return record_not_found
     end
     
-    @open_questions = @group.open_questions
+    @question_list_type = "Unanswered"
+    @questions = @group.open_questions
     @group_members = @group.joined.limit(5)
     @group_members_total = @group.joined.count
     @group_tags = @group.tags
+  end
+  
+  def answered
+    @group = Group.find(params[:id])
+    @question_list_type = "Answered"
+    @questions = @group.answered_questions.limit(10).order('updated_at DESC')
+    @group_members = @group.joined.limit(5)
+    @group_members_total = @group.joined.count
+    @group_tags = @group.tags
+    render :action => 'show'
   end
   
   def members

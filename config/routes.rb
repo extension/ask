@@ -52,6 +52,7 @@ Aae::Application.routes.draw do
     match "groups/:id/tags" => "groups#tags", :via => [:get, :put], :as => 'group_tags'
     match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
+    match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
     match "settings/tags" => "settings#tags", :via => [:get, :put]
