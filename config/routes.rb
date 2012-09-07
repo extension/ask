@@ -29,6 +29,7 @@ Aae::Application.routes.draw do
         post 'report_ham'
         get  'reassign'
         post 'reassign'
+        post 'reactivate'
       end
     end
     

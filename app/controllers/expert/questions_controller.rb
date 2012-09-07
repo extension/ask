@@ -11,6 +11,10 @@ class Expert::QuestionsController < ApplicationController
   
   def show
     @question = Question.find_by_id(params[:id])
+    if @question.blank?
+      flash[:error] = "Question not found."
+      return redirect_to expert_home_url
+    end
     @question_responses = @question.responses
     @fake_related = Question.find(:all, :limit => 3, :offset => rand(Question.count))
 
@@ -197,6 +201,14 @@ class Expert::QuestionsController < ApplicationController
     flash[:success] = "Incoming question has been successfully marked as not spam."
     redirect_to expert_question_url(question)
   end
+    
+  def reactivate
+    question = Question.find_by_id(params[:id])
+    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver => nil, :current_response => nil, :resolved_at => nil, :current_resolver_email => nil)
+    QuestionEvent.log_reactivate(question, current_user)
+    flash[:success] = "Question re-activated"
+    redirect_to expert_question_url(question)
+  end  
     
   def add_tag
     @question = Question.find_by_id(params[:id])

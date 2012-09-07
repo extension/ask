@@ -61,9 +61,15 @@ class QuestionEvent < ActiveRecord::Base
   
   def self.log_rejection(question)
     return self.log_event({:question => question,
-      :initiated_by_id => question.current_resolver.id,
+      :initiated_by_id => question.current_resolver_id,
       :event_state => REJECTED,
       :response => question.current_response})
+  end
+  
+  def self.log_reactivate(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => REACTIVATE})
   end
   
   def self.log_no_answer(question)

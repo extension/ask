@@ -7,7 +7,7 @@
 class CreateQuestions < ActiveRecord::Migration
   def change
     create_table :questions do |t|
-      t.integer  "current_resolver"           # from resolved_by
+      t.integer  "current_resolver_id"        # from resolved_by
       t.integer  "contributing_question_id"   # keep for legacy values, may not continue this going forward
       t.string   "status",                    :default => "",    :null => false
       t.text     "body",                      :null => false # from asked_question
@@ -48,7 +48,7 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["location_id"], :name => "fk_question_location"
     add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"
     add_index "questions", ["resolved_at"], :name => "resolved_at_idx"
-    add_index "questions", ["current_resolver"], :name => "fk_current_resolver"
+    add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
     add_index "questions", ["status_state"], :name => "status_state_idx"
     add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
     add_index "questions", ["assignee_id"], :name => "fk_assignee"
