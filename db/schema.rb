@@ -186,7 +186,6 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
     t.integer  "submitter_id"
     t.integer  "initiated_by_id"
     t.integer  "recipient_id"
-    t.integer  "response_id"
     t.text     "response"
     t.integer  "event_state",                        :null => false
     t.integer  "contributing_question_id"
@@ -214,7 +213,7 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
   add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
 
   create_table "questions", :force => true do |t|
-    t.integer  "current_resolver"
+    t.integer  "current_resolver_id"
     t.integer  "contributing_question_id"
     t.string   "status",                   :default => "",    :null => false
     t.text     "body",                                        :null => false
@@ -256,7 +255,7 @@ ActiveRecord::Schema.define(:version => 20120727213558) do
   add_index "questions", ["contributing_question_id"], :name => "fk_contributing_question"
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
-  add_index "questions", ["current_resolver"], :name => "fk_current_resolver"
+  add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["group_name"], :name => "group_name_idx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"

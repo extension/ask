@@ -97,17 +97,17 @@
   </aside>
 
   <aside>
-	<% if !@question.spam %>
+	<% if @question.spam %>
 	  <h3>This question has been marked as spam.</h3>
       <p><%= link_to "This is not spam", report_ham_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as not spam?", :method => :post %></p>
 	<% elsif @question.status_state == Question::STATUS_REJECTED %>
 	  <h3>This question has been rejected</h3>
         <p>
     	  <strong>Rejected by: </strong> 
-    	  <% if @question.current_resolver == User.system_user_id %>
+    	  <% if @question.current_resolver_id == User.system_user_id %>
     	    System
     	  <% else %>
-    	    <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver.id) %>
+    	    <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
     	  <% end %>
     	</p>
         <p><strong>Rejection comment:</strong> <%= wrap_text(@question.current_response) %></p>
@@ -119,16 +119,16 @@
 	   	<h3>This question has been closed</h3>
          <p>
      	   <strong>Closed by: </strong> 
-     	   <% if @question.current_resolver.id == User.systemuserid %>
+     	   <% if @question.current_resolver_id == User.system_user_id %>
      	      System
      	   <% else %>
-     	      <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver.id) %>
+     	      <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
      	   <% end %>
      	 </p>
          <p><strong>Closing comment:</strong> <%= wrap_text(@question.current_response) %></p>
          <p><strong>Date: </strong><%= humane_date(@question.resolved_at) %></p>
          <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id) %></p>
-	<% elsif @question.status_state == Question::STATUS::RESOLVED %>
+	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
 	    <h3>This question has been resolved</h3>
 	<% else %>
       <h3>Actions</h3>

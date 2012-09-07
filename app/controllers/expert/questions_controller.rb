@@ -11,6 +11,10 @@ class Expert::QuestionsController < ApplicationController
   
   def show
     @question = Question.find_by_id(params[:id])
+    if @question.blank?
+      flash[:error] = "Question not found."
+      return redirect_to expert_home_url
+    end
     @question_responses = @question.responses
     @fake_related = Question.find(:all, :limit => 3, :offset => rand(Question.count))
 

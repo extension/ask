@@ -1,7 +1,7 @@
 class Question < ActiveRecord::Base
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
-  belongs_to :current_resolver, :class_name => "User"
+  belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
   belongs_to :location
   belongs_to :county
   belongs_to :widget 
