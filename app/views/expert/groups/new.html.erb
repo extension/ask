@@ -1,0 +1,25 @@
+<h1>Create a New Group</h1>
+
+<div class="form_group">
+
+<%= form_for @group, :url => expert_groups_create_path, :html => { :class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+    <p>
+      <%= f.label :name, 'Group Name' %>
+      <%= f.text_field :name,  :class => "xl" %>
+    </p>
+    
+    <p>
+      <%= f.label :description, 'Group Description (optional)' %>
+      <%= f.text_area :description, :rows => "2",  :class => "xl" %>
+    </p>
+  </fieldset>
+      
+  <fieldset>
+    <p><%= f.submit "Create Group", :class => "btn large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>
+
+</div>

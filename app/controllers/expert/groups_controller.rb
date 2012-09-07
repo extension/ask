@@ -143,4 +143,18 @@ class Expert::GroupsController < ApplicationController
     @group = Group.find_by_id(params[:id])
   end
   
+  def new
+    @group = Group.new
+  end
+  
+  def create
+    @group = Group.new(params[:group])
+    @group.created_by = current_user
+    if @group.save
+      redirect_to(expert_group_path(@group.id), :notice => 'Group was successfully created.')
+    else
+      render :action => 'profile'
+    end
+  end
+  
 end

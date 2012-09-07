@@ -46,9 +46,9 @@
             <%= link_to("Expert Home", expert_home_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
-                <li class="active"><a href="">Incoming</a></li>
-                <li><%= link_to "Answered" %></li>
-                <li><%= link_to "My Groups", expert_groups_path %></li>
+                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
+                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
+                <li <%= "class='active'" if current_page?(:controller => 'groups', :action => "index") %>><%= link_to "Groups", expert_groups_path %></li>
               </ul>
             </div><!--/.nav-collapse -->
             

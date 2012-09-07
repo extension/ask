@@ -13,6 +13,10 @@ class Expert::HomeController < ApplicationController
     @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
   end
   
+  def answered
+    @recently_answered_questions = Question.answered.find(:all, :limit => 20, :order => 'created_at DESC')
+  end
+  
   def tags
     @tag = Tag.find_by_id(params[:tag_id])
     return record_not_found if (!@tag)

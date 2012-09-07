@@ -38,9 +38,10 @@ Aae::Application.routes.draw do
       end
     end
     
-    resources :groups, :except => [:destroy] do
+    resources :groups, :except => [:create, :destroy] do
       collection do
         get 'questions_by_tag'
+        post 'new'
       end
     end
     
@@ -52,12 +53,14 @@ Aae::Application.routes.draw do
     match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
+    match "groups/create" => "groups#create", :via => [:post]
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
     match "settings/tags" => "settings#tags", :via => [:get, :put]
     match "home" => "home#index"
     match "home/tags" => "home#tags"
     match "home/experts" => "home#experts"
+    match "home/answered" => "home#answered"
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
