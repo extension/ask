@@ -29,6 +29,8 @@ class Group < ActiveRecord::Base
   has_many :expertise_locations, :through => :group_locations, :source => :location
   has_many :expertise_counties, :through => :group_counties, :source => :county
   
+  has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED} AND questions.spam = false"
+  
   # will_paginate per page default 
   self.per_page = 15
   
