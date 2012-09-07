@@ -75,4 +75,8 @@ class User < ActiveRecord::Base
     end
   end
   
+  def join_group(group, connection_type)
+    self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
+  end
+  
 end

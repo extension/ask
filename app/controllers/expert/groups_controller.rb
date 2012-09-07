@@ -157,4 +157,10 @@ class Expert::GroupsController < ApplicationController
     end
   end
   
+  def join
+    @group = Group.find_by_id(params[:group_id])
+    current_user.join_group(@group,"member")
+    redirect_to(expert_group_path(@group.id), :notice => 'Joined')
+  end
+  
 end
