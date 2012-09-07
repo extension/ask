@@ -23,6 +23,12 @@ module ApplicationHelper
     end
   end
   
+  # http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
+  def wrap_text(txt, col=120)
+    txt.gsub(/(.{1,#{col}})( +|$\n?)|(.{1,#{col}})/,
+      "\\1\\3\n") 
+  end
+  
   def get_avatar(user, image_size = :medium)
     case image_size
         when :medium    then image_size_in_px = "100x100"
