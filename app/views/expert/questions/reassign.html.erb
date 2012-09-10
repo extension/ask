@@ -1,7 +1,10 @@
+<% @page_title = "Reassign"%>
+
 <div id="main" class="span8">
 
-<p><%= link_to "AaE ##{@question.id}", expert_question_path(@question.id) %></p>
-<h1>Reassign this question</h1>
+<h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+
+<h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
 
 <% if @question.assignee != current_user %>
   <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post, :class => "btn-primary btn" %></p>

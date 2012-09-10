@@ -1,26 +1,14 @@
 <% @page_title = "Reply to question ##{@question.id}"%>
 
-<h3><%= link_to "AaE ##{@question.id}", expert_question_path(@question) %></h3>
+<div id="main" class="span8">
 
-<p>
-    <strong>Submitter's Name:</strong> <%= @question.submitter_name %><br />
-    <% if location = @question.location %>
-      <strong>Location of Question:</strong> <%= location.name %><br />
-    <% end %>
-    <% if location and county = @question.county %>
-      <strong>County of Question:</strong> <%= county.name %><br />
-    <% end %>
-    <strong>Question Submitted At:</strong> <%= humane_date(@question.created_at) %><br />
-</p>
+<h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<p><%= link_to "Use canned response", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-danger" %></p>
-
-<h1>Write a Reply</h1>
+<h1>Send an Answer <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
 
 <div id="response_form">
-    <h2>Your response will be sent via email and posted to the submitter's AaE question page</h2>
+  
     <%= form_tag answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]) do %>
-    <p class="save_it"><%= submit_tag 'Send Reply' %></p>
     <div id="email_content">
         <div class="headerinfo">
             <p><strong>Subject:</strong> [Message from eXtension] Your question has been responded to by one of our experts.
@@ -53,6 +41,7 @@
             <p><label for="signature" class="helptext">Your default email signature can be set in your preferences</label> 
             <%= text_area_tag 'signature', @signature, "rows" => 3 %></p>
             
+            <p class="save_it"><%= submit_tag 'Send Reply', :class => "btn btn-primary" %></p>
             
             <p>Thank you for using our 'Ask an Expert' system.</p>
             <p>Have another question? Please ask!
@@ -65,8 +54,20 @@
             <p><span class="helptext">-- end of email message --</span></p>
         </div>
     </div>
-    <p class="save_it"><%= submit_tag 'Send Reply' %></p>
 </div>
 
 
 <% end %>
+
+</div>
+
+
+<div id="secondary" class="span4">
+  <aside>
+    <h3>Your response will be sent via email and posted to the submitter's AaE question page</h3>
+  </aside>
+  
+  <p>If no one can answer this question, use the canned response to suggest their local office.</p>
+  <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-primary" %></p>
+
+</div>
