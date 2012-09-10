@@ -4,7 +4,7 @@
   <h2><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
 <% end %>
 
-<p><%= format_text_for_display(@question.body) %></p>
+  <p class="question_body"><%= format_text_for_display(@question.body) %></p>
 
   <% @question.images.each do |image| %>
     <%= image_tag image.url(:thumb) %>
@@ -20,14 +20,23 @@
 </p>
 
 <p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
-<% if @question.submitter %>
-  by <%= @question.submitter.name %></p>
-<% end %>
+  <% if @question.submitter %>
+    by <%= @question.submitter.name %>
+  <% end %>
+</p>
 
 <% if @question_responses.length > 0 %>
   <h3>Responses</h3>
   <% @question_responses.each do |response| %>
-    <p><%= format_text_for_display(response.body) %></p>
+    <div class="response_block">
+      <p class="response"><%= format_text_for_display(response.body) %></p>
+      <p>Asked <%= time_ago_in_words(response.created_at) %> ago</p>
+      <%= link_to expert_user_path(response.resolver_id) do %>
+        <%= get_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
+      <% end %>
+      
+      
+    </div>
   <% end %>
 <% end %>
 

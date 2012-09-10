@@ -181,4 +181,6 @@ body#expert {
 	.bekind {padding:1em; background:#eee; margin:1em 0 2em;}
 	#tag_info {margin:2em 0; padding:1em; padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
 	#email_content {padding:2em;}
+	.question_body {font-size:1.5em; line-height:1.3em;}
+	.response_block p.response {font-size:1.3em; line-height:1.2em;}
 }
