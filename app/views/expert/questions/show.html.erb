@@ -99,36 +99,44 @@
 
   <aside>
     <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
-	<% if @question.status_state == Question::STATUS_REJECTED %>
-	  <h3>This question has been rejected</h3>
-        <p>
-    	  <strong>Rejected by: </strong> 
+    
+    <% if @question.status_state == Question::STATUS_REJECTED %>
+      <h3>This question has been rejected</h3>
+      <p>
+    	  <strong>By: </strong> 
     	  <% if @question.current_resolver_id == User.system_user_id %>
     	    System
     	  <% else %>
     	    <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
     	  <% end %>
     	</p>
-        <p><strong>Rejection comment:</strong> <%= wrap_text(@question.current_response) %></p>
-        <p><strong>Date: </strong><%= humane_date(@question.resolved_at) %></p>
-        <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
+      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
+      <p><%= humane_date(@question.resolved_at) %></p>
+      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+        
 	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
 	   <h3>This question was not answered</h3>
+	   
 	<% elsif @question.status_state == Question::STATUS_CLOSED %>
 	   	<h3>This question has been closed</h3>
-         <p>
-     	   <strong>Closed by: </strong> 
-     	   <% if @question.current_resolver_id == User.system_user_id %>
-     	      System
-     	   <% else %>
-     	      <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
-     	   <% end %>
-     	 </p>
-         <p><strong>Closing comment:</strong> <%= wrap_text(@question.current_response) %></p>
-         <p><strong>Date: </strong><%= humane_date(@question.resolved_at) %></p>
-         <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
+      <p>
+        <strong>Closed by: </strong> 
+        <% if @question.current_resolver_id == User.system_user_id %>
+          System
+        <% else %>
+          <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+        <% end %>
+      </p>
+      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
+      <p><%= humane_date(@question.resolved_at) %></p>
+      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+      
 	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
 	    <h3>This question has been resolved</h3>
+	    <div class="question_actions">
+        <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+      </div>
+	    
 	<% else %>
       
       <div class="question_actions">
