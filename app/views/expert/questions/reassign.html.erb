@@ -3,7 +3,13 @@
 <p><%= link_to "AaE ##{@question.id}", expert_question_path(@question.id) %></p>
 <h1>Reassign this question</h1>
 
-<h4>Filtering on these options...</h4>
+<% if @question.assignee != current_user %>
+  <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post, :class => "btn-primary btn" %></p>
+<% end %>
+<p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+
+
+<h4>Experts that match these options...</h4>
 
 <table class="table table-bordered">
 
@@ -35,7 +41,7 @@
         <td>
           <p>
             <%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn" %>
+            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn btn-primary" %>
           </p>
           <% filter_terms.each do |i| %>
             <td><i class="icon-ok"></i></td>

@@ -13,6 +13,8 @@
     <strong>Question Submitted At:</strong> <%= humane_date(@question.created_at) %><br />
 </p>
 
+<p><%= link_to "Use canned response", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-danger" %></p>
+
 <h1>Write a Reply</h1>
 
 <div id="response_form">
