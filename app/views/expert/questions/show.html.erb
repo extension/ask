@@ -103,19 +103,23 @@
     <% if @question.status_state == Question::STATUS_REJECTED %>
       <h3>This question has been rejected</h3>
       <p>
-    	  <strong>By: </strong> 
     	  <% if @question.current_resolver_id == User.system_user_id %>
     	    System
     	  <% else %>
-    	    <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+    	    <%= link_to expert_user_path(@question.current_resolver_id) do %>
+            <%= get_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+          <% end %>
+    	    
     	  <% end %>
     	</p>
       <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= humane_date(@question.resolved_at) %></p>
       <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
         
 	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
-	   <h3>This question was not answered</h3>
+	   <h3>A canned response was used to answer this question</h3>
+	   <div class="question_actions">
+       <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+     </div>
 	   
 	<% elsif @question.status_state == Question::STATUS_CLOSED %>
 	   	<h3>This question has been closed</h3>
@@ -128,7 +132,6 @@
         <% end %>
       </p>
       <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= humane_date(@question.resolved_at) %></p>
       <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
       
 	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
@@ -153,23 +156,28 @@
      <% end %>
   </aside>
   
-	<aside>
-	  <% if @question_responses.length < 1 %>
-      <h3>Assigned to</h3>
-    <% else %>
-      <h3>Last response by</h3>
-    <% end %>
+  <% if @question.status_state != Question::STATUS_REJECTED %>
+    <aside>
+      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+        <h3>Last response by</h3>
+      <% else %>
+        <h3>Assigned to</h3>
+      <% end %>
+  
       <%= link_to expert_user_path(@question.assignee_id) do %>
         <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
       <% end %>
-	
-	<% if @question.assigned_group %>
-    <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
-		<p>This question is associated with the above group. To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
-	<% else %>
-		<p><strong>This question is groupless :(</strong> To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
-	<% end %>
+    
+      <% if @question.assigned_group %>
+        <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
+  		  <p>This question is associated with the above group. To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
+  	  <% else %>
+  		  <p><strong>This question is groupless :(</strong> To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
+      <% end %>
     </aside>
+  <% end %>
+
+	
   
   <aside class="subtle">
     <h3>Related Questions</h3>
