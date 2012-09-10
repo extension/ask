@@ -99,10 +99,7 @@
 
   <aside>
     <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
-	<% if @question.spam %>
-	  <h3>This question has been marked as spam.</h3>
-      <p><%= link_to "This is not spam", report_ham_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as not spam?", :method => :post %></p>
-	<% elsif @question.status_state == Question::STATUS_REJECTED %>
+	<% if @question.status_state == Question::STATUS_REJECTED %>
 	  <h3>This question has been rejected</h3>
         <p>
     	  <strong>Rejected by: </strong> 
@@ -143,9 +140,6 @@
       
       <div class="question_actions last">
         <p><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-danger" %></p>
-        <% if !@question.body.index("http://").blank? %>
-          <p><%= link_to "Report As Spam", report_spam_expert_question_path(@question.id), :confirm => "Are you sure you want to mark this question as spam?", :method => :post, :class => "btn" %></p>
-        <% end %>
       </div>
       
      <% end %>
