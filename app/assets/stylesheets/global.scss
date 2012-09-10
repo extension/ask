@@ -153,6 +153,7 @@ body#expert {
 	
 /*	#location_list {padding:1em; margin:1em 0;}*/
 	#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
+	#secondary aside.subtle {background:#fff;}
 /*	#filter_terms td p {-webkit-transform: rotate(-45deg);}*/
 	
 	/*rotate 30 degrees*/
@@ -176,4 +177,7 @@ body#expert {
 /*	#secondary {outline:1px solid blue;}*/
 	.question_actions {margin-bottom:2em;}
 	.question_actions.last {margin-bottom:0;}
+	
+	.bekind {padding:1em; background:#eee; margin:1em 0 2em;}
+	#tag_info {margin:2em 0; padding:1em; padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
 }

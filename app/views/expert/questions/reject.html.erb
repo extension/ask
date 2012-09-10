@@ -1,27 +1,23 @@
-<% @page_title = "Reject" %>
+<% @page_title = "Mark as Spam, Inappropriate Content or Duplicate" %>
 
 <h3><%= link_to "Question #{@question.id}", expert_question_url(@question) %></h3>
 
 <h1><%= @page_title %></h1>
 
-<h2>Spam, Inappropriate Content and Duplicates</h2>
+<div class="bekind">
+  <h3>Please Don't Reject Valid Questions</h3>
+  <p>If no one can answer this question, use the canned response to suggest their local office: <%= link_to "Canned response", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-primary" %></p>
+</div>
 
-<h3>No information is sent to the question submitter.</h3>
 
-<p class="bekind">Please don't reject valid questions. If no one can answer this question, respond and suggest their local office.</p>
-
+<h2>Still need to Reject?</h2>
 <%= form_tag reject_expert_question_path(@question) do %>
     <p>
-        <label for="reject_message">Reason for rejecting question</label>
+        <label for="reject_message">Reason
         <%= text_field_tag :reject_message %>
+        </label>
     </p>
     <p>
-        <%= submit_tag 'Reject'%>
+        <%= submit_tag 'Reject Question', :class => "btn btn-danger"%> <strong>(No information is sent to the question submitter)</strong>
     </p>
 <% end %>
-
-
-<div id="inc_body" class="aaedelete">
-	<h2 class="inc_question"><span><%= @question.body %></span></h2>
-	<p class="inc_descriptive clear"><strong><%= @question.submitter_name %></strong> submitted this question <%= time_ago_in_words(@question.created_at) %> ago</p>
-</div>
