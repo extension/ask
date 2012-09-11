@@ -271,6 +271,13 @@ class Question < ActiveRecord::Base
     end
   end
   
+  # get the event of the last response given for a question
+  def last_response
+    question_event = self.question_events.find(:first, :conditions => "event_state = #{QuestionEvent::RESOLVED} OR event_state = #{QuestionEvent::NO_ANSWER}", :order => "created_at DESC")
+    return question_event if question_event
+    return nil
+  end
+  
   private
 
   def generate_fingerprint

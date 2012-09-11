@@ -16,6 +16,7 @@ class Expert::QuestionsController < ApplicationController
       return redirect_to expert_home_url
     end
     @question_responses = @question.responses
+    @last_question_response = @question.last_response
     @fake_related = Question.find(:all, :limit => 3, :offset => rand(Question.count))
 
     ga_tracking = []
@@ -200,6 +201,56 @@ class Expert::QuestionsController < ApplicationController
         
     flash[:success] = "Incoming question has been successfully marked as not spam."
     redirect_to expert_question_url(question)
+  end
+  
+  def close_out
+    @question = Question.find_by_id(params[:id])
+    @submitter_name = @question.submitter_name
+    
+    if request.post?
+      close_out_reason = params[:close_out_reason]
+      
+      if !@question
+        flash.now[:failure] = 'Question not found'
+        return render nil
+      end
+      
+      if close_out_reason.blank?
+        flash.now[:failure] = 'Please document a reason for closing this question.'
+        return render nil
+      end
+          
+      # get the last response type, if a non-answer response was previously sent, respect the status of it in the question, else 
+      # set it to resolved
+      if last_response = @question.last_response
+        resolver = last_response.initiator
+        if last_response.event_state == QuestionEvent::NO_ANSWER
+          @question.update_attributes(:status => Question::NO_ANSWER_TEXT, 
+                                      :status_state => Question::STATUS_NO_ANSWER,
+                                      :current_resolver => resolver,
+                                      :resolved_at => last_response.created_at,
+                                      :current_response => last_response.response,
+                                      :current_resolver_email => resolver.email)
+        else    
+          @question.update_attributes(:status => Question::RESOLVED_TEXT, 
+                                      :status_state => Question::STATUS_RESOLVED,
+                                      :current_resolver => resolver,
+                                      :resolved_at => last_response.created_at,
+                                      :current_response => last_response.response,
+                                      :current_resolver_email => resolver.email)
+        end
+      # else, we're closing it out with no response, which is not supposed to happen
+      # close out is only being used for questions with a response now, for purposes like
+      # when someone responds with a thank you and you need to close it out without a response.
+      else           
+        flash[:error] = "Please either reassign, answer or reject the question." 
+        return redirect_to expert_question_url(@question)
+      end                                    
+      
+      QuestionEvent.log_close(@question, current_user, close_out_reason)                                                      
+      flash[:success] = "Question closed successfully!"
+      redirect_to expert_question_url(@question)
+    end
   end
     
   def reactivate

@@ -30,6 +30,8 @@ Aae::Application.routes.draw do
         get  'reassign'
         post 'reassign'
         post 'reactivate'
+        get  'close_out'
+        post 'close_out'
       end
     end
     

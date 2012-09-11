@@ -91,6 +91,13 @@ class QuestionEvent < ActiveRecord::Base
       :event_state => MARKED_NON_SPAM})
   end
   
+  def self.log_close(question, initiated_by, close_out_reason)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => CLOSED,
+      :response => close_out_reason})
+  end
+  
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]

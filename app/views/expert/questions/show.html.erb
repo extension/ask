@@ -164,11 +164,13 @@
       </div>
 	    
 	<% else %>
-      
       <div class="question_actions">
         <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
         <% if @question.assignee == current_user %>
           <p><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+          <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
+          <p><%= link_to "Close Question", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+          <% end %>
         <% end %>
       </div>
       
