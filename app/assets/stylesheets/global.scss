@@ -27,7 +27,7 @@ body#public {
 
 body#expert {
 	
-	background:#ddd;
+	background:#504848;
 	padding-bottom:5em;
 	.row-fluid {background:#fff;}
 	#widgetcode { margin:1em 0; padding:.5em 0;}
@@ -170,7 +170,7 @@ body#expert {
 	-o-transform: rotate(-30deg);
 	}
 	.question.list {margin:0 0 2em; }
-	#history {padding:2em;margin:3em 0 5em; background:#f5f5f5;}
+	#history {padding:2em;margin:3em 0 5em; background:#fff; color:#777;}
 	#history li {margin-bottom:.5em;}
 	textarea {width:30em;}
 /*	#main {outline:1px solid red;}*/
@@ -184,4 +184,5 @@ body#expert {
 	.question_body {font-size:1.5em; line-height:1.3em;}
 	.response_block p.response {font-size:1.3em; line-height:1.2em;}
 	.response_block {margin-bottom:2em;}
+	#aaeid {color:#999; font-size:1.3em;}
 }
