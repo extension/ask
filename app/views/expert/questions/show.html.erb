@@ -1,127 +1,18 @@
 <% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
 
 <div id="main" class="span8">
+  <div id="question_wrapper">
+    <p id="aaeid">Question #<%= @question.id %></p>
   
-  <p id="aaeid">Question #<%= @question.id %></p>
+    <%= render :partial => 'partials/question_main' %>
   
-  <%= render :partial => 'partials/question_main' %>
-  
-  <div id="tag_info">
-  <div class="ui-widget">
-    <label for="tag_picker">Add Tags</label>
-  	<input id="tag_picker" placeholder="Type and select a tag" /> 
+    <%= render :partial => 'partials/history' %>
   </div>
-  
-  <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
-  <% if @question.tags.length > 0 %>
-    <% @question.tags.each do |tag| %>
-      <% if @question.assigned_group %>
-        <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
-      <% else %>
-        <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
-      <% end %>
-    <% end %>
-  <% else %>
-    <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
-    <p><small>(All tags are viewable if the question is public)</small></p>
-  <% end %>
-
-  </div>
-  </div>
-
-  <script class="code" type="text/javascript">
-
-  		function add_tag(tag) {
-  		  $.ajax({
-          type: "POST",
-          url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
-          cache: false,
-          data: {tag: tag}
-        })
-        .done(function() {
-  				$("#tag_picker").autocomplete("close");
-  				$("#tag_picker").val('');
-  				return false;
-        })  
-        .fail(function() {
-          alert("error");
-          $("#tag_picker").autocomplete("close");
-    			$("#tag_picker").val('');
-    			return false;
-        })
-  		}
-
-      // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
-  		$("#tag_picker").autocomplete({
-  			source: "/ajax/tags",
-  			minLength: 2,
-  			select: function(e, ui) {
-  			  add_tag(ui.item.name);
-  			}
-  		}).keypress(function(e) {
-        if (e.keyCode === 13) {
-          add_tag(this.value);
-        }
-      });
-
-      // remove tags
-       $("#tag_list").on("click", ".removetag", function(){
-         var tag = $(this).closest("p");
-         $.ajax({
-           type: "POST",
-             url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
-             cache: false,
-             data: {tag_id: tag.attr("id").replace('tag_', '')}
-         })
-         .done(function() {
-           tag.fadeOut(500);
-         })
-       });
-
-  </script>
-  
-  
-  
-	<%= render :partial => 'partials/history' %>
-  
 </div>
 
-
 <div id="secondary" class="span4">
-  <aside>
-    <% if @question.is_private %>
-      <h3><i class="icon-lock"></i> This question is private</h3>
-    <% else %>
-      <h3><i class="icon-globe"></i> This question is public</h3>
-    <% end %>
-    <p><%= link_to "See what the public sees", question_path(@question.id) %></p>
-  </aside>
-
-  <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
-
+<p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   
-  <% if @question.status_state != Question::STATUS_REJECTED %>
-    <aside>
-      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
-        <h3>Last response by</h3>
-      <% else %>
-        <h3>Assigned to</h3>
-      <% end %>
-  
-      <%= link_to expert_user_path(@question.assignee_id) do %>
-        <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
-      <% end %>
-    
-      <% if @question.assigned_group %>
-        <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
-  		  <p>This question is associated with the above group. To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
-  	  <% else %>
-  		  <p><strong>This question is groupless :(</strong> To change, reassign the question to a new group. <small>(note: this is an explanation of how the code currently works)</small></p>
-      <% end %>
-    </aside>
-  <% end %>
-
-
   <aside>
     <% if @question.status_state == Question::STATUS_REJECTED %>
       <h3>This question has been rejected</h3>
@@ -159,32 +50,103 @@
       
 	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
 	    <h3>This question has been resolved</h3>
-	    <div class="question_actions">
+	    <div class="question_actions last">
         <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
       </div>
 	    
 	<% else %>
-      <div class="question_actions">
-        <p><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-        <% if @question.assignee == current_user %>
-          <p><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-          <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
-          <p><%= link_to "Close Question", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-          <% end %>
-        <% end %>
-      </div>
       
-      <div class="question_actions last">
-        <p><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-danger" %></p>
+      <div class="question_actions">
+        <span><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
+        <% if @question.assignee == current_user %>
+          <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
+        <% end %>
+        <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
+          <p><%= link_to "Close Question", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+        <% end %>
+  
+        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-danger" %></span>
       </div>
       
      <% end %>
   </aside>
   
   
-  <aside class="subtle">
+  <aside>
+    <% if @question.is_private %>
+      <h3><i class="icon-lock"></i> <%= link_to "This question is private", question_path(@question.id) %></h3>
+    <% else %>
+      <h3><i class="icon-globe"></i> <%= link_to "This question is public", question_path(@question.id) %></h3>
+    <% end %>
+  </aside>
+
+  
+
+  
+  <% if @question.status_state != Question::STATUS_REJECTED %>
+    <aside>
+      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+        <h3>Last response by</h3>
+      <% else %>
+        <h3>Assigned to</h3>
+      <% end %>
+  
+      <%= link_to expert_user_path(@question.assignee_id) do %>
+        <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
+      <% end %>
+    
+      <% if @question.assigned_group %>
+        <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
+  		  
+  	  <% else %>
+  		  <p><strong>This question is groupless :(</strong></p>
+      <% end %>
+    </aside>
+  <% end %>
+
+
+  <aside class="nobg">
+    <p>
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= link_to "#{@question.county.name} County" %></span>
+        <% end %>
+        <% if @question.location.present? %>
+          <span class="tag tag-geography"><%= link_to @question.location.abbreviation %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse"><%= link_to "No Location" %></span>
+      <% end %>
+    </p>
+    
+    <div id="tag_picker_wrapper">
+      <div class="ui-widget">
+        <label for="tag_picker">Add Tags</label>
+    	  <input id="tag_picker" placeholder="Type and select a tag" /> 
+      </div>
+    </div>
+    
+    <div id="tags">
+      
+    <% if @question.tags.length > 0 %>
+      <% @question.tags.each do |tag| %>
+        <% if @question.assigned_group %>
+          <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+        <% else %>
+          <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+        <% end %>
+      <% end %>
+    <% else %>
+      
+    <% end %>
+    
+    </div>
+    
+    <p><small>(All tags are viewable if the question is public)</small></p>
+  </aside>
+  
+  <aside class="nobg">
     <h3>Related Questions</h3>
-    <h4>TODO: Replace with actual related questions. This is just a placeholder.</h4>
     <% @fake_related.each do |question| %>
       <%= link_to expert_question_path(question.id) do %>
         <% if question.title.present? %>
@@ -194,6 +156,58 @@
         <% end %>
       <%- end -%>
     <% end %>
+    <h4 class="subtle">TODO: Replace with actual related questions. This is just a placeholder.</h4>
   </aside>
   
 </div>
+
+<script class="code" type="text/javascript">  
+  
+		function add_tag(tag) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
+        cache: false,
+        data: {tag: tag}
+      })
+      .done(function() {
+				$("#tag_picker").autocomplete("close");
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function() {
+        alert("error");
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#tag_picker").autocomplete({
+			source: "/ajax/tags",
+			minLength: 2,
+			select: function(e, ui) {
+			  add_tag(ui.item.name);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        add_tag(this.value);
+      }
+    });
+
+    // remove tags
+     $("#tags").on("click", ".removetag", function(){
+       var tag = $(this).closest("p");
+       $.ajax({
+         type: "POST",
+           url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
+           cache: false,
+           data: {tag_id: tag.attr("id").replace('tag_', '')}
+       })
+       .done(function() {
+         tag.fadeOut(500);
+       })
+     });
+
+</script>

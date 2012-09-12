@@ -21,12 +21,12 @@
     <% filter_terms = [] %>
     <% if @question.county.present? %>
       <% filter_terms <<  @question.county.name %> 
-      <td><p class="rotate30"><span class="label label-success"><%= "#{@question.county.name} County" %></span> <span class="removetag">[x]</span></p></td>
+      <td><p class="rotate30"><span class="tag tag-geography"><%= "#{@question.county.name} County" %></span> <span class="removetag">[x]</span></p></td>
     <% end %>
 
     <% if @question.location.present? %>
       <% filter_terms <<  @question.location.name %> 
-      <td><p class="rotate30"><span class="label label-success"><%= @question.location.abbreviation %></span> <span class="removetag">[x]</span></p></td>
+      <td><p class="rotate30"><span class="tag tag-geography"><%= @question.location.abbreviation %></span> <span class="removetag">[x]</span></p></td>
     <% end %>
 
     <% if @question.tags.length > 0 %>

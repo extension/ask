@@ -1,29 +1,22 @@
 <% if @question.title.present? %>
-  <h2><%= format_text_for_display(@question.title) %></h2>
+  <h2 class="title"><%= format_text_for_display(@question.title) %></h2>
 <% else %>
-  <h2><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
+  <h2 class="title"><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
 <% end %>
 
-  <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+<div id="question">
+<p class="question_body"><%= format_text_for_display(@question.body) %></p>
 
   <% @question.images.each do |image| %>
     <%= image_tag image.url(:thumb) %>
   <% end %>
-
-<p>  
-  <% if @question.county.present? %>
-    <span class="label label-success"><%= "#{@question.county.name} County" %></span>
-  <% end %>
-  <% if @question.location.present? %>
-    <span class="label label-success"><%= @question.location.abbreviation %></span>
-  <% end %>
-</p>
 
 <p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
   <% if @question.submitter %>
     by <%= @question.submitter.name %>
   <% end %>
 </p>
+</div>
 
 <% if @question_responses.length > 0 %>
   <h3>Responses</h3>
@@ -41,4 +34,7 @@
     </div>
   <% end %>
 <% end %>
+
+
+
 

@@ -16,17 +16,17 @@
     
         <p>
           <% if q.county.present? %>
-            <span class="label label-success"><%= "#{q.county.name} County" %></span>
+            <span class="tag tag-geography"><%= "#{q.county.name} County" %></span>
           <% end %>
           <% if q.location.present? %>
-            <span class="label label-success"><%= q.location.abbreviation %></span>
+            <span class="tag tag-geography"><%= q.location.abbreviation %></span>
           <% end %>
         </p>
     
         <p>
         <% if q.tags.length > 0 %>
           <% q.tags.each do |tag| %>
-            <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
+            <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
           <% end %>
         <% else %>
           <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>

@@ -37,19 +37,19 @@
       
         <p>
         <% if q.county.present? %>
-          <span class="label label-success"><%= "#{q.county.name} County" %></span>
+          <span class="tag tag-geography"><%= "#{q.county.name} County" %></span>
         <% end %>
         <% if q.location.present? %>
-          <span class="label label-success"><%= q.location.abbreviation %></span>
+          <span class="tag tag-geography"><%= q.location.abbreviation %></span>
         <% end %>
 
         
         <% if q.tags.length > 0 %>
           <% q.tags.each do |tag| %>
             <% if q.assigned_group %>
-              <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
+              <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
             <% else %>
-              <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+              <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
             <% end %>
           <% end %>
         <% else %>
@@ -149,7 +149,7 @@
     <% if @user.tags.length > 0 %>
       <p class="tags">  
         <% @user.tags.each do |tag| %>
-        <span class="label"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
         <% end %>
       </p>
       <% if current_user.id == @user.id %>

@@ -15,13 +15,25 @@
           <% end %>
           <p><%= question.body -%></p>
         <%- end -%>
-        <p>Location   
+        <p>
+          <% if question.location.present? %>
+            <% if question.county.present? %>
+              <span class="tag tag-geography"><%= link_to "#{question.county.name} County" %></span>
+            <% end %>
+            <% if question.location.present? %>
+              <span class="tag tag-geography"><%= link_to question.location.abbreviation %></span>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "No Location" %></span>
+          <% end %>
+          
+          
           <% if question.tags.length > 0 %>
             <% question.tags.each do |tag| %>
               <% if question.assigned_group %>
-                <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
+                <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
               <% else %>
-                <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+                <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
               <% end %>
             <% end %>
           <% else %>

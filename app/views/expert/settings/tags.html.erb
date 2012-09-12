@@ -11,7 +11,7 @@
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @user.tags.length > 0 %>
   <% @user.tags.each do |tag| %>
-    <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name %></span> <span class="removetag">[x]</span></p>
+    <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name %></span> <span class="removetag">[x]</span></p>
   <% end %>
 <% else %>
   <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>

@@ -49,9 +49,15 @@ body#expert {
 
     .incoming_question .expert {padding:1em;}
     .incoming_question .expert .avatar {float:left; margin-right:1em;}
-    .incoming_question .expert:hover {background:#eee;}
-
-    .incoming_question {border-bottom:2px solid #ccc; margin: 0 0 1.5em; padding:0 0 1.5em;}
+/*    .incoming_question .expert:hover {background:#eee;}*/
+    .incoming_question {border-bottom:2px solid #eee;  padding:0; border-top:2px solid #fff;}
+	.incoming_question a {color:#16426D;}
+	.incoming_question .span4 {padding:1em 0; border-top:1px solid #fff;}
+	.incoming_question .span8 {padding:1.5em;}
+	.incoming_question:hover .span8 {background:#f5f5f5;}
+	.incoming_question:hover .span4 {background:#f5f5f5;}
+	.incoming_question:hover .row-fluid {background:#f5f5f5;}
+/*	.incoming_question:hover {border-bottom:2px solid #bbb; border-top:2px solid #bbb;}*/
 
     .navavatar.loggedin {background:#fff; padding:.5em; outline:3px solid #000;}
 
@@ -147,13 +153,16 @@ body#expert {
 		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
 	}
 	
-	span.removetag {padding:.1em .25em; background:#eee; color:#999; margin-left:1em; cursor:pointer;}
+	span.removetag {padding:.1em .5em; background:#eee; color:#aaa; cursor:pointer;}
+	.add_tags {cursor:pointer;}
 	
 	span.label {font-size:.9em;}
 	
 /*	#location_list {padding:1em; margin:1em 0;}*/
 	#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
-	#secondary aside.subtle {background:#fff;}
+	#secondary aside.nobg {background:#fff;}
+	#secondary aside.nobg h3 {color:#534A4A;}
+
 /*	#filter_terms td p {-webkit-transform: rotate(-45deg);}*/
 	
 	/*rotate 30 degrees*/
@@ -170,19 +179,40 @@ body#expert {
 	-o-transform: rotate(-30deg);
 	}
 	.question.list {margin:0 0 2em; }
-	#history {padding:2em;margin:3em 0 5em; background:#fff; color:#777;}
-	#history li {margin-bottom:.5em;}
+	#history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:2em;}
+	#history a {color:#363955;}
+	#history li {margin-bottom:.5em; list-style:none;}
 	textarea {width:30em;}
 /*	#main {outline:1px solid red;}*/
 /*	#secondary {outline:1px solid blue;}*/
 	.question_actions {margin-bottom:2em;}
 	.question_actions.last {margin-bottom:0;}
+	.question_actions span {float:left; margin-right:1em;}
 	
 	.bekind {padding:1em; background:#eee; margin:1em 0 2em;}
-	#tag_info {margin:2em 0; padding:1em; padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
+	
 	#email_content {padding:2em;}
 	.question_body {font-size:1.5em; line-height:1.3em;}
 	.response_block p.response {font-size:1.3em; line-height:1.2em;}
 	.response_block {margin-bottom:2em;}
 	#aaeid {color:#999; font-size:1.3em;}
+
+	.tag {background:#BDC9B0; @include rounded3; color:#888; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
+	.tag a {padding:.1em .35em; background:#BDC9B0; @include rounded3; color:#888;}
+	.tag a:hover {background:#444; @include rounded3; color:#fff; text-decoration:none;}
+	.tag-geography,
+	.tag-geography a {background:#DAEAC9; color:#3E3553;}
+	.tag-geography a:hover {background:#53785E; color:#fff;}
+	.tag-topic,
+	.tag-topic a {background:#C2E5EC; color:#1F5983;}
+	.tag-topic a:hover {background:#2C1946; color:#fff;}
+	
+	
+	
+	h2.title {line-height:1.1em; margin:1em 0 .65em; color: #201B1B;}
+/*	#tags {border:1px solid lime;}*/
+	#tag_picker_wrapper {margin:2em 0 1em;}
+	.subtle {color:#bbb;}
+	#question_wrapper {padding:1em 2.5em;}
+	#question {margin-bottom:2em;}
 }
