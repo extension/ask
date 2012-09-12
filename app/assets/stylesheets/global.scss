@@ -192,9 +192,10 @@ body#expert {
 	.bekind {padding:1em; background:#eee; margin:1em 0 2em;}
 	
 	#email_content {padding:2em;}
-	.question_body {font-size:1.5em; line-height:1.3em;}
-	.response_block p.response {font-size:1.3em; line-height:1.2em;}
+	.question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
+	.response_block p.response {font-size:1.3em; line-height:1.4em; font-family: Georgia, serif;}
 	.response_block {margin-bottom:2em;}
+	.response_block .author {padding: 0 0 0 1em;}
 	#aaeid {color:#999; font-size:1.3em;}
 
 	.tag {background:#BDC9B0; @include rounded3; color:#888; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
@@ -209,10 +210,12 @@ body#expert {
 	
 	
 	
-	h2.title {line-height:1.1em; margin:1em 0 .65em; color: #201B1B;}
+	
 /*	#tags {border:1px solid lime;}*/
 	#tag_picker_wrapper {margin:2em 0 1em;}
 	.subtle {color:#bbb;}
 	#question_wrapper {padding:1em 2.5em;}
 	#question {margin-bottom:2em;}
+	.h3 {color:#3D3737;font-family: Georgia, serif; margin-bottom:1em;}
+	h2.title {line-height:1.2em; margin:1em 0 .65em; color: #201B1B; font-family: Georgia, serif; font-size:1.9em}
 }
