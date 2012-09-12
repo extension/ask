@@ -15,11 +15,15 @@
         <% end %>
     
         <p>
-          <% if q.county.present? %>
-            <span class="tag tag-geography"><%= "#{q.county.name} County" %></span>
-          <% end %>
           <% if q.location.present? %>
-            <span class="tag tag-geography"><%= q.location.abbreviation %></span>
+            <% if q.county.present? %>
+              <span class="tag tag-geography"><%= link_to "#{q.county.name} County", expert_view_county_path(q.county.id) %></span>
+            <% end %>
+            <% if q.location.present? %>
+              <span class="tag tag-geography"><%= link_to q.location.abbreviation, expert_view_location_path(q.location.id) %></span>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "No Location" %></span>
           <% end %>
         </p>
     

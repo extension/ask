@@ -28,4 +28,22 @@ class Expert::HomeController < ApplicationController
     return record_not_found if (!@tag)
     @experts = User.tagged_with(@tag.id)
   end
+  
+  def location
+    @location = Location.find_by_id(params[:id])
+    @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
+    
+    @questions = Question.where("location_id = ?", @location.id).order("questions.status_state DESC").limit(8)
+    @experts = User.with_expertise_location(@location.id).order("users.last_sign_in_at ASC").limit(8)
+    @groups = Group.with_expertise_location(@location.id).limit(8)
+  end
+  
+  def county
+    @county = County.find_by_id(params[:id])
+    @location = Location.find_by_id(@county.location_id)
+    
+    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(8)
+    @experts = User.with_expertise_county(@county.id).order("users.last_sign_in_at ASC").limit(8)
+    @groups = Group.with_expertise_county(@county.id).limit(8)
+  end
 end
