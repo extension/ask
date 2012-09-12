@@ -192,17 +192,17 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
   # TODO: replace keys with general account and store in non-version-controlled file
-  #require "omniauth-facebook"
-  #require "omniauth-twitter"
+  require "omniauth-facebook"
+  require "omniauth-twitter"
   require "omniauth-openid"
   
   # ==> OpenID configuration
   # configure storage for OpenID
   require 'openid/store/filesystem'
   config.omniauth :open_id, :store => OpenID::Store::Filesystem.new("#{Rails.root}/tmp"), :name => 'people', :identifier => 'https://people.extension.org', :require => 'omniauth-openid'
-  #config.omniauth :open_id, :store => OpenID::Store::Filesystem.new("#{Rails.root}/tmp"), :name => 'google', :identifier => 'https://www.google.com/accounts/o8/id', :require => 'omniauth-openid'
-  #config.omniauth :twitter, Settings.twitter_app_id, Settings.twitter_app_secret
-  #config.omniauth :facebook, Settings.facebook_app_id, Settings.facebook_app_secret
+  config.omniauth :open_id, :store => OpenID::Store::Filesystem.new("#{Rails.root}/tmp"), :name => 'google', :identifier => 'https://www.google.com/accounts/o8/id', :require => 'omniauth-openid'
+  config.omniauth :twitter, Settings.twitter_app_id, Settings.twitter_app_secret
+  config.omniauth :facebook, Settings.facebook_app_id, Settings.facebook_app_secret
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
