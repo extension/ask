@@ -23,6 +23,7 @@ class Authmap < ActiveRecord::Base
   # UPDATE: Will handle account merges manually (through a call from the console to the merge_account_with method on the user model) 
   # on a case by case basis for now
   # TODO: Logic needs to be changed here for account merge
+  # Todo: Need to check for user email existing, and if so, connect a authmap record to it.
   def self.process_user_info(access_token, logged_in_user)
     if !logged_in_user.blank?
       return logged_in_user
