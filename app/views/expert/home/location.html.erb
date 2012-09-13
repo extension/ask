@@ -1,8 +1,9 @@
 <div id="main" class="span8">
+  <div class="map"></div>
 <h1><%= @location.name %></h1>
 
 <div class="tag_summary">
-  <h2>Questions</h2>
+  <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
 <% if @questions.length > 0 %>
   <table>
     <tr>
@@ -30,7 +31,7 @@
 </div>
 
 <div class="tag_summary">
-  <h2>Experts</h2>
+  <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
 <% if @experts.length > 0 %>
   <% @experts.each do |member| %>
     <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>
@@ -42,7 +43,7 @@
 </div>
 
 <div class="tag_summary">
-  <h2>Groups</h2>
+  <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
 <% if @groups.length > 0 %>
   <% @groups.each do |group| %>
     <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>

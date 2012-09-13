@@ -1,23 +1,28 @@
 <% @page_title = @user.name %>
 
 <div id="main" class="span8">
-  <h1><%= @user.name %></h1>
-  <%= get_avatar(@user) %>
   
-  <h3>Expert description</h3>
+  <div id="user_masthead">
+    <%= get_avatar(@user) %>
+    <h1><%= @user.name %> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
   
-  <p>
-    <strong>About me:</strong>
-    <% if @user.bio %>
-      <%= @user.bio %>
-    <% else %>
-      This person hasn't added a description yet...
-    <% end  %>
+    <h3>Expert description</h3>
+    
+    <p>
+      <strong>About me:</strong>
+      <% if @user.bio %>
+        <%= @user.bio %>
+      <% else %>
+        This person hasn't added a description yet...
+      <% end  %>
+
+    <% if current_user.id == @user.id %>
+    <%= link_to 'edit', expert_settings_profile_path() %>
+    <% end %>
+    </p>
+  </div>
   
-  <% if current_user.id == @user.id %>
-  <%= link_to 'edit', expert_settings_profile_path() %>
-  <% end %>
-  </p>
+  
   
   <% if @answered_questions.length == 0 %>
     <h3>This person hasn't answered any questions</h3>
@@ -82,7 +87,6 @@
 
 
 <div id="secondary" class="span4">
-  <p><%= link_to "Public profile", user_path(@user.id), :class => "label btn-warning" %></p>
   
   <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">

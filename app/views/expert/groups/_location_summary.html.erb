@@ -5,14 +5,14 @@
   <h3>Locations</h3>
     <% @group.expertise_locations.each do |l| %>
       <div class="location">
-
-        <h4><%= l.name %></h4>
+        
+        <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
 
         <% if @group.expertise_locations.where("location_id = ?", l.id).length > 0 %>
           <% if @group.expertise_counties.where("location_id = ?", l.id).length > 0 %>
             <ul>
               <% @group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
-                <li><%= c.name %></li>
+                <li><span class="tag tag-geography"><%= link_to "#{c.name} County", expert_view_county_path(c.id) %></span></li>
               <% end %>
             </ul>
           <% else %>
