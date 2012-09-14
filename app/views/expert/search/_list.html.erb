@@ -1,0 +1,72 @@
+<div id="main" class="span12">
+  <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.length %> of <%= @questions.total_entries %></strong></p>
+  
+  <h3>#TODO NOTE: Only showing question search results at current time. Result list is also incomplete.</h3>
+  
+  <% @questions.each do |question| %>
+  <div class="incoming_question">
+    
+    <div class="row-fluid">  
+      
+      <div class="span8">
+        <%= link_to expert_question_path(question.id) do %>
+          <% if question.title.present? %>
+            <h3><%= format_text_for_display(question.title) -%></h3>
+          <% else %>
+            <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
+          <% end %>
+          <p><%= question.body -%></p>
+        <%- end -%>
+        <p>
+          <% if question.location.present? %>
+            <% if question.county.present? %>
+              <span class="tag tag-geography"><%= link_to "#{question.county.name} County", expert_view_county_path(question.county.id) %></span>
+            <% end %>
+            <% if question.location.present? %>
+              <span class="tag tag-geography"><%= link_to question.location.abbreviation, expert_view_location_path(question.location.id) %></span>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "No Location" %></span>
+          <% end %>
+          
+          <% if question.tags.length > 0 %>
+            <% question.tags.each do |tag| %>
+              <% if question.assigned_group %>
+                <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
+              <% else %>
+                <span class="label"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span>
+              <% end %>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(question.id) %></span>
+          <% end %>
+            <%= time_ago_in_words(question.created_at) %> ago
+        </p>
+      </div>
+      
+      <div class="span4">
+	    <div class="expert">
+	    <% if question.assignee_id.present? %>
+          <%= link_to expert_user_path(question.assignee_id) do %>
+            <%= get_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %>
+		  <% end %>
+		<% else %>
+		  <p><strong>This question does not have an assignee.</strong></p>
+		<% end %>
+		
+		<% if question.assigned_group %>
+	      <p><%= get_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
+		<% else %>
+			<p><strong>This question is groupless</strong></p>
+		<% end %>
+        </div>
+      </div>
+    
+    </div>
+    
+  </div>
+  <% end %>
+  
+  <%= will_paginate @questions %>
+  
+</div>

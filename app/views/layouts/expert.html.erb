@@ -50,6 +50,12 @@
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
                 <li <%= "class='active'" if current_page?(:controller => 'groups', :action => "index") %>><%= link_to "Groups", expert_groups_path %></li>
               </ul>
+              <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
+              <p id="search">
+                <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
+                <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
+              </p>
+              <% end %>
             </div><!--/.nav-collapse -->
             
             
@@ -69,7 +75,14 @@
 
 </div>
 
+<script class="code" type="text/javascript">
+  $('#icon-search').click(function() {
+    $('#searchform').submit();
+  });
+</script>
+
 <%= render(:partial => 'home/google_analytics') %>
 
 </body>
 </html>
+

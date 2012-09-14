@@ -73,6 +73,8 @@ Aae::Application.routes.draw do
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
     match "settings/add_tag" => "settings#add_tag", :via => [:post]
     match "settings/remove_tag" => "settings#remove_tag", :via => [:post]
+    match "search/all" => "search#all", :via => [:get]
+    match "home/search" => "home#search", :via => [:get]
   end
   
   match "home/private_page" => "home#private_page", :via => :get
@@ -85,8 +87,6 @@ Aae::Application.routes.draw do
   match "ajax/add_location" => "ajax#add_location", :via => [:post]
   match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
   match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
-  
-  
   
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.

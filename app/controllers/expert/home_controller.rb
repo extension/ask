@@ -13,6 +13,9 @@ class Expert::HomeController < ApplicationController
     @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
   end
   
+  def search
+  end
+  
   def answered
     @recently_answered_questions = Question.answered.find(:all, :limit => 20, :order => 'created_at DESC')
   end
