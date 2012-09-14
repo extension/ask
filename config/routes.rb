@@ -65,7 +65,7 @@ Aae::Application.routes.draw do
     match "home/tags" => "home#tags"
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
-    match "home/location/:id" => "home#location", :as => 'view_location'
+    match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]

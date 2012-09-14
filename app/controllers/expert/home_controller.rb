@@ -29,7 +29,7 @@ class Expert::HomeController < ApplicationController
     @experts = User.tagged_with(@tag.id)
   end
   
-  def location
+  def locations
     @location = Location.find_by_id(params[:id])
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
     
