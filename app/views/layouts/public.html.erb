@@ -20,18 +20,26 @@
           <div class="container">
             
             <% if current_user %>
-              <span class="navavatar loggedin">
-                <%= get_avatar(current_user, :thumb) %>
-                <%= link_to expert_user_path(current_user.id) do %>
-                   <%= current_user.name %>
-                <% end %>
-                &nbsp;
-                <%= link_to 'Settings', expert_settings_profile_path() %>
-                &nbsp;
-                <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-                &nbsp;
-                <%= link_to("Expert Home", expert_home_path()) %>
-              </span>  
+              <% if current_user.has_exid? %>
+                <span class="navavatar loggedin">
+                  <%= get_avatar(current_user, :thumb) %>
+                  <%= link_to expert_user_path(current_user.id) do %>
+                     <%= current_user.name %>
+                  <% end %>
+                  &nbsp;
+                  <%= link_to 'Settings', expert_settings_profile_path() %>
+                  &nbsp;
+                  <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+                  &nbsp;
+                  <%= link_to("Expert Home", expert_home_path()) %>
+                </span>
+              <% else %>
+                <span class="navavatar loggedin">
+                  <%= link_to "Need an account page for non-exids" %>
+                  &nbsp;
+                  <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+                </span>
+              <% end %>
             <% else %>
               <span class="navavatar">
                 <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
