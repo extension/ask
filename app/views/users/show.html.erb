@@ -1,5 +1,7 @@
 
 <div id="main" class="span6">
+  <% if current_user && current_user.has_exid? %>
+  
   <h1><%= @user.name %></h1>
   <h3>Short description</h3>
   <h3>Location</h3>
@@ -23,11 +25,16 @@
     </h3>
   <% end %>
   
+  <% else %>
+    <h1><%= @user.name %></h1>
+    <%= get_avatar(@user) %>
+  <% end %>
+  
 </div>
 
 
 <div id="main" class="span6">
-  <% if current_user %>
+  <% if current_user && current_user.has_exid? %>
     <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-inverse" %>
   <% end %>
   

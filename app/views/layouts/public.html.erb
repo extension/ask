@@ -35,7 +35,7 @@
                 </span>
               <% else %>
                 <span class="navavatar loggedin">
-                  <%= link_to "Need an account page for non-exids" %>
+                  <%= link_to "Settings", user_path(current_user.id), :class => "btn" %>
                   &nbsp;
                   <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
                 </span>
