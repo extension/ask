@@ -6,11 +6,22 @@
 
 <aside>
 <% if @group.active %>
-	<p><%= link_to "Ask an Expert Form", ask_group_path(@group.id), :class => "btn btn-primary" %></p>
+	<p>
+	  <%= link_to ask_group_path(@group.id), :class => "btn btn-success" do %>
+	    <i class="icon-play icon-white"></i>
+	    Question Form is Live
+	  <% end %>
+	  <%= link_to 'Options', expert_group_widget_path() %>
+	</p>
 <% else  %>
 	<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
 <% end %>
-<p><%= link_to 'Join Group', expert_group_join_path(:group_id => @group.id), :class => "btn btn-primary" %></p>
+</aside>
+
+<aside>
+  <div id="membership_connection">
+    <%= render :partial => 'membership_connection' %>
+  </div>
 </aside>
 
 <aside>
@@ -36,6 +47,7 @@
     <p>There are no tags at this time.</p>
   <% end %>
 </aside>
+
 
 <aside>
   <h3>Group Members (<%= @group_members_total %>)</h3>

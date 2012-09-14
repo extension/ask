@@ -4,10 +4,11 @@
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
+<p><%= link_to "View Question Form for this Group", ask_group_path(@group.id), :class => "btn btn-primary" %></p>
+
 <%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
 
   <div class="form_subgroup">
-    
 
     <fieldset>
 		<p>

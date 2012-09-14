@@ -158,9 +158,15 @@ class Expert::GroupsController < ApplicationController
   end
   
   def join
-    @group = Group.find_by_id(params[:group_id])
+    @group = Group.find_by_id(params[:id])
     current_user.join_group(@group,"member")
     redirect_to(expert_group_path(@group.id), :notice => 'Joined')
+  end
+  
+  def leave
+    @group = Group.find_by_id(params[:id])
+    current_user.leave_group(@group)
+    redirect_to(expert_group_path(@group.id), :notice => 'You have been removed from the group')
   end
   
 end

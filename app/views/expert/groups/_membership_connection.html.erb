@@ -1,0 +1,5 @@
+<% if current_user.member_of_group(@group) %>
+  <p><%= link_to 'Leave Group', expert_group_leave_path(), :class => "btn" %></p>
+<% else%>
+  <p><%= link_to 'Join Group', expert_group_join_path(), :class => "btn" %></p>
+<% end %>

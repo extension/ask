@@ -48,6 +48,11 @@ class User < ActiveRecord::Base
     return DEFAULT_NAME
   end
   
+  def member_of_group(group)
+    find_group = self.group_connections.where('group_id = ?', group.id)
+    !find_group.blank?
+  end
+  
   def self.system_user_id
     return 1
   end
@@ -78,5 +83,11 @@ class User < ActiveRecord::Base
   def join_group(group, connection_type)
     self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
   end
+  
+  def leave_group(group)
+    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+      connection.destroy
+    end
+  end  
   
 end
