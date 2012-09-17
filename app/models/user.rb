@@ -53,6 +53,11 @@ class User < ActiveRecord::Base
     !find_group.blank?
   end
   
+  def leader_of_group(group)
+    find_group = self.group_connections.where('group_id = ?', group.id).where('connection_type = ?', 'leader')
+    !find_group.blank?
+  end
+  
   def self.system_user_id
     return 1
   end
@@ -81,11 +86,16 @@ class User < ActiveRecord::Base
   end
   
   def join_group(group, connection_type)
-    self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
+    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+      connection.destroy
+      self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
+    else
+      self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
+    end
   end
   
-  def leave_group(group)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+  def leave_group(group, connection_type)
+    if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
     end
   end  

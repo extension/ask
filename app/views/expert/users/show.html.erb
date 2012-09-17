@@ -181,7 +181,7 @@
   </aside>
 
   <aside>
-    <h3>Group Membership</h3>
+    <h3>Group Membership <%= link_to "(#{@my_groups.count})", expert_user_groups_path() %></h3>
     <ul class="groups">
       <% if @my_groups.length == 0 %>
         <li>You currently are not a member or leader of a group.</li>
@@ -190,6 +190,7 @@
           <li><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
         <% end %>
       <% end %>
+      <%= link_to "View groups", expert_user_groups_path() %>
     </ul>
   </aside>
   

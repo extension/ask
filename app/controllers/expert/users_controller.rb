@@ -23,4 +23,8 @@ class Expert::UsersController < ApplicationController
     @questions = @user.answered_questions.tagged_with(@tag.id).order("questions.status_state ASC")
   end
   
+  def groups
+    @user = User.find(params[:id])
+    @my_groups = @user.group_memberships
+  end
 end

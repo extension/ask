@@ -8,7 +8,7 @@
 <% if @group.active %>
 	<p>
 	  <%= link_to ask_group_path(@group.id), :class => "btn btn-success" do %>
-	    <i class="icon-play icon-white"></i>
+	    <i class="icon-signal icon-white"></i>
 	    Question Form is Live
 	  <% end %>
 	  <%= link_to 'Options', expert_group_widget_path() %>
@@ -18,26 +18,20 @@
 <% end %>
 </aside>
 
-<aside>
-  <div id="membership_connection">
-    <%= render :partial => 'membership_connection' %>
-  </div>
-</aside>
 
-<aside>
-  <% if  @group.description? %>
+<% if  @group.description? %>
+  <aside>
     <p><%= format_text_for_display(@group.description).html_safe %></p>
-  <% else %>
-    <p>Needs a description.</p>
-  <% end %>
-</aside>
+  </aside>
+<% end %>
+
 
 <aside>
   <%= render :partial => 'location_summary' %>
 </aside>
 
 <aside>
-  <h3>Tags <%= link_to 'edit', expert_group_tags_path() %></h3> 
+  <h3>Group Tags <%= link_to "(#{@group_tags_total})", expert_group_tags_path() %></h3> 
 
   <% if @group_tags.length > 0 %>
     <% @group_tags.each do |tag| %>
@@ -46,11 +40,15 @@
   <% else %>
     <p>There are no tags at this time.</p>
   <% end %>
+  <p><%= link_to 'View all', expert_group_tags_path() %></p>
 </aside>
 
 
 <aside>
-  <h3>Group Members (<%= @group_members_total %>)</h3>
+  <div id="membership_connection">
+    <%= render :partial => 'membership_connection' %>
+  </div>
+  <h3>Group Members <%= link_to "(#{@group_members_total})", expert_group_members_path(@group) %></h3>
 
   <% @group_members.each do |member| %>
     <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>

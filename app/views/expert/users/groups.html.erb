@@ -1,0 +1,39 @@
+<% @page_title = @user.name + " - Groups" %>
+
+
+<div id="main" class="span12">
+  <h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+  <h1>Groups</h1>
+  
+  <% if @my_groups.length == 0 %>
+    <li>You currently are not a member or leader of a group.</li>
+  <% else %>
+    
+  <table class="table table-bordered">
+    <tr>
+      <th>Name</th>
+      <th>Membership</th>
+      <th>Notifications</th>
+    </tr>
+    
+    <% @my_groups.each do |group| %>
+      <tr>
+        <td><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></td>
+        <% if @user.leader_of_group(group)%>
+          <td><strong>Leader <i class="icon-user"></i></strong></td>
+        <% else %>
+          <td>member</td>
+        <% end %>
+        <td>
+          <%= radio_button_tag :notification_ty, "", true %> None
+          <%= radio_button_tag :notification_ty, "", true %> All incoming questions 
+        </td>
+        
+      </tr>
+    <% end %>
+      
+      
+      
+  <% end %>
+
+</div>

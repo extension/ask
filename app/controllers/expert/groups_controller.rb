@@ -24,7 +24,8 @@ class Expert::GroupsController < ApplicationController
     @questions = @group.open_questions
     @group_members = @group.joined.limit(5)
     @group_members_total = @group.joined.count
-    @group_tags = @group.tags
+    @group_tags = @group.tags.limit(7).order('updated_at DESC')
+    @group_tags_total = @group.tags.count
   end
   
   def answered
@@ -33,13 +34,14 @@ class Expert::GroupsController < ApplicationController
     @questions = @group.answered_questions.limit(10).order('updated_at DESC')
     @group_members = @group.joined.limit(5)
     @group_members_total = @group.joined.count
-    @group_tags = @group.tags
+    @group_tags = @group.tags.limit(7).order('updated_at DESC')
+    @group_tags_total = @group.tags.count
     render :action => 'show'
   end
   
   def members
     @group = Group.find(params[:id])
-    @group_members = @group.joined
+    @group_members = @group.joined.order('connection_type ASC')
   end
   
   def questions_by_tag
@@ -163,10 +165,22 @@ class Expert::GroupsController < ApplicationController
     redirect_to(expert_group_path(@group.id), :notice => 'Joined')
   end
   
+  def lead
+    @group = Group.find_by_id(params[:id])
+    current_user.join_group(@group,"leader")
+    redirect_to(expert_group_path(@group.id), :notice => 'You are a group leader')
+  end
+  
   def leave
     @group = Group.find_by_id(params[:id])
-    current_user.leave_group(@group)
+    current_user.leave_group(@group, "member")
     redirect_to(expert_group_path(@group.id), :notice => 'You have been removed from the group')
+  end
+  
+  def unlead
+    @group = Group.find_by_id(params[:id])
+    current_user.leave_group(@group, "leader")
+    redirect_to(expert_group_path(@group.id), :notice => 'You are no longer a group leader')
   end
   
 end

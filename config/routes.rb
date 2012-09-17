@@ -48,6 +48,7 @@ Aae::Application.routes.draw do
       end
     end
     
+    match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
@@ -58,6 +59,8 @@ Aae::Application.routes.draw do
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
     match "groups/:id/join" => "groups#join", :via => [:get, :put, :post], :as => 'group_join'
     match "groups/:id/leave" => "groups#leave", :via => [:get, :put, :post], :as => 'group_leave'
+    match "groups/:id/lead" => "groups#lead", :via => [:get, :put, :post], :as => 'group_lead'
+    match "groups/:id/unlead" => "groups#unlead", :via => [:get, :put, :post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]

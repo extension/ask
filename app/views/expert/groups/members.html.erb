@@ -1,5 +1,19 @@
-<h1><%= link_to @group.name, expert_group_path() %> Members</h1>
+<h1><%= link_to @group.name, expert_group_path() %> Members (<%= @group.joined.count %>)</h1>
 
+<table class="table table-bordered">
+  <tr>
+    <th>Name</th>
+    <th>Notifications</th>
+  </tr>
+  
 <% @group_members.each do |member| %>
-  <p><%= get_avatar(member) %> <%= link_to member.name, expert_user_path(member.id) %></p>
+  <tr>
+    <% if member.leader_of_group(@group)%>
+      <td><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %> <strong><i class="icon-user"></i> Leader</strong></td>
+    <% else %>
+      <td><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></td>
+    <% end %>
+    <td></td>
+  </tr>
 <% end %>
+</table>
