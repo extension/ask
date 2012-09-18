@@ -19,6 +19,22 @@
       <%= f.text_area :description, :rows => "2",  :class => "xl" %>
     </p>
   </fieldset>
+  
+  <fieldset>
+    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p class="clearing">
+      <%= get_avatar(@group) %>
+      <% if @group.avatar.present? %>
+        <p class="clearing">
+          <label>
+            <%= check_box_tag 'delete_avatar' %>
+            Remove avatar
+          </label> 
+        </p>
+      <% end %>
+      <%= f.file_field :avatar %>
+    </p>
+  </fieldset>
       
   <fieldset>
     <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>

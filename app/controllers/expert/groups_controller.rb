@@ -54,6 +54,10 @@ class Expert::GroupsController < ApplicationController
     if request.put?
       @group.attributes = params[:group]
       
+      if params[:delete_avatar] && params[:delete_avatar] == "1"
+        @group.avatar = nil
+      end
+      
       if @group.save
         redirect_to(expert_group_profile_path, :notice => 'Profile was successfully updated.')
       else
