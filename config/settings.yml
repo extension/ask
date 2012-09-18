@@ -9,3 +9,5 @@ darmokdatabase: 'prod_darmok'
 send_notifications: false
 engineering_list: 'engineering@extension.org'
 auto_assign_incoming_questions: true
+group_avatar_count: 3
+user_avatar_count: 2
