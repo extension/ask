@@ -1,1 +1,2 @@
 $("#membership_connection").html("<%= escape_javascript(render partial: 'membership_connection') %>")
+$( "<p><%= escape_javascript(get_avatar(current_user, :thumb)) %> <%= escape_javascript(link_to current_user.name, expert_user_path(current_user.id)) %></span></p>" ).prependTo("#group_members").hide().slideDown();

@@ -98,6 +98,13 @@ class User < ActiveRecord::Base
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
     end
-  end  
+  end
+  
+  def leave_group_leadership(group, connection_type)
+    if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
+      connection.destroy
+      self.group_connections.create(group: group, connection_type: "member", connection_code: GroupEvent::GROUP_JOIN)
+    end
+  end
   
 end

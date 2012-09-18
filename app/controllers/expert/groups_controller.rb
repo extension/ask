@@ -22,20 +22,16 @@ class Expert::GroupsController < ApplicationController
     
     @question_list_type = "Unanswered"
     @questions = @group.open_questions
-    @group_members = @group.joined.limit(5)
-    @group_members_total = @group.joined.count
+    @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
-    @group_tags_total = @group.tags.count
   end
   
   def answered
     @group = Group.find(params[:id])
     @question_list_type = "Answered"
     @questions = @group.answered_questions.limit(10).order('updated_at DESC')
-    @group_members = @group.joined.limit(5)
-    @group_members_total = @group.joined.count
+    @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
-    @group_tags_total = @group.tags.count
     render :action => 'show'
   end
   
@@ -162,25 +158,25 @@ class Expert::GroupsController < ApplicationController
   def join
     @group = Group.find_by_id(params[:id])
     current_user.join_group(@group,"member")
-    redirect_to(expert_group_path(@group.id), :notice => 'Joined')
+    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
   
   def lead
     @group = Group.find_by_id(params[:id])
     current_user.join_group(@group,"leader")
-    redirect_to(expert_group_path(@group.id), :notice => 'You are a group leader')
+    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
   
   def leave
     @group = Group.find_by_id(params[:id])
     current_user.leave_group(@group, "member")
-    redirect_to(expert_group_path(@group.id), :notice => 'You have been removed from the group')
+    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
   
   def unlead
     @group = Group.find_by_id(params[:id])
-    current_user.leave_group(@group, "leader")
-    redirect_to(expert_group_path(@group.id), :notice => 'You are no longer a group leader')
+    current_user.leave_group_leadership(@group, "leader")
+    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
   
 end

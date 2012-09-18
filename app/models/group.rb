@@ -58,6 +58,14 @@ class Group < ActiveRecord::Base
     (self.widget_fingerprint == BONNIE_PLANTS_GROUP)
   end
   
+  def group_members_with_self_first(current_user, limit)
+    group_members = self.joined.where("user_id != ?", current_user.id).limit(limit)
+    if (current_user.leader_of_group(self) || current_user.member_of_group(self))
+      group_members = group_members.unshift(current_user)
+    end
+    return group_members
+  end
+  
   def self.question_wrangler_group
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end

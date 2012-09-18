@@ -31,7 +31,7 @@
 </aside>
 
 <aside>
-  <h3>Group Tags <%= link_to "(#{@group_tags_total})", expert_group_tags_path() %></h3> 
+  <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3> 
 
   <% if @group_tags.length > 0 %>
     <% @group_tags.each do |tag| %>
@@ -48,10 +48,16 @@
   <div id="membership_connection">
     <%= render :partial => 'membership_connection' %>
   </div>
-  <h3>Group Members <%= link_to "(#{@group_members_total})", expert_group_members_path(@group) %></h3>
-
+  <div id="group_members">
   <% @group_members.each do |member| %>
-    <p><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></p>
+    <p>
+      <%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
+      <% if member.leader_of_group(@group) %>
+      <strong><i class="icon-user"></i> Leader</strong>
+      <% end %>
+    </p>
   <% end %>
+  </div>
   <p><%= link_to 'view all', expert_group_members_path(@group) %></p>
+  
 </aside>
