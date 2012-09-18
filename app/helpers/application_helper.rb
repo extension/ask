@@ -38,9 +38,18 @@ module ApplicationHelper
     if user.avatar.present? 
       return_string = image_tag(user.avatar.url(image_size))
     # no avatar for user
-    else
-      # if no avatar, show a random one each time
-      return_string = image_tag("avatar_placeholder_0" + rand(1..2).to_s + ".png", :size => image_size_in_px)
+    else      
+      # if no avatar, assign a random image
+      last_digit = user.id.to_s[(user.id.to_s.length - 1), 1].to_i
+      
+      case last_digit
+        when 0..4
+          avatar_number = "1"
+        when 5..9
+          avatar_number = "2"
+      end
+      
+      return_string = image_tag("avatar_placeholder_0" + avatar_number + ".png", :size => image_size_in_px)
     end
     
     return link_to(return_string, expert_user_path(user.id), {:title => user.name}).html_safe  
@@ -57,8 +66,19 @@ module ApplicationHelper
       return_string = image_tag(group.avatar.url(image_size))
     # no avatar for user
     else
-      # if no avatar, show a random one each time
-      return_string = image_tag("group_avatar_placeholder_0" + rand(1..3).to_s + ".png", :size => image_size_in_px)
+      # if no avatar, assign a random image
+      last_digit = group.id.to_s[(group.id.to_s.length - 1), 1].to_i
+      
+      case last_digit
+        when 0..2
+          avatar_number = "1"
+        when 3..6
+          avatar_number = "2"
+        when 7..9
+          avatar_number = "3"
+      end
+      
+      return_string = image_tag("group_avatar_placeholder_0" + avatar_number + ".png", :size => image_size_in_px)
     end
 
     return link_to(return_string, expert_group_path(group.id), {:title => group.name}).html_safe  
