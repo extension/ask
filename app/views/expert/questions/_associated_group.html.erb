@@ -1,5 +1,5 @@
 <% if @question.assigned_group %>
-  <h3>Grouped with</h3>
+  <h4>Grouped with</h4>
   <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Change group</span>
   </p>
 <% else %>
