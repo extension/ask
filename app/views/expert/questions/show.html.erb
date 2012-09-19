@@ -13,6 +13,73 @@
 <div id="secondary" class="span4">
 <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   
+  
+  
+  
+  <aside>
+    <% if @question.is_private %>
+      <h3><i class="icon-lock"></i> <%= link_to "This question is private", question_path(@question.id) %></h3>
+    <% else %>
+      <h3><i class="icon-globe"></i> <%= link_to "This question is public", question_path(@question.id) %></h3>
+    <% end %>
+  </aside>
+
+  
+
+  
+  <% if @question.status_state != Question::STATUS_REJECTED %>
+    <aside>
+      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+        <h3>Last response by</h3>
+      <% else %>
+        <h3>Assigned to</h3>
+      <% end %>
+  
+      <%= link_to expert_user_path(@question.assignee_id) do %>
+        <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
+      <% end %>
+      
+      <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %> 
+    </aside>
+    
+    <aside class="nobg">
+      <div id="associated_group">
+        <%= render :partial => 'associated_group' %>
+      </div>      
+    </aside>
+    
+    
+    <aside>
+      <div id="tag_picker_wrapper">
+        <div class="ui-widget">
+          <label for="tag_picker">Add Tags</label>
+      	  <input id="tag_picker" placeholder="Type and select a tag" /> 
+        </div>
+      </div>
+
+      <div id="tags">
+
+      <% if @question.tags.length > 0 %>
+        <% @question.tags.each do |tag| %>
+          <% if @question.assigned_group %>
+            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+          <% else %>
+            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+          <% end %>
+        <% end %>
+      <% else %>
+
+      <% end %>
+
+      </div>
+
+      <p><small>(All tags are viewable if the question is public)</small></p>
+    </aside>
+    
+  <% end %>
+  
+  
+  
   <aside>
     <% if @question.status_state == Question::STATUS_REJECTED %>
       <h3>This question has been rejected</h3>
@@ -57,12 +124,12 @@
 	<% else %>
       
       <div class="question_actions">
-        <span><%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
+
         <% if @question.assignee == current_user %>
           <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <% end %>
         <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
-          <p><%= link_to "Close Question", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+          <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <% end %>
   
         <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-danger" %></span>
@@ -71,82 +138,8 @@
      <% end %>
   </aside>
   
-  
-  <aside>
-    <% if @question.is_private %>
-      <h3><i class="icon-lock"></i> <%= link_to "This question is private", question_path(@question.id) %></h3>
-    <% else %>
-      <h3><i class="icon-globe"></i> <%= link_to "This question is public", question_path(@question.id) %></h3>
-    <% end %>
-  </aside>
-
-  
-
-  
-  <% if @question.status_state != Question::STATUS_REJECTED %>
-    <aside>
-      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
-        <h3>Last response by</h3>
-      <% else %>
-        <h3>Assigned to</h3>
-      <% end %>
-  
-      <%= link_to expert_user_path(@question.assignee_id) do %>
-        <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
-      <% end %>
-    
-      <% if @question.assigned_group %>
-        <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %></p>
-  		  
-  	  <% else %>
-  		  <p><strong>This question is groupless :(</strong></p>
-      <% end %>
-    </aside>
-  <% end %>
-
-
   <aside class="nobg">
-    <p>
-      <% if @question.location.present? %>
-        <% if @question.county.present? %>
-          <span class="tag tag-geography"><%= link_to "#{@question.county.name} County", expert_view_county_path(@question.county.id) %></span>
-        <% end %>
-        <% if @question.location.present? %>
-          <span class="tag tag-geography"><%= link_to @question.location.abbreviation, expert_view_location_path(@question.location.id) %></span>
-        <% end %>
-      <% else %>
-        <span class="label label-inverse"><%= link_to "No Location" %></span>
-      <% end %>
-    </p>
-    
-    <div id="tag_picker_wrapper">
-      <div class="ui-widget">
-        <label for="tag_picker">Add Tags</label>
-    	  <input id="tag_picker" placeholder="Type and select a tag" /> 
-      </div>
-    </div>
-    
-    <div id="tags">
-      
-    <% if @question.tags.length > 0 %>
-      <% @question.tags.each do |tag| %>
-        <% if @question.assigned_group %>
-          <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
-        <% else %>
-          <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
-        <% end %>
-      <% end %>
-    <% else %>
-      
-    <% end %>
-    
-    </div>
-    
-    <p><small>(All tags are viewable if the question is public)</small></p>
-  </aside>
-  
-  <aside class="nobg">
-    <h3>Related Questions</h3>
+    <h4>Related Questions</h4>
     <% @fake_related.each do |question| %>
       <%= link_to expert_question_path(question.id) do %>
         <% if question.title.present? %>

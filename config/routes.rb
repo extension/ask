@@ -75,6 +75,7 @@ Aae::Application.routes.draw do
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
+    match "questions/associate_with_group" => "questions#associate_with_group", :via => [:post]
     match "settings/add_tag" => "settings#add_tag", :via => [:post]
     match "settings/remove_tag" => "settings#remove_tag", :via => [:post]
     match "search/all" => "search#all", :via => [:get]
@@ -84,6 +85,7 @@ Aae::Application.routes.draw do
   match "home/private_page" => "home#private_page", :via => :get
   match "ask" => "home#ask"
   match "ajax/tags" => "ajax#tags", :via => [:get]
+  match "ajax/groups" => "ajax#groups", :via => [:get]
   match "ajax/counties" => "ajax#counties", :via => [:get]
   match "ajax/show_location" => "ajax#show_location", :via => [:get, :post]
   match "ajax/edit_location" => "ajax#edit_location", :via => [:get, :post]

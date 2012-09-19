@@ -1,0 +1,56 @@
+<% if @question.assigned_group %>
+  <p><%= get_group_avatar(@question.assigned_group, :mini) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Change group</span>
+  </p>
+<% else %>
+  <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>
+<% end %>
+
+<div id="associated_group_picker" style="display:none;">
+  <div class="ui-widget">
+  	<label for="group_picker">Place this question in a different group</label>
+  	<span>This does not reassign the question</span>
+  	<input id="group_picker" placeholder="Type and select a group" />
+  </div>
+</div>
+
+<script class="code" type="text/javascript">
+  
+  $(".associated_group_picker_toggle").click(function () {
+    $("#associated_group_picker").toggle();
+  });
+  
+  
+		function change_group(group_id) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_associate_with_group_path(:id => @question.id) %>",
+        cache: false,
+        data: {group_id: group_id}
+      })
+      .done(function() {
+				$("#tag_picker").autocomplete("close");
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function() {
+        alert("error");
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#group_picker").autocomplete({
+      source: "/ajax/groups",
+			minLength: 2,
+			select: function(e, ui) {
+			  change_group(ui.item.id);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        add_tag(this.value);
+      }
+    });
+
+</script>
