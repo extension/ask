@@ -1,5 +1,6 @@
 <% if @question.assigned_group %>
-  <p><%= get_group_avatar(@question.assigned_group, :mini) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Change group</span>
+  <h3>Grouped with</h3>
+  <p><%= get_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Change group</span>
   </p>
 <% else %>
   <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>

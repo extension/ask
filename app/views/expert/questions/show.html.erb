@@ -19,7 +19,7 @@
   <aside>
     <div id="privacy_status">
     <% if @question.is_private %>
-      <h3 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h3><span>edit</span>
+      <h4 class="lock"><%= link_to "This question is private", question_path(@question.id) %> <span class="btn">edit</span></h4>
     <% else %>
       <h3><i class="icon-globe"></i> <%= link_to "This question is public", question_path(@question.id) %></h3><span>edit</span>
     <% end %>
@@ -44,7 +44,7 @@
       <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %> 
     </aside>
     
-    <aside class="nobg">
+    <aside class="">
       <div id="associated_group">
         <%= render :partial => 'associated_group' %>
       </div>      
@@ -134,7 +134,7 @@
           <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <% end %>
   
-        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-danger" %></span>
+        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-inverse" %></span>
       </div>
       
      <% end %>
