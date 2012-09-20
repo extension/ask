@@ -212,7 +212,7 @@ body#expert {
 	
 	
 /*	#tags {border:1px solid lime;}*/
-	#tag_picker_wrapper {margin:2em 0 1em;}
+	#tag_picker_wrapper {margin:0 0 1em;}
 	.subtle {color:#bbb;}
 	#question_wrapper {padding:1em 2.5em;}
 	#question {margin-bottom:2em;}
@@ -230,4 +230,9 @@ body#expert {
 	#search {padding:.5em;}
 	#search .btn {margin:0;}
 	#search_field {}
+/*	#associated_group {padding:.25em 0 0 1em;}*/
+	
+	#associated_group_picker {margin:0 0 3em;}
+	#privacy_status a {color:#999;}
+	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 }

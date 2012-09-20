@@ -304,4 +304,12 @@ class Expert::QuestionsController < ApplicationController
     # @tag_experts = User.joins{tags}.where{tags.name.in tags_names}.group{User.id}.having("count(User.id) = #{tags_names.size}")
   end
   
+  def associate_with_group
+    @question = Question.find_by_id(params[:id])
+    @group = Group.find_by_id(params[:group_id])
+    
+    @question.assigned_group = @group 
+    @question.save
+  end
+  
 end

@@ -16,6 +16,19 @@
     by <%= @question.submitter.name %>
   <% end %>
 </p>
+
+  <p>
+    <% if @question.location.present? %>
+      <% if @question.county.present? %>
+        <span class="tag tag-geography"><%= link_to "#{@question.county.name} County", expert_view_county_path(@question.county.id) %></span>
+      <% end %>
+      <% if @question.location.present? %>
+        <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
+      <% end %>
+    <% else %>
+      <span class="label label-inverse"><%= link_to "No Location" %></span>
+    <% end %>
+  </p>
 </div>
 
 <% if @question_responses.length > 0 %>
