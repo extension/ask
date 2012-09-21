@@ -5,18 +5,42 @@ body#public {
 	.avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
 	.avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
-	.navavatar {float:right;}
+	
+	
 	.navbar {height:80px !important;}
-	.navbar-inner {height:80px !important;}
-	.navbar-inner .container {height:80px !important;}
+	
+	.navavatar {float:right; padding:.5em 2em; color:#fff;}
+	.navavatar a {color:#fff;}
+	.navavatar.loggedin img {border:#888 1px solid;}
+	
+	#publicbar.navbar-inner {height:80px !important;}
+	#publicbar.navbar-inner .container {height:80px !important;}
+	#publicbar.navbar-inner {background:#f47B28;}
+	
+	#publicbar .nav .active > a,
+	#publicbar .nav .active > a:hover {
+	    background:#f47B28;
+	}
+	#publicbar .brand {color:#000; font-size:2.5em;}
+	
+	#expertbar {border-bottom: 2px solid #000 !important;}
+	#expertbar a.brand {font-size:1.1em;}
+	#expertbar a:hover {color:#fff !important; text-decoration:none;}
+	#expertbar .navavatar.loggedin a {color:#999;}
+	.logout {margin-left:1em;}
+	#expertbar .navavatar {background:#000;}
+	
 	.container-fluid {max-width:1180px; margin: 0 auto;}
 	.right {float:right;}
+	
+	
 	
 	.demo.navbar-fixed-top {top:40px;}
 	#app_location {height:40px;position:fixed;right:0;left:0;top:0}
 	#app_location.demo {background:yellow; padding:1em 1em .5em ; text-align:center;}
 	#app_location.demo p {font-size:1.3em; color:#000;}
 	#app_location.demo p a {color:#000; text-decoration:underline;}
+
 	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
@@ -26,10 +50,10 @@ body#public {
 
 
 body#expert {
-	
+	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:2em;}
 	background:#504848;
 	padding-bottom:5em;
-	.row-fluid {background:#fff;}
+	.row-fluid {background:#f9f9f9;}
 	#widgetcode { margin:1em 0; padding:.5em 0;}
 	#widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
 	label strong {font-size:1.2em; display:block}
@@ -39,13 +63,17 @@ body#expert {
 	.tags .label:hover {background:#000;}
 	.tags .label a:hover {text-decoration:none !important;}
 	fieldset p {margin-bottom:2em}
-    #content_wrapper {margin:3em 1.5em 1em;}
+    #content_wrapper {margin:3em 1.5em 1em; float:left;}
     .container-fluid {max-width:1180px; margin: 0 auto;}
 
     .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
     .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
     .navavatar {float:right;}
+	.navavatar {background:#000; padding:.5em 2em; border:3px solid #000;}
+	.navavatar a {color:#999;}
+	.navavatar img {border:#888 1px solid;}
+	.navavatar a:hover {color:#fff !important; text-decoration:none;}
 
     .incoming_question .expert {padding:1em;}
     .incoming_question .expert .avatar {float:left; margin-right:1em;}
@@ -59,7 +87,7 @@ body#expert {
 	.incoming_question:hover .row-fluid {background:#f5f5f5;}
 /*	.incoming_question:hover {border-bottom:2px solid #bbb; border-top:2px solid #bbb;}*/
 
-    .navavatar.loggedin {background:#fff; padding:.5em; outline:3px solid #000;}
+    
 
 
     .answered_question {margin: 0 0 .5em; padding:0 0 .5em;}
@@ -183,7 +211,7 @@ body#expert {
 	#history a {color:#363955;}
 	#history li {margin-bottom:.5em; list-style:none;}
 	textarea {width:30em;}
-/*	#main {outline:1px solid red;}*/
+	#main {margin:0}
 /*	#secondary {outline:1px solid blue;}*/
 	.question_actions {margin-bottom:2em;}
 	.question_actions.last {margin-bottom:0;}
@@ -235,6 +263,8 @@ body#expert {
 	#associated_group_picker {margin:0 0 3em;}
 	#privacy_status a {color:#999;}
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
+/*	.testh1 {outline:1px solid red; margin:1em 1em 3em;}*/
+	.testh1 {}
 }
 
 body#expert.demo .container-fluid {margin-top:40px;}

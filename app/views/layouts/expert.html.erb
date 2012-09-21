@@ -25,11 +25,7 @@
                   <%= current_user.name %>
                 <% end %>
                 &nbsp;
-                <%= link_to 'Settings', expert_settings_profile_path() %>
-                &nbsp;
                 <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-                &nbsp;
-                <%= link_to("Ask an Expert Site", root_path()) %>
               </span>  
             <% else %>
               <span class="navavatar">
@@ -43,7 +39,8 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("Expert Home", expert_home_path(), :class => "brand") %>
+            <%= link_to("AaE Experts", expert_home_path(), :class => "brand home") %>
+            <%= link_to("AaE Public", root_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
@@ -68,6 +65,7 @@
   
   <div class="row-fluid">
     <div id="content_wrapper">
+      <!-- <h1 class="testh1">AaE Experts</h1> -->
       <%= yield %>
     </div>
   </div>

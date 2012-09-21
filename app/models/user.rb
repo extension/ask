@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   
   devise :rememberable, :trackable, :database_authenticatable
   
-  has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }

@@ -33,10 +33,11 @@ module ApplicationHelper
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
+        when :mini      then image_size_in_px = "20x20"
     end
     
     if user.avatar.present? 
-      return_string = image_tag(user.avatar.url(image_size))
+      return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
     # no avatar for user
     else      
       # if no avatar, assign a random image
