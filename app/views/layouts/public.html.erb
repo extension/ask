@@ -7,40 +7,42 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body id="public">
+<body id="public" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <div id="app_location" class="demo">
-      <p>You are viewing <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong>. The data on this site is regularly deleted for development purposes. <strong><%= link_to("Visit Ask 2.0", "http://ask.extension.org") -%></strong>.</p>
+  <% if current_user %>
+    <% if current_user.has_exid? %>
+    <div id="fixed_fixer"></div>
+    
+    <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
+     <div id="expertbar" class="navbar-inner">
+        <div class="container">
+          <span class="navavatar loggedin">
+            <%= get_avatar(current_user, :mini) %>
+            <%= link_to expert_user_path(current_user.id) do %>
+              <%= current_user.name %>
+            <% end %>
+            <%= link_to('Logout', destroy_user_session_path, :method => :delete, :class => "logout") %>
+          </span>
+          <%= link_to("AaE Experts", expert_home_path(), :class => "brand") %>
+        </div>
+      </div>
     </div>
+    <% end %>
   <% end %>
+  
+  <div id="flash_notification_wrapper">
+    <%= flash_notifications -%>
+  </div>
 
-  <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
-        <div class="navbar-inner">
-          <div class="container">
-            
-            <% if current_user %>
-              <% if current_user.has_exid? %>
+<div class="navbar">
+  <div id="publicbar" class="navbar-inner">
+    <div class="container">
+            <% if current_user && !current_user.has_exid? %>
                 <span class="navavatar loggedin">
-                  <%= get_avatar(current_user, :thumb) %>
-                  <%= link_to expert_user_path(current_user.id) do %>
-                     <%= current_user.name %>
-                  <% end %>
-                  &nbsp;
-                  <%= link_to 'Settings', expert_settings_profile_path() %>
-                  &nbsp;
-                  <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-                  &nbsp;
-                  <%= link_to("Expert Home", expert_home_path()) %>
+                  <%= current_user.name %>
+                  <%= link_to('Logout', destroy_user_session_path, :method => :delete, :class => "logout") %>
                 </span>
-              <% else %>
-                <span class="navavatar loggedin">
-                  <%= link_to "Settings", user_path(current_user.id), :class => "btn" %>
-                  &nbsp;
-                  <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-                </span>
-              <% end %>
-            <% else %>
+            <% elsif !current_user %>
               <span class="navavatar">
                 <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
               </span>
@@ -53,21 +55,32 @@
             </a>
             <%= link_to("eXtension Ask an Expert", root_path(), :class => "brand") %>
             <div class="nav-collapse">
-              <ul class="nav">
+              <ul class="nav">  
                 <li class="active"><a href="">About</a></li>
               </ul>
             </div><!--/.nav-collapse -->
             <p><%= link_to("Ask a Question", ask_path(), :class => "btn") %></p>
-          </div>
-        </div>
-        
-      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <div class="container-fluid">
-  <%= flash_notifications -%>
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong><%= link_to("Visit Ask 2.0", "http://ask.extension.org") -%></strong>.</p>
+    </div>
+  <% end %>
+  
+  
+  
   
   <div class="row-fluid">
+    <div id="content_wrapper">
     <%= yield %>
+    </div>
   </div>
   
 

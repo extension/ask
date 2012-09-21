@@ -7,14 +7,10 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
-<body id="expert">
+<body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <div id="app_location" class="demo">
-      <p>You are viewing <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong>. The data on this site is regularly deleted for development purposes. <strong><%= link_to("Visit Ask 2.0", "http://ask.extension.org") -%></strong>.</p>
-    </div>
-  <% end %>
-
+  <div id="fixed_fixer"></div>
+  
   <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
         <div class="navbar-inner">
           <div class="container">
@@ -25,11 +21,7 @@
                   <%= current_user.name %>
                 <% end %>
                 &nbsp;
-                <%= link_to 'Settings', expert_settings_profile_path() %>
-                &nbsp;
                 <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-                &nbsp;
-                <%= link_to("Ask an Expert Site", root_path()) %>
               </span>  
             <% else %>
               <span class="navavatar">
@@ -43,7 +35,8 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("Expert Home", expert_home_path(), :class => "brand") %>
+            <%= link_to("AaE Experts", expert_home_path(), :class => "brand home") %>
+            <%= link_to("AaE Public", root_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
@@ -62,9 +55,17 @@
           </div>
         </div>
       </div>
-
+      
+      <div id="flash_notification_wrapper">
+        <%= flash_notifications -%>
+      </div>
+      
 <div class="container-fluid">
-  <%= flash_notifications -%>
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong><%= link_to("Visit Ask 2.0", "http://ask.extension.org") -%></strong>.</p>
+    </div>
+  <% end %>
   
   <div class="row-fluid">
     <div id="content_wrapper">
