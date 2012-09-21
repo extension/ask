@@ -1,13 +1,22 @@
 @import "_variables";
 
+body {
+	#app_location.demo {background:#FFDC50; padding:.5em 1em .1em;}
+	#app_location.demo p {font-size:1.1em; color:#000;}
+	#app_location.demo p a {color:#000; text-decoration:underline;}
+}
+
 body#public {
-    padding-top:140px;
-	.avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
-	.avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
+  padding-top:120px;
+  
+  #app_location.demo {margin-top:1em; background:#FFFF7E;}
+  #content_wrapper {margin:3em 1.5em 1em;}
+  .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
+  .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
 	
 	
-	.navbar {height:80px !important;}
+/*  .navbar {height:80px !important;}*/
 	
 	.navavatar {float:right; padding:.5em 2em; color:#fff;}
 	.navavatar a {color:#fff;}
@@ -21,7 +30,7 @@ body#public {
 	#publicbar .nav .active > a:hover {
 	    background:#f47B28;
 	}
-	#publicbar .brand {color:#000; font-size:2.5em;}
+	#publicbar .brand {color:#000;}
 	
 	#expertbar {border-bottom: 2px solid #000 !important;}
 	#expertbar a.brand {font-size:1.1em;}
@@ -29,22 +38,19 @@ body#public {
 	#expertbar .navavatar.loggedin a {color:#999;}
 	.logout {margin-left:1em;}
 	#expertbar .navavatar {background:#000;}
+	#expertbar.navbar-inner {min-height:30px !important;}
 	
 	.container-fluid {max-width:1180px; margin: 0 auto;}
 	.right {float:right;}
 	
 	
-	
-	.demo.navbar-fixed-top {top:40px;}
-	#app_location {height:40px;position:fixed;right:0;left:0;top:0}
-	#app_location.demo {background:yellow; padding:1em 1em .5em ; text-align:center;}
-	#app_location.demo p {font-size:1.3em; color:#000;}
-	#app_location.demo p a {color:#000; text-decoration:underline;}
-
-	
 	@media screen and (max-width: 979px) {
-		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
+		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		padding-top:0;
+	}
+	
+	@media screen and (min-width: 979px) {
+		#publicbar .brand {color:#000; font-size:2.5em;}
 	}
 }
 
@@ -63,7 +69,7 @@ body#expert {
 	.tags .label:hover {background:#000;}
 	.tags .label a:hover {text-decoration:none !important;}
 	fieldset p {margin-bottom:2em}
-    #content_wrapper {margin:3em 1.5em 1em; float:left;}
+    #content_wrapper {margin:3em 1.5em 1em;}
     .container-fluid {max-width:1180px; margin: 0 auto;}
 
     .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
@@ -171,14 +177,11 @@ body#expert {
 	label {font-weight:bold; font-size:1.1em}
 	.radio_options {padding:1em;}
 
-	.demo.navbar-fixed-top {top:40px;}
-	#app_location {height:40px;position:fixed;right:0;left:0;top:0}
-	#app_location.demo {background:yellow; padding:1em 1em .5em ; text-align:center;}
-	#app_location.demo p {font-size:1.3em; color:#000;}
-	#app_location.demo p a {color:#000; text-decoration:underline;}
+
+	
 	
 	@media screen and (max-width: 979px) {
-		#app_location {height:auto;position:static; margin-left:-1em;margin-right:-1em;}
+		#app_location {height:auto; margin-left:-1em;margin-right:-1em;}
 	}
 	
 	span.removetag {padding:.1em .5em; background:#eee; color:#aaa; cursor:pointer;}
@@ -267,4 +270,4 @@ body#expert {
 	.testh1 {}
 }
 
-body#expert.demo .container-fluid {margin-top:40px;}
+/*body#expert.demo .container-fluid {margin-top:40px;}*/
