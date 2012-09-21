@@ -9,11 +9,11 @@
 </head>
 <body id="public" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
-  
   <% if current_user %>
     <% if current_user.has_exid? %>
+    <div id="fixed_fixer"></div>
     
+    <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
      <div id="expertbar" class="navbar-inner">
         <div class="container">
           <span class="navavatar loggedin">
@@ -26,14 +26,17 @@
           <%= link_to("AaE Experts", expert_home_path(), :class => "brand") %>
         </div>
       </div>
-    
+    </div>
     <% end %>
   <% end %>
   
+  <div id="flash_notification_wrapper">
+    <%= flash_notifications -%>
+  </div>
 
-    
+<div class="navbar">
   <div id="publicbar" class="navbar-inner">
-          <div class="container">
+    <div class="container">
             <% if current_user && !current_user.has_exid? %>
                 <span class="navavatar loggedin">
                   <%= current_user.name %>
@@ -57,9 +60,12 @@
               </ul>
             </div><!--/.nav-collapse -->
             <p><%= link_to("Ask a Question", ask_path(), :class => "btn") %></p>
-          </div>
-        </div>
     </div>
+  </div>
+</div>
+
+
+
 
 <div class="container-fluid">
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
@@ -68,7 +74,8 @@
     </div>
   <% end %>
   
-  <%= flash_notifications -%>
+  
+  
   
   <div class="row-fluid">
     <div id="content_wrapper">

@@ -4,10 +4,70 @@ body {
 	#app_location.demo {background:#FFDC50; padding:.5em 1em .1em;}
 	#app_location.demo p {font-size:1.1em; color:#000;}
 	#app_location.demo p a {color:#000; text-decoration:underline;}
+	
+	.navbar {margin-bottom:0;}
+	
+	#fixed_fixer {height: 35px;}
+	#flash_notification_wrapper {position:relative;}
+	
+	#flash_notification {
+      height:5em;
+      width:100%;
+      position:absolute;
+      text-align:center;
+      left:0px;
+      top:0;
+      z-index:100;
+      opacity: 0.92;
+      -moz-opacity: 0.92;
+      -moz-box-shadow: #555 0px 0px 5px;
+      box-shadow: #555 0px 0px 5px;
+      background: #049cdb;
+      background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+      background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+      background-image: linear-gradient(top, #049cdb, #0064cd);
+      color:#fff;
+      cursor:pointer;
+  }
+  #flash_notification.notice {} //default
+  #flash_notification.error,
+  #flash_notification.warning {
+      color: #000;
+      background: #f3e942;
+      background-image: -webkit-linear-gradient(top, #f3f1c4, #f3e942);
+      background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+      background-image: linear-gradient(top, #049cdb, #0064cd);
+  }
+  #flash_notification p {padding: 1em; font-size:1.5em;}
+  
+  @media screen and (max-width: 979px) {
+    #fixed_fixer {height: 0;}
+	}
 }
 
 body#public {
-  padding-top:120px;
+/*  border:3px solid red;*/
+  
+  #publicbar.navbar-inner {height:80px !important; background:#f47B28;
+/*    opacity:0.4;*/
+  }
+  #publicbar.navbar-inner .container {height:80px !important;}
+  
+  
+  #publicbar .nav .active > a,
+	#publicbar .nav .active > a:hover {
+	    background:#f47B28;
+	}
+	#publicbar .brand {color:#000;}
+	
+	#expertbar {border-bottom: 2px solid #000 !important;}
+	#expertbar a.brand {font-size:1.1em;}
+	#expertbar a:hover {color:#fff !important; text-decoration:none;}
+	#expertbar .navavatar.loggedin a {color:#999;}
+	#expertbar .navavatar {background:#000;}
+	#expertbar.navbar-inner {min-height:35px; height:35px;}
+	.logout {margin-left:1em;}
+  
   
   #app_location.demo {margin-top:1em; background:#FFFF7E;}
   #content_wrapper {margin:3em 1.5em 1em;}
@@ -22,23 +82,9 @@ body#public {
 	.navavatar a {color:#fff;}
 	.navavatar.loggedin img {border:#888 1px solid;}
 	
-	#publicbar.navbar-inner {height:80px !important;}
-	#publicbar.navbar-inner .container {height:80px !important;}
-	#publicbar.navbar-inner {background:#f47B28;}
 	
-	#publicbar .nav .active > a,
-	#publicbar .nav .active > a:hover {
-	    background:#f47B28;
-	}
-	#publicbar .brand {color:#000;}
 	
-	#expertbar {border-bottom: 2px solid #000 !important;}
-	#expertbar a.brand {font-size:1.1em;}
-	#expertbar a:hover {color:#fff !important; text-decoration:none;}
-	#expertbar .navavatar.loggedin a {color:#999;}
-	.logout {margin-left:1em;}
-	#expertbar .navavatar {background:#000;}
-	#expertbar.navbar-inner {min-height:30px !important;}
+	
 	
 	.container-fluid {max-width:1180px; margin: 0 auto;}
 	.right {float:right;}
@@ -56,6 +102,10 @@ body#public {
 
 
 body#expert {
+  #fixed_fixer {height: 60px;}
+  @media screen and (max-width: 979px) {
+    #fixed_fixer {height: 0;}
+	}
 	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:2em;}
 	background:#504848;
 	padding-bottom:5em;
@@ -109,35 +159,7 @@ body#expert {
 
     .notifylink a {color:#666;}
 
-    #flash_notification {
-        height:5em;
-        width:100%;
-        position:fixed;
-        text-align:center;
-        left:0px;
-        top:40px;
-        z-index:100;
-        opacity: 0.92;
-        -moz-opacity: 0.92;
-        -moz-box-shadow: #555 0px 0px 5px;
-        box-shadow: #555 0px 0px 5px;
-        background: #049cdb;
-        background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
-        background-image: -o-linear-gradient(top, #049cdb, #0064cd);
-        background-image: linear-gradient(top, #049cdb, #0064cd);
-        color:#fff;
-        cursor:pointer;
-    }
-    #flash_notification.notice {} //default
-    #flash_notification.error,
-    #flash_notification.warning {
-        color: #000;
-        background: #f3e942;
-        background-image: -webkit-linear-gradient(top, #f3f1c4, #f3e942);
-        background-image: -o-linear-gradient(top, #049cdb, #0064cd);
-        background-image: linear-gradient(top, #049cdb, #0064cd);
-    }
-    #flash_notification p {padding: 1em; font-size:1.5em;}
+    
     
 
     .location_block {margin-bottom:3em; padding:1em; width: 30%; margin-bottom:1em; border:2px solid #aaa;}
