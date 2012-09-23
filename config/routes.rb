@@ -113,7 +113,18 @@ Aae::Application.routes.draw do
   # get counties for widget
   match 'widget/get_counties/:location_id' => 'widget#get_counties', :via => :get
   
-  
+  # webmail routes 
+  scope "webmail" do
+    match "/:mailer_cache_id/logo" => "webmail#logo", :as => 'webmail_logo'
+    match "/view/:hashvalue" => "webmail#view", :as => 'webmail_view'
+  end
+
+  # webmail example routing
+  namespace "webmail" do
+    namespace "examples" do
+      match "/:action"
+    end
+  end
     
   root :to => 'home#index'
   

@@ -3,6 +3,7 @@ twitter_app_secret: 'notset'
 facebook_app_id: 'notset'
 facebook_app_secret: 'notset'
 session_token: '1234567890123456789012345678901234567890'
+urlwriter_host: 'aae.dev'
 airbrake_api_key: 'notset'
 app_location: 'localdev'
 darmokdatabase: 'prod_darmok'
@@ -11,3 +12,5 @@ engineering_list: 'engineering@extension.org'
 auto_assign_incoming_questions: true
 group_avatar_count: 3
 user_avatar_count: 2
+aae_escalation_delta: 24
+
