@@ -1,6 +1,6 @@
 <div class="comment">
   <%= get_avatar(comment.user, :thumb) %>
-  <span class="comment_author"></span>
+  <span class="comment_author"><%= comment.user.has_exid? ? "eXtension Affiliate" : "" %></span>
   
   <p class="content">
     <%= format_text_for_display(comment.content) %>
