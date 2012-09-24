@@ -9,6 +9,9 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
+  after_create :create_question_event_notification
+  
+  
   ASSIGNED_TO = 1
   RESOLVED = 2
   MARKED_SPAM = 3
@@ -139,5 +142,28 @@ class QuestionEvent < ActiveRecord::Base
     return ((self.event_state == ASSIGNED_TO) or (self.event_state == RESOLVED) or (self.event_state==REJECTED) or (self.event_state==NO_ANSWER))
   end
   
+  def create_question_event_notification
+    case self.event_state
+    when ASSIGNED_TO
+      #assigned and reassigned, submission ack
+      if self.previous_event_id.nil? and !self.recipient_id.nil? #new incoming question
+        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
+      end
+      if (self.recipient_id != self.previous_handling_recipient_id) and (self.recipient_id != self.previous_handling_initiator_id) #reassigned
+        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      end
+        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now )
+    when REJECTED
+      Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
+    when EDIT_QUESTION
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_PUBLIC_EDIT, delivery_time: 1.minute.from_now )
+    when PUBLIC_RESPONSE
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.current_resolver.id, notification_type: Notification::AAE_PUBLIC_COMMENT, delivery_time: 1.minute.from_now )
+    when RESOLVED
+      Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_EXPERT_RESPONSE, delivery_time: 1.minute.from_now )
+    else
+      true
+    end
+  end
     
 end

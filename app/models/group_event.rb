@@ -1,6 +1,8 @@
 class GroupEvent < ActiveRecord::Base
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   belongs_to :group
+  after_create :create_group_event_notification
+  
   
   # GROUP EVENTS
   GROUP_ACTIVITY = 200
@@ -59,5 +61,17 @@ class GroupEvent < ActiveRecord::Base
     501 => 'posted to list'
   }
   
+  def create_group_event_notification
+    case self.event_code
+    when GROUP_JOIN
+      Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.recipient_id, notification_type: Notification::GROUP_USER_JOIN, delivery_time: 1.minute.from_now )
+    when GROUP_LEFT
+      Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.recipient_id, notification_type: Notification::GROUP_USER_LEFT, delivery_time: 1.minute.from_now )
+    when GROUP_ADDED_AS_LEADER
+      Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.recipient_id, notification_type: Notification::GROUP_LEADER_JOIN, delivery_time: 1.minute.from_now )
+    when GROUP_REMOVED_AS_LEADER
+      Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.recipient_id, notification_type: Notification::GROUP_LEADER_LEFT, delivery_time: 1.minute.from_now )
+    end
+  end
   
 end
