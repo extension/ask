@@ -11,6 +11,7 @@ class CreateGroups < ActiveRecord::Migration
       t.string  :widget_fingerprint
       t.boolean :widget_upload_capable
       t.boolean :widget_show_location
+      t.boolean :widget_show_title
       t.boolean :widget_enable_tags
       t.integer :widget_location_id
       t.integer :widget_county_id
