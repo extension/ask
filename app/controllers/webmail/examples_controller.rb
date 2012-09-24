@@ -42,7 +42,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_public_edit
-    mail = InternalMailer.aae_public_edit(user: User.first, group: Group.first, question: Question.last, cache_email: false)
+    mail = InternalMailer.aae_public_edit(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
   

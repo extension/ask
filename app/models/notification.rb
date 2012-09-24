@@ -92,39 +92,51 @@ class Notification < ActiveRecord::Base
   end
   
   def process_group_user_join
+    self.notifiable.group.leaders.each{|leader| GroupMailer.group_user_join(user: leader, group: self.notifiable.group, new_member: self.notifiable.creator).deliver}
   end
   
   def process_group_user_left
+    self.notifiable.group.leaders.each{|leader| GroupMailer.group_user_left(user: leader, group: self.notifiable.group, former_member: self.notifiable.creator).deliver}
   end
   
   def process_group_leader_join
+    self.notifiable.group.leaders.each{|leader| GroupMailer.group_leader_join(user: leader, group: self.notifiable.group, new_leader: self.notifiable.creator).deliver}
   end
   
   def process_group_leader_left
+    self.notifiable.group.leaders.each{|leader| GroupMailer.group_leader_left(user: leader, group: self.notifiable.group, former_leader: self.notifiable.creator).deliver}
   end  
   
   def process_aae_assignment
+    InternalMailer.aae_assignment(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
   end
   
   def process_aae_reassignment
+    InternalMailer.aae_assignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
   end
   
   def process_aae_escalation
+    #NYI
   end
   
   def process_aae_public_edit
+    InternalMailer.aae_public_edit(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
   end
   
   def process_aae_public_comment
+    #NYI
   end
   
   def process_aae_reject
+    InternalMailer.aae_reject(rejected_event: self.notifiable, user: self.notifiable.previous_handling_recipient).deliver unless self.notifiable.previous_handling_recipient.nil?
   end
   
   def process_aae_public_expert_response
+    #NYI
   end
   
   def process_aae_public_submission_acknowledgement
+    PublicMailer.public_submission_acknowledgement(user:self.notifiable.question.submitter, question: self.notifiable.question)
   end
   
   def queue_delayed_notifications

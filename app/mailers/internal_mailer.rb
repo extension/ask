@@ -90,7 +90,6 @@ class InternalMailer < ActionMailer::Base
   
   def aae_public_edit(options = {})
     @user = options[:user]
-    @group = options[:group]
     @question = options[:question]
     @subject = "[eXtension Question:#{@question.id}] Incoming question edited by submitter"
     @assigned_at = @question.last_assigned_at
@@ -118,7 +117,6 @@ class InternalMailer < ActionMailer::Base
   
   def aae_public_comment(options = {})
     @user = options[:user]
-    @group = options[:group]
     @comment = options[:comment]
     @question = @comment.question
     @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new comment."
@@ -146,10 +144,9 @@ class InternalMailer < ActionMailer::Base
   end
   
   def aae_reject(options = {})
-    @rejected_event = options[:rejected_event]
+    @rejected_ = options[:rejected_event]
     @question = @rejected_event.question
     @user = options[:user]
-    @group = options[:group]
     @subject = "[eXtension Question:#{@question.id}] Incoming question rejected"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
