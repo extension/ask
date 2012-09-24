@@ -37,7 +37,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_escalation
-    mail = InternalMailer.aae_escalation(user: User.first, group: Group.first, question: Question.last, cache_email: false)
+    mail = InternalMailer.aae_escalation(user: User.first, group: Group.first, cache_email: false)
     return render_mail(mail)
   end
   
@@ -47,12 +47,12 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_public_comment
-    mail = InternalMailer.aae_public_comment(user: User.first, group: Group.first, comment: Comment.last, cache_email: false)
+    mail = InternalMailer.aae_public_comment(user: User.first, comment: Comment.last, cache_email: false)
     return render_mail(mail)
   end
   
   def internal_aae_reject
-    mail = InternalMailer.aae_reject(user: User.first, group: Group.first, rejected_event: QuestionEvent.where(event_state:QuestionEvent::REJECTED).first, cache_email: false)
+    mail = InternalMailer.aae_reject(user: User.first, rejected_event: QuestionEvent.where(event_state:QuestionEvent::REJECTED).first, cache_email: false)
     return render_mail(mail)
   end
   

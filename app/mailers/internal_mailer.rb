@@ -65,8 +65,7 @@ class InternalMailer < ActionMailer::Base
   def aae_escalation(options = {})
     @user = options[:user]
     @group = options[:group]
-    @question = options[:question]
-    @subject = "eXtension Initiative: Ask an Expert Escalation Report"
+    @subject = "eXtension Initiative: Ask an Expert Escalation Report: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if(!@user.email.blank?)
@@ -144,7 +143,7 @@ class InternalMailer < ActionMailer::Base
   end
   
   def aae_reject(options = {})
-    @rejected_ = options[:rejected_event]
+    @rejected_event = options[:rejected_event]
     @question = @rejected_event.question
     @user = options[:user]
     @subject = "[eXtension Question:#{@question.id}] Incoming question rejected"
