@@ -345,7 +345,9 @@ ActiveRecord::Schema.define(:version => 20120918192757) do
     t.integer  "darmok_id"
     t.string   "kind",                                    :default => "",    :null => false
     t.string   "login",                    :limit => 80
-    t.string   "name"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "public_name"
     t.string   "email"
     t.string   "title"
     t.integer  "position_id"

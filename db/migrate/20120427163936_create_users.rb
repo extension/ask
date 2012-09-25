@@ -10,7 +10,9 @@ class CreateUsers < ActiveRecord::Migration
       t.integer  "darmok_id"
       t.string   "kind",                                   :default => "",    :null => false
       t.string   "login",                    :limit => 80
-      t.string   "name"
+      t.string   "first_name"
+      t.string   "last_name"
+      t.string   "public_name"
       t.string   "email",                    :limit => 96
       t.string   "title"
       t.integer  "position_id"
