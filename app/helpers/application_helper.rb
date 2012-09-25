@@ -38,13 +38,29 @@ module ApplicationHelper
     
     if user.avatar.present? 
       return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
-    # no avatar for user
     else      
       # if no avatar, assign a random image
       return_string = image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px)
     end
     
     return link_to(return_string, expert_user_path(user.id), {:title => user.name}).html_safe  
+  end
+  
+  def get_public_avatar(user, image_size = :medium)
+    case image_size
+        when :medium    then image_size_in_px = "100x100"
+        when :thumb     then image_size_in_px = "40x40"
+        when :mini      then image_size_in_px = "20x20"
+    end
+    
+    if user.avatar.present? 
+      return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
+    else      
+      # if no avatar, assign a random image
+      return_string = image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px)
+    end
+    
+    return link_to(return_string, user_path(user.id), {:title => user.name}).html_safe  
   end
   
   def get_group_avatar(group, image_size = :medium)

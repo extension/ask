@@ -49,6 +49,14 @@ class User < ActiveRecord::Base
     return DEFAULT_NAME
   end
   
+  def public_name
+    if self[:name].present?
+      name = self[:name].split(' ', 2)
+      return name[0] + " " + name[1][0,1]
+    end
+    return DEFAULT_NAME
+  end
+  
   def member_of_group(group)
     find_group = self.group_connections.where('group_id = ?', group.id)
     !find_group.blank?

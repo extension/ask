@@ -82,6 +82,9 @@ Aae::Application.routes.draw do
     match "home/search" => "home#search", :via => [:get]
   end
   
+  match "home/about" => "home#about", :via => :get
+  match "home/locations/:id" => "home#locations", :as => 'view_location'
+  match "home/county/:id" => "home#county", :as => 'view_county'
   match "home/private_page" => "home#private_page", :via => :get
   match "ask" => "home#ask"
   match "ajax/tags" => "ajax#tags", :via => [:get]

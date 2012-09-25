@@ -1,12 +1,39 @@
-
 <div id="main" class="span6">
-  <% if current_user && current_user.has_exid? %>
   
-  <h1><%= @user.name %></h1>
-  <h3>Short description</h3>
-  <h3>Location</h3>
+  <h1><%= @user.public_name %></h1>
   
-  <%= get_avatar(@user) %>
+  <div id="location_list">
+
+  <% if @user.expertise_locations.length > 0 %>
+
+    <h3>Locations</h3>
+      <% @user.expertise_locations.each do |l| %>
+        <div class="location">
+
+          <h4><span class="tag tag-geography"><%= link_to l.name, view_location_path(l.id) %></span></h4>
+
+          <% if @user.expertise_locations.where("location_id = ?", l.id).length > 0 %>
+            <% if @user.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+              <ul>
+                <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                  <li><span class="tag tag-geography"><%= link_to "#{c.name} County", view_county_path(c.id) %></span></li>
+                <% end %>
+              </ul>
+            <% else %>
+                <ul>
+                  <li class="all_counties">All counties</li>
+                </ul>
+              <% end %>
+            <% end %>
+
+        </div>
+      <% end %>
+
+  <% end %>
+  
+  
+  
+  <%= get_public_avatar(@user) %>
   
   <p>
     <strong>About me:</strong>
@@ -24,12 +51,8 @@
     <% end %>
     </h3>
   <% end %>
-  
-  <% else %>
-    <h1><%= @user.name %></h1>
-    <%= get_avatar(@user) %>
-  <% end %>
-  
+
+  </div>
 </div>
 
 

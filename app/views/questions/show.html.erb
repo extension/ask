@@ -29,8 +29,6 @@
         <% if @question.location.present? %>
           <span class="tag tag-geography"><%= @question.location.name %></span>
         <% end %>
-      <% else %>
-        <span class="label label-inverse"><%= link_to "No Location" %></span>
       <% end %>
     </p>
   </div>
@@ -57,38 +55,55 @@
 
 <% if @question_responses.length < 1 %>
   <div class="not_answered">
-    <h2>This question is waiting for an official answer</h2>
-    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
+    <h3>This question is waiting for an official answer</h3>
   </div>
 <% end %>
 
-<br /><br />
 
 <%= render :partial => 'comments' %>
 
 </div>
 
 <div id="secondary" class="span4">
-  <% if current_user %>
-      <p><%= link_to "Edit/view", expert_question_path(@question.id) %></p>
+  <% if current_user && current_user.has_exid? %>
+      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
   <% end %>
   
-  <aside>
+  <% if @question.status_state != Question::STATUS_REJECTED %>
+    <aside>
+      <h3>About this question</h3>
+      
+      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+          <h4>Answered by</h4>
+        <% else %>
+          <h4>Assigned to</h4>
+        <% end %>
+
+        <%= link_to user_path(@question.assignee_id) do %>
+          <%= get_public_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, user_path(@question.assignee.id) %>
+        <% end %>
+    
+    
     <% if @question.assigned_group %>
-      <h4>Grouped with</h4>
-      <p><%= get_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
-      </p>
-    <% else %>
-      <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>
+      <h4>This question is grouped with</h4>
+      <p><%= get_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
     <% end %>
+    <p>Ask an Expert is made up of groups and individual experts.</p>
   </aside>
-  
-  <aside>
-    <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
-  </aside>
+  <% end %>
     
   <aside>
-    <%= render :partial => 'partials/related' %>
+    <h4>Related Questions</h4>
+    <% @fake_related.each do |question| %>
+      <%= link_to question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+    <% end %>
+    <h4 class="subtle">TODO: Replace with actual related questions. This is just a placeholder.</h4>
   </aside>
   
 </div>

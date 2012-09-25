@@ -35,8 +35,6 @@
           <% if q.location.present? %>
             <span class="tag tag-geography"><%= q.location.name %></span>
           <% end %>
-        <% else %>
-          <span class="label label-inverse"><%= link_to "No Location" %></span>
         <% end %>
 
       <% if q.tags.length > 0 %>

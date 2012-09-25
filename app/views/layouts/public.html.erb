@@ -56,10 +56,10 @@
             <%= link_to("eXtension Ask an Expert", root_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">  
-                <li class="active"><a href="">About</a></li>
+                <li class="active"><%= link_to "About", home_about_path() %></li>
               </ul>
             </div><!--/.nav-collapse -->
-            <p><%= link_to("Ask a Question", ask_path(), :class => "btn") %></p>
+            <p class="right"><%= link_to("Ask a Question", ask_path(), :class => "btn") %></p>
     </div>
   </div>
 </div>
