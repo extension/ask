@@ -80,7 +80,7 @@
         <% end %>
 
         <%= link_to user_path(@question.assignee_id) do %>
-          <%= get_public_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, user_path(@question.assignee.id) %>
+          <%= get_public_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.public_name, user_path(@question.assignee.id) %>
         <% end %>
     
     
