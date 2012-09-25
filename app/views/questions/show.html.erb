@@ -2,7 +2,58 @@
 
 <div id="main" class="span8">
 
-<%= render :partial => 'partials/question_main'%>
+  <% if @question.title.present? %>
+    <h2 class="title"><%= format_text_for_display(@question.title) %></h2>
+  <% else %>
+    <h2 class="title"><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
+  <% end %>
+
+  <div id="question">
+  <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+
+    <% @question.images.each do |image| %>
+      <%= image_tag image.url(:thumb) %>
+    <% end %>
+
+  <p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
+    <% if @question.submitter %>
+      by <%= @question.submitter.name %>
+    <% end %>
+  </p>
+
+    <p>
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= "#{@question.county.name} County" %></span>
+        <% end %>
+        <% if @question.location.present? %>
+          <span class="tag tag-geography"><%= @question.location.name %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse"><%= link_to "No Location" %></span>
+      <% end %>
+    </p>
+  </div>
+
+  <% if @question_responses.length > 0 %>
+    <h3 class="h3">Responses</h3>
+    <% @question_responses.each do |response| %>
+      <div class="response_block">
+        <p class="response"><%= format_text_for_display(response.body) %></p>
+        <div class="author">
+          <% if response.resolver_id %>
+            <%= link_to expert_user_path(response.resolver_id) do %>
+              <%= get_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
+            <% end %>
+          <% else %>
+            <p>Anonymous Guest</p>
+          <% end %>
+          <p><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
 
 <% if @question_responses.length < 1 %>
   <div class="not_answered">
@@ -19,8 +70,18 @@
 
 <div id="secondary" class="span4">
   <% if current_user %>
-      <p><%= link_to "Edit/view", expert_question_path(@question.id), :class => "label btn-info" %></p>
+      <p><%= link_to "Edit/view", expert_question_path(@question.id) %></p>
   <% end %>
+  
+  <aside>
+    <% if @question.assigned_group %>
+      <h4>Grouped with</h4>
+      <p><%= get_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
+      </p>
+    <% else %>
+      <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>
+    <% end %>
+  </aside>
   
   <aside>
     <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
