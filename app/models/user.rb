@@ -45,10 +45,10 @@ class User < ActiveRecord::Base
   }
   
   def name
-    if (self[:first_name].present? && self[:last_name].present?)
-      return self[:first_name] + " " + self[:last_name] 
-    elsif self[:public_name].present?
-      return self[:public_name]
+    if (self.first_name.present? && self.last_name.present?)
+      return self.first_name + " " + self.last_name 
+    elsif self.public_name.present?
+      return self.public_name
     end
     return DEFAULT_NAME
   end
