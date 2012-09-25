@@ -150,7 +150,7 @@ class QuestionEvent < ActiveRecord::Base
         Notification.create(notifiable: self, created_by: self.question.submitter, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
       end
       if (self.recipient_id != self.previous_handling_recipient_id) and (self.recipient_id != self.previous_handling_initiator_id) #reassigned
-        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+        # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
       end
         Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now )
     when REJECTED
