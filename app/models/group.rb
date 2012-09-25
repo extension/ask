@@ -42,10 +42,10 @@ class Group < ActiveRecord::Base
   # will_paginate per page default 
   self.per_page = 15
   
-  CONNECTIONS = {'member' => 'Community Member',
-    'leader' => 'Community Leader',
-    'wantstojoin' => 'Wants to Join Community',
-    'invited' => 'Community Invitation'}
+  CONNECTIONS = {'member' => 'Group Member',
+    'leader' => 'Group Leader',
+    'wantstojoin' => 'Wants to Join Group',
+    'invited' => 'Group Invitation'}
     
   QUESTION_WRANGLER_GROUP_ID = 38
     

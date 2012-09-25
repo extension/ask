@@ -33,6 +33,7 @@ class User < ActiveRecord::Base
   
   scope :with_expertise_county, lambda {|county_id| {:include => :expertise_counties, :conditions => "user_counties.county_id = #{county_id}"}}
   scope :with_expertise_location, lambda {|location_id| {:include => :expertise_locations, :conditions => "user_locations.location_id = #{location_id}"}}
+  scope :question_wranglers, conditions: { is_question_wrangler: true }
   
   scope :can_route_outside_location, lambda { |user_ids|
    location_routers = UserPreference.where("(name = '#{UserPreference::AAE_LOCATION_ONLY}' OR name = '#{UserPreference::AAE_COUNTY_ONLY}') AND (user_id IN (#{user_ids.join(',')}))").uniq.pluck('user_id').join(',')
@@ -88,12 +89,23 @@ class User < ActiveRecord::Base
   def join_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
       connection.destroy
-      self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
+    end
+    
+    self.group_connections.create(group: group, connection_type: connection_type)
+    
+    if connection_type == 'leader'
       GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_ADDED_AS_LEADER], event_code: GroupEvent::GROUP_ADDED_AS_LEADER, group: group)
     else
-      self.group_connections.create(group: group, connection_type: connection_type, connection_code: GroupEvent::GROUP_JOIN)
       GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_JOIN], event_code: GroupEvent::GROUP_JOIN, group: group)
     end
+    
+    # question wrangler group?
+    if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
+      if(connection_type == 'leader' || connection_type == 'member')
+        self.update_attribute(:is_question_wrangler, true)
+      end
+    end
+    
   end
   
   def leave_group(group, connection_type)
@@ -101,12 +113,17 @@ class User < ActiveRecord::Base
       connection.destroy
       GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_LEFT], event_code: GroupEvent::GROUP_LEFT, group: group)
     end
+    
+    # question wrangler group?
+    if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
+      self.update_attribute(:is_question_wrangler, false)
+    end
   end
   
   def leave_group_leadership(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
-      self.group_connections.create(group: group, connection_type: "member", connection_code: GroupEvent::GROUP_JOIN)
+      self.group_connections.create(group: group, connection_type: "member")
       GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_REMOVED_AS_LEADER], event_code: GroupEvent::GROUP_REMOVED_AS_LEADER, group: group)
     end
   end

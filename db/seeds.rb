@@ -201,7 +201,7 @@ def fill_in_group_connections_for_areas_of_expertise
   puts 'Filling in group connections for areas of expertise ...'
   expertise_group_connection_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.group_connections(user_id, group_id, connection_type, connection_code, send_notifications, connected_by, created_at, updated_at)
-  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', 0, false, #{User.system_user_id}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
+  SELECT #{@darmokdatabase}.expertise_areas.user_id, #{@aae_database}.groups.id, 'member', NULL, false, #{User.system_user_id}, #{@darmokdatabase}.expertise_areas.created_at, NOW()
   FROM   #{@darmokdatabase}.expertise_areas
   JOIN   #{@aae_database}.groups ON #{@darmokdatabase}.expertise_areas.category_id = #{@aae_database}.groups.darmok_expertise_id 
   GROUP BY #{@darmokdatabase}.expertise_areas.user_id, #{@darmokdatabase}.expertise_areas.category_id

@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(:version => 20120918192757) do
     t.integer  "user_id",                              :null => false
     t.integer  "group_id",                             :null => false
     t.string   "connection_type",                      :null => false
-    t.integer  "connection_code",                      :null => false
+    t.integer  "connection_code"
     t.boolean  "send_notifications", :default => true
     t.integer  "connected_by"
     t.datetime "created_at",                           :null => false

@@ -4,7 +4,7 @@ class CreateGroupConnections < ActiveRecord::Migration
       t.integer :user_id, :null => false
       t.integer :group_id, :null => false
       t.string  :connection_type, :null => false
-      t.integer :connection_code, :null => false
+      t.integer :connection_code
       t.boolean :send_notifications, :default => 1
       t.integer :connected_by
       t.timestamps
