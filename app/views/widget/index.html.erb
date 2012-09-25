@@ -57,7 +57,15 @@
             <% end %>
     <% end %>
     </div><!-- .grid_16 -->
-
+    
+    <% if @group.widget_show_title %>
+    <p>
+      <label for="title">Give your question a title
+      <%= f.text_field(:title, { :type => "text" }) %>
+      </label>
+    </p>
+    <% end %>
+    
     <p>
       <label for="question">Question
       <%= f.text_area :body, :rows => 4  %>

@@ -133,6 +133,12 @@ class Expert::GroupsController < ApplicationController
         @group.widget_show_location = false
       end
       
+      if params[:widget_show_title].present? && params[:widget_show_title] == '1'
+        @group.widget_show_title = true
+      else
+        @group.widget_show_title = false
+      end
+      
       if @group.save
         redirect_to(expert_group_widget_path, :notice => 'Widget settings successfully updated.')
       else

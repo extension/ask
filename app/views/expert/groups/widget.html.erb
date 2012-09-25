@@ -36,7 +36,15 @@
           <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option
 			    <span>(If enabled, the selected location will override the default location.)</span>
         </label>
-		</p>
+	</p>
+	
+	<p>
+      <label>
+        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field on Form
+		    <span>(If no title form is provided, a title will be created from the first 80 characters of the question )</span>
+      </label>
+	</p>	
+		
     </fieldset>
 
 
