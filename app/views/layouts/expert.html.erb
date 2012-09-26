@@ -6,6 +6,7 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <%= render(:partial => 'home/google_analytics') %>
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
@@ -81,8 +82,6 @@
     $('#searchform').submit();
   });
 </script>
-
-<%= render(:partial => 'home/google_analytics') %>
 
 </body>
 </html>
