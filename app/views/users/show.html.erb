@@ -1,6 +1,11 @@
 <div id="main" class="span6">
   
-  <h1><%= @user.public_name %></h1>
+  <h1>
+    <%= @user.public_name %>
+    <% if current_user && current_user.has_exid? %>
+      <%= link_to "expert view", expert_user_path(@user.id), :class => "btn" %>
+    <% end %>
+  </h1>
   
   <div id="location_list">
 
@@ -57,24 +62,41 @@
 
 
 <div id="main" class="span6">
-  <% if current_user && current_user.has_exid? %>
-    <%= link_to "expert view", expert_user_path(@user.id), :class => "label btn-inverse" %>
-  <% end %>
-  
-  <h3>Answered Questions</h3>
+  <h3>Assigned Questions</h3>
 
-  <% @fake_answered.each do |question| %>
+  <% @open_questions.each do |question| %>
   <div class="answered_question">
 
-      <%= link_to expert_question_path(question.id) do %>
+      <%= link_to question_path(question.id) do %>
         <% if question.title.present? %>
           <p><%= format_text_for_display(question.title) -%></p>
         <% else %>
           <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
         <% end %>
       <%- end -%>
-      <p>Location <span class="label">Tags</span> <span class="label">Tags</span> <span class="label">Tags</span>  <%= time_ago_in_words(question.created_at) %> ago </p>
+      <p><%= time_ago_in_words(question.created_at) %> ago </p>
   
   </div>
   <% end %>
+  
+  
+  <h3>Answered Questions</h3>
+
+  <% @answered_questions.each do |question| %>
+  <div class="answered_question">
+
+      <%= link_to question_path(question.id) do %>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+      <%- end -%>
+      <p><%= time_ago_in_words(question.created_at) %> ago </p>
+  
+  </div>
+  <% end %>
+  
+  
+  
 </div>
