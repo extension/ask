@@ -60,12 +60,6 @@
       </p>
     </fieldset>
   <% end %>
-
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <div id="app_location" class="demo">
-      <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>.</p>
-    </div>
-  <% end %>
  
   <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary" %></p>
 <% end %>
