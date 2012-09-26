@@ -1,0 +1,85 @@
+<%= form_for @question, :url => ask_group_path(), :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+
+  <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+  
+  <fieldset>
+    <p>
+      <%= f.label :title, 'Give your question a title' %>
+      <%= f.text_field :title, {:type => "text", :class => "xl"} %>
+    </p>
+    
+    <p>
+      <%= f.label :body, 'Question' %>
+      <%= f.text_area :body, :rows => 6, :class => "xl" %>
+    </p>    
+  </fieldset>
+
+
+  <% if @group.widget_show_location %>
+    <fieldset>
+      <p>
+        <%= f.label :location_id, 'Location and County' %>
+        <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
+      </p>
+    
+      <p id="county_list">
+        <% if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
+          <%= f.label :county_id %>
+          <%= f.select(:county_id, options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id))) %>
+        <% end %>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <% if @group.widget_upload_capable? %>
+    <fieldset>
+      <p>
+        <label>Image (optional)</label>
+        <%= f.fields_for :images do |image_form| %>
+          <%= image_form.file_field :attachment %>
+        <% end %>
+        <em>.jpg .png or .gif.</em>
+      </p>
+    </fieldset>
+  <% end %>
+  
+  <fieldset>
+    <p>
+      <%= f.label :email, 'Email' %>
+      <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
+    </p>
+  </fieldset>
+  
+  <% if @group.widget_public_option %>
+    <fieldset>
+      <p>
+        <label for="is_public">
+        <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Share my question on Ask an Expert
+        </label>
+        <span><em>Sharing your question may help others learn from the answer.</em></span>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>.</p>
+    </div>
+  <% end %>
+ 
+  <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary" %></p>
+<% end %>
+
+<script class="code" type="text/javascript">
+  $(document).ready(function () {
+  
+    $("#question_location_id").change(function() {
+      var location_id = $('select#question_location_id :selected').val();
+      if(location == "") location="0";
+      jQuery.get('/widget/get_counties/' + location_id, function(data){
+          $("#county_list").html(data);
+      })
+      return false;
+    });
+  });
+</script>
