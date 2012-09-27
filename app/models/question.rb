@@ -27,8 +27,8 @@ class Question < ActiveRecord::Base
   before_create :generate_fingerprint, :clean_question_and_answer, :set_last_opened
   before_update :clean_question_and_answer
 
-  after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications
-  
+  after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+
   scope :public_visible, conditions: { is_private: false }
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
   scope :tagged_with, lambda {|tag_id| 
@@ -36,7 +36,7 @@ class Question < ActiveRecord::Base
   }
   
   # sunspot/solr search
-  searchable do
+  searchable :auto_index => false do
     text :title, more_like_this: true
     text :body, more_like_this: true
     text :response_list, more_like_this: true
@@ -100,7 +100,7 @@ class Question < ActiveRecord::Base
   def response_list
     self.responses.map(&:body).join(' ')
   end
-  
+
   def auto_assign_by_preference
     if existing_question = Question.find(:first, :conditions => ["id != #{self.id} and body = ? and submitter_email = '#{self.submitter_email}'", self.body])
       reject_msg = "This question was a duplicate of incoming question ##{existing_sq.id}"
@@ -279,6 +279,10 @@ class Question < ActiveRecord::Base
   end
   
   private
+  
+  def index_me
+    Sunspot.index(self)
+  end
 
   def generate_fingerprint
     create_time = Time.now.to_s

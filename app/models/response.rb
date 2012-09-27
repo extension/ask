@@ -9,7 +9,7 @@ class Response < ActiveRecord::Base
   accepts_nested_attributes_for :images
   
   before_create :calculate_duration_since_last, :clean_response
-  
+  after_save :index_parent_question
   
   def calculate_duration_since_last
     parent_question_id = self.question_id
@@ -26,11 +26,15 @@ class Response < ActiveRecord::Base
     return
   end
   
-  
   class Response::Image < Asset
     has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
   
+  private
   
+  def index_parent_question
+    Sunspot.index(self.question)
+  end
+    
 end
 
