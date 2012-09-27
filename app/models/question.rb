@@ -28,6 +28,7 @@ class Question < ActiveRecord::Base
   before_update :clean_question_and_answer
 
   after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+  after_update :index_me
 
   scope :public_visible, conditions: { is_private: false }
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
@@ -281,7 +282,12 @@ class Question < ActiveRecord::Base
   private
   
   def index_me
-    Sunspot.index(self)
+    # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
+    # did not change, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
+    # if a response is not created, then this hook will need to execute, otherwise, we're good to go.
+    if self.status_state_changed? && (self.status_state == 4 || self.status_state == 5) || self.is_private_changed?
+      Sunspot.index(self)
+    end
   end
 
   def generate_fingerprint
