@@ -5,20 +5,37 @@
   <fieldset>
     <p>
       <%= f.label :title, 'Give your question a title' %>
-      <%= f.text_field :title, {:type => "text", :class => "xl"} %>
+      <%= f.text_field :title, {:type => "text", :class => "xl required"} %>
     </p>
     
     <p>
       <%= f.label :body, 'Question' %>
-      <%= f.text_area :body, :rows => 6, :class => "xl" %>
+      <%= f.text_area :body, :rows => 6, :class => "xl required" %>
     </p>    
+
+    <p>
+      <%= f.label :email, 'Email' %>
+      <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off", :class => "required" }) %>
+    </p>
   </fieldset>
+  
+  
+  <% if @group.widget_public_option %>
+    <fieldset>
+      <p>
+        <label for="is_public">
+        <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
+        </label>
+        <span><em>Share your question with the public at ask.extension.org so others can learn from the answer.</em></span>
+      </p>
+    </fieldset>
+  <% end %>
 
 
   <% if @group.widget_show_location %>
     <fieldset>
       <p>
-        <%= f.label :location_id, 'Location and County' %>
+        <%= f.label :location_id, 'Location and County (optional)' %> 
         <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
       </p>
     
@@ -36,30 +53,13 @@
       <p>
         <label>Image (optional)</label>
         <%= f.fields_for :images do |image_form| %>
-          <%= image_form.file_field :attachment %>
+          <%= image_form.file_field :attachment  %>
         <% end %>
-        <em>.jpg .png or .gif.</em>
       </p>
     </fieldset>
   <% end %>
   
-  <fieldset>
-    <p>
-      <%= f.label :email, 'Email' %>
-      <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
-    </p>
-  </fieldset>
   
-  <% if @group.widget_public_option %>
-    <fieldset>
-      <p>
-        <label for="is_public">
-        <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Share my question on Ask an Expert
-        </label>
-        <span><em>Sharing your question may help others learn from the answer.</em></span>
-      </p>
-    </fieldset>
-  <% end %>
  
   <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary" %></p>
 <% end %>
@@ -76,4 +76,7 @@
       return false;
     });
   });
+  
+  $("form").validate();
+  
 </script>
