@@ -17,3 +17,25 @@
 
 #comments_form textarea { width:70%; display:block;}
 h2.title {line-height:1.2em; margin:1em 0 .65em; color: #161F21; font-family: Georgia, serif; font-size:1.9em}
+
+
+label {font-weight:normal; font-size:1.4em; color:#555;}
+
+
+label.error {
+	color: red;
+	font-style: italic
+}
+div.error { display: none; }
+input:focus { border: 1px dotted black; }
+input.error, textarea.error { border: 2px solid red; }
+form.cmxform .gray * { color: gray; }
+
+
+input.error, select.error, textarea.error  {
+  border: 2px solid red;
+  background-color:#ffffd5;
+  color:red;
+}
+
+fieldset {margin-bottom:1.75em;}

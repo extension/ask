@@ -1,23 +1,37 @@
 <div id="main" class="span8">
-
-  <div class="groupmasthead">
-    <%= get_group_avatar(@group) %>
-    
-    <h1><%= link_to @group.name, group_path(@group.id) %></h1>
-    
-    <% if  @group.description? %>
-      <p><%= format_text_for_display(@group.description).html_safe %></p>
-    <% end %>
   
-    <iframe width="80%" style="border:0;" src="<%= group_widget_url(@group.widget_fingerprint) %>" height="400px" /></iframe>
+  <h2>Ask a Question</h2>
     
-  </div>
+  <% if !@group.active? %>
+    <h3>This group is not accepting questions at the current time</h3>
+  <% else %>
+  
+    <%- if @question.errors.any? -%>
+      <ul>
+        <%- @question.errors.full_messages.each do |msg| -%>
+          <li><%= msg %></li>
+        <%- end -%>
+      </ul>
+    <%- end -%>
+  
+    <%= render(:partial => 'groups/form') %>
+  <% end %>
+  
 </div>
 
 <div id="secondary" class="span4">
-
-  <% if current_user %>
-    <%= link_to "expert view", expert_group_path(@group.id), :class => "label btn-inverse" %>
+  <%= get_group_avatar(@group) %>
+  
+  <h3>
+    <%= link_to @group.name, group_path(@group.id) %> 
+    <% if current_user && current_user.has_exid? %>
+      <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
+    <% end %>
+  </h3>
+  
+  <% if  @group.description? %>
+    <h3>About this group</h3>
+    <p><%= format_text_for_display(@group.description).html_safe %></p>
   <% end %>
-
+  
 </div>

@@ -1,15 +1,20 @@
 <div id="main" class="span8">
   <div class="groupmasthead">
-    <% if @group.active %>
-      <h2 class="right"><%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn large btn-primary" %></h2>
-    <% end %>
-    
     <%= get_group_avatar(@group) %>
     
-    <h1><%= @group.name %></h1>
+    <h1>
+      <%= @group.name %> 
+      <% if current_user && current_user.has_exid? %>
+        <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
+      <% end %>
+    </h1>
     
     <% if  @group.description? %>
       <p><%= format_text_for_display(@group.description).html_safe %></p>
+    <% end %>
+    
+    <% if @group.active %>
+      <p><%= link_to "Ask a question to this group", ask_group_path(@group.id), :class => "btn large btn-primary" %></p>
     <% end %>
   </div>
   
@@ -51,9 +56,5 @@
 </div>
 
 <div id="secondary" class="span4">
-
-  <% if current_user %>
-    <%= link_to "expert view", expert_group_path(@group.id), :class => "label btn-inverse" %>
-  <% end %>
   
 </div>

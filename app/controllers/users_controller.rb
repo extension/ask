@@ -9,8 +9,8 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    
-    @fake_answered = Question.public_visible.find(:all, :limit => 10, :offset => rand(Question.count))
+    @answered_questions = @user.answered_questions.public_visible.limit(10)
+    @open_questions = @user.open_questions.public_visible.limit(10)
   end
   
 end
