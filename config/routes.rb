@@ -87,7 +87,7 @@ Aae::Application.routes.draw do
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
   match "home/private_page" => "home#private_page", :via => :get
-  match "ask" => "home#ask"
+  match "ask" => "groups#ask", :id => "38" #id for QW group
   match "ajax/tags" => "ajax#tags", :via => [:get]
   match "ajax/groups" => "ajax#groups", :via => [:get]
   match "ajax/counties" => "ajax#counties", :via => [:get]
