@@ -31,7 +31,6 @@ class GroupsController < ApplicationController
     
     if request.post?
       @question = Question.new(params[:question])
-      @question.images.build
       
       if !(@submitter = User.find_by_email(@question.submitter_email))
         @submitter = User.create({:email => @question.submitter_email})
