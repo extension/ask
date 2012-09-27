@@ -12,7 +12,7 @@
           <% if @user.expertise_counties.where("location_id = ?", l.id).length > 0 %>
             <ul>
               <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
-                <li><span class="tag tag-geography"><%= link_to "#{c.name} County", expert_view_county_path(c.id) %></span></li>
+                <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
               <% end %>
             </ul>
           <% else %>

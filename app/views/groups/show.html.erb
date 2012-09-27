@@ -35,7 +35,7 @@
       <p>
         <% if q.location.present? %>
           <% if q.county.present? %>
-            <span class="tag tag-geography"><%= "#{q.county.name} County" %></span>
+            <span class="tag tag-geography"><%= "#{q.county.name}" %></span>
           <% end %>
           <% if q.location.present? %>
             <span class="tag tag-geography"><%= q.location.name %></span>

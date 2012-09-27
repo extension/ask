@@ -1,5 +1,5 @@
 <div class="map"></div>
-<h1><%= @county.name %> County, <%= link_to @location.name, view_location_path(@location.id) %></h1>
+<h1><%= @county.name %>, <%= link_to @location.name, view_location_path(@location.id) %></h1>
 
 <div class="tag_summary">
   <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>

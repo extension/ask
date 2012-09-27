@@ -30,7 +30,7 @@
       <p>
         <% if question.location.present? %>
           <% if question.county.present? %>
-            <span class="tag tag-geography"><%= "#{question.county.name} County" %></span>
+            <span class="tag tag-geography"><%= "#{question.county.name}" %></span>
           <% end %>
           <% if question.location.present? %>
             <span class="tag tag-geography"><%= question.location.abbreviation %></span>

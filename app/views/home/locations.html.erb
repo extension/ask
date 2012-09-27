@@ -58,7 +58,7 @@
 <div id="secondary" class="span4">
   <ul class="county_list">
   <% @counties.each do |county| %>
-    <li><span class="tag tag-geography"><%= link_to "#{county.name} County", view_county_path(county.id) %></span></li>
+    <li><span class="tag tag-geography"><%= link_to "#{county.name}", view_county_path(county.id) %></span></li>
   <% end %>
   </ul>
 </div>

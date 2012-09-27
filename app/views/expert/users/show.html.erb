@@ -43,7 +43,7 @@
         <p>
           <% if q.location.present? %>
             <% if q.county.present? %>
-              <span class="tag tag-geography"><%= link_to "#{q.county.name} County", expert_view_county_path(q.county.id) %></span>
+              <span class="tag tag-geography"><%= link_to "#{q.county.name}", expert_view_county_path(q.county.id) %></span>
             <% end %>
             <% if q.location.present? %>
               <span class="tag tag-geography"><%= link_to q.location.abbreviation, expert_view_location_path(q.location.id) %></span>
