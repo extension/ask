@@ -53,7 +53,7 @@
 		<% end %>
 		
 		<% if question.assigned_group %>
-	      <p><%= get_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
+	      <p><%= link_expert_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
 		<% else %>
 			<p><strong>This question is groupless</strong></p>
 		<% end %>

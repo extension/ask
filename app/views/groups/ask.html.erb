@@ -26,7 +26,7 @@
     </aside>
   <% else %>
     
-    <%= get_group_avatar(@group) %>
+    <%= link_public_group_avatar(@group) %>
 
     <h3>
       <%= link_to @group.name, group_path(@group.id) %> 

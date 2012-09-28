@@ -45,7 +45,7 @@
   <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
 <% if @groups.length > 0 %>
   <% @groups.each do |group| %>
-    <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
   <% end %>
   <p>view all</p> 
 <% else %>

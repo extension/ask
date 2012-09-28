@@ -1,8 +1,8 @@
 <% @page_title = @group.name %>
 
 <div id="main" class="span8">
-  <%= get_group_avatar(@group) %>
-  <h1><%= @group.name %> <%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></h1>
+  <%= link_expert_group_avatar(@group) %>
+  <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span> <%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></h1>
   
   <ul class="nav nav-tabs">
     <li><%= link_to 'Unanswered', expert_group_path(@group) %></li>
