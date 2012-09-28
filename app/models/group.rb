@@ -94,6 +94,10 @@ class Group < ActiveRecord::Base
     return assignees
   end
   
+  def question_wrangler_group?
+    self.id == QUESTION_WRANGLER_GROUP_ID
+  end
+  
   def set_tag(tag)
     if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
       return false
