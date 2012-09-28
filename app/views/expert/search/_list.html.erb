@@ -1,8 +1,6 @@
 <div id="main" class="span12">
   <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.length %> of <%= @questions.total_entries %></strong></p>
-  
-  <h3>#TODO NOTE: Only showing question search results at current time. Result list is also incomplete.</h3>
-  
+ 
   <% @questions.each do |question| %>
   <div class="incoming_question">
     

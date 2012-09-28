@@ -19,6 +19,15 @@ class User < ActiveRecord::Base
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
   
   
+  # sunspot/solr search
+  searchable do
+    text :name
+    text :tag_fulltext
+    boolean :retired
+    boolean :is_blocked
+  end
+  
+  
   devise :rememberable, :trackable, :database_authenticatable
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
@@ -60,6 +69,10 @@ class User < ActiveRecord::Base
       return self[:first_name] + " " + self[:last_name][0,1]
     end
     return DEFAULT_NAME
+  end
+  
+  def tag_fulltext
+    self.tags.map(&:name).join(' ')
   end
   
   def member_of_group(group)

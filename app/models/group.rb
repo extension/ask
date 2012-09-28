@@ -39,6 +39,11 @@ class Group < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
     
+  # sunspot/solr search
+  searchable do
+    text :name
+  end
+    
   # will_paginate per page default 
   self.per_page = 15
   
