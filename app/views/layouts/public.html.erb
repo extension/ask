@@ -18,7 +18,7 @@
      <div id="expertbar" class="navbar-inner">
         <div class="container">
           <span class="navavatar loggedin">
-            <%= get_avatar(current_user, :mini) %>
+            <%= link_public_user_avatar(current_user, :mini) %>
             <%= link_to expert_user_path(current_user.id) do %>
               <%= current_user.name %>
             <% end %>

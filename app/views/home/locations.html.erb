@@ -34,7 +34,7 @@
   <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
 <% if @experts.length > 0 %>
   <% @experts.each do |member| %>
-    <p><%= get_public_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
+    <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
   <% end %>
   <p>view all</p> 
 <% else %>
@@ -46,7 +46,7 @@
   <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
 <% if @groups.length > 0 %>
   <% @groups.each do |group| %>
-    <p><%= get_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
+    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
   <% end %>
   <p>view all</p> 
 <% else %>

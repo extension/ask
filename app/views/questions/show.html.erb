@@ -40,8 +40,8 @@
         <p class="response"><%= format_text_for_display(response.body) %></p>
         <div class="author">
           <% if response.resolver_id %>
-            <%= link_to expert_user_path(response.resolver_id) do %>
-              <%= get_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
+            <%= link_to user_path(response.resolver_id) do %>
+              <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
             <% end %>
           <% else %>
             <p>Anonymous Guest</p>
@@ -80,13 +80,13 @@
         <% end %>
 
         <%= link_to user_path(@question.assignee_id) do %>
-          <%= get_public_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.public_name, user_path(@question.assignee.id) %>
+          <%= link_public_user_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.public_name, user_path(@question.assignee.id) %>
         <% end %>
     
     
     <% if @question.assigned_group %>
       <h4>This question is grouped with</h4>
-      <p><%= get_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
+      <p><%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
     <% end %>
     <p>Ask an Expert is made up of groups and individual experts.</p>
   </aside>

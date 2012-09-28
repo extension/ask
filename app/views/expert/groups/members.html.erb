@@ -9,9 +9,9 @@
 <% @group_members.each do |member| %>
   <tr>
     <% if member.leader_of_group(@group)%>
-      <td><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %> <strong><i class="icon-user"></i> Leader</strong></td>
+      <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %> <strong><i class="icon-user"></i> Leader</strong></td>
     <% else %>
-      <td><%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></td>
+      <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %></td>
     <% end %>
     <td></td>
   </tr>

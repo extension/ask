@@ -48,7 +48,7 @@
 	    <div class="expert">
 	    <% if question.assignee_id.present? %>
           <%= link_to expert_user_path(question.assignee_id) do %>
-            <%= get_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %>
+            <%= link_expert_user_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %>
 		  <% end %>
 		<% else %>
 		  <p><strong>This question does not have an assignee.</strong></p>

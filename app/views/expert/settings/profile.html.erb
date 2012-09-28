@@ -32,7 +32,7 @@
   <fieldset>
     <p><%= f.label :avatar, 'Profile Avatar' %></p>
     <p class="clearing">
-      <%= get_avatar(@user) %>
+      <%= link_expert_user_avatar(@user) %>
       <% if @user.avatar.present? %>
         <p class="clearing">
           <label>
