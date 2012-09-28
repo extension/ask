@@ -51,7 +51,7 @@
   <div id="group_members">
   <% @group_members.each do |member| %>
     <p>
-      <%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
+      <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %>
       <% if member.leader_of_group(@group) %>
       <strong><i class="icon-user"></i> Leader</strong>
       <% end %>

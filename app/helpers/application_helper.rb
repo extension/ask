@@ -29,6 +29,14 @@ module ApplicationHelper
       "\\1\\3\n") 
   end
   
+  def link_public_user(user)
+    return link_to(user.name, user_path(user.id), {:title => user.name}).html_safe
+  end
+  
+  def link_expert_user(user)
+    return link_to(user.name, expert_user_path(user.id), {:title => user.name}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '')
+  end
+  
   def link_public_user_avatar(user, image_size = :medium)
     return link_to(get_avatar_for_user(user, image_size), user_path(user.id), {:title => user.name}).html_safe
   end
