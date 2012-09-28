@@ -283,9 +283,9 @@ class Question < ActiveRecord::Base
   
   def index_me
     # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
-    # did not change, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
-    # if a response is not created, then this hook will need to execute, otherwise, we're good to go.
-    if self.status_state_changed? && (self.status_state == 4 || self.status_state == 5) || self.is_private_changed?
+    # did not change and these other fields did, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
+    # since a response is not created, then this hook will need to execute, otherwise, we're good to go.
+    if (self.status_state_changed? && ((self.status_state == 4 || self.status_state == 5) || (self.status_state == 1 && self.current_response.nil?))) || self.is_private_changed? || self.body_changed? || self.title_changed?
       Sunspot.index(self)
     end
   end
