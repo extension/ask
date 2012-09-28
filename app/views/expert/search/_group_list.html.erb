@@ -1,0 +1,5 @@
+<div id="main" class="span12">
+   
+  <% @groups.each do |group| %>
+   <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %>
+  <% end %>

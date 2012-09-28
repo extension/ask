@@ -20,12 +20,28 @@ class Expert::SearchController < ApplicationController
     @list_title = "Search for '#{params[:q]}'"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     questions = Question.search do
-                without(:status_state, Question::STATUS_REJECTED)
-                fulltext(params[:q])
-                with :spam, false
-                paginate :page => params[:page], :per_page => Question.per_page
-              end
+                  without(:status_state, Question::STATUS_REJECTED)
+                  fulltext(params[:q])
+                  with :spam, false
+                  paginate :page => params[:page], :per_page => 10
+                end
     @questions = questions.results
+    
+    users = User.search do
+              with :is_blocked, false
+              with :retired, false
+              fulltext(params[:q]) do
+                fields(:name)
+              end
+              paginate :page => params[:page], :per_page => 10
+            end
+    @users = users.results
+    
+    groups = Group.search do
+               fulltext(params[:q])
+               paginate :page => params[:page], :per_page => 10
+             end
+    @groups = groups.results
     render :action => 'index'
   end
 
