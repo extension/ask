@@ -9,7 +9,7 @@
   <% @experts.each do |expert| %>
     <p>
      <%= link_to expert_user_path(expert) do %>
-     <%= get_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert) %>
+     <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert) %>
      <% end %>
     </p>
   <% end %>

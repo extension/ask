@@ -7,7 +7,7 @@
 
  
   <% @groups.each do |group| %>
-   <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %>
+   <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %>
   <% end %>
 
   <% if !defined?(paginate_groups) || paginate_groups != false %>
