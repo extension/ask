@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
     text :tag_fulltext
     boolean :retired
     boolean :is_blocked
+    integer :darmok_id 
   end
   
   

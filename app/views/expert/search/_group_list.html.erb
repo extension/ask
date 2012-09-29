@@ -1,5 +1,16 @@
+<h1><%= title %></h1>
+
 <div id="main" class="span12">
-   
+  <% if !defined?(paginate_groups) || paginate_groups != false %>
+	<p>Displaying <strong><%= @groups.offset + 1 %>-<%= @groups.offset + @groups.length %> of <%= @groups.total_entries %></strong></p>
+  <% end %>  
+
+ 
   <% @groups.each do |group| %>
    <p><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %>
   <% end %>
+
+  <% if !defined?(paginate_groups) || paginate_groups != false %>
+  <%= will_paginate @groups %>
+  <% end %>
+</div>
