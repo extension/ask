@@ -18,7 +18,7 @@
     
     <% @my_groups.each do |group| %>
       <tr>
-        <td><%= get_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></td>
+        <td><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></td>
         <% if @user.leader_of_group(group)%>
           <td><strong>Leader <i class="icon-user"></i></strong></td>
         <% else %>

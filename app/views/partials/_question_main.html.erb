@@ -39,7 +39,7 @@
       <div class="author">
         <% if response.resolver_id %>
           <%= link_to expert_user_path(response.resolver_id) do %>
-            <%= get_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
+            <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
           <% end %>
         <% else %>
           <p>Anonymous Guest</p>

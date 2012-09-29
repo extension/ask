@@ -29,7 +29,47 @@ module ApplicationHelper
       "\\1\\3\n") 
   end
   
-  def get_avatar(user, image_size = :medium)
+  def link_public_user(user)
+    return link_to(user.name, user_path(user.id), {:title => user.name}).html_safe
+  end
+  
+  def link_expert_user(user)
+    return link_to(user.name, expert_user_path(user.id), {:title => user.name}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '')
+  end
+  
+  def link_public_user_avatar(user, image_size = :medium)
+    return link_to(get_avatar_for_user(user, image_size), user_path(user.id), {:title => user.name}).html_safe
+  end
+  
+  def link_expert_user_avatar(user, image_size = :medium)
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name}).html_safe
+  end
+
+  def link_public_group_avatar(group, image_size = :medium)
+    return link_to(get_avatar_for_group(group, image_size), group_path(group.id), {:title => group.name}).html_safe
+  end
+  
+  def link_expert_group_avatar(group, image_size = :medium)
+    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name}).html_safe
+  end
+  
+  def get_avatar_for_group(group, image_size = :medium)
+    case image_size
+        when :medium    then image_size_in_px = "100x100"
+        when :thumb     then image_size_in_px = "40x40"
+        when :mini     then image_size_in_px = "20x20"
+    end
+    
+    if group.avatar.present? 
+      return_string = image_tag(group.avatar.url(image_size))
+    else
+      # if no avatar, assign a random image
+      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)      
+    end
+    return return_string
+  end  
+  
+  def get_avatar_for_user(user, image_size = :medium)
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
@@ -43,59 +83,9 @@ module ApplicationHelper
       return_string = image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px)
     end
     
-    return link_to(return_string, expert_user_path(user.id), {:title => user.name}).html_safe  
+    return return_string
   end
-  
-  def get_public_avatar(user, image_size = :medium)
-    case image_size
-        when :medium    then image_size_in_px = "100x100"
-        when :thumb     then image_size_in_px = "40x40"
-        when :mini      then image_size_in_px = "20x20"
-    end
-    
-    if user.avatar.present? 
-      return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
-    else      
-      # if no avatar, assign a random image
-      return_string = image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px)
-    end
-    
-    return link_to(return_string, user_path(user.id), {:title => user.name}).html_safe  
-  end
-  
-  def get_group_avatar(group, image_size = :medium)
-    case image_size
-        when :medium    then image_size_in_px = "100x100"
-        when :thumb     then image_size_in_px = "40x40"
-        when :mini     then image_size_in_px = "20x20"
-    end
-    
-    if group.avatar.present? 
-      return_string = image_tag(group.avatar.url(image_size))
-    else
-      # if no avatar, assign a random image
-      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)      
-    end
 
-    return link_to(return_string, expert_group_path(group.id), {:title => group.name}).html_safe  
-  end
-  
-  def get_public_group_avatar(group, image_size = :medium)
-    case image_size
-        when :medium    then image_size_in_px = "100x100"
-        when :thumb     then image_size_in_px = "40x40"
-        when :mini     then image_size_in_px = "20x20"
-    end
-    
-    if group.avatar.present? 
-      return_string = image_tag(group.avatar.url(image_size))
-    else
-      # if no avatar, assign a random image
-      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)      
-    end
-
-    return link_to(return_string, group_path(group.id), {:title => group.name}).html_safe  
-  end
   
   def default_location_id(fallback_location_id = nil)
     if(@personal[:location].blank?)

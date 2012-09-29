@@ -1,6 +1,6 @@
 <h3>Comment on this Question</h3>
 <% if current_user %>
-<%= get_avatar(current_user, :thumb) %>
+<%= link_public_user_avatar(current_user, :thumb) %>
 <% end %>
 <div id="comments_form">
   <% if current_user %>

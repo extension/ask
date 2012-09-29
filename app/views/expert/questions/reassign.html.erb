@@ -43,7 +43,7 @@
         <tr>
         <td>
           <p>
-            <%= get_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
+            <%= link_expert_user_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
             <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn btn-primary" %>
           </p>
           <% filter_terms.each do |i| %>

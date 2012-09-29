@@ -38,7 +38,7 @@
       <% end %>
   
       <%= link_to expert_user_path(@question.assignee_id) do %>
-        <%= get_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
+        <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
       <% end %>
       
       <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %> 
@@ -90,7 +90,7 @@
     	    System
     	  <% else %>
     	    <%= link_to expert_user_path(@question.current_resolver_id) do %>
-            <%= get_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+            <%= link_expert_user_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
           <% end %>
     	    
     	  <% end %>
