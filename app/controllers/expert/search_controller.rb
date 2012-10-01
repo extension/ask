@@ -64,8 +64,7 @@ class Expert::SearchController < ApplicationController
                   paginate :page => params[:page], :per_page => 15
                 end
     @questions = questions.results
-    
-    render :partial => 'question_list', :locals => {:title => "Search for '#{params[:q]}'"}
+    @page_title = "Search on questions for '#{params[:q]}'"
   end
   
   def experts
@@ -89,8 +88,7 @@ class Expert::SearchController < ApplicationController
               paginate :page => params[:page], :per_page => 15
             end
     @experts = experts.results
-    
-    render :partial => 'expert_list', :locals => {:title => "Search for '#{params[:q]}'"}
+    @page_title = "Search on questions for '#{params[:q]}'"
   end
   
   def groups
@@ -108,7 +106,7 @@ class Expert::SearchController < ApplicationController
                paginate :page => params[:page], :per_page => 15
              end
     @groups = groups.results
-    render :partial => 'group_list', :locals => {:title => "Search for '#{params[:q]}'"}
+    @page_title = "Search on questions for '#{params[:q]}'"
   end
 
 end
