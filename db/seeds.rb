@@ -142,11 +142,17 @@ def transfer_widget_communities_to_groups
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
     VALUES (99999, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
   END_SQL
-  
+
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(group_insert_query)
     ActiveRecord::Base.connection.execute(wrangler_group_insert_query)
     ActiveRecord::Base.connection.execute(orphan_group_insert_query)
+    
+    # run queries to insert into county and location join tables for groups
+    Group.where("widget_county_id IS NOT NULL OR widget_location_id IS NOT NULL").each do |g|
+      g.group_locations.create(:location_id => g.widget_location_id) if g.widget_location_id.present?
+      g.group_counties.create(:county_id => g.widget_county_id) if g.widget_county_id.present?
+    end
   end
   
   # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
