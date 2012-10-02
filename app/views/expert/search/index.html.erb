@@ -5,11 +5,13 @@
 <% if @questions.total_entries > 15 %>
 <%= link_to 'see all', expert_search_questions_path(:q => params[:q]) %>
 <% end %>
+
 <h3>Experts</h3>
 <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
 <% if @experts.total_entries > 15 %>
 <%= link_to 'see all', expert_search_experts_path(:q => params[:q]) %>
 <% end %>
+
 <h3>Groups</h3>
 <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
 <% if @groups.total_entries > 15 %>
