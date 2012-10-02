@@ -147,12 +147,6 @@ def transfer_widget_communities_to_groups
     ActiveRecord::Base.connection.execute(group_insert_query)
     ActiveRecord::Base.connection.execute(wrangler_group_insert_query)
     ActiveRecord::Base.connection.execute(orphan_group_insert_query)
-    
-    # run queries to insert into county and location join tables for groups
-    Group.where("widget_county_id IS NOT NULL OR widget_location_id IS NOT NULL").each do |g|
-      g.group_locations.create(:location_id => g.widget_location_id) if g.widget_location_id.present?
-      g.group_counties.create(:county_id => g.widget_county_id) if g.widget_county_id.present?
-    end
   end
   
   # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
@@ -161,6 +155,15 @@ def transfer_widget_communities_to_groups
   
   puts " Groups transferred: #{benchmark.real.round(2)}s"
 end
+
+def transfer_widget_group_locations
+  # run queries to insert into county and location join tables for groups
+  Group.where("widget_county_id IS NOT NULL OR widget_location_id IS NOT NULL").each do |g|
+    g.group_locations.create(:location_id => g.widget_location_id) if g.widget_location_id.present?
+    g.group_counties.create(:county_id => g.widget_county_id) if g.widget_county_id.present?
+  end
+end
+
 
 def transfer_expertise_areas_to_groups
   puts 'Transferring expertise areas to groups...'
@@ -532,3 +535,4 @@ transfer_group_tags
 transfer_question_taggings
 transfer_question_source
 transfer_aae_user_prefs
+transfer_widget_group_locations
