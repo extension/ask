@@ -24,7 +24,7 @@
     
     <p class="bio">
       <%= f.label :public_name, 'Public Name' %>
-      <%= f.text_field :public_name,  :class => "xl" %>
+      <%= f.text_field :public_name,  :class => "" %>
       <span>(if blank, <strong><%= @user.first_name + ' ' + @user.last_name[0,1] %></strong> will be used on your <%= link_to "Public Profile", user_path(@user.id) %>)
     </p>
   </fieldset>
