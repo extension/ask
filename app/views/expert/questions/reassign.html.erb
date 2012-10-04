@@ -17,8 +17,8 @@
 <table class="table table-bordered">
 
   <tr id="filter_terms">
-    <td><%= link_to "Mix it up", reassign_expert_question_path(@question.id), :class => "btn" %></td>
-    <% filter_terms = [] %>
+    <td><%= will_paginate @expert_results %></td>
+  <% filter_terms = [] %>
     <% if @question.county.present? %>
       <% filter_terms <<  @question.county.name %> 
       <td><p class="rotate30"><span class="tag tag-geography"><%= "#{@question.county.name}" %></span> <span class="removetag">[x]</span></p></td>
@@ -38,16 +38,26 @@
   </tr>
 
 
-<% if @tag_and_location_experts.length > 0 %>
-      <% @tag_and_location_experts.each do |member| %>
+<% if @expert_results.length > 0 %>
+      <% @expert_results.each do |member| %>
         <tr>
         <td>
           <p>
             <%= link_expert_user_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
             <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn btn-primary" %>
           </p>
-          <% filter_terms.each do |i| %>
-            <td><i class="icon-ok"></i></td>
+          <% filter_terms.each do |term| %>
+            <td>
+	          <% if @question.county.present? && term == @question.county.name && member.expertise_counties.include?(@question.county) %>
+	            <i class="icon-ok"></i>
+	          <% elsif @question.location.present? && term == @question.location.name && member.expertise_locations.include?(@question.location) %>
+	            <i class="icon-ok"></i>
+	          <% else %>
+	            <% if member.tags.map(&:name).include?(term) %>
+	              <i class="icon-ok"></i>
+	            <% end %>
+	          <% end %>
+	        </td>
           <% end %>
         </td>
         </tr>

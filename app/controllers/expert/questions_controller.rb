@@ -5,6 +5,8 @@
 # see LICENSE file
 
 class Expert::QuestionsController < ApplicationController
+  require 'will_paginate/array' 
+  
   layout 'expert'
   before_filter :authenticate_user!
   before_filter :require_exid
@@ -277,31 +279,33 @@ class Expert::QuestionsController < ApplicationController
   
   def reassign
     @question = Question.find_by_id(params[:id])
-    @location_experts = ''
-    @county_experts = ''
-    @tag_experts = ''
-    @tag_and_county_experts = ''
-    @tag_and_location_experts = ''
-    
-    if @question.location_id?
-      @location_experts = User.with_expertise_location(@question.location_id).limit(6)
-    end
-    
-    if @question.county_id?
-      @county_experts = User.with_expertise_county(@question.county_id).limit(6)
-    end
-    
-    if @question.tags.length > 0
-      @tag_experts = User.tagged_with(@question.tags.first.id).limit(6)
+    per_page = 10
+    @experts = Array.new
+    county_experts = Array.new
+    location_experts = Array.new
+    question_tags = @question.tags.map{|t| "'#{t.name}'"}.join(',')
+      
+    if question_tags.present?
       if @question.county_id?
-        @tag_and_county_experts = User.with_expertise_county(@question.county_id).tagged_with(@question.tags.first.id).limit(6)
-      end
+        county_experts = User.with_expertise_county(@question.county_id)
+        expert_ids = county_experts.map(&:id)
+        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})"))
+      end      
+    
       if @question.location_id?
-        @tag_and_location_experts = User.with_expertise_location(@question.location_id).tagged_with(@question.tags.first.id).limit(6).offset(rand(6))
+        location_experts = User.with_expertise_location(@question.location_id)
+        expert_ids = location_experts.map(&:id)
+        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})"))
       end
+    
+      @experts.concat(User.tagged_with_any(question_tags))
     end
-    # tags_names = ["horses", "horticulture"]
-    # @tag_experts = User.joins{tags}.where{tags.name.in tags_names}.group{User.id}.having("count(User.id) = #{tags_names.size}")
+    
+    @experts.concat(county_experts) if county_experts.length > 0
+    @experts.concat(location_experts) if location_experts.length > 0
+    @experts.uniq!
+    
+    @expert_results = @experts.paginate({:page => params[:page], :per_page => per_page})
   end
   
   def associate_with_group

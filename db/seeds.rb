@@ -157,11 +157,15 @@ def transfer_widget_communities_to_groups
 end
 
 def transfer_widget_group_locations
-  # run queries to insert into county and location join tables for groups
-  Group.where("widget_county_id IS NOT NULL OR widget_location_id IS NOT NULL").each do |g|
-    g.group_locations.create(:location_id => g.widget_location_id) if g.widget_location_id.present?
-    g.group_counties.create(:county_id => g.widget_county_id) if g.widget_county_id.present?
+  puts 'Transferring widget group locations and counties...'
+  benchmark = Benchmark.measure do
+    # run queries to insert into county and location join tables for groups
+    Group.where("widget_county_id IS NOT NULL OR widget_location_id IS NOT NULL").each do |g|
+      g.group_locations.create(:location_id => g.widget_location_id) if g.widget_location_id.present?
+      g.group_counties.create(:county_id => g.widget_county_id) if g.widget_county_id.present?
+    end
   end
+  puts " Widget group locations and counties transferred: #{benchmark.real.round(2)}s"
 end
 
 

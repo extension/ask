@@ -54,6 +54,11 @@ class User < ActiveRecord::Base
    end
   }
   
+  scope :tagged_with_any, lambda { |tag_list| 
+        {:select => "users.*, COUNT(users.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "users.id", :order => "tag_count DESC"}
+  }
+  
+  
   def name
     if (self.first_name.present? && self.last_name.present?)
       return self.first_name + " " + self.last_name 
