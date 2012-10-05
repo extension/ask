@@ -39,21 +39,24 @@
 
 
 <% if @expert_results.length > 0 %>
-      <% @expert_results.each do |member| %>
+      <% @expert_results.each do |expert| %>
+        <% expert_expertise_counties = expert.expertise_counties %>
+        <% expert_expertise_locations = expert.expertise_locations %>
+        <% expert_tags = expert.tags %>
         <tr>
         <td>
           <p>
-            <%= link_expert_user_avatar(member, :thumb) %> <%= link_to member.name, expert_user_path(member.id) %>
-            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => member.login), :method => :post, :class => "btn btn-primary" %>
+            <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %>
+            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => expert.login), :method => :post, :class => "btn btn-primary" %>
           </p>
           <% filter_terms.each do |term| %>
             <td>
-	          <% if @question.county.present? && term == @question.county.name && member.expertise_counties.include?(@question.county) %>
+	          <% if @question.county.present? && term == @question.county.name && expert_expertise_counties.include?(@question.county) %>
 	            <i class="icon-ok"></i>
-	          <% elsif @question.location.present? && term == @question.location.name && member.expertise_locations.include?(@question.location) %>
+	          <% elsif @question.location.present? && term == @question.location.name && expert_expertise_locations.include?(@question.location) %>
 	            <i class="icon-ok"></i>
 	          <% else %>
-	            <% if member.tags.map(&:name).include?(term) %>
+	            <% if expert_tags.map(&:name).include?(term) %>
 	              <i class="icon-ok"></i>
 	            <% end %>
 	          <% end %>
