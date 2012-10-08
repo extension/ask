@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   # sunspot/solr search
   searchable do
     text :name
+    text :login
+    text :email
     text :tag_fulltext
     boolean :retired
     boolean :is_blocked

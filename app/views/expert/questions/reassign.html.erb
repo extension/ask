@@ -11,6 +11,13 @@
 <% end %>
 <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
 
+<p>Search Experts by Name, Email or Login</p>
+<%= form_tag '', :id => 'expert_search_by_name' do %>
+<%= text_field_tag 'expert_name' %>
+<%= submit_tag 'Search' %>
+<% end %>
+
+<div id="expert_search_results"></div>
 
 <h4>Experts that match these options...</h4>
 
@@ -70,3 +77,18 @@
   <p>No County and Tag Matches</p>
 <% end %>
 </table>
+
+<script class="code" type="text/javascript">
+/* Append the function to the "document ready" chain */
+jQuery(function($) {
+  /* when the #expert search form submits */
+  $("#expert_search_by_name").submit(function() {
+	/* stop form from submitting normally */
+	event.preventDefault();
+    /* make a call to search experts and replace expert result contents */
+    $.post('<%= expert_search_by_name_path %>', { expert_search: $("#expert_name").val(), question_id: <%= @question.id %>}, function(data) {
+      $("#expert_search_results").html(data);
+    });
+  });
+})
+</script>

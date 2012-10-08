@@ -47,6 +47,21 @@ class Expert::SearchController < ApplicationController
     render :action => 'index'
   end
   
+  def by_name  
+    experts = User.search do
+      fulltext(params[:expert_search]) do
+        fields(:name, :login, :email)
+      end
+      with :retired, false
+      with :is_blocked, false
+      without(:darmok_id, nil)
+      without(:darmok_id, 0)
+    end
+    
+    @experts = experts.results
+    @question = Question.find_by_id(params[:question_id])
+  end
+  
   def questions
     # take quotes out to see if it's a blank field and also strip out +, -, and "  as submitted by themselves are apparently special characters 
     # for solr and will make it crash, and if you ain't got no q param, no search goodies for you!

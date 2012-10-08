@@ -81,6 +81,7 @@ Aae::Application.routes.draw do
     match "settings/remove_tag" => "settings#remove_tag", :via => [:post]
     match "search/all" => "search#all", :via => [:get]
     match "search/experts" => "search#experts", :via => [:get]
+    match "search/by_name" => "search#by_name", :via => [:post]
     match "search/groups" => "search#groups", :via => [:get]
     match "search/questions" => "search#questions", :via => [:get]
     match "home/search" => "home#search", :via => [:get]
