@@ -124,7 +124,7 @@ ActiveRecord::Schema.define(:version => 20120918192757) do
   create_table "groups", :force => true do |t|
     t.string   "name",                                            :null => false
     t.text     "description"
-    t.boolean  "widget_public_option",         :default => true
+    t.boolean  "widget_public_option",         :default => false
     t.boolean  "active",                       :default => true
     t.boolean  "assignment_outside_locations", :default => true
     t.boolean  "individual_assignment",        :default => true

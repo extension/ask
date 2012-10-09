@@ -130,8 +130,8 @@ def transfer_widget_communities_to_groups
   # we need to add the Question Wrangler community to groups which is a special case. the question wrangler community does not have a widget
   # and they're not a selectable area of expertise, but will be a formal and emphasized group in this AaE application and will have a widget.
   wrangler_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
-    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.communities.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
+  INSERT INTO #{@aae_database}.groups (id, name, description, widget_public_option, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
+    SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.communities.name, #{@darmokdatabase}.communities.description, true, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
            NULL, true, true, false, NULL, NULL, NULL, true, #{@darmokdatabase}.communities.created_at, NOW()
     FROM #{@darmokdatabase}.communities
     WHERE #{@darmokdatabase}.communities.name = 'eXtension Question Wranglers'
