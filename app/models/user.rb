@@ -162,4 +162,13 @@ class User < ActiveRecord::Base
     end
   end
   
+  def only_assign_from_locations?
+    (self.user_preferences.find(:first, :conditions => {:name => 'aae_location_only', :setting => '1'}).present?) ? (return true) : (return false)
+    # self.user_preferences.find(:first, :conditions => {:name => 'aae_location_only')
+  end
+
+  def only_assign_from_counties?
+    (self.user_preferences.find(:first, :conditions => {:name => 'aae_county_only', :setting => '1'}).present?) ? (return true) : (return false)
+  end
+    
 end
