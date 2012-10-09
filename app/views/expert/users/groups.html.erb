@@ -1,9 +1,15 @@
+<h1><%= link_to @user.name, expert_user_path(@user) %></h1>
+
+<h1>Groups</h1>
+
+<% if current_user.id == @user.id %>
+  <%= render :partial => 'expert/settings/settings_navigation' %>
+<% end %>
+
 <% @page_title = @user.name + " - Groups" %>
 
 
 <div id="main" class="span12">
-  <h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
-  <h1>Groups</h1>
   
   <% if @my_groups.length == 0 %>
     <li>You currently are not a member or leader of a group.</li>
