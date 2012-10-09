@@ -84,6 +84,10 @@ class Expert::QuestionsController < ApplicationController
     end
     
     flash[:notice] = "Question successfully reassigned!"
+    
+    if params[:redirect_to_answer]
+      return redirect_to answer_expert_question_url(@question)
+    end
     redirect_to expert_question_url(@question)
   end
   

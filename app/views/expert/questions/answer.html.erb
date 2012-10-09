@@ -6,13 +6,17 @@
 
 <h1>Send an Answer <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
 
+<% if @question.assignee != current_user %>
+  <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_login => current_user.login), :method => :post, :class => "btn-primary btn" %></p>
+<% end %>
+
 <div id="response_form">
   
     <%= form_tag answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]) do %>
     <div id="email_content">
         <div class="headerinfo">
-            <p><strong>Subject:</strong> [Message from eXtension] Your question has been responded to by one of our experts.
-                <br /><strong>From:</strong> noreplies@extension.org</p>
+            <p><strong>Subject:</strong> [Message from eXtension] Your question has been responded to by one of our experts.</p>
+            <p><strong>From:</strong> noreplies@extension.org</p>
         </div>
         <div class="bodyinfo">
             <p>There is a response to the question you asked via eXtension's 'Ask an Expert' tool!</p>
@@ -38,8 +42,7 @@
             "onChange" => "fitTextArea(this)", "onKeyUp" => "fitTextArea(this)", "rows" => 6 %>
             </p>
 
-            <p><label for="signature" class="helptext">Your default email signature can be set in your preferences</label> 
-            <%= text_area_tag 'signature', @signature, "rows" => 3 %></p>
+            <p><%= text_area_tag 'signature', @signature, "rows" => 3 %></p>
             
             <p class="save_it"><%= submit_tag 'Send Reply', :class => "btn btn-primary" %></p>
             
@@ -47,11 +50,13 @@
             <p>Have another question? Please ask!
                 <br />http://www.extension.org/ask/</p>
             
-            <p>***PLEASE DO NOT REPLY TO THIS MESSAGE***</p/>
+            <div class="legal">
+              <p>***PLEASE DO NOT REPLY TO THIS MESSAGE***</p/>
             
-            <p><%= Question::EXPERT_DISCLAIMER %></p>
+                <p><%= Question::EXPERT_DISCLAIMER %></p>
             
-            <p><span class="helptext">-- end of email message --</span></p>
+                <p><span class="helptext">-- end of email message --</span></p>
+            </div>
         </div>
     </div>
 </div>
