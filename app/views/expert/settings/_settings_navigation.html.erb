@@ -1,7 +1,7 @@
 <% @page_title = @user.name + " Profile Settings"%>
   <ul class="nav nav-tabs">
-    <li><%= link_to @user.name, expert_user_path(current_user.id) %></li>
     <li><%= link_to 'General', expert_settings_profile_path() %></li>
     <li><%= link_to 'Locations', expert_settings_location_path() %></li>
     <li><%= link_to 'Tags', expert_settings_tags_path() %></li>
+    <li><%= link_to 'Answering', expert_settings_assignment_path() %></li>
   </ul>

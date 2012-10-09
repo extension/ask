@@ -1,0 +1,76 @@
+<h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+
+<h3>Assignment Options</h3>
+
+<%= render :partial => 'expert/settings/settings_navigation' %>
+
+<%= form_for @user, :url => expert_settings_assignment_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+
+  <div class="info right">
+    <h3>More info...</h3>
+    <h4>How else are questions assigned?</h4>
+    <p>Experts can manually assign questions to any group or individual.</p>
+  </div>
+  
+  <fieldset>
+    <div>
+      <h3>Vacation Status</h3>
+      <div class="radio_options">
+      <p>
+        <label>
+          <%= check_box_tag :foo, "1", false, :class => "checkbox" %>
+          Mark me as away
+          <span>(When your "vacation status" is turned on, AaE questions can not be assigned to you.)</span>
+        </label>
+      </p>
+      </div>
+    </div>
+  </fieldset>
+  
+  <fieldset>
+    <div>
+      <h3>Automatic assignments</h3>
+      <p>All automatic assignments come through Groups. If you don't belong to a Group, you won't receive any automatic assignments.</p>
+      <div class="user_assignment_prefs">
+        <p>
+          <label>
+            <%= check_box_tag :foo, "1", false, :class => "checkbox" %>
+            Questions submitted to my Groups can be automatically assigned to me.
+            <span>(note: Some groups use a question queue instead of automatic assignments)</span>
+          </label>
+        </p>
+      
+      <div class="assignment_prefs">
+      <p>
+        <label>
+          <%= radio_button_tag :foo, "", true %>
+          My groups can assign me a question from anywhere
+        </label>
+        
+        <label>
+          <%= radio_button_tag :foo, "", false %>
+          Group questions must match my states
+        </label>
+      
+        <label>
+          <%= radio_button_tag :foo, "", false %>
+          Group questions must match my counties
+        </label>
+      </p>
+      </div>
+      </div>
+    </div>
+    
+    <h3>Email Signature</h3>
+    <p class="bio">
+      <%= label :foo, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
+      <%= text_area_tag :foo %>
+    </p>
+    
+  </fieldset>
+  
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>

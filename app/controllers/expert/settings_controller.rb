@@ -49,5 +49,9 @@ class Expert::SettingsController < ApplicationController
     @locations = Location.order('fipsid ASC')
     @object = @user
   end
+  
+  def assignment
+    @user = current_user
+  end
 
 end
