@@ -483,7 +483,7 @@ def transfer_question_source
   JOIN   #{@darmokdatabase}.categories_submitted_questions ON #{@darmokdatabase}.categories_submitted_questions.submitted_question_id = #{@aae_database}.questions.id
   JOIN   #{@darmokdatabase}.categories ON #{@darmokdatabase}.categories_submitted_questions.category_id = #{@darmokdatabase}.categories.id
   JOIN   #{@aae_database}.groups ON #{@aae_database}.groups.darmok_expertise_id = #{@darmokdatabase}.categories.id
-  SET    #{@aae_database}.questions.assigned_group_id = #{@aae_database}.groups.id
+  SET    #{@aae_database}.questions.assigned_group_id = #{@aae_database}.groups.id, #{@aae_database}.questions.group_name = #{@aae_database}.groups.name
   WHERE  #{@aae_database}.questions.original_group_id IS NULL AND #{@darmokdatabase}.categories.parent_id IS NULL
   END_SQL
   
@@ -492,6 +492,23 @@ def transfer_question_source
   end
   
   puts " Group references transferred to questions: #{benchmark.real.round(2)}s"
+end
+
+# update all other questions that did not fit into a widget or expertise area
+def transfer_misfit_questions_to_groups
+  puts 'Updating misfit questions to groupless group...'
+  
+  question_misfit_update_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.questions
+  SET #{@aae_database}.questions.assigned_group_id = #{Group::ORPHAN_GROUP_ID}, #{@aae_database}.questions.group_name = '#{Group::ORPHAN_GROUP_NAME}'
+  WHERE #{@aae_database}.questions.assigned_group_id IS NULL AND #{@aae_database}.questions.group_name IS NULL
+  END_SQL
+  
+  benchmark = Benchmark.measure do
+    ActiveRecord::Base.connection.execute(question_misfit_update_query)
+  end
+  
+  puts " Misfit questions updated: #{benchmark.real.round(2)}s"
 end
 
 # transfer all aae preferences from darmok
@@ -540,3 +557,4 @@ transfer_question_taggings
 transfer_question_source
 transfer_aae_user_prefs
 transfer_widget_group_locations
+transfer_misfit_questions_to_groups
