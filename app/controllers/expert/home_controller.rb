@@ -11,6 +11,7 @@ class Expert::HomeController < ApplicationController
   
   def index
     @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
+    @locations = Location.order('fipsid ASC')
   end
   
   def search
