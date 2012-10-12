@@ -62,8 +62,11 @@
 <div id="main" class="span4">
   <aside>
     <h2>Your Location...</h2>
-    <p>County, State</p>
-    
+    <% if !@personal[:county].blank? and !@personal[:location].blank? %>
+          <p><%= @personal[:county].name %>, <%= @personal[:location].name %></p>
+        <% else %>
+          <p>County, State</p>
+        <% end %>
     <h2>Extension Near You</h2>
     <div id="institution"></div>
     
