@@ -47,6 +47,43 @@ body {
 	
 	input.xs {width: 4em;}
 	input.xl, textarea.xl {width: 80%;}
+	
+	.avatar_with_badge {
+	  position:relative; 
+    display:inline-block;
+    border:2px solid #ccc;
+    padding:2px;
+    margin-bottom:8px;
+	}
+	.badge {
+    display: block;
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    line-height: 16px;
+    height: 16px;
+    font-size:11px;
+    font-weight:normal;
+    padding: 0 5px;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.25);
+    border: 2px solid #fff;
+    @include rounded10;
+    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.8), inset 0 2px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
+    background-color: #000;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #acddf6), color-stop(100%, #000));
+    background-image: -webkit-linear-gradient(top, #acddf6, #000);
+    background-image: -moz-linear-gradient(top, #acddf6, #000);
+    background-image: -ms-linear-gradient(top, #acddf6, #000);
+    background-image: -o-linear-gradient(top, #acddf6, #000);
+    background-image: linear-gradient(top, #acddf6, #000);
+  }
+  
+  .navavatar .avatar_with_badge {
+    border: 0;
+  }
 }
 
 
@@ -123,7 +160,7 @@ body#public {
 
 
 body#expert {
-  #fixed_fixer {height: 60px;}
+  #fixed_fixer {height: 68px;}
   @media screen and (max-width: 979px) {
     #fixed_fixer {height: 0;}
 	}
@@ -308,6 +345,7 @@ body#expert {
 	#search_field {}
 /*	#associated_group {padding:.25em 0 0 1em;}*/
 	
+	.group {margin:1em 0;}
 	#associated_group_picker {margin:0 0 3em;}
 	#privacy_status a {color:#999;}
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}

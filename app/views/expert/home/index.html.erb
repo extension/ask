@@ -1,4 +1,16 @@
 <div id="main" class="span12">
+  
+  <div id="location_picker">
+    <select id="location_option" name="location_option">
+      <% # TODO: figure out a better way to generate the select dropdown %>
+      <option value="">Filter questions</option>
+      <% @locations.each do |l| %>
+        <option value="<%= l.id %>"><%= l.name %></option>
+        <% end %>
+    </select>
+    <br class="clearing" />
+  </div>
+  
   <h1>Incoming Questions</h1>
   
   <% @recent_questions.each do |question| %>
@@ -45,15 +57,10 @@
       <div class="span4">
 	    <div class="expert">
 	    <% if question.assignee_id.present? %>
-          <%= link_to expert_user_path(question.assignee_id) do %>
-            <%= link_expert_user_avatar(question.assignee, :thumb) %> <%= link_to question.assignee.name, expert_user_path(question.assignee.id) %> 
-            <% if question.assignee.is_question_wrangler %>
-            <i class="icon-qw"></i>
-            <% end %>
-		  <% end %>
-		<% else %>
-		  <p><strong>This question does not have an assignee.</strong></p>
-		<% end %>
+        <%= link_expert_user_avatar(question.assignee, :thumb) %> <%= link_expert_user(question.assignee) %> 
+		  <% else %>
+		    <p><strong>This question does not have an assignee.</strong></p>
+	    <% end %>
 		
 		<% if question.assigned_group %>
 	      <p><%= link_expert_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
