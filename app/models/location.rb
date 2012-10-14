@@ -19,16 +19,18 @@ class Location < ActiveRecord::Base
   
   def self.get_geoip_data(ipaddress = Settings.request_ip_address)
     if(geoip_data_file = Settings.geoip_data_file)
-      returnhash = {}
-      if(data = GeoIP.new(geoip_data_file).city(ipaddress))
-        returnhash[:country_code] = data[2]
-        returnhash[:region] = data[6]
-        returnhash[:city] = data[7]
-        returnhash[:postal_code] = data[8]
-        returnhash[:lat] = data[9]
-        returnhash[:lon] = data[10]
-        returnhash[:tz] = data[13]
-        return returnhash
+      if File.exists?(geoip_data_file)
+        returnhash = {}
+        if(data = GeoIP.new(geoip_data_file).city(ipaddress))
+          returnhash[:country_code] = data[2]
+          returnhash[:region] = data[6]
+          returnhash[:city] = data[7]
+          returnhash[:postal_code] = data[8]
+          returnhash[:lat] = data[9]
+          returnhash[:lon] = data[10]
+          returnhash[:tz] = data[13]
+          return returnhash
+        end
       else
         return nil
       end      
