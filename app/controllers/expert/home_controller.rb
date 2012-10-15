@@ -12,13 +12,20 @@ class Expert::HomeController < ApplicationController
   def index
     @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
     @locations = Location.order('fipsid ASC')
+    @my_groups = current_user.group_memberships
   end
   
   def search
   end
   
+  def get_counties
+    render :partial => "counties"
+  end
+  
   def answered
     @recently_answered_questions = Question.answered.find(:all, :limit => 20, :order => 'created_at DESC')
+    @locations = Location.order('fipsid ASC')
+    @my_groups = current_user.group_memberships
   end
   
   def tags

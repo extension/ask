@@ -84,6 +84,10 @@ body {
   .navavatar .avatar_with_badge {
     border: 0;
   }
+  
+  #location_filter {background:#DEE3E9; padding:10px;}
+  #location_filter #location_picker {float:left; margin: 0 1em 0 0 !important;}
+  #location_filter #county_list {float:left; margin: 0 1em 0 0 !important;}
 }
 
 

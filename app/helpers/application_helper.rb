@@ -120,10 +120,10 @@ module ApplicationHelper
   def get_county_options(provided_location = nil)
     if params[:location_id] and params[:location_id].strip != '' and location = Location.find(params[:location_id])
       counties = location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
-      return ([['', '']].concat(counties.map{|c| [c.name, c.id]}))
+      return ([['All counties', 'All counties']].concat(counties.map{|c| [c.name, c.id]}))
     elsif(provided_location)
       counties = provided_location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
-      return ([['', '']].concat(counties.map{|c| [c.name, c.id]}))
+      return ([['All counties', 'All counties']].concat(counties.map{|c| [c.name, c.id]}))
     end
   end
   

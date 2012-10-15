@@ -73,6 +73,7 @@ Aae::Application.routes.draw do
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
+    match 'home/get_counties/:location_id' => 'home#get_counties', :via => :get
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions/add_tag" => "questions#add_tag", :via => [:post]

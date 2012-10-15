@@ -1,4 +1,7 @@
 <div id="main" class="span12">
+  
+  <%= render :partial => 'filter' %>
+  
   <h1>Answered Questions</h1>
   
   <% @recently_answered_questions.each do |question| %>

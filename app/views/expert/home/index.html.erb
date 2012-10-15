@@ -1,15 +1,6 @@
 <div id="main" class="span12">
   
-  <div id="location_picker">
-    <select id="location_option" name="location_option">
-      <% # TODO: figure out a better way to generate the select dropdown %>
-      <option value="">Filter questions</option>
-      <% @locations.each do |l| %>
-        <option value="<%= l.id %>"><%= l.name %></option>
-        <% end %>
-    </select>
-    <br class="clearing" />
-  </div>
+<%= render :partial => 'filter' %>  
   
   <h1>Incoming Questions</h1>
   

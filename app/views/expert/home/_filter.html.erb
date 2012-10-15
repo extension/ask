@@ -1,0 +1,38 @@
+<div id="location_filter">
+  <div id="location_picker">
+    <select id="location_option" name="location_option">
+      <option value="">All locations</option>
+        <% @locations.each do |l| %>
+        <option value="<%= l.id %>"><%= l.name %></option>
+        <% end %>
+    </select>
+  </div>
+  
+  <div id="county_list"></div>
+  
+  
+  <select id="location_option" name="location_option">
+    <option value="">All groups</option>
+    <% @my_groups.each do |group| %>
+    <option value="<%= group.id %>"><%= group.name %></option>
+    <% end %>
+  </select>
+  
+  <br class="clearing" />
+  
+  
+  
+</div>
+
+
+
+<script class="code" type="text/javascript">
+  $("#location_option").change(function() {
+    var location_id = $('select#location_option :selected').val();
+    if(location == "") location="0";
+      jQuery.get('/expert/home/get_counties/' + location_id, function(data){
+        $("#county_list").html(data);
+      });
+    return false;
+  });
+</script>

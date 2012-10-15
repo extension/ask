@@ -37,7 +37,6 @@
               <span class="icon-bar"></span>
             </a>
             <%= link_to("AaE Experts", expert_home_path(), :class => "brand home") %>
-            <%= link_to("AaE Public", root_path(), :class => "brand") %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
@@ -50,6 +49,7 @@
                 <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
               </p>
               <% end %>
+              <%= link_to("AaE Public", root_path(), :class => "brand") %>
             </div><!--/.nav-collapse -->
             
             
