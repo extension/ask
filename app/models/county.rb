@@ -13,5 +13,13 @@ class County < ActiveRecord::Base
       return self[:name] + " County"
     end
   end
+  
+  def self.find_by_geoip(ipaddress = Settings.request_ip_address)
+    if(geoname = GeoName.find_by_geoip(ipaddress))
+      self.find_by_name(geoname.county_name)
+    else
+      return nil
+    end
+  end
     
 end

@@ -13,4 +13,7 @@ auto_assign_incoming_questions: true
 group_avatar_count: 3
 user_avatar_count: 2
 aae_escalation_delta: 24
+request_ip_address: "152.46.27.154"
+geoip_data_file: 'notset'
+geoname_data_file: 'notset'
 
