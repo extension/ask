@@ -22,9 +22,9 @@ class Expert::HomeController < ApplicationController
   end
   
   def tags
-    @tag = Tag.find_by_id(params[:tag_id])
+    @tag = Tag.find_by_name(params[:id])
     return record_not_found if (!@tag)
-    @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC")
+    @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
   end
   
   def experts
