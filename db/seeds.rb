@@ -118,11 +118,12 @@ end
 def transfer_widget_communities_to_groups
   puts 'Transferring widget communities to groups...'
   # preserve id's
+  # also preserve old widget id here just in case we ever should need it
   group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
+  INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_id, old_widget_url, group_notify, created_at, updated_at)
     SELECT #{@darmokdatabase}.communities.id, #{@darmokdatabase}.widgets.name, #{@darmokdatabase}.communities.description, #{@darmokdatabase}.communities.active, #{@darmokdatabase}.communities.created_by,
            #{@darmokdatabase}.widgets.fingerprint, #{@darmokdatabase}.widgets.upload_capable, #{@darmokdatabase}.widgets.show_location, #{@darmokdatabase}.widgets.enable_tags, #{@darmokdatabase}.widgets.location_id,
-           #{@darmokdatabase}.widgets.county_id, #{@darmokdatabase}.widgets.old_widget_url, #{@darmokdatabase}.widgets.group_notify, #{@darmokdatabase}.widgets.created_at, NOW()
+           #{@darmokdatabase}.widgets.county_id, #{@darmokdatabase}.widgets.id, #{@darmokdatabase}.widgets.old_widget_url, #{@darmokdatabase}.widgets.group_notify, #{@darmokdatabase}.widgets.created_at, NOW()
     FROM #{@darmokdatabase}.communities
     JOIN #{@darmokdatabase}.widgets ON #{@darmokdatabase}.widgets.id = #{@darmokdatabase}.communities.widget_id
   END_SQL
@@ -511,19 +512,37 @@ def transfer_misfit_questions_to_groups
   puts " Misfit questions updated: #{benchmark.real.round(2)}s"
 end
 
-# transfer all aae preferences from darmok
+# transfer aae preferences from darmok
+# the aae listview filtering preferences will not be transferring over as many of them do not make sense because of datatype changes, and 
+# do not make sense with the new way we're doing filtering, plus this is a new system and it's reasonable that people can reset their listview preferences here
 def transfer_aae_user_prefs
   puts 'Transferring user prefs...'
   
-  aae_user_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.user_preferences(id, user_id, name, setting, created_at, updated_at)
-  SELECT #{@darmokdatabase}.user_preferences.id, #{@darmokdatabase}.user_preferences.user_id, #{@darmokdatabase}.user_preferences.name, #{@darmokdatabase}.user_preferences.setting, #{@darmokdatabase}.user_preferences.created_at, #{@darmokdatabase}.user_preferences.updated_at
-  FROM #{@darmokdatabase}.user_preferences
-  WHERE  #{@darmokdatabase}.user_preferences.name IN ('filter.widget.id', 'signature', 'aae_location_only', 'aae_county_only', 'expert.source.filter', 'expert.category.filter', 'expert.county.filter', 'expert.location.filter')
+  aae_signature_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.users 
+  JOIN #{@darmokdatabase}.user_preferences ON #{@aae_database}.users.id = #{@darmokdatabase}.user_preferences.user_id
+  SET #{@aae_database}.users.signature = #{@darmokdatabase}.user_preferences.setting
+  WHERE #{@darmokdatabase}.user_preferences.name = 'signature'
+  END_SQL
+  
+  aae_location_only_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.users
+  JOIN #{@darmokdatabase}.user_preferences ON #{@aae_database}.users.id = #{@darmokdatabase}.user_preferences.user_id
+  SET #{@aae_database}.users.location_only = 1 
+  WHERE #{@darmokdatabase}.user_preferences.name = 'aae_location_only'
+  END_SQL
+  
+  aae_county_only_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE #{@aae_database}.users
+  JOIN #{@darmokdatabase}.user_preferences ON #{@aae_database}.users.id = #{@darmokdatabase}.user_preferences.user_id
+  SET #{@aae_database}.users.county_only = 1 
+  WHERE #{@darmokdatabase}.user_preferences.name = 'aae_county_only'
   END_SQL
   
   benchmark = Benchmark.measure do
-    ActiveRecord::Base.connection.execute(aae_user_pref_transfer_query)
+    ActiveRecord::Base.connection.execute(aae_signature_pref_transfer_query)
+    ActiveRecord::Base.connection.execute(aae_location_only_pref_transfer_query)
+    ActiveRecord::Base.connection.execute(aae_county_only_pref_transfer_query)
   end
   
   puts " AaE user prefs transferred: #{benchmark.real.round(2)}s"  

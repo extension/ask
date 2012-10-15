@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
     t.boolean  "widget_enable_tags"
     t.integer  "widget_location_id"
     t.integer  "widget_county_id"
+    t.integer  "old_widget_id"
     t.string   "old_widget_url"
     t.boolean  "group_notify",                 :default => false
     t.integer  "darmok_expertise_id"
@@ -369,6 +370,7 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
     t.integer  "county_id",                               :default => 0
     t.boolean  "retired",                                 :default => false
     t.boolean  "is_admin",                                :default => false
+    t.boolean  "auto_route",                              :default => true,  :null => false
     t.string   "phone_number"
     t.boolean  "aae_responder",                           :default => true
     t.string   "time_zone"
@@ -378,6 +380,9 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
     t.boolean  "second_aae_away_reminder",                :default => false
     t.string   "bio"
     t.boolean  "is_blocked",                              :default => false, :null => false
+    t.text     "signature"
+    t.boolean  "location_only",                           :default => false, :null => false
+    t.boolean  "county_only",                             :default => false, :null => false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
