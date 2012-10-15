@@ -15,6 +15,7 @@ class CreateGroups < ActiveRecord::Migration
       t.boolean :widget_enable_tags
       t.integer :widget_location_id
       t.integer :widget_county_id
+      t.integer :old_widget_id
       t.string  :old_widget_url
       t.boolean :group_notify, :default => 0
       t.integer :darmok_expertise_id, :null => true, :default => nil

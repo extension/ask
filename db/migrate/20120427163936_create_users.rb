@@ -20,6 +20,9 @@ class CreateUsers < ActiveRecord::Migration
       t.integer  "county_id",                              :default => 0
       t.boolean  "retired",                                :default => false
       t.boolean  "is_admin",                               :default => false
+      # auto_route will default to true and people can opt out, which sets everyone's initial prefs to be auto-routed questions.
+      # this is b/c auto-routing in this new system has a different definition than in the old one, so this pref is not transferred from the old.
+      t.boolean  "auto_route",                             :default => true, :null => false
       t.string   "phone_number"
       t.boolean  "aae_responder",                          :default => true
       t.string   "time_zone"
@@ -29,6 +32,9 @@ class CreateUsers < ActiveRecord::Migration
       t.boolean  "second_aae_away_reminder",               :default => false
       t.string   "bio"
       t.boolean  "is_blocked",                             :default => false, :null => false
+      t.text     "signature"
+      t.boolean  "location_only",                           :default => false, :null => false
+      t.boolean  "county_only",                             :default => false, :null => false
       # paperclip method for generating necessary image columns
       t.has_attached_file :avatar
       
