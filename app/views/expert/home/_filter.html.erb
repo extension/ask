@@ -18,6 +18,14 @@
     <% end %>
   </select>
   
+  <select id="location_option" name="location_option">
+    <option value="">All Tags</option>
+    <% @my_tags.each do |tag| %>
+    <option value="<%= tag.id %>"><%= tag.name %></option>
+    <% end %>
+    <option value="">The list comes from your tags</option>
+  </select>
+  
   <br class="clearing" />
   
   
