@@ -18,7 +18,7 @@ class Group < ActiveRecord::Base
   has_many :invited, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'invited' and users.retired = 0"
   has_many :interest, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'interest' and users.retired = 0"
   has_many :interested, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type IN ('interest','wantstojoin','leader') and users.retired = 0"
-  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.aae_responder = 1"
+  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0"
   
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
@@ -95,7 +95,7 @@ class Group < ActiveRecord::Base
     end
     
     if assignees.blank?
-      assignees = wrangler_group.assignees.can_route_outside_location(wrangler_group.assignees.map{|ga| ga.id})
+      assignees = wrangler_group.assignees.active.route_from_anywhere
     end
     
     return assignees

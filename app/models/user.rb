@@ -46,15 +46,8 @@ class User < ActiveRecord::Base
   scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("user_counties.county_id = #{county_id}") }
   scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :question_wranglers, conditions: { is_question_wrangler: true }
-  
-  scope :can_route_outside_location, lambda { |user_ids|
-   location_routers = UserPreference.where("(name = '#{UserPreference::AAE_LOCATION_ONLY}' OR name = '#{UserPreference::AAE_COUNTY_ONLY}') AND (user_id IN (#{user_ids.join(',')}))").uniq.pluck('user_id').join(',')
-   if location_routers.blank?
-     {:conditions => "users.aae_responder = true", :order => "last_name ASC"}
-   else
-     {:conditions => "users.id NOT IN (#{location_routers}) AND users.aae_responder = true", :order => "last_name ASC"}
-   end
-  }
+  scope :active, conditions: { away: false }
+  scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
   
   scope :tagged_with_any, lambda { |tag_list| 
         {:select => "users.*, COUNT(users.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "users.id", :order => "tag_count DESC"}
@@ -160,15 +153,6 @@ class User < ActiveRecord::Base
       self.group_connections.create(group: group, connection_type: "member")
       GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_REMOVED_AS_LEADER], event_code: GroupEvent::GROUP_REMOVED_AS_LEADER, group: group)
     end
-  end
-  
-  def only_assign_from_locations?
-    (self.user_preferences.find(:first, :conditions => {:name => 'aae_location_only', :setting => '1'}).present?) ? (return true) : (return false)
-    # self.user_preferences.find(:first, :conditions => {:name => 'aae_location_only')
-  end
-
-  def only_assign_from_counties?
-    (self.user_preferences.find(:first, :conditions => {:name => 'aae_county_only', :setting => '1'}).present?) ? (return true) : (return false)
   end
     
 end

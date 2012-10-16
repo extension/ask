@@ -52,6 +52,12 @@ class Expert::SettingsController < ApplicationController
   
   def assignment
     @user = current_user
+    
+    if request.put?
+      @user.update_attributes(params[:user])
+      flash[:notice] = "Preferences updated successfully!"
+      render nil
+    end
   end
 
 end

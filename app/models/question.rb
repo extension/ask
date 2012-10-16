@@ -127,7 +127,7 @@ class Question < ActiveRecord::Base
       end
       if !assignee 
         group_assignee_ids = group.assignees.collect{|ga| ga.id}
-        assignee = pick_user_from_list(group.assignees.can_route_outside_location(group_assignee_ids))
+        assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
       end
       # still aint got no one? wrangle that bad boy.
       if !assignee

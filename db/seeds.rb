@@ -22,24 +22,27 @@ def transfer_accounts
   puts 'Transferring users...'
   # preserve id's here
   account_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
-    INSERT INTO #{@aae_database}.users (id, darmok_id, kind, login, first_name, last_name, public_name, email, title, position_id, location_id, county_id, retired, is_admin, phone_number, aae_responder, time_zone, is_question_wrangler, vacated_aae_at, first_aae_away_reminder, second_aae_away_reminder, current_sign_in_at, last_sign_in_at, created_at, updated_at)
+    INSERT INTO #{@aae_database}.users (id, darmok_id, kind, login, first_name, last_name, public_name, email, title, position_id, location_id, county_id, retired, is_admin, phone_number, time_zone, is_question_wrangler, vacated_aae_at, first_aae_away_reminder, second_aae_away_reminder, current_sign_in_at, last_sign_in_at, created_at, updated_at)
     SELECT #{@darmokdatabase}.accounts.id, #{@darmokdatabase}.accounts.id, #{@darmokdatabase}.accounts.type, #{@darmokdatabase}.accounts.login, #{@darmokdatabase}.accounts.first_name, #{@darmokdatabase}.accounts.last_name, NULL, 
            #{@darmokdatabase}.accounts.email, #{@darmokdatabase}.accounts.title, #{@darmokdatabase}.accounts.position_id, #{@darmokdatabase}.accounts.location_id, #{@darmokdatabase}.accounts.county_id, #{@darmokdatabase}.accounts.retired,
-           #{@darmokdatabase}.accounts.is_admin, #{@darmokdatabase}.accounts.phonenumber, #{@darmokdatabase}.accounts.aae_responder, #{@darmokdatabase}.accounts.time_zone, #{@darmokdatabase}.accounts.is_question_wrangler, #{@darmokdatabase}.accounts.vacated_aae_at,
+           #{@darmokdatabase}.accounts.is_admin, #{@darmokdatabase}.accounts.phonenumber, #{@darmokdatabase}.accounts.time_zone, #{@darmokdatabase}.accounts.is_question_wrangler, #{@darmokdatabase}.accounts.vacated_aae_at,
            #{@darmokdatabase}.accounts.first_aae_away_reminder, #{@darmokdatabase}.accounts.second_aae_away_reminder, #{@darmokdatabase}.accounts.last_login_at, #{@darmokdatabase}.accounts.last_login_at, #{@darmokdatabase}.accounts.created_at, NOW() 
     FROM   #{@darmokdatabase}.accounts
   END_SQL
   
-  # all public accounts should have the aae_responder field set to false, they were set to true in darmok
-  account_aae_responder_update_query = <<-END_SQL.gsub(/\s+/, " ").strip
+  # transfer data for away status (field has changed from a responder to a away flag)
+  # default for this field is false
+  # also all public accounts should have the away field set to true, they were set to false in darmok
+  transfer_aae_responder_query = <<-END_SQL.gsub(/\s+/, " ").strip
     UPDATE #{@aae_database}.users
-    SET    #{@aae_database}.users.aae_responder = 0 
-    WHERE  #{@aae_database}.users.kind = 'PublicUser'
+    JOIN #{@darmokdatabase}.accounts ON #{@aae_database}.users.id = #{@darmokdatabase}.accounts.id
+    SET #{@aae_database}.users.away = 1
+    WHERE #{@darmokdatabase}.accounts.aae_responder = 0 OR #{@aae_database}.users.kind = 'PublicUser'
   END_SQL
-  
+
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(account_insert_query)
-    ActiveRecord::Base.connection.execute(account_aae_responder_update_query)
+    ActiveRecord::Base.connection.execute(transfer_aae_responder_query)
   end
   
   puts " Accounts transferred : #{benchmark.real.round(2)}s"
@@ -525,17 +528,19 @@ def transfer_aae_user_prefs
   WHERE #{@darmokdatabase}.user_preferences.name = 'signature'
   END_SQL
   
+  # default for routing_instructions is 'anywhere'
+  
   aae_location_only_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   UPDATE #{@aae_database}.users
   JOIN #{@darmokdatabase}.user_preferences ON #{@aae_database}.users.id = #{@darmokdatabase}.user_preferences.user_id
-  SET #{@aae_database}.users.location_only = 1 
+  SET #{@aae_database}.users.routing_instructions = 'locations_only' 
   WHERE #{@darmokdatabase}.user_preferences.name = 'aae_location_only'
   END_SQL
   
   aae_county_only_pref_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
   UPDATE #{@aae_database}.users
   JOIN #{@darmokdatabase}.user_preferences ON #{@aae_database}.users.id = #{@darmokdatabase}.user_preferences.user_id
-  SET #{@aae_database}.users.county_only = 1 
+  SET #{@aae_database}.users.routing_instructions = 'counties_only' 
   WHERE #{@darmokdatabase}.user_preferences.name = 'aae_county_only'
   END_SQL
   

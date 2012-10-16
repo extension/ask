@@ -18,7 +18,7 @@
       <div class="radio_options">
       <p>
         <label>
-          <%= check_box_tag :foo, "1", false, :class => "checkbox" %>
+          <%= f.check_box :away %>
           Mark me as away
           <span>(When your "vacation status" is turned on, AaE questions can not be assigned to you.)</span>
         </label>
@@ -34,7 +34,7 @@
       <div class="user_assignment_prefs">
         <p>
           <label>
-            <%= check_box_tag :foo, "1", false, :class => "checkbox" %>
+            <%= f.check_box :auto_route %>
             Questions submitted to my Groups can be automatically assigned to me.
             <span>(note: Some groups use a question queue instead of automatic assignments)</span>
           </label>
@@ -43,17 +43,17 @@
       <div class="assignment_prefs">
       <p>
         <label>
-          <%= radio_button_tag :foo, "", true %>
+          <%= f.radio_button :routing_instructions, 'anywhere' %>
           My groups can assign me a question from anywhere
         </label>
         
         <label>
-          <%= radio_button_tag :foo, "", false %>
+          <%= f.radio_button :routing_instructions, 'locations_only' %>
           Group questions must match my states
         </label>
       
         <label>
-          <%= radio_button_tag :foo, "", false %>
+          <%= f.radio_button :routing_instructions, 'counties_only' %>
           Group questions must match my counties
         </label>
       </p>
@@ -63,8 +63,8 @@
     
     <h3>Email Signature</h3>
     <p class="bio">
-      <%= label :foo, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
-      <%= text_area_tag :foo %>
+      <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
+      <%= f.text_area :signature %>
     </p>
     
   </fieldset>

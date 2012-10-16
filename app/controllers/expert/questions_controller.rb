@@ -69,7 +69,7 @@ class Expert::QuestionsController < ApplicationController
       return redirect_to expert_question_url(@question)
     end
       
-    if !user.aae_responder && current_user.id != user.id
+    if user.away && current_user.id != user.id
       flash[:failure] = "This user has elected not to receive questions."
       return redirect_to expert_question_url(@question)  
     end

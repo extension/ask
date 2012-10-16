@@ -24,7 +24,7 @@ class CreateUsers < ActiveRecord::Migration
       # this is b/c auto-routing in this new system has a different definition than in the old one, so this pref is not transferred from the old.
       t.boolean  "auto_route",                             :default => true, :null => false
       t.string   "phone_number"
-      t.boolean  "aae_responder",                          :default => true
+      t.boolean  "away",                                   :default => false
       t.string   "time_zone"
       t.boolean  "is_question_wrangler",                   :default => false
       t.datetime "vacated_aae_at"
@@ -33,8 +33,8 @@ class CreateUsers < ActiveRecord::Migration
       t.string   "bio"
       t.boolean  "is_blocked",                             :default => false, :null => false
       t.text     "signature"
-      t.boolean  "location_only",                           :default => false, :null => false
-      t.boolean  "county_only",                             :default => false, :null => false
+      t.string   "routing_instructions",                   :default => 'anywhere', :null => false
+      
       # paperclip method for generating necessary image columns
       t.has_attached_file :avatar
       
@@ -60,5 +60,6 @@ class CreateUsers < ActiveRecord::Migration
     add_index "users", ["email"], :name => "email"
     add_index "users", ["login"], :name => "login"
     add_index "users", ["retired"], :name => "retired"  
+    add_index "users", ["routing_instructions"], :name => "routing_instructions"
   end
 end

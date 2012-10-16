@@ -348,7 +348,6 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
 
   create_table "user_preferences", :force => true do |t|
     t.integer  "user_id",    :null => false
-    t.string   "name",       :null => false
     t.text     "setting",    :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
@@ -358,7 +357,7 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "kind",                                    :default => "",    :null => false
+    t.string   "kind",                                    :default => "",         :null => false
     t.string   "login",                    :limit => 80
     t.string   "first_name"
     t.string   "last_name"
@@ -370,19 +369,18 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
     t.integer  "county_id",                               :default => 0
     t.boolean  "retired",                                 :default => false
     t.boolean  "is_admin",                                :default => false
-    t.boolean  "auto_route",                              :default => true,  :null => false
+    t.boolean  "auto_route",                              :default => true,       :null => false
     t.string   "phone_number"
-    t.boolean  "aae_responder",                           :default => true
+    t.boolean  "away",                                    :default => false
     t.string   "time_zone"
     t.boolean  "is_question_wrangler",                    :default => false
     t.datetime "vacated_aae_at"
     t.boolean  "first_aae_away_reminder",                 :default => false
     t.boolean  "second_aae_away_reminder",                :default => false
     t.string   "bio"
-    t.boolean  "is_blocked",                              :default => false, :null => false
+    t.boolean  "is_blocked",                              :default => false,      :null => false
     t.text     "signature"
-    t.boolean  "location_only",                           :default => false, :null => false
-    t.boolean  "county_only",                             :default => false, :null => false
+    t.string   "routing_instructions",                    :default => "anywhere", :null => false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
@@ -394,12 +392,13 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                                                 :null => false
-    t.datetime "updated_at",                                                 :null => false
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
   end
 
   add_index "users", ["email"], :name => "email"
   add_index "users", ["login"], :name => "login"
   add_index "users", ["retired"], :name => "retired"
+  add_index "users", ["routing_instructions"], :name => "routing_instructions"
 
 end
