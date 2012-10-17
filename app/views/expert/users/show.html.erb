@@ -145,12 +145,18 @@
   <% end %>
     <p class="downplay">Last active: <%= time_ago_in_words(@user.last_sign_in_at) %> ago</p>
     <% if @handling_event_count[:handled] > 0 %>
-       <p class="downplay">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></p>
+       <p class="downplay"><span id="handling_rate" rel="popover" data-content="How likely will this person handle an assigned question? A high handling rate means they are likely to handle it. A low rate means someone else usually has to step in. There's a 24-hour grace period after a question is assigned." data-original-title="Handling Rate">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
     <% else %>
        <p class="downplay">This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
   </aside>
-
+  
+  <script type="text/javascript">
+    $('#handling_rate').popover({
+      placement: 'bottom'      
+    })
+  </script>
+  
   <aside>
     <%= render :partial => 'location_summary' %>
   </aside>
