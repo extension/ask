@@ -10,8 +10,6 @@
       <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
     <% end %>
     
-    <h3>Expert description</h3>
-    
     <p>
       <strong>About me:</strong>
       <% if @user.bio %>
@@ -145,20 +143,18 @@
    
        
   <% end %>
-  </aside>
   
 
-  
-  <aside>
     <h4>Handling Rate</h4>
     <% if @handling_event_count[:handled] > 0 %>
-       <h5>Handling rate for assigned questions:</h5>
        <p><span class="handling_rate"><span><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
     <% else %>
        <p>This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
+    <p>Last active: <%= time_ago_in_words(@user.last_sign_in_at) %> ago</p>
+  
+  
   </aside>
-
 
   <aside>
     <%= render :partial => 'location_summary' %>
@@ -202,6 +198,8 @@
       <%= link_to "View groups", expert_user_groups_path() %>
     </ul>
   </aside>
+  
+
   
 </div>
 
