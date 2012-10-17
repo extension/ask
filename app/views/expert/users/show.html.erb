@@ -143,17 +143,12 @@
    
        
   <% end %>
-  
-
-    <h4>Handling Rate</h4>
+    <p class="downplay">Last active: <%= time_ago_in_words(@user.last_sign_in_at) %> ago</p>
     <% if @handling_event_count[:handled] > 0 %>
-       <p><span class="handling_rate"><span><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
+       <p class="downplay">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></p>
     <% else %>
-       <p>This person hasn't handled any questions in the last 6 months.</p>
+       <p class="downplay">This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
-    <p>Last active: <%= time_ago_in_words(@user.last_sign_in_at) %> ago</p>
-  
-  
   </aside>
 
   <aside>

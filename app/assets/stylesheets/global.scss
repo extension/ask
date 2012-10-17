@@ -212,17 +212,13 @@ body#expert {
   
   .answered_question {margin: 0 0 .5em; padding:0 0 .5em;}
 
-    
+  h3 .label {font-size:.8em;}
 
-    h3 .label {font-size:.8em;}
-
-    .section {margin:2em 0;}
-
-    span.handling_rate {width:50%; border:1px solid #000; display:block; padding:1px}
-    span.handling_rate span {width:75%; color:#555; background-color:#bbb; display:block; padding:.15em .5em;}
-
-    .notifylink a {color:#666;}
-
+  .section {margin:2em 0;}
+  .notifylink a {color:#666;}
+  
+  .downplay {color:#777;}
+  .handling_rate {font-weight:bold; font-size:1.2em; color:#777;}
     
     
 
