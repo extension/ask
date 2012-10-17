@@ -285,21 +285,19 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     per_page = 10
     @experts = Array.new
-    county_experts = Array.new
-    location_experts = Array.new
+    county_experts = User.with_expertise_county(@question.county_id)
+    location_experts = User.with_expertise_location(@question.location_id)
     question_tags = @question.tags.map{|t| "'#{t.name}'"}.join(',')
       
     if question_tags.present?
       if @question.county_id?
-        county_experts = User.with_expertise_county(@question.county_id)
         expert_ids = county_experts.map(&:id)
-        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})"))
+        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
       end      
     
       if @question.location_id?
-        location_experts = User.with_expertise_location(@question.location_id)
         expert_ids = location_experts.map(&:id)
-        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})"))
+        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
       end
     
       @experts.concat(User.tagged_with_any(question_tags))
