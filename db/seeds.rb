@@ -558,6 +558,17 @@ def generate_widget_fingerprint(expertise_area_name, expertise_area_id)
   return Digest::SHA1.hexdigest(create_time + expertise_area_name + expertise_area_id.to_s)
 end
 
+def transfer_geo_names
+  puts 'Transferring Geonames...'
+
+  geo_names_query = "INSERT INTO #{@aae_database}.geo_names  SELECT * FROM #{@darmokdatabase}.geo_names;"
+  benchmark = Benchmark.measure do
+    ActiveRecord::Base.connection.execute(geo_names_query)
+  end
+  
+  puts " Geonames transferred: #{benchmark.real.round(2)}s"
+end
+
 
 transfer_accounts
 transfer_locations
@@ -582,3 +593,4 @@ transfer_question_source
 transfer_aae_user_prefs
 transfer_widget_group_locations
 transfer_misfit_questions_to_groups
+transfer_geo_names

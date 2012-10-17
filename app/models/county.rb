@@ -16,7 +16,7 @@ class County < ActiveRecord::Base
   
   def self.find_by_geoip(ipaddress = Settings.request_ip_address)
     if(geoname = GeoName.find_by_geoip(ipaddress))
-      self.find_by_name(geoname.county_name)
+      self.find_by_name(geoname.county)
     else
       return nil
     end
