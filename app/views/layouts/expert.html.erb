@@ -68,6 +68,10 @@
     </div>
   <% end %>
   
+  <% if current_user.away %>
+    <div id="on_vacation"><i class="icon-exclamation-sign"></i> Your availability is set to "Away." Questions can not be assigned to you. <%= link_to 'Edit your settings', expert_settings_assignment_path() %></div>
+  <% end %>
+  
   <div class="row-fluid">
     <div id="content_wrapper">
       <%= yield %>
