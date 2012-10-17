@@ -34,7 +34,7 @@ module ApplicationHelper
   end
   
   def link_expert_user(user)
-    return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away? ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away? ? ' <span class="on_vacation">(Not available)</span>' : '')
+    return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
   
   def link_public_user_avatar(user, image_size = :medium)
