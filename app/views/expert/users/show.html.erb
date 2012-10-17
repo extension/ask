@@ -5,7 +5,11 @@
   <div id="user_masthead">
     <%= link_expert_user_avatar(@user) %>
     <h1><span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
-  
+    
+    <% if @user.away %>
+      <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
+    <% end %>
+    
     <h3>Expert description</h3>
     
     <p>
