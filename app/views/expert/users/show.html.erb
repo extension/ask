@@ -151,7 +151,12 @@
   
   <aside>
     <h4>Handling Rate</h4>
-    <p><span class="handling_rate"><span>75 (fake data)</span></span></p>
+    <% if @handling_event_count[:handled] > 0 %>
+       <h5>Handling rate for assigned questions:</h5>
+       <p><span class="handling_rate"><span><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
+    <% else %>
+       <p>This person hasn't handled any questions in the last 6 months.</p>
+    <% end%>
   </aside>
 
 

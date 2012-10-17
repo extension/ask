@@ -14,6 +14,7 @@ class Expert::UsersController < ApplicationController
     @answered_questions = @user.answered_questions.limit(10)
     @open_questions = @user.open_questions.limit(10)
     @my_groups = @user.group_memberships
+    @handling_event_count = @user.aae_handling_event_count 
   end
   
   def tags

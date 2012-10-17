@@ -135,6 +135,68 @@ class User < ActiveRecord::Base
     
   end
   
+  # instance method version of aae_handling_event_count
+  def aae_handling_event_count(options = {})
+    myoptions = options.merge({:group_by_id => true, :limit_to_handler_ids => [self.id]})
+    result = User.aae_handling_event_count(myoptions)
+    if(result and result[self.id])
+      returnvalues = result[self.id]
+    else
+      returnvalues = {:total => 0, :handled => 0, :ratio => 0}
+    end
+    return returnvalues
+  end
+   
+  def self.aae_handling_event_count(options = {})
+    # group by user id's or user objects?
+    group_clause = (options[:group_by_id] ? 'previous_handling_recipient_id' : 'previous_handling_recipient')
+    
+    # get the total number of handling events
+    conditions = []      
+    
+    # default date interval is 6 months
+    conditions << "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"
+    
+    if(!options[:limit_to_handler_ids].blank?)
+      conditions << "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})"
+    end
+
+    totals_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
+    
+    # get the total number of handling events for which I am the previous recipient *and* I was the initiator.
+    conditions = ["initiated_by_id = previous_handling_recipient_id"]
+    conditions << "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"
+    
+    if(!options[:limit_to_handler_ids].blank?)
+      conditions << "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})"
+    end
+
+    handled_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
+    
+    # loop through the total list, build a return hash
+    # that will return the values per user_id (or user object)
+    returnvalues = {}
+    returnvalues[:all] = {:total => 0, :handled => 0, :ratio => 0}
+    totals_hash.keys.each do |groupkey|
+      total = totals_hash[groupkey]
+      handled = (handled_hash[groupkey].nil?? 0 : handled_hash[groupkey])
+      # calculate a floating point ratio
+      if(handled > 0)
+        ratio = handled.to_f / total.to_f
+      else
+        ratio = 0
+      end
+      returnvalues[groupkey] = {:total => total, :handled => handled, :ratio => ratio}
+      returnvalues[:all][:total] += total
+      returnvalues[:all][:handled] += handled       
+    end
+    if(returnvalues[:all][:handled] > 0)
+      returnvalues[:all][:ratio] = returnvalues[:all][:handled].to_f / returnvalues[:all][:total].to_f
+    end
+
+    return returnvalues
+  end
+    
   def leave_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
