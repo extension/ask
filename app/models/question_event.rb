@@ -32,6 +32,7 @@ class QuestionEvent < ActiveRecord::Base
   
   scope :latest, {:order => "created_at desc", :limit => 1}
   scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
+  scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
   
 
   def self.log_resolution(question)
