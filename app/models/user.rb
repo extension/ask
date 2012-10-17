@@ -139,7 +139,7 @@ class User < ActiveRecord::Base
   def aae_handling_event_count(options = {})
     myoptions = options.merge({:group_by_id => true, :limit_to_handler_ids => [self.id]})
     result = User.aae_handling_event_count(myoptions)
-    if(result and result[self.id])
+    if(result.present? && result[self.id].present?)
       returnvalues = result[self.id]
     else
       returnvalues = {:total => 0, :handled => 0, :ratio => 0}
@@ -148,29 +148,30 @@ class User < ActiveRecord::Base
   end
    
   def self.aae_handling_event_count(options = {})
+    # narrow by recipients
+    !options[:limit_to_handler_ids].blank? ? recipient_condition = "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})" : recipient_condition = nil
+    # default date interval is 6 months
+    date_condition = "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"    
     # group by user id's or user objects?
     group_clause = (options[:group_by_id] ? 'previous_handling_recipient_id' : 'previous_handling_recipient')
     
     # get the total number of handling events
     conditions = []      
-    
-    # default date interval is 6 months
-    conditions << "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"
-    
-    if(!options[:limit_to_handler_ids].blank?)
-      conditions << "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})"
-    end
-
+    conditions << date_condition
+    conditions << recipient_condition if recipient_condition.present?
     totals_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
+    
+    # pull all question events for where someone pulled the question from them within 24 hours and do not count those
+    conditions = ["initiated_by_id <> previous_handling_recipient_id"]
+    conditions << date_condition
+    conditions << "duration_since_last_handling_event <= 86400"
+    conditions << recipient_condition if recipient_condition.present?
+    negated_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
     
     # get the total number of handling events for which I am the previous recipient *and* I was the initiator.
     conditions = ["initiated_by_id = previous_handling_recipient_id"]
-    conditions << "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"
-    
-    if(!options[:limit_to_handler_ids].blank?)
-      conditions << "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})"
-    end
-
+    conditions << date_condition
+    conditions << recipient_condition if recipient_condition.present?
     handled_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
     
     # loop through the total list, build a return hash
@@ -179,6 +180,7 @@ class User < ActiveRecord::Base
     returnvalues[:all] = {:total => 0, :handled => 0, :ratio => 0}
     totals_hash.keys.each do |groupkey|
       total = totals_hash[groupkey]
+      total = total - negated_hash[groupkey].to_i if !negated_hash[groupkey].nil? 
       handled = (handled_hash[groupkey].nil?? 0 : handled_hash[groupkey])
       # calculate a floating point ratio
       if(handled > 0)
