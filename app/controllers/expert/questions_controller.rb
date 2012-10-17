@@ -285,8 +285,8 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     per_page = 10
     @experts = Array.new
-    county_experts = User.with_expertise_county(@question.county_id)
-    location_experts = User.with_expertise_location(@question.location_id)
+    @question.location_id.present? ? location_experts = User.with_expertise_location(@question.location_id) : location_experts = []
+    @question.county_id.present? ? county_experts = User.with_expertise_county(@question.county_id) : county_experts = []
     question_tags = @question.tags.map{|t| "'#{t.name}'"}.join(',')
       
     if question_tags.present?
