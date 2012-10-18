@@ -27,6 +27,7 @@ class Expert::HomeController < ApplicationController
     @recently_answered_questions = Question.answered.find(:all, :limit => 20, :order => 'created_at DESC')
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
+    @my_tags = current_user.tags
   end
   
   def tags
