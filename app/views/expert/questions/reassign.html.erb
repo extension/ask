@@ -49,31 +49,28 @@
 
 </script>
 
-
-
-<div id="expert_search_results"></div>
-
-<h4>Experts that match these options...</h4>
-
 <table class="table table-bordered">
 
   <tr id="filter_terms">
-    <td><%= will_paginate @expert_results %></td>
+    <td>
+      <strong>Best Matches</strong>
+      <%= will_paginate @expert_results %>
+    </td>
   <% filter_terms = [] %>
     <% if @question.county.present? %>
       <% filter_terms <<  @question.county.name %> 
-      <td><p class="rotate30"><span class="tag tag-geography"><%= "#{@question.county.name}" %></span> <span class="removetag">[x]</span></p></td>
+      <td><span class="tag tag-geography"><%= "#{@question.county.name}" %></span></td>
     <% end %>
 
     <% if @question.location.present? %>
       <% filter_terms <<  @question.location.name %> 
-      <td><p class="rotate30"><span class="tag tag-geography"><%= @question.location.abbreviation %></span> <span class="removetag">[x]</span></p></td>
+      <td><span class="tag tag-geography"><%= @question.location.abbreviation %></span></td>
     <% end %>
 
     <% if @question.tags.length > 0 %>
       <% @question.tags.each do |tag| %>
         <% filter_terms <<  tag.name %> 
-        <td><p id="tag_<%= tag.id %>" class="rotate30"><span class="label"><%= tag.name %></span> <span class="removetag">[x]</span></p></td>
+        <td><span class="label"><%= tag.name %></span></td>
       <% end %>
     <% end %>
   </tr>
@@ -86,10 +83,8 @@
         <% expert_tags = expert.tags %>
         <tr>
         <td>
-          <p>
+            <%= link_to "View", assign_expert_question_path(:id => @question.id, :assignee_login => expert.login), :method => :post, :class => "btn btn-primary" %>
             <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %>
-            <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_login => expert.login), :method => :post, :class => "btn btn-primary" %>
-          </p>
           <% filter_terms.each do |term| %>
             <td>
 	          <% if @question.county.present? && term == @question.county.name && expert_expertise_counties.include?(@question.county) %>
