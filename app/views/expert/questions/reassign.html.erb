@@ -15,35 +15,16 @@
 
 
 <script class="code" type="text/javascript">
-
-		function assign_user(assignee_login) {
-		  $.ajax({
-        type: "POST",
-        url: "<%= user_assign_options_expert_question_path(:id => @question.id) %>",
-        cache: false,
-        data: {assignee_login: assignee_login}
-      })
-      .done(function() {
-				$("#expert_name").val('');
-				return false;
-      })  
-      .fail(function() {
-        alert("error");
-  			$("#expert_name").val('');
-  			return false;
-      })
-		}
-
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
 		$("#expert_name").autocomplete({
       source: "/ajax/experts",
 			minLength: 2,
 			select: function(e, ui) {
-			  assign_user(ui.item.id);
+			  window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
 			}
 		}).keypress(function(e) {
       if (e.keyCode === 13) {
-        assign_user(this.value);
+        window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + this.value
       }
     });
 
@@ -83,7 +64,7 @@
         <% expert_tags = expert.tags %>
         <tr>
         <td>
-            <%= link_to "View", assign_expert_question_path(:id => @question.id, :assignee_login => expert.login), :method => :post, :class => "btn btn-primary" %>
+            <%= link_to "Select", assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id),  :class => "btn btn-primary" %>
             <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %>
           <% filter_terms.each do |term| %>
             <td>

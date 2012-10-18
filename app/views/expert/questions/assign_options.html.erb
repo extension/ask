@@ -1,0 +1,53 @@
+<h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+
+<h1><%= @user.name %></h1>
+
+
+<% if @user.away %>
+  <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
+<% end %>
+
+<h2><%= link_expert_user_avatar(@user) %></h2>
+
+<p>Send a comment</p>
+<textarea class="l" cols="40" maxlength="140" name="user[bio]" rows="5"></textarea>
+
+
+<p><%= link_to "Assign to #{@user.name}", assign_expert_question_path(:id => @question.id, :assignee_login => @user.login), :method => :post, :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %></p>
+
+
+<% if @user.expertise_locations.length > 0 %>
+  
+  <h3>Locations</h3>
+    <% @user.expertise_locations.each do |l| %>
+      <div class="location">
+        
+        <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
+
+        <% if @user.expertise_locations.where("location_id = ?", l.id).length > 0 %>
+          <% if @user.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+            <ul>
+              <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
+              <% end %>
+            </ul>
+          <% else %>
+              <ul>
+                <li class="all_counties">All counties</li>
+              </ul>
+            <% end %>
+          <% end %>
+
+      </div>
+    <% end %>
+    
+    <% if @user.tags.length > 0 %>
+      <p class="tags">  
+        <% @user.tags.each do |tag| %>
+        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <% end %>
+      </p>
+      
+    <% end %>
+  
+<% end %>

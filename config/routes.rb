@@ -21,6 +21,7 @@ Aae::Application.routes.draw do
     resources :questions, :only => [:show] do
       member do
         post 'assign'
+        get 'assign_options'
         get  'answer'
         post "user_assign_options"
         post 'answer'

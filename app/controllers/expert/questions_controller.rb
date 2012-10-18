@@ -42,6 +42,11 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def assign_options
+    @user = User.find_by_id(params[:expert_id])
+    @question = Question.find_by_id(params[:id])
+  end
+  
   def user_assign_options
     @question = Question.find_by_id(params[:id])
     user = User.find_by_id(params[:assignee_login])

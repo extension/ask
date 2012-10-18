@@ -35,7 +35,7 @@
               <% if question.assigned_group %>
                 <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
               <% else %>
-                <span class="tag tag-topic"><%= link_to tag.name, expert_view_all_tags_path(:name => tag.name) %></span>
+                <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span>
               <% end %>
             <% end %>
           <% else %>
