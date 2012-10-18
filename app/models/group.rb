@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
+  has_many :question_events
   has_many :questions
   has_many :group_locations
   has_many :group_counties
@@ -33,6 +34,10 @@ class Group < ActiveRecord::Base
   
   scope :with_expertise_county, lambda {|county_id| {:include => :expertise_counties, :conditions => "group_counties.county_id = #{county_id}"}}
   scope :with_expertise_location, lambda {|location_id| {:include => :expertise_locations, :conditions => "group_locations.location_id = #{location_id}"}}
+  scope :tagged_with_any, lambda { |tag_list| 
+        {:select => "groups.*, COUNT(groups.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "groups.id", :order => "tag_count DESC"}
+  }
+  
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   

@@ -5,6 +5,7 @@ class CreateQuestionEvents < ActiveRecord::Migration
       t.integer  "submitter_id"
       t.integer  "initiated_by_id"
       t.integer  "recipient_id"
+      t.integer  "recipient_group_id", :default => nil
       t.text     "response"
       t.integer  "event_state", :null => false
       t.integer  "contributing_question_id"

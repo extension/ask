@@ -21,6 +21,7 @@ Aae::Application.routes.draw do
     resources :questions, :only => [:show] do
       member do
         post 'assign'
+        post 'assign_to_group'
         get  'answer'
         post 'answer'
         post 'assign_to_wrangler'

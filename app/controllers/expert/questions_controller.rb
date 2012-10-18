@@ -56,7 +56,7 @@ class Expert::QuestionsController < ApplicationController
     end
     
     if !params[:assignee_login]
-      flash[:failure] = "You must select a user to reassign."
+      flash[:failure] = "You must select a user or group to reassign."
       redirect_to expert_question_url(@question)
       return
     end
@@ -81,6 +81,49 @@ class Expert::QuestionsController < ApplicationController
     if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
       @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
       QuestionEvent.log_reopen(@question, user, current_user, assign_comment)
+    end
+    
+    flash[:notice] = "Question successfully reassigned!"
+    
+    if params[:redirect_to_answer]
+      return redirect_to answer_expert_question_url(@question)
+    end
+    redirect_to expert_question_url(@question)
+  end
+  
+  def assign_to_group
+    if !params[:id]
+      flash[:failure] = "You must select a question to assign."
+      return redirect_to expert_home_url
+    end
+    
+    @question = Question.find_by_id(params[:id])
+        
+    if !@question
+      flash[:failure] = "Invalid question."
+      return redirect_to expert_home_url
+    end
+    
+    if !params[:group_id]
+      flash[:failure] = "You must select a user or group to reassign."
+      redirect_to expert_question_url(@question)
+      return
+    end
+      
+    group = Group.find_by_id(params[:group_id])
+      
+    if !group
+      flash[:failure] = "Group does not exist."
+      return redirect_to expert_question_url(@question)
+    end
+      
+    params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
+        
+    @question.assign_to_group(group, current_user, assign_comment)
+    # re-open the question if it's reassigned after resolution
+    if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
+      @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
+      QuestionEvent.log_reopen_to_group(@question, group, current_user, assign_comment)
     end
     
     flash[:notice] = "Question successfully reassigned!"

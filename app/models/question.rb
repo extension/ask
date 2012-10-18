@@ -166,7 +166,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
-    self.update_attribute(:assignee, user)  
+    self.update_attributes(:assignee => user)  
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
     if public_comment
@@ -183,6 +183,32 @@ class Question < ActiveRecord::Base
     #     end
   end
   
+  # Assigns the question to the group, logs the assignment, and sends an email
+  # to the group members signed up for notifications notifying them that a question has been assigned to their group
+  def assign_to_group(group, assigned_by, comment)
+    raise ArgumentError unless group and group.instance_of?(Group)  
+
+    # don't bother doing anything if this is an assignment to the group already assigned 
+    return true if self.assigned_group && (group.id == self.assigned_group.id)
+
+    # update and log
+    self.update_attributes(:assigned_group => group, :assignee => nil)  
+    QuestionEvent.log_group_assignment(self,user,assigned_by,comment)    
+    # if this is a reopen reassignment due to the public user commenting on the sq                                  
+    if public_comment
+      asker_comment = public_comment.response
+    else
+      asker_comment = nil
+    end
+    
+    # TODO: Put New Notification Logic Here
+    # create notifications
+    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
+    #     if(is_reassign and public_reopen == false)
+    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
+    #     end
+  end
+
   # updates the question, creates a response and  
   # calls the function to log a new resolved question event 
   def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil)

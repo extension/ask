@@ -3,6 +3,7 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :initiator, :class_name => "User", :foreign_key => "initiated_by_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :recipient, :class_name => "User", :foreign_key => "recipient_id"
+  belongs_to :assigned_group, :class_name => "Group", :foreign_key => "recipient_group_id"
   belongs_to :previous_recipient, :class_name => "User", :foreign_key => "previous_recipient_id"
   belongs_to :previous_initiator,  :class_name => "User", :foreign_key => "previous_initiator_id"
   belongs_to :previous_handling_recipient, :class_name => "User", :foreign_key => "previous_handling_recipient_id"
@@ -26,13 +27,14 @@ class QuestionEvent < ActiveRecord::Base
   REOPEN = 12
   CLOSED = 13
   COMMENT = 14
+  ASSIGNED_TO_GROUP = 15
   
   EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 'marked as spam', 4 => 'marked as non-spam', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
-                            8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented' }
+                            8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented', 15 => 'assigned to group' }
   
   scope :latest, {:order => "created_at desc", :limit => 1}
-  scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
-  scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
+  scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
+  scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
   
 
   def self.log_resolution(question)
@@ -53,12 +55,31 @@ class QuestionEvent < ActiveRecord::Base
       :response => assignment_comment})
   end
   
+  def self.log_group_assignment(question, group, initiated_by, assignment_comment)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :recipient_group_id => group.id,
+      :recipient_id => nil,
+      :event_state => ASSIGNED_TO_GROUP,
+      :response => assignment_comment})
+  end
+  
   def self.log_reopen(question, recipient, initiated_by, assignment_comment)
     question.update_attribute(:last_opened_at, Time.now)
     
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
       :recipient_id => recipient.id,
+      :event_state => REOPEN,
+      :response => assignment_comment})
+  end
+  
+  def self.log_reopen_to_group(question, group, initiated_by, assignment_comment)
+    question.update_attribute(:last_opened_at, Time.now)
+    
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :recipient_group_id => group.id,
       :event_state => REOPEN,
       :response => assignment_comment})
   end
@@ -105,10 +126,13 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]
-    if create_attributes[:event_state] == ASSIGNED_TO
+    if create_attributes[:event_state] == ASSIGNED_TO || create_attributes[:event_state] == ASSIGNED_TO_GROUP
       question.update_attribute(:last_assigned_at, time_of_this_event)
     end
 
+    # gathering of previous events for metrics gathering for things like duration and handling rate, 
+    # if we want to keep track of this for a group context (user is being tracked here), we'll need to add more columns to the schema for groups
+    
     # get last event
     last_event = question.question_events.latest[0]
     if last_event.present?
@@ -140,9 +164,10 @@ class QuestionEvent < ActiveRecord::Base
   end
   
   def is_handling_event?
-    return ((self.event_state == ASSIGNED_TO) or (self.event_state == RESOLVED) or (self.event_state==REJECTED) or (self.event_state==NO_ANSWER))
+    return ((self.event_state == ASSIGNED_TO) || (self.event_state == ASSIGNED_TO_GROUP) || (self.event_state == RESOLVED) || (self.event_state==REJECTED) || (self.event_state==NO_ANSWER))
   end
   
+  # NOTE THAT THE RECIPIENT_ID (AND PREVIOUS_RECIPIENT_ID AND PREVIOUS_HANDLING_RECIPIENT_ID) CAN BE NULL HERE DUE TO ASSIGNMENT TO GROUPS IN WHICH THE RECIPIENT_GROUP_ID IS SET
   def create_question_event_notification
     case self.event_state
     when ASSIGNED_TO
@@ -150,14 +175,14 @@ class QuestionEvent < ActiveRecord::Base
       if self.previous_event_id.nil? and !self.recipient_id.nil? #new incoming question
         Notification.create(notifiable: self, created_by: self.question.submitter, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
       end
-      if (self.recipient_id != self.previous_handling_recipient_id) and (self.recipient_id != self.previous_handling_initiator_id) #reassigned
-        # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      if (self.recipient_id != self.previous_handling_recipient_id) && (self.recipient_id != self.previous_handling_initiator_id) #reassigned
+        # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.previous_handling_recipient_id.nil?
       end
-        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now )
+        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.recipient_id.nil?
     when REJECTED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
     when EDIT_QUESTION
-      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_PUBLIC_EDIT, delivery_time: 1.minute.from_now )
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_PUBLIC_EDIT, delivery_time: 1.minute.from_now ) unless self.question.assignee.nil?
     when PUBLIC_RESPONSE
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.current_resolver.id, notification_type: Notification::AAE_PUBLIC_COMMENT, delivery_time: 1.minute.from_now )
     when RESOLVED

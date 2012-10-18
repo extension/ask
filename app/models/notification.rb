@@ -108,11 +108,11 @@ class Notification < ActiveRecord::Base
   end  
   
   def process_aae_assignment
-    InternalMailer.aae_assignment(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
+    InternalMailer.aae_assignment(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_reassignment
-    InternalMailer.aae_assignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
+    InternalMailer.aae_assignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless (self.notifiable.previous_handling_recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_escalation
@@ -120,7 +120,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_edit
-    InternalMailer.aae_public_edit(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless self.notifiable.recipient.email.nil?
+    InternalMailer.aae_public_edit(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_public_comment

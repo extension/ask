@@ -20,6 +20,10 @@ module QuestionsHelper
       reassign_msg = "Assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>"
       reassign_msg = reassign_msg + " <span>Comments: #{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
+    when QuestionEvent::ASSIGNED_TO_GROUP
+      reassign_msg = "Assigned to group<strong>#{link_to "#{q_event.assigned_group.name}", expert_group_path(q_event.assigned_group.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>"
+      reassign_msg = reassign_msg + " <span>Comments: #{q_event.response}</span>" if q_event.response
+      return reassign_msg.html_safe
     when QuestionEvent::RESOLVED 
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span> #{humane_date(q_event.created_at)} </span>".html_safe
     when QuestionEvent::NO_ANSWER
