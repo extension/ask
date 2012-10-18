@@ -42,6 +42,13 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def user_assign_options
+    @question = Question.find_by_id(params[:id])
+    user = User.find_by_id(params[:assignee_login])
+    params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
+    @question.assign_to(user, current_user, assign_comment)
+  end
+  
   def assign
     if !params[:id]
       flash[:failure] = "You must select a question to assign."

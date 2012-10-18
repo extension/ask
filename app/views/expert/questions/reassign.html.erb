@@ -11,11 +11,45 @@
 <% end %>
 <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
 
-<p>Search Experts by Name, Email or Login</p>
-<%= form_tag '', :id => 'expert_search_by_name' do %>
-<%= text_field_tag 'expert_name' %>
-<%= submit_tag 'Search' %>
-<% end %>
+<input id="expert_name" placeholder="Search Experts by Name" />
+
+
+<script class="code" type="text/javascript">
+
+		function assign_user(assignee_login) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= user_assign_options_expert_question_path(:id => @question.id) %>",
+        cache: false,
+        data: {assignee_login: assignee_login}
+      })
+      .done(function() {
+				$("#expert_name").val('');
+				return false;
+      })  
+      .fail(function() {
+        alert("error");
+  			$("#expert_name").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#expert_name").autocomplete({
+      source: "/ajax/experts",
+			minLength: 2,
+			select: function(e, ui) {
+			  assign_user(ui.item.id);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        assign_user(this.value);
+      }
+    });
+
+</script>
+
+
 
 <div id="expert_search_results"></div>
 
