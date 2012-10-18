@@ -69,7 +69,7 @@ Aae::Application.routes.draw do
     match "settings/tags" => "settings#tags", :via => [:get, :put]
     match "settings/assignment" => "settings#assignment", :via => [:get, :put]
     match "home" => "home#index"
-    match "home/tags/:id" => "home#tags"
+    match "home/tags/:name" => "home#tags", :as => 'home_tags'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
