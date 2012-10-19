@@ -190,7 +190,7 @@ class Question < ActiveRecord::Base
   
   # Assigns the question to the group, logs the assignment, and sends an email
   # to the group members signed up for notifications notifying them that a question has been assigned to their group
-  def assign_to_group(group, assigned_by, comment)
+  def assign_to_group(group, assigned_by, comment, public_reopen = false, public_comment = nil)
     raise ArgumentError unless group and group.instance_of?(Group)  
 
     # don't bother doing anything if this is an assignment to the group already assigned 
@@ -198,7 +198,7 @@ class Question < ActiveRecord::Base
 
     # update and log
     self.update_attributes(:assigned_group => group, :assignee => nil)  
-    QuestionEvent.log_group_assignment(self,user,assigned_by,comment)    
+    QuestionEvent.log_group_assignment(self,group,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
     if public_comment
       asker_comment = public_comment.response

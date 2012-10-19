@@ -38,7 +38,6 @@ class Group < ActiveRecord::Base
         {:select => "groups.*, COUNT(groups.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "groups.id", :order => "tag_count DESC"}
   }
   
-  
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },

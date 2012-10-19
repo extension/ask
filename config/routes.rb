@@ -23,8 +23,8 @@ Aae::Application.routes.draw do
         post 'assign'
         post 'assign_to_group'
         get 'assign_options'
+        get 'group_assign_options'
         get  'answer'
-        post "user_assign_options"
         post 'answer'
         post 'assign_to_wrangler'
         get  'reject'

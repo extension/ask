@@ -1,0 +1,45 @@
+<h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+
+<h1><%= @group.name %></h1>
+
+<h2><%= link_expert_group_avatar(@group) %></h2>
+
+<%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
+<p>Send a comment</p>
+<%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
+<p>
+<%= submit_tag "Assign to #{@group.name}" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
+</p>
+<% end %>
+
+<% if @group.expertise_locations.length > 0 %>
+  
+  <h3>Locations</h3>
+    <% @group.expertise_locations.each do |l| %>
+      <div class="location">
+        
+        <h4><span class="tag tag-geography"><%= l.name %></span></h4>
+          <% if @group.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+            <ul>
+              <% @group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                <li><span class="tag tag-geography"><%= c.name %></span></li>
+              <% end %>
+            </ul>
+          <% else %>
+              <ul>
+                <li class="all_counties">All counties</li>
+              </ul>
+          <% end %>
+      </div>
+    <% end %>
+    
+    <% if @group.tags.length > 0 %>
+      <p class="tags">  
+        <% @group.tags.each do |tag| %>
+        <span class="tag tag-topic"><%= tag.name %></span>
+        <% end %>
+      </p>
+      
+    <% end %>
+  
+<% end %>

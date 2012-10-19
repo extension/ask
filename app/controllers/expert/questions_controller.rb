@@ -47,11 +47,9 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
   end
   
-  def user_assign_options
-    @question = Question.find_by_id(params[:id])
-    user = User.find_by_id(params[:assignee_login])
-    params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
-    @question.assign_to(user, current_user, assign_comment)
+  def group_assign_options
+    @group = Group.find_by_id(params[:group_id])
+    @question = Question.find_by_id(params[:id])  
   end
   
   def assign
@@ -337,31 +335,64 @@ class Expert::QuestionsController < ApplicationController
   
   def reassign
     @question = Question.find_by_id(params[:id])
-    per_page = 10
     @experts = Array.new
-    @question.location_id.present? ? location_experts = User.with_expertise_location(@question.location_id) : location_experts = []
-    @question.county_id.present? ? county_experts = User.with_expertise_county(@question.county_id) : county_experts = []
+    @groups = Array.new
+    
+    if @question.location_id.present? 
+      location_experts = User.with_expertise_location(@question.location_id)
+      location_groups = Group.with_expertise_location(@question.location_id)
+    else
+      location_experts = []
+      location_groups = []
+    end
+      
+    if @question.county_id.present?
+      county_experts = User.with_expertise_county(@question.county_id) 
+      county_groups = Group.with_expertise_county(@question.county_id) 
+    else
+      county_experts = []
+      county_groups = []
+    end
+    
     question_tags = @question.tags.map{|t| "'#{t.name}'"}.join(',')
       
     if question_tags.present?
       if @question.county_id?
         expert_ids = county_experts.map(&:id)
         @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = county_groups.map(&:id)
+        @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end      
     
       if @question.location_id?
         expert_ids = location_experts.map(&:id)
         @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = location_groups.map(&:id)
+        @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end
     
       @experts.concat(User.tagged_with_any(question_tags))
+      @groups.concat(Group.tagged_with_any(question_tags))
     end
     
-    @experts.concat(county_experts) if county_experts.length > 0
-    @experts.concat(location_experts) if location_experts.length > 0
-    @experts.uniq!
+    if county_experts.length > 0
+       @experts.concat(county_experts)
+       @groups.concat(county_groups)
+    end  
+      
+    if location_experts.length > 0
+      @experts.concat(location_experts)  
+      @groups.concat(location_groups)  
+    end
     
-    @expert_results = @experts.paginate({:page => params[:page], :per_page => per_page})
+    @experts.uniq!
+    @groups.uniq!
+    
+    # removing pagination for now, but will keep this code in here if we add it back.
+    @expert_results = @experts.paginate({:page => params[:page], :per_page => 10})
+    @group_results = @groups.paginate({:page => params[:page], :per_page => 3})
   end
   
   def associate_with_group
