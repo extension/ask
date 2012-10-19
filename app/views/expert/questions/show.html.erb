@@ -122,7 +122,7 @@
           <% if @question.assigned_group %>
             <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
           <% else %>
-            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span> <span class="btn removetag">x</span></p>
           <% end %>
         <% end %>
       <% else %>

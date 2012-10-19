@@ -19,6 +19,17 @@ class AjaxController < ApplicationController
     list.unshift(Hash[id: nil, label: search_term, name: search_term])
     render json: list
   end
+  
+  def experts
+    if params[:term]
+      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
+      experts = User.where("first_name like '%#{params[:term]}%' or last_name like '%#{params[:term]}%'").limit(18)
+    else
+      experts = User.order('created_at DESC').limit(12)
+    end
+    list = experts.map {|e| Hash[ id: e.id, label: e.name, name: e.name]}
+    render json: list
+  end
 
   def groups
     if params[:term]

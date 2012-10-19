@@ -42,6 +42,18 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def assign_options
+    @user = User.find_by_id(params[:expert_id])
+    @question = Question.find_by_id(params[:id])
+  end
+  
+  def user_assign_options
+    @question = Question.find_by_id(params[:id])
+    user = User.find_by_id(params[:assignee_login])
+    params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
+    @question.assign_to(user, current_user, assign_comment)
+  end
+  
   def assign
     if !params[:id]
       flash[:failure] = "You must select a question to assign."
@@ -157,8 +169,7 @@ class Expert::QuestionsController < ApplicationController
     @related_question = Question.find_by_id(params[:related_question]) if params[:related_question].present?
   
     @sampletext = params[:sample] if params[:sample]
-    signature_pref = current_user.user_preferences.find_by_name('signature')
-    signature_pref ? @signature = signature_pref.setting : @signature = "-#{current_user.name}"
+    current_user.signature.present? ? @signature = current_user.signature : @signature = "-#{current_user.public_name}"
     
     if request.post?
       answer = params[:current_response]

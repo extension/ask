@@ -166,7 +166,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
-    self.update_attributes(:assignee => user)  
+    self.update_attribute(:assignee, user)  
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
     if public_comment

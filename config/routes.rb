@@ -22,7 +22,9 @@ Aae::Application.routes.draw do
       member do
         post 'assign'
         post 'assign_to_group'
+        get 'assign_options'
         get  'answer'
+        post "user_assign_options"
         post 'answer'
         post 'assign_to_wrangler'
         get  'reject'
@@ -69,7 +71,7 @@ Aae::Application.routes.draw do
     match "settings/tags" => "settings#tags", :via => [:get, :put]
     match "settings/assignment" => "settings#assignment", :via => [:get, :put]
     match "home" => "home#index"
-    match "home/tags/:id" => "home#tags"
+    match "home/tags/:name" => "home#tags", :as => 'home_tags'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
@@ -97,6 +99,7 @@ Aae::Application.routes.draw do
   match "ask" => "groups#ask", :id => "38" #id for QW group
   match "ajax/tags" => "ajax#tags", :via => [:get]
   match "ajax/groups" => "ajax#groups", :via => [:get]
+  match "ajax/experts" => "ajax#experts", :via => [:get]
   match "ajax/counties" => "ajax#counties", :via => [:get]
   match "ajax/show_location" => "ajax#show_location", :via => [:get, :post]
   match "ajax/edit_location" => "ajax#edit_location", :via => [:get, :post]
