@@ -160,6 +160,10 @@ class Question < ActiveRecord::Base
 
     if(self.assignee.present? && (assigned_by != self.assignee))
       is_reassign = true
+      # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here, except
+      # in the case of a question wrangler assignment which is handled by the assign to question wrangler function. the other exception is if the public reopened it, 
+      # so it keeps it's assigned group in this case.
+      self.update_attribute(:assigned_group => nil) if public_reopen == false
       previously_assigned_to = self.assignee
     else
       is_reassign = false
@@ -167,6 +171,7 @@ class Question < ActiveRecord::Base
 
     # update and log
     self.update_attribute(:assignee, user)  
+    
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
     if public_comment
