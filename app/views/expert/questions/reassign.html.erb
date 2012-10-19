@@ -11,7 +11,7 @@
 <% end %>
 <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
 
-<input id="expert_name" placeholder="Search Experts by Name" />
+<input id="expert_name" placeholder="Search for Experts and Groups by Name" />
 
 
 <script class="code" type="text/javascript">
@@ -35,7 +35,7 @@
   <tr id="filter_terms">
     <td>
       <strong>Best Matches</strong>
-      <%= will_paginate @expert_results %>
+
     </td>
   <% filter_terms = [] %>
     <% if @question.county.present? %>
