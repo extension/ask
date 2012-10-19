@@ -171,6 +171,13 @@ body#expert {
   @media screen and (max-width: 979px) {
     #fixed_fixer {height: 0;}
 	}
+	
+	@media screen and (min-width: 979px) {
+	  .modal {width:880px; margin: -300px 0 0 -440px;}
+	  .modal-body {max-height:500px;}
+	  
+	}
+	
 	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:2em;}
 	background:#504848;
 	padding-bottom:5em;
