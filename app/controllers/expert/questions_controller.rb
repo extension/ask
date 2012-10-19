@@ -19,8 +19,7 @@ class Expert::QuestionsController < ApplicationController
     end
     @question_responses = @question.responses
     @last_question_response = @question.last_response
-    @fake_related = Question.find(:all, :limit => 3, :offset => rand(Question.count))
-
+    
     ga_tracking = []
     
     if @question.tags.length > 0

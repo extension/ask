@@ -101,7 +101,25 @@ class Question < ActiveRecord::Base
   def response_list
     self.responses.map(&:body).join(' ')
   end
-
+  
+  # return a list of similar articles using sunspot
+  def similar_questions(count = 4)
+    search_results = self.more_like_this do
+      with(:spam, false)
+      without(:status_state, Question::STATUS_REJECTED)
+      paginate(:page => 1, :per_page => count)
+      adjust_solr_params do |params|
+        params[:fl] = 'id,score'
+      end
+    end
+    return_results = {}
+    search_results.each_hit_with_result do |hit,event|
+      return_results[event] = hit.score
+    end
+    return_results
+  end
+  
+  
   def auto_assign_by_preference
     if existing_question = Question.find(:first, :conditions => ["id != #{self.id} and body = ? and submitter_email = '#{self.submitter_email}'", self.body])
       reject_msg = "This question was a duplicate of incoming question ##{existing_sq.id}"

@@ -141,7 +141,8 @@
   
   <aside class="nobg">
     <h4>Related Questions</h4>
-    <% @fake_related.each do |question| %>
+
+    <% @question.similar_questions.each do |question,score| %>
       <%= link_to expert_question_path(question.id) do %>
         <% if question.title.present? %>
           <p><%= format_text_for_display(question.title) -%></p>
@@ -150,7 +151,6 @@
         <% end %>
       <%- end -%>
     <% end %>
-    <h4 class="subtle">TODO: Replace with actual related questions. This is just a placeholder.</h4>
   </aside>
   
 </div>
