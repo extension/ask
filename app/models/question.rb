@@ -163,7 +163,7 @@ class Question < ActiveRecord::Base
       # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here, except
       # in the case of a question wrangler assignment which is handled by the assign to question wrangler function. the other exception is if the public reopened it, 
       # so it keeps it's assigned group in this case.
-      self.update_attribute(:assigned_group => nil) if public_reopen == false
+      self.update_attribute(:assigned_group, nil) if public_reopen == false
       previously_assigned_to = self.assignee
     else
       is_reassign = false
