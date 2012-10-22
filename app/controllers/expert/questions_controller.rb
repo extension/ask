@@ -56,14 +56,14 @@ class Expert::QuestionsController < ApplicationController
   def make_private
     @question = Question.find_by_id(params[:id])
     @question.is_private = true
-    @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+    @question.is_private_reason = Question::PRIVACY_REASON_EXPERT
     @question.save
   end
   
   def make_public
     @question = Question.find_by_id(params[:id])
     @question.is_private = false
-    @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+    @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
     @question.save
   end
   
