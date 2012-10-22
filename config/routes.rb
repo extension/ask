@@ -27,6 +27,8 @@ Aae::Application.routes.draw do
         post "user_assign_options"
         post 'answer'
         post 'assign_to_wrangler'
+        post 'make_private'
+        post 'make_public'
         get  'reject'
         post 'reject'
         post 'report_spam'

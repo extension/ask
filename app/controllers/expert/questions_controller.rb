@@ -53,6 +53,20 @@ class Expert::QuestionsController < ApplicationController
     @question.assign_to(user, current_user, assign_comment)
   end
   
+  def make_private
+    @question = Question.find_by_id(params[:id])
+    @question.is_private = true
+    @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+    @question.save
+  end
+  
+  def make_public
+    @question = Question.find_by_id(params[:id])
+    @question.is_private = false
+    @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+    @question.save
+  end
+  
   def assign
     if !params[:id]
       flash[:failure] = "You must select a question to assign."
