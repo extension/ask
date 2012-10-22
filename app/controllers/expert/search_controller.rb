@@ -33,8 +33,7 @@ class Expert::SearchController < ApplicationController
               end
               with :is_blocked, false
               with :retired, false
-              without(:darmok_id, nil)
-              without(:darmok_id, 0)
+              with :kind, 'User'
               paginate :page => 1, :per_page => 10
             end
     @experts = experts.results
@@ -45,21 +44,6 @@ class Expert::SearchController < ApplicationController
              end
     @groups = groups.results
     render :action => 'index'
-  end
-  
-  def by_name  
-    experts = User.search do
-      fulltext(params[:expert_search]) do
-        fields(:name, :login, :email)
-      end
-      with :retired, false
-      with :is_blocked, false
-      without(:darmok_id, nil)
-      without(:darmok_id, 0)
-    end
-    
-    @experts = experts.results
-    @question = Question.find_by_id(params[:question_id])
   end
   
   def questions
@@ -95,8 +79,7 @@ class Expert::SearchController < ApplicationController
     experts = User.search do
               with :is_blocked, false
               with :retired, false
-              without(:darmok_id, nil)
-              without(:darmok_id, 0)
+              with :kind, 'User'
               fulltext(params[:q]) do
                 fields(:name)
               end

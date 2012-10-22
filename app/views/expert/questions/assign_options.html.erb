@@ -9,7 +9,7 @@
 
 <h2><%= link_expert_user_avatar(@user) %></h2>
 
-<%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_login => @user.login)) do %>
+<%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_id => @user.id)) do %>
 <p>Send a comment</p>
 <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
 <p>

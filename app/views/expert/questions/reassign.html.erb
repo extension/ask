@@ -7,7 +7,7 @@
 <h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
 
 <% if @question.assignee != current_user %>
-  <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_login => current_user.login), :method => :post, :class => "btn-primary btn" %></p>
+  <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
 <% end %>
 <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
 
@@ -20,7 +20,12 @@
       source: "/ajax/experts",
 			minLength: 2,
 			select: function(e, ui) {
-			  window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
+			  if(ui.item.class_type == "User") {
+			    window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
+			  }
+			  else if (ui.item.class_type == "Group") {
+		        window.location = '<%= group_assign_options_expert_question_url(:id => @question.id) %>?group_id=' + ui.item.id
+		      }
 			}
 		}).keypress(function(e) {
       if (e.keyCode === 13) {

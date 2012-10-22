@@ -22,12 +22,17 @@ class AjaxController < ApplicationController
   
   def experts
     if params[:term]
-      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
-      experts = User.where("first_name like '%#{params[:term]}%' or last_name like '%#{params[:term]}%'").limit(18)
+      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign      
+      groups = Group.patternsearch(params[:term]).limit(9)
+      experts = User.exid_holder.active.not_retired.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
     else
-      experts = User.order('created_at DESC').limit(12)
+      groups = Group.order('created_at DESC').limit(6)
+      experts = User.exid_holder.active.not_retired.not_blocked.order('created_at DESC').limit(6)
     end
-    list = experts.map {|e| Hash[ id: e.id, label: e.name, name: e.name]}
+    
+    combined_array = groups + experts
+    
+    list = combined_array.map {|e| Hash[ id: e.id, label: e.name, name: e.name, class_type: e.class.name]}
     render json: list
   end
 

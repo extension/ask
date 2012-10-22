@@ -65,13 +65,13 @@ class Expert::QuestionsController < ApplicationController
       return redirect_to expert_home_url
     end
     
-    if !params[:assignee_login]
+    if !params[:assignee_id]
       flash[:failure] = "You must select a user or group to reassign."
       redirect_to expert_question_url(@question)
       return
     end
       
-    user = User.where(:login => params[:assignee_login]).first
+    user = User.find_by_id(params[:assignee_id])
       
     if !user || user.retired?
       !user ? err_msg = "User does not exist." : err_msg = "User is retired from the system"

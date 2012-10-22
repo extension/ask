@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
     text :tag_fulltext
     boolean :retired
     boolean :is_blocked
-    integer :darmok_id 
+    string :kind
   end
   
   
@@ -48,9 +48,38 @@ class User < ActiveRecord::Base
   scope :question_wranglers, conditions: { is_question_wrangler: true }
   scope :active, conditions: { away: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
+  scope :exid_holder, conditions: { kind: 'User' }
+  scope :not_retired, conditions: { retired: false }
+  scope :not_blocked, conditions: { is_blocked: false }
   
   scope :tagged_with_any, lambda { |tag_list| 
         {:select => "users.*, COUNT(users.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "users.id", :order => "tag_count DESC"}
+  }
+  
+  
+  scope :patternsearch, lambda {|searchterm|
+    # remove any leading * to avoid borking mysql
+    # remove any '\' characters because it's WAAAAY too close to the return key
+    # strip '+' characters because it's causing a repitition search error
+    # strip parens '()' to keep it from messing up mysql query
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
+    
+    if sanitizedsearchterm == ''
+      return []
+    end
+    
+    # in the format wordone wordtwo?
+    words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
+    if(words.length > 1)
+      findvalues = { 
+       :firstword => words[0],
+       :secondword => words[1]
+      }
+      conditions = ["((first_name rlike :firstword AND last_name rlike :secondword) OR (first_name rlike :secondword AND last_name rlike :firstword))",findvalues]
+    else
+      conditions = ["(first_name rlike ? OR last_name rlike ?)", sanitizedsearchterm, sanitizedsearchterm]
+    end
+    {:conditions => conditions}
   }
   
   
@@ -95,7 +124,7 @@ class User < ActiveRecord::Base
   end
   
   def has_exid?
-    return self.darmok_id.present?
+    return self.kind == 'User'
   end
   
   def retired?

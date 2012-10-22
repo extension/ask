@@ -37,6 +37,18 @@ class Group < ActiveRecord::Base
   scope :tagged_with_any, lambda { |tag_list| 
         {:select => "groups.*, COUNT(groups.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "groups.id", :order => "tag_count DESC"}
   }
+  scope :patternsearch, lambda {|searchterm|
+    # remove any leading * to avoid borking mysql
+    # remove any '\' characters because it's WAAAAY too close to the return key
+    # strip '+' characters because it's causing a repitition search error
+    # strip parens '()' to keep it from messing up mysql query
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
+    if sanitizedsearchterm == ''
+      return []
+    end
+    conditions = ["(name rlike ?)", sanitizedsearchterm]
+    {:conditions => conditions}
+  }
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   

@@ -158,12 +158,13 @@ class Question < ActiveRecord::Base
     # assigned to whomever the question was last assigned to.
     return true if self.assignee && user.id == assignee.id && public_reopen == false
 
+    # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here, except
+    # in the case of a question wrangler assignment which is handled by the assign to question wrangler function. the other exception is if the public reopened it, 
+    # so it keeps it's assigned group in this case. if it's not reassignment and an auto-assignment, we keep the group designation.
+    self.update_attribute(:assigned_group, nil) unless public_reopen == true || (assigned_by == User.system_user)
+    
     if(self.assignee.present? && (assigned_by != self.assignee))
       is_reassign = true
-      # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here, except
-      # in the case of a question wrangler assignment which is handled by the assign to question wrangler function. the other exception is if the public reopened it, 
-      # so it keeps it's assigned group in this case.
-      self.update_attribute(:assigned_group, nil) if public_reopen == false
       previously_assigned_to = self.assignee
     else
       is_reassign = false
@@ -193,8 +194,9 @@ class Question < ActiveRecord::Base
   def assign_to_group(group, assigned_by, comment, public_reopen = false, public_comment = nil)
     raise ArgumentError unless group and group.instance_of?(Group)  
 
-    # don't bother doing anything if this is an assignment to the group already assigned 
-    return true if self.assigned_group && (group.id == self.assigned_group.id)
+    # don't bother doing anything if this is an assignment to the group already assigned. 
+    # if it has an assignee, we need to take the assignee off and log this change.
+    return true if self.assigned_group && (group.id == self.assigned_group.id) && self.assignee.nil?
 
     # update and log
     self.update_attributes(:assigned_group => group, :assignee => nil)  
