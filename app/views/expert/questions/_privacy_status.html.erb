@@ -3,7 +3,7 @@
   <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
     <h4 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h4>
     <div id="privacy_edit">
-      <p><small>The submitter choose to make this question private. It can't be made public.</small></p>
+      <p><small>It was marked private by the submitter. It can't be made public.</small></p>
     </div>
   <% end %>
   

@@ -19,6 +19,10 @@
           <p><%= question.body -%></p>
         <%- end -%>
         <p>
+          <% if !question.is_private %>
+            <span class="label label-warning"><%= link_to "Public", question_path(question.id) %></span>
+          <% end %>
+          
           <% if question.location.present? %>
             <% if question.county.present? %>
               <span class="tag tag-geography"><%= link_to "#{question.county.name}", expert_view_county_path(question.county.id) %></span>
