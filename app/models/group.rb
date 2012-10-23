@@ -69,7 +69,7 @@ class Group < ActiveRecord::Base
     'invited' => 'Group Invitation'}
     
   QUESTION_WRANGLER_GROUP_ID = 38
-  ORPHAN_GROUP_ID = 99999
+  ORPHAN_GROUP_ID = 0
   ORPHAN_GROUP_NAME = 'Orphan Group'
     
   # hardcoded for widget layout difference
