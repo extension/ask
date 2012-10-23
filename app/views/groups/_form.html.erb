@@ -19,7 +19,6 @@
     </p>
   </fieldset>
   
-  
   <% if @group.widget_public_option %>
     <fieldset>
       <p>
@@ -31,18 +30,20 @@
     </fieldset>
   <% end %>
 
-
   <% if @group.widget_show_location %>
+  
+  <% # @personal[:location] = Location.find_by_id(37) # for local testing %>
+  <% # @personal[:county] = County.find_by_id(1980) # for local testing  %>
     <fieldset>
       <p>
         <%= f.label :location_id, 'Location and County (optional)' %> 
-        <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
+        <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@personal[:location]))) %>
       </p>
     
       <p id="county_list">
-        <% if (@personal[:location] && @personal[:location].counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
+        <% if !@personal[:county].blank? and !@personal[:location].blank? %>
           <%= f.label :county_id %>
-          <%= f.select(:county_id, options_for_select(get_county_options(@personal[:location] || @group.widget_location), default_county_id(@group.widget_county_id))) %>
+          <%= f.select(:county_id, options_for_select(get_county_options(@personal[:location]), default_county_id(@personal[:county]))) %>
         <% end %>
       </p>
     </fieldset>
