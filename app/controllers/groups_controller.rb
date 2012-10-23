@@ -16,11 +16,6 @@ class GroupsController < ApplicationController
   def ask
     @group = Group.find(params[:id])
     params[:fingerprint] = @group.widget_fingerprint
-    
-    @personal = {}
-    @personal[:location] = nil
-    @personal[:county] = nil
-      
     @question = Question.new
     
     # display three image fields for question submitter
