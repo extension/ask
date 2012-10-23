@@ -69,7 +69,7 @@ class Group < ActiveRecord::Base
     'invited' => 'Group Invitation'}
     
   QUESTION_WRANGLER_GROUP_ID = 38
-  ORPHAN_GROUP_ID = 0
+  ORPHAN_GROUP_ID = 1
   ORPHAN_GROUP_NAME = 'Orphan Group'
     
   # hardcoded for widget layout difference
@@ -92,6 +92,10 @@ class Group < ActiveRecord::Base
       group_members = group_members.unshift(current_user)
     end
     return group_members
+  end
+  
+  def self.orphan_group
+    self.find_by_id(ORPHAN_GROUP_ID)
   end
   
   def self.question_wrangler_group

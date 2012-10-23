@@ -144,7 +144,7 @@ def transfer_widget_communities_to_groups
   ## While we're inserting groups here, let's add a generic group that will be assigned questions with unaffiliated groups
   orphan_group_insert_query = <<-END_SQL.gsub(/\s+/, " ").strip
   INSERT INTO #{@aae_database}.groups (id, name, description, active, created_by, widget_fingerprint, widget_upload_capable, widget_show_location, widget_enable_tags, widget_location_id, widget_county_id, old_widget_url, group_notify, created_at, updated_at)
-    VALUES (0, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
+    VALUES (1, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
   END_SQL
 
   benchmark = Benchmark.measure do

@@ -176,10 +176,12 @@ class Question < ActiveRecord::Base
     # assigned to whomever the question was last assigned to.
     return true if self.assignee && user.id == assignee.id && public_reopen == false
 
-    # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here, except
+    # when reassigned to another expert, we do not really know which (if any) group is involved here, so we clear out the group designation here (assign it to the orphan group), except
     # in the case of a question wrangler assignment which is handled by the assign to question wrangler function. the other exception is if the public reopened it, 
     # so it keeps it's assigned group in this case. if it's not reassignment and an auto-assignment, we keep the group designation.
-    self.update_attribute(:assigned_group, nil) unless public_reopen == true || (assigned_by == User.system_user)
+    if public_reopen != true && (assigned_by != User.system_user)  
+      self.update_attribute(:assigned_group, Group.orphan_group) 
+    end
     
     if(self.assignee.present? && (assigned_by != self.assignee))
       is_reassign = true
