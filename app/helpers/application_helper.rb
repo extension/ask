@@ -42,7 +42,7 @@ module ApplicationHelper
   end
   
   def link_expert_user_avatar(user, image_size = :medium)
-    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "avatar_with_badge"}).html_safe
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name}).html_safe
   end
 
   def link_public_group_avatar(group, image_size = :medium)
@@ -80,7 +80,7 @@ module ApplicationHelper
       return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
     else      
       # if no avatar, assign a random image
-      return_string = image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px) + (user.open_questions.length > 0 ? raw("<span class=\"badge\">#{user.open_questions.length}</span>") : "")
+      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px) + (user.open_questions.length > 0 ? raw("<span class=\"badge\">#{user.open_questions.length}</span>") : "") + raw("</span>")
     end
     
     return return_string

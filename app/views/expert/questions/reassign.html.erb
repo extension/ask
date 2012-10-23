@@ -76,20 +76,17 @@
       <% group_tags = group.tags %>
       <tr>
       <td>
-          <%= link_to "Select", group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id),  :class => "btn btn-primary" %>
-          <%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %>
+          <%= link_to get_avatar_for_group(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
         <% filter_terms.each do |term| %>
-          <td>
 	          <% if @question.county.present? && term == @question.county.name && group_expertise_counties.include?(@question.county) %>
-	            <i class="icon-ok"></i>
+	            <td class="match"><i>yes</i></td>
 	          <% elsif @question.location.present? && term == @question.location.name && group_expertise_locations.include?(@question.location) %>
-	            <i class="icon-ok"></i>
+	            <td class="match"><i>yes</i></td>
+	          <% elsif group_tags.map(&:name).include?(term) %>
+	              <td class="match"><i>yes</i></td>
 	          <% else %>
-	            <% if group_tags.map(&:name).include?(term) %>
-	              <i class="icon-ok"></i>
-	            <% end %>
+	            <td class="nomatch"><i>no</i></td>
 	          <% end %>
-	        </td>
         <% end %>
       </td>
       </tr>
@@ -103,24 +100,24 @@
         <% expert_expertise_locations = expert.expertise_locations %>
         <% expert_tags = expert.tags %>
         <tr>
-        <td>
-            <%= link_to "Select", assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id),  :class => "btn btn-primary" %>
-            <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %>
+          <td>
+            <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to expert.name, assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
             <br>
             <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
             <span class="downplay">last active: <%= time_ago_in_words(expert.last_sign_in_at) %> ago</span>
+          </td>
+        
+        
           <% filter_terms.each do |term| %>
-            <td>
 	          <% if @question.county.present? && term == @question.county.name && expert_expertise_counties.include?(@question.county) %>
-	            <i class="icon-ok"></i>
+	            <td class="match"><i>yes</i></td>
 	          <% elsif @question.location.present? && term == @question.location.name && expert_expertise_locations.include?(@question.location) %>
-	            <i class="icon-ok"></i>
+	            <td class="match"><i>yes</i></td>
+	          <% elsif expert_tags.map(&:name).include?(term) %>
+	            <td><i class="icon-ok"></i></td>
 	          <% else %>
-	            <% if expert_tags.map(&:name).include?(term) %>
-	              <i class="icon-ok"></i>
-	            <% end %>
+	            <td class="nomatch"><i>no</i></td>
 	          <% end %>
-	        </td>
           <% end %>
         </td>
         </tr>

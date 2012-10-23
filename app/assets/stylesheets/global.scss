@@ -362,6 +362,8 @@ body#expert {
 	#privacy_status a {color:#999;}
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 	.public {background: transparent url(/assets/icon_checkmark_32.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
+	.match {background: #F5FDE3 url(/assets/icon_checkmark_32.png) 50% 50% no-repeat;}
+	.match i, .nomatch i {display:none;}
 /*	.testh1 {outline:1px solid red; margin:1em 1em 3em;}*/
 	.testh1 {}
   #public_question {background:#CCECA0 !important; color:green;}
