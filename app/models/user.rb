@@ -37,6 +37,8 @@ class User < ActiveRecord::Base
   
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
+    
+  before_update :update_vacated_aae
   
   DEFAULT_NAME = 'Anonymous'
   scope :tagged_with, lambda {|tag_id| 
@@ -138,6 +140,16 @@ class User < ActiveRecord::Base
       if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
         self.tags << tag
         return tag
+      end
+    end
+  end
+  
+  def update_vacated_aae
+    if self.away_changed? 
+      if self.away == true
+        self.vacated_aae_at = Time.now
+      else
+        self.vacated_aae_at = nil
       end
     end
   end
