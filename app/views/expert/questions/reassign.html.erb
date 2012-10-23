@@ -107,7 +107,7 @@
             <%= link_to "Select", assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id),  :class => "btn btn-primary" %>
             <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert.id) %>
             <br>
-            <span class="handling_rate"><%= number_to_percentage(expert.aae_handling_event_count[:ratio]*100, :precision => 0) %></span>
+            <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
             <span class="downplay">last active: <%= time_ago_in_words(expert.last_sign_in_at) %> ago</span>
           <% filter_terms.each do |term| %>
             <td>
