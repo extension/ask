@@ -35,6 +35,14 @@
 
 </script>
 
+
+
+<% if (!@question.location.present?) && (@question.tags.length == 0) %>
+  <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. Please add some tags to generate some matches.</h3>
+
+<% else %>
+
+
 <table class="table table-bordered">
 
   <tr id="filter_terms">
@@ -119,6 +127,9 @@
   <p>No County and Tag Matches</p>
 <% end %>
 </table>
+
+
+<% end %>
 
 <script class="code" type="text/javascript">
 /* Append the function to the "document ready" chain */

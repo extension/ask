@@ -1,0 +1,68 @@
+
+
+<% if @question.is_private %>
+  <aside>
+  
+  <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+    <h4 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h4>
+    <div id="privacy_edit">
+      <p><small>It was marked private by the submitter. It can't be made public.</small></p>
+    </div>
+  <% end %>
+  
+  <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+    <h4 class="lock"><%= link_to "This question is private", question_path(@question.id) %> <span class="btn make_public_link">edit</span></h4>
+    <div id="make_public_edit" style="display:none;">
+      <p>The submitter choose to make this question public, but an expert switched it to a private.</p>
+      <p class="btn btn-primary make_public">Make this question public again</p>
+    </div>
+  <% end %>
+  </aside>
+  
+<% else %>
+
+  <aside id="public_question">
+  
+    <h3 class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="btn make_private_link">edit</span></h3>
+  
+    <div id="make_private_edit" style="display:none;">
+      <p>The submitter choose to make this question public, but it can be converted to a private question.</p>
+      <p class="btn btn-primary make_private">Make this question private</p>
+    </div>
+  </aside>
+  
+<% end %>
+
+
+<script class="code" type="text/javascript">
+  
+  $(".make_private_link").click(function () {
+    $("#make_private_edit").toggle();
+  });
+  $(".make_public_link").click(function () {
+    $("#make_public_edit").toggle();
+  });
+
+     $("#make_public_edit").on("click", ".make_public", function(){
+       $.ajax({
+         type: "POST",
+           url: "<%= make_public_expert_question_path(:id => @question.id) %>",
+           cache: false
+       })
+       .done(function() {
+         $("#make_public_edit").hide();
+       })
+     });
+     
+     $("#make_private_edit").on("click", ".make_private", function(){
+        $.ajax({
+          type: "POST",
+            url: "<%= make_private_expert_question_path(:id => @question.id) %>",
+            cache: false
+        })
+        .done(function() {
+          $("#make_private_edit").hide();
+        })
+      });
+
+</script>
