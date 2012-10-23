@@ -1,0 +1,15 @@
+<% @page_title = "Session Information" %>
+
+<%- if !session -%>
+  <h2>No session data</h2>
+<%- else -%>
+  <h2>Your Session Information</h2>
+  <table class='table'>
+    <%- session.each do |key,value|%>
+      <tr>
+        <td scope="row" class="label"><%= key %></td>   
+        <td><%= value %></td>         
+      </tr>
+     <%- end -%>
+  </table>
+<%- end -%>

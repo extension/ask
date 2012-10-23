@@ -1,10 +1,10 @@
 module ApplicationHelper
   # TODO: Need to fix this
   def format_text_for_display(content)
-    #return word_wrap(simple_format(auto_link(content, :all, :target => "_blank"))) 
+    #return word_wrap(simple_format(auto_link(content, :all, :target => "_blank")))
     return content
   end
-  
+
   def humane_date(time)
      if(time.blank?)
        ''
@@ -12,7 +12,7 @@ module ApplicationHelper
        time.strftime("%B %e, %Y, %l:%M %p %Z")
      end
   end
-  
+
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning]
     return_string = ''
@@ -22,29 +22,29 @@ module ApplicationHelper
       return return_string.html_safe
     end
   end
-  
+
   # http://blog.macromates.com/2006/wrapping-text-with-regular-expressions/
   def wrap_text(txt, col=120)
     txt.gsub(/(.{1,#{col}})( +|$\n?)|(.{1,#{col}})/,
-      "\\1\\3\n") 
+      "\\1\\3\n")
   end
-  
+
   def link_public_user(user)
     return link_to(user.name, user_path(user.id), {:title => user.name}).html_safe
   end
-  
+
   def expert_user(user)
     return user.name + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
-  
+
   def link_expert_user(user)
     return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
-  
+
   def link_public_user_avatar(user, image_size = :medium)
     return link_to(get_avatar_for_user(user, image_size), user_path(user.id), {:title => user.name}).html_safe
   end
-  
+
   def link_expert_user_avatar(user, image_size = :medium)
     return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name}).html_safe
   end
@@ -52,75 +52,67 @@ module ApplicationHelper
   def link_public_group_avatar(group, image_size = :medium)
     return link_to(get_avatar_for_group(group, image_size), group_path(group.id), {:title => group.name}).html_safe
   end
-  
+
   def link_expert_group_avatar(group, image_size = :medium)
     return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name}).html_safe
   end
-  
+
   def get_avatar_for_group(group, image_size = :medium)
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
         when :mini     then image_size_in_px = "20x20"
     end
-    
-    if group.avatar.present? 
+
+    if group.avatar.present?
       return_string = image_tag(group.avatar.url(image_size))
     else
       # if no avatar, assign a random image
-      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)      
+      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)
     end
     return return_string
-  end  
-  
+  end
+
   def get_avatar_for_user(user, image_size = :medium)
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
         when :mini      then image_size_in_px = "20x20"
     end
-    
-    if user.avatar.present? 
+
+    if user.avatar.present?
       return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
-    else      
+    else
       # if no avatar, assign a random image
       return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px) + (user.open_questions.length > 0 ? raw("<span class=\"badge\">#{user.open_questions.length}</span>") : "") + raw("</span>")
     end
-    
+
     return return_string
   end
 
-  
+
   def default_location_id(fallback_location_id = nil)
-    if(@personal[:location].blank?)
-      if(fallback_location_id.blank?)
-        return ''
-      else
-        return fallback_location_id
-      end
-    else
-      return @personal[:location].id
+    if(current_location.present?)
+      current_location.id
+    elsif(fallback_location_id.present?)
+      fallback_location_id
     end
   end
-  
-  
+
+
   def default_county_id(fallback_county_id = nil)
-    if(@personal[:county].blank?)
-      if(fallback_county_id.blank?)
-        return ''
-      else
-        return fallback_county_id
-      end
-    else
-      return @personal[:county].id
+    if(current_county.present?)
+      current_county.id
+    elsif(fallback_county_id.present?)
+      fallback_county_id
     end
   end
-  
+
   def get_location_options
     locations = Location.find(:all, :order => 'entrytype, name')
     return [['', '']].concat(locations.map{|l| [l.name, l.id]})
   end
-  
+
   def get_county_options(provided_location = nil)
     if params[:location_id] and params[:location_id].strip != '' and location = Location.find(params[:location_id])
       counties = location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
@@ -130,5 +122,11 @@ module ApplicationHelper
       return ([['All counties', 'All counties']].concat(counties.map{|c| [c.name, c.id]}))
     end
   end
-  
+
+  def display_location_and_county
+    locations = []
+    locations  << current_county.name if current_county
+    locations  << (current_location.nil? ? 'Unknown' : current_location.name)
+    locations.join(', ').html_safe
+  end
 end

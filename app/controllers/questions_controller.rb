@@ -1,18 +1,15 @@
 class QuestionsController < ApplicationController
   layout 'public'
-  
+
   def show
     @question = Question.find_by_id(params[:id])
-    
+
     @question_responses = @question.responses
     @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.public_visible.count))
   end
-  
+
   # TODO: incorporate title into this.
   def create
-    @personal = {}
-    @personal[:location] = nil
-    @personal[:county] = nil
     if request.post?
       @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
@@ -23,10 +20,10 @@ class QuestionsController < ApplicationController
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
         @question = Question.new(params[:question])
-        
+
         # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
         @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : @question.submitter_email
-        
+
         # make sure email and confirmation email match up
         if @question.submitter_email != @email_confirmation
           @argument_errors = "Email address does not match the confirmation email address."
@@ -40,7 +37,7 @@ class QuestionsController < ApplicationController
             raise ArgumentError
           end
         end
-        
+
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.group_name = @group.name
@@ -49,22 +46,24 @@ class QuestionsController < ApplicationController
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
-        
+
         if !@group.widget_public_option
           @question.is_private = true
           # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
-          # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what 
+          # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what
           # the submitter wanted, we default to the safest thing, privacy by the submitter.
           @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
         elsif params[:is_public].present? && params[:is_public] == '1'
-          # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public 
+          # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public
           @question.is_private = false
           @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
         else
           @question.is_private = true
           @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
         end
-        
+
+        # if the person overrode location/county - set those session values
+
         # TODO: Need to update this
         # # location and county - separate from params[:submitted_question], but probably shouldn't be
         #         if(params[:location_id] and location = Location.find_by_id(params[:location_id].strip.to_i))
@@ -93,13 +92,13 @@ class QuestionsController < ApplicationController
         #             @question.county_id = @group.county_id
         #           end
         #         end
-        
+
         # validate question
         if !@question.valid?
           @argument_errors = ("Errors occured when saving:<br />" + @question.errors.full_messages.join('<br />'))
           raise ArgumentError
         end
-        
+
         if @question.save
           #session[:account_id] = @submitter.id
           #TODO: keep???
@@ -114,7 +113,7 @@ class QuestionsController < ApplicationController
         else
           raise InternalError
         end
-      
+
       rescue ArgumentError => ae
         flash[:warning] = @argument_errors
         @host_name = request.host_with_port
