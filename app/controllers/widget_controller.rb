@@ -4,7 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class WidgetController < ApplicationController  
+class WidgetController < ApplicationController
   #layout 'widgets'
   #has_rakismet :only => [:create_from_widget]
   #ssl_allowed :index, :create_from_widget
@@ -12,13 +12,8 @@ class WidgetController < ApplicationController
 
   # ask widget pulled from remote iframe
   def index
-    #TODO: Need to change this, including this for the time being.
-    @personal = {}
-    @personal[:location] = nil
-    @personal[:county] = nil
-    
     @group = Group.find_by_widget_fingerprint(params[:fingerprint])
-    
+
     if !@group.blank?
       if !@group.active?
         @status_message = "This widget has been disabled."
@@ -28,11 +23,11 @@ class WidgetController < ApplicationController
       @status_message = "Unknown widget specified."
       return render(:template => '/widget/status', :layout => false)
     end
-      
+
     @question = Question.new
     @question.images.build
-    
-    if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))      
+
+    if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))
       @email = @submitter.email
       @email_confirmation = @email
     end
@@ -44,13 +39,13 @@ class WidgetController < ApplicationController
       return render :layout => false
     end
   end
-    
+
   def create_from_widget
-    
+
   end
-  
+
   def get_counties
     render :partial => "counties"
   end
-  
+
 end

@@ -1,9 +1,9 @@
 Aae::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
-  
+
   devise_for :users, :path => '/', :controllers => { :sessions => "users/sessions", :registrations => "users/registrations" }
-  devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do 
+  devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
@@ -16,7 +16,7 @@ Aae::Application.routes.draw do
       post 'ask'
     end
   end
-    
+
   namespace :expert do
     resources :questions, :only => [:show] do
       member do
@@ -40,20 +40,20 @@ Aae::Application.routes.draw do
         post 'close_out'
       end
     end
-    
+
     resources :users, :except => [:destroy] do
       collection do
         get 'tags'
       end
     end
-    
+
     resources :groups, :except => [:create, :destroy] do
       collection do
         get 'questions_by_tag'
         post 'new'
       end
     end
-    
+
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
@@ -93,7 +93,7 @@ Aae::Application.routes.draw do
     match "search/questions" => "search#questions", :via => [:get]
     match "home/search" => "home#search", :via => [:get]
   end
-  
+
   match "home/about" => "home#about", :via => :get
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
@@ -109,7 +109,7 @@ Aae::Application.routes.draw do
   match "ajax/add_location" => "ajax#add_location", :via => [:post]
   match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
   match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
-  
+
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
@@ -128,8 +128,8 @@ Aae::Application.routes.draw do
   match 'widget/create_from_widget' => 'widget#create_from_widget', :via => :post
   # get counties for widget
   match 'widget/get_counties/:location_id' => 'widget#get_counties', :via => :get
-  
-  # webmail routes 
+
+  # webmail routes
   scope "webmail" do
     match "/:mailer_cache_id/logo" => "webmail#logo", :as => 'webmail_logo'
     match "/view/:hashvalue" => "webmail#view", :as => 'webmail_view'
@@ -141,7 +141,9 @@ Aae::Application.routes.draw do
       match "/:action"
     end
   end
-    
+
+  #debug items
+  match "debug/session_information", to: "debug#session_information"
   root :to => 'home#index'
-  
+
 end
