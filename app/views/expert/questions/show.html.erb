@@ -99,12 +99,13 @@
       <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %> 
     </aside>
     
-    <aside class="">
-      <div id="associated_group">
-        <%= render :partial => 'associated_group' %>
-      </div>      
-    </aside>
-    
+    <% if !@question.assignee.blank? %>
+      <aside class="">
+        <div id="associated_group">
+          <%= render :partial => 'associated_group' %>
+        </div>      
+      </aside>
+    <% end %>
     
     <aside>
       <div id="tag_picker_wrapper">
