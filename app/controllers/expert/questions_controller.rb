@@ -352,7 +352,7 @@ class Expert::QuestionsController < ApplicationController
     @groups = Array.new
     
     if @question.location_id.present? 
-      location_experts = User.with_expertise_location(@question.location_id)
+      location_experts = User.active.with_expertise_location(@question.location_id)
       location_groups = Group.with_expertise_location(@question.location_id)
     else
       location_experts = []
@@ -360,7 +360,7 @@ class Expert::QuestionsController < ApplicationController
     end
       
     if @question.county_id.present?
-      county_experts = User.with_expertise_county(@question.county_id) 
+      county_experts = User.active.with_expertise_county(@question.county_id) 
       county_groups = Group.with_expertise_county(@question.county_id) 
     else
       county_experts = []
@@ -372,7 +372,7 @@ class Expert::QuestionsController < ApplicationController
     if question_tags.present?
       if @question.county_id?
         expert_ids = county_experts.map(&:id)
-        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
         
         group_ids = county_groups.map(&:id)
         @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
@@ -380,13 +380,13 @@ class Expert::QuestionsController < ApplicationController
     
       if @question.location_id?
         expert_ids = location_experts.map(&:id)
-        @experts.concat(User.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
         
         group_ids = location_groups.map(&:id)
         @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end
     
-      @experts.concat(User.tagged_with_any(question_tags))
+      @experts.concat(User.active.tagged_with_any(question_tags))
       @groups.concat(Group.tagged_with_any(question_tags))
     end
     
