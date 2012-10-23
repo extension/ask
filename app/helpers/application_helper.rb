@@ -33,6 +33,10 @@ module ApplicationHelper
     return link_to(user.name, user_path(user.id), {:title => user.name}).html_safe
   end
   
+  def expert_user(user)
+    return user.name + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
+  end
+  
   def link_expert_user(user)
     return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end

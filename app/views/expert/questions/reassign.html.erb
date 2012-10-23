@@ -101,7 +101,7 @@
         <% expert_tags = expert.tags %>
         <tr>
           <td>
-            <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to expert.name, assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
+            <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to raw(expert_user(expert)), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
             <br>
             <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
             <span class="downplay">last active: <%= time_ago_in_words(expert.last_sign_in_at) %> ago</span>
