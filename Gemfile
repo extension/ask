@@ -110,6 +110,7 @@ group :development do
   gem "rails3-generators"
   gem 'capistrano'
   gem 'capatross'
+  gem 'quiet_assets'
 end
  
 group :test do
