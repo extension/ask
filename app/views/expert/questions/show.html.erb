@@ -14,13 +14,10 @@
 <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p>
   
   
+  <div id="privacy_status">
+    <%= render :partial => 'privacy_status' %>
+  </div>
   
-  
-  <aside>
-    <div id="privacy_status">
-      <%= render :partial => 'privacy_status' %>
-    </div>
-  </aside>
 
   <aside>
     <% if @question.status_state == Question::STATUS_REJECTED %>

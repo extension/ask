@@ -1,4 +1,7 @@
+
+
 <% if @question.is_private %>
+  <aside>
   
   <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
     <h4 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h4>
@@ -14,16 +17,19 @@
       <p class="btn btn-primary make_public">Make this question public again</p>
     </div>
   <% end %>
+  </aside>
   
 <% else %>
-  <h3><i class="icon-globe"></i> <%= link_to "This question is public", question_path(@question.id) %> <span class="btn make_private_link">edit</span></h3>
+
+  <aside id="public_question">
   
-  <% if @question.is_private_reason == Question::PRIVACY_REASON_PUBLIC %>
+    <h3 class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="btn make_private_link">edit</span></h3>
+  
     <div id="make_private_edit" style="display:none;">
       <p>The submitter choose to make this question public, but it can be converted to a private question.</p>
       <p class="btn btn-primary make_private">Make this question private</p>
     </div>
-  <% end %>  
+  </aside>
   
 <% end %>
 
