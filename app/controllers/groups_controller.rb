@@ -22,7 +22,11 @@ class GroupsController < ApplicationController
     @personal[:county] = nil
       
     @question = Question.new
-    @question.images.build
+    
+    # display three image fields for question submitter
+    3.times do
+      @question.images.build
+    end
     
     if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))      
       @email = @submitter.email
