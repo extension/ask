@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
   # instance method version of aae_handling_event_count
   def aae_handling_event_count(options = {})
     myoptions = options.merge({:group_by_id => true, :limit_to_handler_ids => [self.id]})
-    result = User.aae_handling_event_count(myoptions)
+    result = self.class.aae_handling_event_count(myoptions)
     if(result.present? && result[self.id].present?)
       returnvalues = result[self.id]
     else
