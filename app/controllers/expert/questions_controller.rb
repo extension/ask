@@ -402,6 +402,8 @@ class Expert::QuestionsController < ApplicationController
     
     @experts.uniq!
     @groups.uniq!
+
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
     
     # removing pagination for now, but will keep this code in here if we add it back.
     @expert_results = @experts.paginate({:page => params[:page], :per_page => 10})
