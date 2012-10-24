@@ -29,14 +29,19 @@ module LocationsHelper
   end
 
   def get_county_options(provided_location = nil)
+    [['All counties', 'All counties']] + get_county_options_without_all_counties(provided_location)
+  end
+
+  def get_county_options_without_all_counties(provided_location = nil)
     if params[:location_id] and params[:location_id].strip != '' and location = Location.find(params[:location_id])
       counties = location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
-      return ([['All counties', 'All counties']].concat(counties.map{|c| [c.name, c.id]}))
+      counties.map{|c| [c.name, c.id]}
     elsif(provided_location)
       counties = provided_location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
-      return ([['All counties', 'All counties']].concat(counties.map{|c| [c.name, c.id]}))
+      counties.map{|c| [c.name, c.id]}
     end
   end
+
 
   def display_location_and_county
     locations = []
