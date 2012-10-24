@@ -134,6 +134,7 @@ class Question < ActiveRecord::Base
   
   def auto_assign
     assignee = nil
+    system_user = User.system_user
     
     group = self.assigned_group
     if (group.assignment_outside_locations || group.expertise_locations.include?(self.location)) && group.assignees.length > 0
@@ -147,9 +148,10 @@ class Question < ActiveRecord::Base
         group_assignee_ids = group.assignees.collect{|ga| ga.id}
         assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
       end
-      # still aint got no one? wrangle that bad boy.
+      # still aint got no one? assign to the group
       if !assignee
-        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+        assign_to_group(group, system_user, nil)
+        return
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
@@ -158,7 +160,6 @@ class Question < ActiveRecord::Base
     end
     
     if assignee
-      system_user = User.system_user
       assign_to(assignee, system_user, nil)
     else
       return
