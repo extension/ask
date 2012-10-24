@@ -85,7 +85,7 @@
             })
             $.ajax({
               type: "POST",
-              url: "",
+              url: "/ajax/change_session_location",
               cache: false,
               data: {location_id: location_id}
             })
@@ -102,7 +102,7 @@
             var county_id = $('select#question_county_id :selected').val();
             $.ajax({
               type: "POST",
-              url: "",
+              url: "/ajax/change_session_location",
               cache: false,
               data: {county_id: county_id}
             })

@@ -110,6 +110,9 @@ Aae::Application.routes.draw do
   match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
   match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
 
+  # wildcard
+  match "ajax/:action", to: "ajax", :via => [:post]
+
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
