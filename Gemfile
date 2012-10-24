@@ -11,6 +11,9 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+# xml parsing
+gem 'nokogiri'
+
 # jquery 
 gem 'jquery-rails'
 
@@ -33,8 +36,7 @@ gem 'geoip'
 # Deploy with Capistrano
 gem 'capistrano'
 
-# xml parsing
-gem 'nokogiri'
+
 
 # authentication
 gem 'devise', "~> 1.5.1"
