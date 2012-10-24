@@ -62,7 +62,55 @@
 <div id="main" class="span4">
   <aside>
     <h2>Your Location...</h2>
-    <p><%= display_location_and_county %></p>
+    <p><%= display_location_and_county %> <span id="change_location" class="btn">change location</span></p>
+    
+    <div id="set_location" style="display:none;">
+      <p><%= select_tag(:location_id, options_for_select(get_location_options, default_location_id)) %></p>
+      <p id="county_list">
+        <% if current_location.present? %>
+          <%= f.select(:county_id, options_for_select(get_county_options(current_location), default_county_id)) %>
+        <% end %>
+      </p>
+        
+      <script type="text/javascript">
+        $("#change_location").click(function () {
+          $("#set_location").toggle();
+        });
+        
+        $("#location_id").change(function() {
+          var location_id = $('select#location_id :selected').val();
+          if(location == "") location="0";
+            jQuery.get('/widget/get_counties/' + location_id, function(data){
+              $("#county_list").html(data);
+            })
+            $.ajax({
+              type: "POST",
+              url: "",
+              cache: false,
+              data: {location_id: location_id}
+            })
+          });
+          
+          $("#county_list").on("change", "#question_county_id", function(){
+            var county_id = $('select#question_county_id :selected').val();
+            $.ajax({
+              type: "POST",
+              url: "",
+              cache: false,
+              data: {county_id: county_id}
+            })
+            .done(function() {
+      				$("#set_location").hide()
+      				return false;
+            })  
+            .fail(function() {
+              alert("error");
+        			return false;
+            })
+          });          
+        </script>
+        
+    </div>
     <h2>Extension Near You</h2>
     <div id="institution"></div>
     
