@@ -89,6 +89,13 @@
               cache: false,
               data: {location_id: location_id}
             })
+            .done(function() {
+      				return false;
+            })  
+            .fail(function() {
+              alert("error");
+        			return false;
+            })
           });
           
           $("#county_list").on("change", "#question_county_id", function(){
