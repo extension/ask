@@ -13,7 +13,7 @@ class County < ActiveRecord::Base
   has_many :group_counties
   has_many :groups, :through => :group_counties
   belongs_to :location
-  
+
   def name
     if self.censusclass == "C7"
       # return self.name + " (Non-county incorporation)"
@@ -22,7 +22,7 @@ class County < ActiveRecord::Base
       return self[:name] + " County"
     end
   end
-  
+
   def self.find_by_geoip(ipaddress = Settings.request_ip_address,cache_options = {})
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
     Rails.cache.fetch(cache_key,cache_options) do
@@ -33,5 +33,5 @@ class County < ActiveRecord::Base
       end
     end
   end
-    
+
 end
