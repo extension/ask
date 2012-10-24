@@ -68,7 +68,7 @@
       <p><%= select_tag(:location_id, options_for_select(get_location_options, default_location_id)) %></p>
       <p id="county_list">
         <% if current_location.present? %>
-          <%= f.select(:county_id, options_for_select(get_county_options(current_location), default_county_id)) %>
+          <%= select_tag(:county_id, options_for_select(get_county_options(current_location), default_county_id)) %>
         <% end %>
       </p>
         
