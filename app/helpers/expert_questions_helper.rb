@@ -5,7 +5,7 @@ module ExpertQuestionsHelper
     elsif(ratehash[:ratio].blank?)
       number_to_percentage(0, :precision => 0).html_safe 
     else
-      "#{number_to_percentage(ratehash[:ratio]*100, :precision => 0)} <small>for #{ratehash[:handled]}</small>".html_safe
+      "#{number_to_percentage(ratehash[:ratio]*100, :precision => 0)} <small>for #{ratehash[:handled]} questions over the last 6 months</small>".html_safe
     end
   end
   
