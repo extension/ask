@@ -157,7 +157,6 @@ class AjaxController < ApplicationController
     else
       session[:location_data] = {personal: personal}
     end
-    render json: personal.to_json
   end
 
 end

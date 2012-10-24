@@ -62,7 +62,7 @@
 <div id="main" class="span4">
   <aside>
     <h2>Your Location...</h2>
-    <p><%= display_location_and_county %> <span id="change_location" class="btn">change</span></p>
+    <p><span id="display_location"><%= display_location_and_county %></span> <span id="change_location" class="btn">change</span></p>
 
     <div id="set_location" style="display:none;">
       <p><%= select_tag(:location_id, options_for_select(get_location_options, default_location_id)) %></p>
