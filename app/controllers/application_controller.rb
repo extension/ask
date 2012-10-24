@@ -86,17 +86,19 @@ class ApplicationController < ActionController::Base
 
   def current_county
     if(!@current_county)
-    if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:county_id])
-      county = County.find_by_id(session[:location_data][:personal][:county_id])
-      # county validation check
-      if(county and location = current_location and county.location_id == location.id)
-        county
+      if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:county_id])
+        county = County.find_by_id(session[:location_data][:personal][:county_id])
+        # county validation check
+        if(county and location = current_location and county.location_id == location.id)
+          @current_county = county
+        else
+          @current_county = nil
+        end
       else
-        nil
+        @current_county = nil
       end
-    else
-      nil
     end
+    @current_county
   end
 
 
