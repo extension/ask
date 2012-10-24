@@ -79,22 +79,8 @@
 
         $("#location_id").change(function() {
           var location_id = $('select#location_id :selected').val();
-          if(location == "") location="0";
             jQuery.get('/home/county_options_list/' + location_id, function(data){
               $("#county_list").html(data);
-            })
-            $.ajax({
-              type: "POST",
-              url: "/ajax/change_session_location",
-              cache: false,
-              data: {location_id: location_id}
-            })
-            .done(function() {
-      				return false;
-            })
-            .fail(function() {
-              alert("error");
-        			return false;
             })
           });
 
