@@ -87,20 +87,22 @@
           $("#county_list").on("change", "#county_id", function(){
             var county_id = $('select#county_id :selected').val();
             var location_id = $('select#location_id :selected').val();
-            $.ajax({
-              type: "POST",
-              url: "/ajax/change_session_location",
-              cache: false,
-              data: {county_id: county_id, location_id: location_id}
-            })
-            .done(function() {
-      				$("#set_location").hide()
-      				return false;
-            })
-            .fail(function() {
-              alert("error");
-        			return false;
-            })
+            if(county_id != '') {
+              $.ajax({
+                type: "POST",
+                url: "/ajax/change_session_location",
+                cache: false,
+                data: {county_id: county_id, location_id: location_id}
+              })
+              .done(function() {
+        				$("#set_location").hide()
+        				return false;
+              })
+              .fail(function() {
+                alert("error");
+          			return false;
+              })
+            }
           });
         </script>
 
