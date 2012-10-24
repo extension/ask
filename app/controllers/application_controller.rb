@@ -1,3 +1,10 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#  BSD(-compatible)
+#  see LICENSE file
+
 class ApplicationController < ActionController::Base
   helper_method :current_location
   helper_method :current_county
@@ -67,14 +74,18 @@ class ApplicationController < ActionController::Base
   end
 
   def current_location
-    if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:location_id])
-      Location.find_by_id(session[:location_data][:personal][:location_id])
-    else
-      nil
+    if(!@current_location)
+      if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:location_id])
+        @current_location = Location.find_by_id(session[:location_data][:personal][:location_id])
+      else
+        @current_location = nil
+      end
     end
+    @current_location
   end
 
   def current_county
+    if(!@current_county)
     if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:county_id])
       county = County.find_by_id(session[:location_data][:personal][:county_id])
       # county validation check
