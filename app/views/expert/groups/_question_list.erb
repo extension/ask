@@ -37,6 +37,27 @@
         <% end %>
          <%= time_ago_in_words(q.created_at) %> ago
          </p>
+         
+         <% q.images.each do |image| %>
+           <% if FileTest.exist?(image.url()) %>
+
+           <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+
+           <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+             <div class="modal-header">
+             <p>
+               <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+               <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+             <p>
+               </div>
+             <div class="modal-body">
+               <%= image_tag image.url() %>
+             </div>
+           </div>
+           <% else %>
+             <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+           <% end %>
+         <% end %>
     </div>
   <% end %>
 <% end %>
