@@ -111,6 +111,7 @@ group :development do
   gem 'capistrano'
   gem 'capatross'
   gem 'quiet_assets'
+  gem 'pry'
 end
  
 group :test do
