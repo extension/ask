@@ -1,22 +1,22 @@
 <div id="main" class="span8">
 
-  
-  
+
+
   <% if @recent_questions.length == 0 %>
-    
+
     <div id="day_one">
       <h1>Welcome to the new Ask an Expert</h1>
-      
+
       <h2>Where's the Questions?</h2>
       <p>There are not any publicly viewable questions yet because the previous Ask an Expert system did not allow any public sharing. So when we migrated the existing questions to this version, we had to mark them all as "private."</p>
       <p>This page will fill up as new questions are submitted and submitters choose to share. Please check back soon!</p>
     </div>
-    
+
   <% else %>
-  
+
   <h3 class="main">Recent Questions</h3>
-  <% @recent_questions.each do |question| %>  
-  
+  <% @recent_questions.each do |question| %>
+
   <div class="incoming_question">
     <%= link_to question_path(question.id) do %>
       <% if question.title.present? %>
@@ -26,7 +26,7 @@
       <% end %>
       <p><%= question.body -%></p>
     <%- end -%>
-      
+
       <p>
         <% if question.location.present? %>
           <% if question.county.present? %>
@@ -36,7 +36,7 @@
             <span class="tag tag-geography"><%= question.location.abbreviation %></span>
           <% end %>
         <% end %>
-        
+
         <% if question.tags.length > 0 %>
           <% question.tags.each do |tag| %>
             <% if question.assigned_group %>
@@ -52,7 +52,7 @@
       <% if current_user && current_user.has_exid? %>
         <%= link_to "expert view", expert_question_path(question.id)  %>
       <% end %>
-      
+
       </p>
     </div>
   <% end %>
@@ -63,7 +63,7 @@
   <aside>
     <h2>Your Location...</h2>
     <p><%= display_location_and_county %> <span id="change_location" class="btn">change</span></p>
-    
+
     <div id="set_location" style="display:none;">
       <p><%= select_tag(:location_id, options_for_select(get_location_options, default_location_id)) %></p>
       <p id="county_list">
@@ -71,12 +71,12 @@
           <%= select_tag(:county_id, options_for_select(get_county_options(current_location), default_county_id)) %>
         <% end %>
       </p>
-        
+
       <script type="text/javascript">
         $("#change_location").click(function () {
           $("#set_location").toggle();
         });
-        
+
         $("#location_id").change(function() {
           var location_id = $('select#location_id :selected').val();
           if(location == "") location="0";
@@ -91,13 +91,13 @@
             })
             .done(function() {
       				return false;
-            })  
+            })
             .fail(function() {
               alert("error");
         			return false;
             })
           });
-          
+
           $("#county_list").on("change", "#question_county_id", function(){
             var county_id = $('select#question_county_id :selected').val();
             $.ajax({
@@ -109,18 +109,18 @@
             .done(function() {
       				$("#set_location").hide()
       				return false;
-            })  
+            })
             .fail(function() {
               alert("error");
         			return false;
             })
-          });          
+          });
         </script>
-        
+
     </div>
     <h2>Extension Near You</h2>
     <div id="institution"></div>
-    
+
     <h4>(Do we want to show local agents here?)</h4>
   </aside>
 </div>
