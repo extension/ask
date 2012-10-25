@@ -69,6 +69,6 @@
   </div>
   <% end %>
   <% if !defined?(paginate_questions) || paginate_questions != false %>
-  <%= will_paginate @questions %>
+  <%= paginate @questions %>
   <% end %>
 </div>

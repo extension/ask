@@ -12,13 +12,13 @@
   
   <h1>Groups</h1>
   <h4>All Groups</h4>
-  <%= will_paginate @groups %>
+  <%= paginate @groups %>
 
   <% @groups.each do |group| %>
     <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
   <% end %>
 
-  <%= will_paginate @groups %>
+  <%= paginate @groups %>
 
 </div>
 

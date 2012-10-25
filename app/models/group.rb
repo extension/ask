@@ -60,8 +60,8 @@ class Group < ActiveRecord::Base
     text :name
   end
     
-  # will_paginate per page default 
-  self.per_page = 15
+  # pagination per page default 
+  paginates_per = 15
   
   CONNECTIONS = {'member' => 'Group Member',
     'leader' => 'Group Leader',
