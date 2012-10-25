@@ -35,13 +35,13 @@
     <fieldset>
       <p>
         <%= f.label :location_id, 'Location and County (optional)' %>
-        <%= f.select(:location_id, options_for_select(get_location_options, default_location_id)) %>
+        <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil)) %>
       </p>
 
       <p id="county_list">
         <% if current_location.present? %>
           <%= f.label :county_id %>
-          <%= f.select(:county_id, options_for_select(get_county_options(current_location), default_county_id)) %>
+          <%= f.select(:county_id, options_for_select(get_county_options(current_location), current_county.present? ? current_county.id : nil)) %>
         <% end %>
       </p>
     </fieldset>
