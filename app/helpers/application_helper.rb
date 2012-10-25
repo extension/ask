@@ -52,16 +52,16 @@ module ApplicationHelper
     return link_to(get_avatar_for_user(user, image_size), user_path(user.id), {:title => user.name}).html_safe
   end
 
-  def link_expert_user_avatar(user, image_size = :medium)
-    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name}).html_safe
+  def link_expert_user_avatar(user, image_size = :medium, suppress_single = false)
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => (suppress_single ? "suppress_single" : "")}).html_safe
   end
 
   def link_public_group_avatar(group, image_size = :medium)
     return link_to(get_avatar_for_group(group, image_size), group_path(group.id), {:title => group.name}).html_safe
   end
 
-  def link_expert_group_avatar(group, image_size = :medium)
-    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name}).html_safe
+  def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
+    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name, :class => (suppress_single ? "suppress_single" : "")}).html_safe
   end
 
   def get_avatar_for_group(group, image_size = :medium)
@@ -75,7 +75,7 @@ module ApplicationHelper
       return_string = image_tag(group.avatar.url(image_size))
     else
       # if no avatar, assign a random image
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px) + (group.open_questions.length > 0 ? raw("<span class=\"badge\">#{group.open_questions.length}</span>") : "") + raw("</span>")
+      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px) + (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") + raw("</span>")
     end
     return return_string
   end
@@ -91,7 +91,7 @@ module ApplicationHelper
       return_string = image_tag(user.avatar.url(image_size), :size => image_size_in_px)
     else
       # if no avatar, assign a random image
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px) + (user.open_questions.length > 0 ? raw("<span class=\"badge\">#{user.open_questions.length}</span>") : "") + raw("</span>")
+      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("avatar_placeholder_0#{(user.id % Settings.user_avatar_count) + 1}.png", :size => image_size_in_px) + (user.open_questions.length > 0 ? raw("<span class=\"badge count_#{user.open_questions.length}\">#{user.open_questions.length}</span>") : "") + raw("</span>")
     end
 
     return return_string
