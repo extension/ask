@@ -134,22 +134,4 @@ class AjaxController < ApplicationController
     @object.expertise_counties.delete(county)
   end
 
-  def change_yolo
-    if(@yolo)
-      if(params[:location_id])
-        # should 404 on failure
-        location = Location.find(params[:location_id])
-        @yolo.location = location
-      end
-
-      if(params[:county_id])
-        # should 404 on failure
-        county = County.find(params[:county_id])
-        @yolo.county = county
-      end
-
-      @yolo.save
-    end
-  end
-
 end

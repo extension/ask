@@ -22,7 +22,6 @@
   <% @groups.each do |group| %>
     <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
   <% end %>
-  <p>view all</p>
 <% else %>
   <p>There are no groups in this location</p>
 <% end %>
@@ -49,7 +48,7 @@ $("#location_id").change(function() {
     if(county_id != '') {
       $.ajax({
         type: "POST",
-        url: "/ajax/change_yolo",
+        url: "/home/change_yolo",
         cache: false,
         data: {county_id: county_id, location_id: location_id}
       })
