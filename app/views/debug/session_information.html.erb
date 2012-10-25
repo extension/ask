@@ -7,9 +7,11 @@
   <table class='table'>
     <%- session.each do |key,value|%>
       <tr>
-        <td scope="row" class="label"><%= key %></td>   
-        <td><%= value %></td>         
+        <td><%= key %></td>
+        <td><%= value %></td>
       </tr>
      <%- end -%>
+     <td>request_ip</td>
+     <td><%= request.remote_ip %></td>
   </table>
 <%- end -%>
