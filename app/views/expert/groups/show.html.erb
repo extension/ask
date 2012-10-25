@@ -7,6 +7,7 @@
   <ul class="nav nav-tabs">
     <li><%= link_to 'Unanswered', expert_group_path(@group) %></li>
     <li><%= link_to 'Answered', expert_group_answered_path(@group) %></li>
+    <li><%= link_to 'Group History', expert_group_history_path() %></li>
   </ul>
 
   <%= render :partial => 'question_list' %>
