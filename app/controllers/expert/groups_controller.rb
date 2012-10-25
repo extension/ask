@@ -52,13 +52,23 @@ class Expert::GroupsController < ApplicationController
   def profile
     @group = Group.find_by_id(params[:id])
     if request.put?
+      change_hash = Hash.new
       @group.attributes = params[:group]
       
       if params[:delete_avatar] && params[:delete_avatar] == "1"
         @group.avatar = nil
       end
       
+      if @group.name_changed? 
+        change_hash[:name] = {:old => @group.name_was, :new => @group.name}
+      end
+      
+      if @group.description_changed? 
+        change_hash[:description] = {:old => @group.description_was, :new => @group.description}
+      end
+      
       if @group.save
+        GroupEvent.log_edited_attributes(@group, current_user, nil, change_hash)
         redirect_to(expert_group_profile_path, :notice => 'Profile was successfully updated.')
       else
         render :action => 'profile'
@@ -95,9 +105,19 @@ class Expert::GroupsController < ApplicationController
   def assignment_options
     @group = Group.find_by_id(params[:id])
     if request.put?
+      change_hash = Hash.new
       @group.attributes = params[:group]
       
+      if @group.assignment_outside_locations_changed? 
+        change_hash[:assignment_outside_locations] = {:old => @group.assignment_outside_locations_was.to_s, :new => @group.assignment_outside_locations.to_s}
+      end
+      
+      if @group.individual_assignment_changed?
+        change_hash[:individual_assignment] = {:old => @group.individual_assignment_was.to_s, :new => @group.individual_assignment.to_s}
+      end
+      
       if @group.save
+        GroupEvent.log_edited_attributes(@group, current_user, nil, change_hash)
         redirect_to(expert_group_assignment_options_path, :notice => 'Assignment preferences updated.')
       else
         render :action => 'assignment_options'
@@ -108,7 +128,7 @@ class Expert::GroupsController < ApplicationController
   def widget
     @group = Group.find_by_id(params[:id])
     if request.post?
-      
+      change_hash = Hash.new
       if params[:active].present? && params[:active] == '1'
         @group.active = true
       else
@@ -139,7 +159,28 @@ class Expert::GroupsController < ApplicationController
         @group.widget_show_title = false
       end
       
+      if @group.active_changed? 
+        change_hash[:active] = {:old => @group.active_was.to_s, :new => @group.active.to_s}
+      end
+      
+      if @group.widget_public_option_changed? 
+        change_hash[:public_option] = {:old => @group.widget_public_option_was.to_s, :new => @group.widget_public_option.to_s}
+      end
+      
+      if @group.widget_upload_capable_changed? 
+        change_hash[:upload_capable] = {:old => @group.widget_upload_capable_was.to_s, :new => @group.widget_upload_capable.to_s}
+      end
+      
+      if @group.widget_show_location_changed? 
+        change_hash[:show_location] = {:old => @group.widget_show_location_was.to_s, :new => @group.widget_show_location.to_s}
+      end
+      
+      if @group.widget_show_title_changed? 
+        change_hash[:show_title] = {:old => @group.widget_show_title_was.to_s, :new => @group.widget_show_title.to_s}
+      end
+      
       if @group.save
+        GroupEvent.log_edited_attributes(@group, current_user, nil, change_hash)
         redirect_to(expert_group_widget_path, :notice => 'Widget settings successfully updated.')
       else
         render :action => 'widget'

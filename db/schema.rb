@@ -126,13 +126,14 @@ ActiveRecord::Schema.define(:version => 20121011014643) do
   add_index "group_counties", ["group_id", "county_id"], :name => "fk_counties_groups", :unique => true
 
   create_table "group_events", :force => true do |t|
-    t.integer  "created_by",   :null => false
+    t.integer  "created_by",           :null => false
     t.integer  "recipient_id"
     t.string   "description"
     t.integer  "event_code"
-    t.integer  "group_id",     :null => false
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.integer  "group_id",             :null => false
+    t.text     "updated_group_values"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
   end
 
   add_index "group_events", ["created_by"], :name => "idx_group_events_created_by"

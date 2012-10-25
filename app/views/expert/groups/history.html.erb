@@ -4,8 +4,13 @@
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
-<h3>Discussion about what should appear on this page:</h3>
-
-<p>(access to eXtension Basecamp required)</p>
-
-<p><%= link_to "https://basecamp.com/1851571/projects/925213-ask-an-expert-2-0/todos/12943998-groups", "https://basecamp.com/1851571/projects/925213-ask-an-expert-2-0/todos/12943998-groups" %></p>
+<% @group.group_events.each do |event| %>
+  <% if event.event_code == GroupEvent::GROUP_EDITED_ATTRIBUTES %>
+    <% event.updated_group_values.each do |key, value| %>
+      <p><%= key.to_s.gsub('_', ' ').capitalize %> changed from '<%= value[:old] %>' to '<%= value[:new] %>' by <%= event.creator.name %> <%= humane_date(event.created_at) %> </p>
+    <% end %>
+  <% else %>
+    <p><%= event.recipient.name %> <%= event.description.capitalize %> by <%= event.creator.name %> <%= humane_date(event.created_at) %></p>
+  <% end %>
+  <p></p>	
+<% end %>

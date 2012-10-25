@@ -162,9 +162,9 @@ class User < ActiveRecord::Base
     self.group_connections.create(group: group, connection_type: connection_type)
     
     if connection_type == 'leader'
-      GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_ADDED_AS_LEADER], event_code: GroupEvent::GROUP_ADDED_AS_LEADER, group: group)
+      GroupEvent.log_added_as_leader(group, self, self)
     else
-      GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_JOIN], event_code: GroupEvent::GROUP_JOIN, group: group)
+      GroupEvent.log_group_join(group, self, self)
     end
     
     # question wrangler group?
@@ -243,7 +243,7 @@ class User < ActiveRecord::Base
   def leave_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
-      GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_LEFT], event_code: GroupEvent::GROUP_LEFT, group: group)
+      GroupEvent.log_group_leave(group, self, self)
     end
     
     # question wrangler group?
@@ -256,7 +256,7 @@ class User < ActiveRecord::Base
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
       self.group_connections.create(group: group, connection_type: "member")
-      GroupEvent.create(created_by: self.id, recipient_id: self.id, description: GroupEvent::GROUP_EVENT_STRINGS[GroupEvent::GROUP_REMOVED_AS_LEADER], event_code: GroupEvent::GROUP_REMOVED_AS_LEADER, group: group)
+      GroupEvent.log_removed_as_leader(group, self, self)
     end
   end
     

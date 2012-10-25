@@ -6,6 +6,7 @@ class CreateGroupEvents < ActiveRecord::Migration
       t.string  :description
       t.integer :event_code
       t.integer :group_id, :null => false
+      t.text    :updated_group_values
       t.timestamps
     end
     

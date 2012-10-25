@@ -1,8 +1,10 @@
 class GroupEvent < ActiveRecord::Base
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
+  belongs_to :recipient, :class_name => "User", :foreign_key => "recipient_id"
   belongs_to :group
   after_create :create_group_event_notification
   
+  serialize :updated_group_values
   
   # GROUP EVENTS
   GROUP_ACTIVITY = 200
@@ -36,6 +38,8 @@ class GroupEvent < ActiveRecord::Base
   CREATED_GROUP = 110
   LIST_POST = 501
   
+  GROUP_EDITED_ATTRIBUTES = 600
+  
   GROUP_EVENT_STRINGS = {
     205 => 'accepted group invitation',
     212 => 'added as group leader',
@@ -58,8 +62,41 @@ class GroupEvent < ActiveRecord::Base
     401 => 'updated group information',
     202 => 'wants to join group',
     110 => 'created group',
-    501 => 'posted to list'
+    501 => 'posted to list',
+    600 => 'edited attributes'
   }
+  
+  def self.log_group_join(group, initiator, recipient)
+    return self.log_group_changes(group, initiator, recipient, GROUP_JOIN)
+  end
+  
+  def self.log_group_leave(group, initiator, recipient)
+    return self.log_group_changes(group, initiator, recipient, GROUP_LEFT)
+  end
+  
+  def self.log_added_as_leader(group, initiator, recipient)
+    return self.log_group_changes(group, initiator, recipient, GROUP_ADDED_AS_LEADER)
+  end
+  
+  def self.log_removed_as_leader(group, initiator, recipient)
+    return self.log_group_changes(group, initiator, recipient, GROUP_REMOVED_AS_LEADER)
+  end
+  
+  def self.log_edited_attributes(group, initiator, recipient, edit_hash)
+    return self.log_group_changes(group, initiator, recipient, GROUP_EDITED_ATTRIBUTES, edit_hash)
+  end
+  
+  def self.log_group_changes(group, initiator, recipient, event_code, edit_hash = nil)
+    log_attributes = {}
+    log_attributes[:created_by] = initiator.id
+    log_attributes[:recipient_id] = recipient.present? ? recipient.id : nil
+    log_attributes[:description] = GROUP_EVENT_STRINGS[event_code]
+    log_attributes[:event_code] = event_code
+    log_attributes[:group_id] = group.id
+    log_attributes[:updated_group_values] = edit_hash
+    
+    return GroupEvent.create(log_attributes)
+  end
   
   def create_group_event_notification
     case self.event_code
