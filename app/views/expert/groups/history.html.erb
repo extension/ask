@@ -13,8 +13,8 @@
     <% if event.recipient.name == event.creator.name %>
       <p><%= link_expert_user_avatar(event.recipient, :thumb) %> <%= link_expert_user(event.recipient) %> <%= event.description %> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small></p>
     <% else %>
-      <p><%= event.recipient.name %> <%= event.description %> by <%= event.creator.name %> <%= humane_date(event.created_at) %></p>
+      <p><%= link_expert_user_avatar(event.recipient, :thumb) %> <%= link_expert_user(event.recipient) %> <%= event.description %> by <%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small></p>
     <% end %>
   <% end %>
-  <p></p>	
+
 <% end %>
