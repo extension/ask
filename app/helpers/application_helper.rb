@@ -75,7 +75,7 @@ module ApplicationHelper
       return_string = image_tag(group.avatar.url(image_size))
     else
       # if no avatar, assign a random image
-      return_string = image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px)
+      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px) + (group.open_questions.length > 0 ? raw("<span class=\"badge\">#{group.open_questions.length}</span>") : "") + raw("</span>")
     end
     return return_string
   end

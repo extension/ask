@@ -8,6 +8,8 @@
 <p class="question_body"><%= format_text_for_display(@question.body) %></p>
 
   <% @question.images.each do |image| %>
+    <% if FileTest.exist?(image.url()) %>
+  
     <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
     
     <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -21,6 +23,9 @@
         <%= image_tag image.url() %>
       </div>
     </div>
+    <% else %>
+      <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+    <% end %>
   <% end %>
 
 

@@ -19,19 +19,19 @@ class AjaxController < ApplicationController
     list.unshift(Hash[id: nil, label: search_term, name: search_term])
     render json: list
   end
-  
+
   def experts
     if params[:term]
-      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign      
+      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
       groups = Group.patternsearch(params[:term]).limit(9)
       experts = User.exid_holder.active.not_retired.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
     else
       groups = Group.order('created_at DESC').limit(6)
       experts = User.exid_holder.active.not_retired.not_blocked.order('created_at DESC').limit(6)
     end
-    
+
     combined_array = groups + experts
-    
+
     list = combined_array.map {|e| Hash[ id: e.id, label: e.name, name: e.name, class_type: e.class.name]}
     render json: list
   end
@@ -46,7 +46,7 @@ class AjaxController < ApplicationController
     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
     render json: list
   end
-  
+
   def counties
     if params[:term]
       like= "%".concat(params[:term].concat("%"))
@@ -68,7 +68,7 @@ class AjaxController < ApplicationController
     render :partial => 'show_location', :locals => {:location => location}
   end
 
-  
+
   def edit_location
     case params[:object_type]
       when "group"    then @object = Group.find_by_id(params[:object_id])
@@ -85,7 +85,7 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     @county = County.find(params[:requested_county])
-    
+
     if !@object.expertise_counties.include?(@county)
       @object.expertise_counties << @county
       if !@object.expertise_locations.include?(@county.location)
@@ -94,8 +94,8 @@ class AjaxController < ApplicationController
       @object.save
     end
   end
- 
-   
+
+
   def add_location
     case params[:object_type]
       when "group"    then @object = Group.find_by_id(params[:object_id])
@@ -109,7 +109,7 @@ class AjaxController < ApplicationController
       @object.expertise_locations << location
       @object.save
     end
-  end  
+  end
 
 
   def remove_location
@@ -133,5 +133,30 @@ class AjaxController < ApplicationController
     county = County.find(params[:county_id])
     @object.expertise_counties.delete(county)
   end
-  
+
+  def change_session_location
+    if(session[:location_data] and session[:location_data][:personal])
+      personal = session[:location_data][:personal]
+    else
+      personal = {}
+    end
+    if(params[:location_id])
+      # should 404 on failure
+      location = Location.find(params[:location_id])
+      personal[:location_id] = location.id
+    end
+
+    if(params[:county_id])
+      # should 404 on failure
+      county = County.find(params[:county_id])
+      personal[:county_id] = county.id
+    end
+
+    if(session[:location_data])
+      session[:location_data][:personal] = personal
+    else
+      session[:location_data] = {personal: personal}
+    end
+  end
+
 end

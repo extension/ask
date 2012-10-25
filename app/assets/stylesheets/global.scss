@@ -73,12 +73,12 @@ body {
     -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.8), inset 0 2px rgba(255, 255, 255, 0.5);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
     background-color: #000;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #acddf6), color-stop(100%, #000));
-    background-image: -webkit-linear-gradient(top, #acddf6, #000);
-    background-image: -moz-linear-gradient(top, #acddf6, #000);
-    background-image: -ms-linear-gradient(top, #acddf6, #000);
-    background-image: -o-linear-gradient(top, #acddf6, #000);
-    background-image: linear-gradient(top, #acddf6, #000);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FF0000), color-stop(100%, #A1000F));
+    background-image: -webkit-linear-gradient(top, #FF0000, #A1000F);
+    background-image: -moz-linear-gradient(top, #FF0000, #A1000F);
+    background-image: -ms-linear-gradient(top, #FF0000, #A1000F);
+    background-image: -o-linear-gradient(top, #FF0000, #A1000F);
+    background-image: linear-gradient(top, #FF0000, #A1000F);
   }
   
   .navavatar .avatar_with_badge {
@@ -91,6 +91,8 @@ body {
   
   #on_vacation {background:#FEFF8D; padding:1em; color:#444; font-weight:bold; font-size:1.1em;}
   .on_vacation {color: #888 !important;}
+  
+  .link {cursor:pointer; color:blue;}
 }
 
 
@@ -226,9 +228,13 @@ body#expert {
   
   .downplay {color:#777;}
   .handling_rate {font-weight:bold; font-size:1.2em; color:#777;}
+  .handling_rate small {font-weight:normal; font-size:.8em; color:#777;}
   #handling_rate {cursor:pointer;}
+  .handling_rate_graph {display:block;padding:0;border:1px solid #ccc;width:200px;}
+  .handling_rate_graph .graph {display:block; background:#555; height:5px;}
   .block {display:block;}
-    
+  .reasssign .handling_rate_graph {width:100px;}
+  .missing_image {border:1px solid #888; padding:1px;}
     
 
     .location_block {margin-bottom:3em; padding:1em; width: 30%; margin-bottom:1em; border:2px solid #aaa;}
@@ -362,7 +368,7 @@ body#expert {
 	#privacy_status a {color:#999;}
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 	.public {background: transparent url(/assets/icon_checkmark_32.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
-	.match {background: #F5FDE3 url(/assets/icon_checkmark_32.png) 50% 50% no-repeat;}
+	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat;}
 	.match i, .nomatch i {display:none;}
 /*	.testh1 {outline:1px solid red; margin:1em 1em 3em;}*/
 	.testh1 {}

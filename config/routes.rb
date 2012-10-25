@@ -98,7 +98,10 @@ Aae::Application.routes.draw do
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
   match "home/private_page" => "home#private_page", :via => :get
+  match "home/county_options_list/:location_id" => "home#county_options_list", :via => :get
+
   match "ask" => "groups#ask", :id => "38" #id for QW group
+
   match "ajax/tags" => "ajax#tags", :via => [:get]
   match "ajax/groups" => "ajax#groups", :via => [:get]
   match "ajax/experts" => "ajax#experts", :via => [:get]
@@ -109,6 +112,9 @@ Aae::Application.routes.draw do
   match "ajax/add_location" => "ajax#add_location", :via => [:post]
   match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
   match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
+
+  # wildcard
+  match "ajax/:action", to: "ajax", :via => [:post]
 
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
