@@ -4,7 +4,7 @@
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
-<% @group.group_events.each do |event| %>
+<% @group_events.each do |event| %>
   <% if event.event_code == GroupEvent::GROUP_EDITED_ATTRIBUTES %>
     <% event.updated_group_values.each do |key, value| %>
       <p><%= key.to_s.gsub('_', ' ').capitalize %> changed from '<%= value[:old] %>' to '<%= value[:new] %>' by <%= event.creator.name %> <%= humane_date(event.created_at) %> </p>

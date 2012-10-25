@@ -190,6 +190,7 @@ class Expert::GroupsController < ApplicationController
   
   def history
     @group = Group.find_by_id(params[:id])
+    @group_events = @group.group_events.order('created_at DESC')
   end
   
   def new
