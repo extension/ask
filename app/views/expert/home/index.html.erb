@@ -76,13 +76,13 @@
       <div class="span4">
 	    <div class="expert">
 	    <% if question.assignee_id.present? %>
-        <%= link_expert_user_avatar(question.assignee, :thumb) %> <%= link_expert_user(question.assignee) %> 
+        <%= link_expert_user_avatar(question.assignee, :thumb, true) %> <%= link_expert_user(question.assignee) %> 
 		  <% else %>
 		    <p><strong>This question does not have an assignee.</strong></p>
 	    <% end %>
 		
 		<% if question.assigned_group %>
-	      <p><%= link_expert_group_avatar(question.assigned_group, :mini) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
+	      <p><%= link_expert_group_avatar(question.assigned_group, :mini, true) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
 		<% else %>
 			<p><strong>This question is groupless</strong></p>
 		<% end %>
