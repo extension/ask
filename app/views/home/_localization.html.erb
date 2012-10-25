@@ -1,4 +1,9 @@
-<h2><span id="display_location"><%= display_location_and_county %></span></h2>
+
+<% if current_location.present? %>
+  <h3><span id="display_location"><%= display_location_and_county %></span></h3>
+<% else %>
+  <h3><span id="display_location">Customize your location</span></h3>
+<% end %>
 <span id="change_location" class="btn">change</span>
 
 <div id="set_location" style="display:none;">
@@ -11,9 +16,8 @@
 </div>
 
 <% if default_location_id %>
-<div class="tag_summary">
-  <% @groups = Group.with_expertise_location(default_location_id).limit(6) %>
-  <h2>Groups near you</h2>
+<div>
+  <h3>Groups near you</h3>
 <% if @groups.length > 0 %>
   <% @groups.each do |group| %>
     <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
