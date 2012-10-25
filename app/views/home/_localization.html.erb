@@ -7,22 +7,22 @@
 <span id="change_location" class="btn">change</span>
 
 <div id="set_location" style="display:none;">
-  <p><%= select_tag(:location_id, options_for_select(get_location_options, default_location_id)) %></p>
+  <p><%= select_tag(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil)) %></p>
   <p id="county_list">
     <% if current_location.present? %>
-      <%= select_tag(:county_id, options_for_select(get_county_options_without_all_counties(current_location), default_county_id)) %>
+      <%= select_tag(:county_id, options_for_select(get_county_options_without_all_counties(current_location), current_county.present? ? current_county.id : nil)) %>
     <% end %>
   </p>
 </div>
 
-<% if default_location_id %>
+<% if current_location.present? %>
 <div>
   <h3>Groups near you</h3>
 <% if @groups.length > 0 %>
   <% @groups.each do |group| %>
     <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
   <% end %>
-  <p>view all</p> 
+  <p>view all</p>
 <% else %>
   <p>There are no groups in this location</p>
 <% end %>
