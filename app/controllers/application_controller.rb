@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   layout "public"
 
   before_filter :store_redirect_url
-  before_filter :set_session_location
+  before_filter :set_yolo
 
   def store_redirect_url
     session[:user_return_to] = request.url unless (params[:controller] == "authmaps/omniauth_callbacks" || params[:controller] == "users/sessions")
@@ -41,65 +41,31 @@ class ApplicationController < ActionController::Base
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
   end
 
-  def set_session_location
-    detected = {location_id: 0, county_id: 0}
-    personal = {}
-    # autodetect location
-    location = Location.find_by_geoip(request.remote_ip)
-    county = County.find_by_geoip(request.remote_ip)
-    detected[:location_id] = location.id if location
-    detected[:county_id] = county.id if county
-
-    # check for session data
-    if(session[:location_data].blank? or session[:location_data][:detected].blank? or session[:location_data][:detected][:location_id].blank?)
-      personal = Marshal.load(Marshal.dump(detected))
-      session[:location_data] = {detected: detected, personal: personal}
-      return true
+  def set_yolo
+    if(session[:yolo_id])
+      if(@yolo = YoLo.find_by_id(session[:yolo_id]))
+        @yolo.update_with_ip(request.remote_ip,current_user)
+        return true
+      end
     end
-
-    # we've got session location data - check for location mismatch
-    if(location and session[:location_data][:detected][:location_id] != location.id)
-      # location mismatch - override
-      personal = Marshal.load(Marshal.dump(detected))
-      session[:location_data] = {detected: detected, personal: detected}
-      return true
-    elsif(county and session[:location_data][:detected][:county_id] and session[:location_data][:detected][:county_id] != county.id)
-      # county mismatch - override
-      personal = Marshal.load(Marshal.dump(detected))
-      session[:location_data] = {detected: detected, personal: personal}
-      return true
-    else
-      # no override
+    @yolo = YoLo.create_from_ip(request.remote_ip,current_user)
+    if(@yolo)
+      session[:yolo_id] = @yolo.id
     end
   end
 
   def current_location
-    if(!@current_location)
-      if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:location_id])
-        @current_location = Location.find_by_id(session[:location_data][:personal][:location_id])
-      else
-        @current_location = nil
-      end
+    if(!@yolo)
+      set_yolo
     end
-    @current_location
+    @yolo.nil? ? nil : @yolo.location
   end
 
   def current_county
-    if(!@current_county)
-      if(session[:location_data] and session[:location_data][:personal] and session[:location_data][:personal][:county_id])
-        county = County.find_by_id(session[:location_data][:personal][:county_id])
-        # county validation check
-        if(county and location = current_location and county.location_id == location.id)
-          @current_county = county
-        else
-          @current_county = nil
-        end
-      else
-        @current_county = nil
-      end
+    if(!@yolo)
+      set_yolo
     end
-    @current_county
+    @yolo.nil? ? nil : @yolo.county
   end
-
 
 end
