@@ -42,7 +42,13 @@ class ApplicationController < ActionController::Base
   end
 
   def set_yolo
-    if(session[:yolo_id])
+    if(current_user)
+      if(@yolo = current_user.yo_lo)
+        @yolo.update_with_ip(request.remote_ip,current_user)
+        session[:yolo_id] = @yolo.id
+        return true
+      end
+    elsif(session[:yolo_id])
       if(@yolo = YoLo.find_by_id(session[:yolo_id]))
         @yolo.update_with_ip(request.remote_ip,current_user)
         return true

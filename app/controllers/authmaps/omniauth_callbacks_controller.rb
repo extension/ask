@@ -1,4 +1,5 @@
 class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  skip_before_filter :set_yolo
   def twitter
     @user = Authmap.find_for_twitter_oauth(env["omniauth.auth"], current_user)
     if @user.persisted?
