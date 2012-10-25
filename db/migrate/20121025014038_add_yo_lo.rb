@@ -9,6 +9,9 @@ class AddYoLo < ActiveRecord::Migration
       t.integer 'county_id', default: 0
       t.timestamps
     end
+
+    add_index "yo_los", ["user_id"], :name => 'user_ndx'
+
   end
 
 end
