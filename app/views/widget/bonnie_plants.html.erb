@@ -10,7 +10,7 @@
        body {font-size: 62.5%;}
        body, html {margin:0; font-family: "Arial", "sans-serif"; color: #222; line-height:120%; background:transparent;}
        p {font-size:1.2em;line-height:1.3em;margin:0 0 .3em;}
-       
+
        #myForm {margin:0; border: 1px solid #bbb;padding: 2em 2em 0;background: #eee;}
        h1 {margin:0;padding:0;float:right;height: 40px;width: 98px;text-indent:-3000px;}
        h1 a {display:block;height:40px;}
@@ -19,7 +19,7 @@
 
        #myFormOutput p {margin: 1em 0;color:#008000;font-weight: bold;font-size:1.3em;}
        #myFormOutput p#red {color: #ff0000;}
-       
+
        fieldset {margin: 1em 0 .5em;border:0;padding:0;color:#666;}
        input, select {width: 200px;margin: 0 0 1em;}
        textarea {width: 97%;margin: 0 0 1em;}
@@ -32,21 +32,21 @@
        #flash_notice.warning {color:red;}
        	-->
         </style>
-        
+
        <%= javascript_include_tag "application" %>
-</head> 
+</head>
 
 <body>
-  
+
     <%= form_for @question, :html => {:multipart => true} do |f| %>
       <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
     <h2>Ask an Expert</h2>
-    
+
     <div class="grid_16" id="content_area">
     <% flash_names = [:notice, :warning, :message, :error]
-          flash_names.each do |flash_type| 
+          flash_names.each do |flash_type|
              if flash[flash_type] %>
                 <div id='flash_notice' class='<%= flash[:notice]? "notice" : "warning" %>'>
                     <p><%= flash[flash_type] %></p>
@@ -54,7 +54,7 @@
             <% end %>
     <% end %>
     </div><!-- .grid_16 -->
-    
+
     <div id="myFormOutput"></div>
 
     <p>
@@ -68,7 +68,7 @@
         <%= f.text_field :submitter_lastname %>
         </label>
     </p>
-    
+
     <p>
         <label for="email">Email: <span>Type it carefully; this is how you'll receive your answer.</span>
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
@@ -80,25 +80,26 @@
         <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
-    
+
     <% if @group.widget_show_location %>
       <p>Where does your question take place? (optional, but it helps us give a more precise answer)</p>
       <p>
           <label>Location and County
-          <%= f.select(:location_id, options_for_select(get_location_options, default_location_id(@group.widget_location_id))) %>
+          <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : @group.widget_location_id)) %>
           </label>
       </p>
 
       <p id="county_list">
         <% if (current_location && current_location.counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
         	<label>
-	        <%= f.select(:county_id, options_for_select(get_county_options(current_location || @group.widget_location), default_county_id(@group.widget_county_id))) %>
+	        <%= f.select(:county_id,
+          options_for_select(get_county_options(current_location || @group.widget_location), current_county.present? ? current_county.id : @group.widget_county_id)) %>
             </label>
         <% end %>
       </p>
-    <% end %>  
-  
-    <% if @group.widget_upload_capable? %>  
+    <% end %>
+
+    <% if @group.widget_upload_capable? %>
       <p>
       <label>Image (optional)</label>
       <p><em>You can upload .jpg .png or .gif. Max size of 2MB each.</em></p>
@@ -107,7 +108,7 @@
             <%= image_form.file_field :attachment %>
           </p>
       <% end %>
-      </p>  
+      </p>
     <% end %>
 
       <br />
@@ -117,7 +118,7 @@
         <%= f.text_area :body, :rows => 4  %>
         </label>
     </p>
- 
+
     <% if @group.widget_public_option %>
 	  <p>
 		<label for="is_private">Share my question on Ask an Expert? (sharing may help others learn from the answer)
@@ -125,13 +126,13 @@
 		</label>
 	  </p>
 	<% end %>
-	
+
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
 
     <script class="code" type="text/javascript">
       $(document).ready(function () {
-      
+
         $("#question_location_id").change(function() {
           var location_id = $('select#question_location_id :selected').val();
           if(location == "") location="0";
@@ -142,6 +143,6 @@
         });
       });
     </script>
-    
+
 </body>
 </html>

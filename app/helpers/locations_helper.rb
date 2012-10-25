@@ -7,22 +7,6 @@
 
 module LocationsHelper
 
-  def default_location_id(fallback_location_id = nil)
-    if(current_location.present?)
-      current_location.id
-    elsif(fallback_location_id.present?)
-      fallback_location_id
-    end
-  end
-
-  def default_county_id(fallback_county_id = nil)
-    if(current_county.present?)
-      current_county.id
-    elsif(fallback_county_id.present?)
-      fallback_county_id
-    end
-  end
-
   def get_location_options
     locations = Location.find(:all, :order => 'entrytype, name')
     return [['', '']].concat(locations.map{|l| [l.name, l.id]})

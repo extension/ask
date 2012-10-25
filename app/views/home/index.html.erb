@@ -60,7 +60,56 @@
 </div>
 
 <div id="main" class="span4">
-  <aside id="localization">
-    <%= render :partial => 'localization' %>
+  <aside>
+    <h2>Your Location...</h2>
+    <p><span id="display_location"><%= display_location_and_county %></span> <span id="change_location" class="btn">change</span></p>
+
+    <div id="set_location" style="display:none;">
+      <p><%= select_tag(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil)) %></p>
+      <p id="county_list">
+        <% if current_location.present? %>
+          <%= select_tag(:county_id, options_for_select(get_county_options_without_all_counties(current_location), current_county.present? ? current_county.id : nil)) %>
+        <% end %>
+      </p>
+
+      <script type="text/javascript">
+        $("#change_location").click(function () {
+          $("#set_location").toggle();
+        });
+
+        $("#location_id").change(function() {
+          var location_id = $('select#location_id :selected').val();
+            jQuery.get('/home/county_options_list/' + location_id, function(data){
+              $("#county_list").html(data);
+            })
+          });
+
+          $("#county_list").on("change", "#county_id", function(){
+            var county_id = $('select#county_id :selected').val();
+            var location_id = $('select#location_id :selected').val();
+            if(county_id != '') {
+              $.ajax({
+                type: "POST",
+                url: "/ajax/change_yolo",
+                cache: false,
+                data: {county_id: county_id, location_id: location_id}
+              })
+              .done(function() {
+        				$("#set_location").hide()
+        				return false;
+              })
+              .fail(function() {
+                alert("error");
+          			return false;
+              })
+            }
+          });
+        </script>
+
+    </div>
+    <h2>Extension Near You</h2>
+    <div id="institution"></div>
+
+    <h4>(Do we want to show local agents here?)</h4>
   </aside>
 </div>
