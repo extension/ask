@@ -247,6 +247,7 @@ def transfer_group_events
          #{@darmokdatabase}.activities.community_id, #{@darmokdatabase}.activities.created_at, NOW()
   FROM  #{@darmokdatabase}.activities
   JOIN   #{@aae_database}.groups ON #{@aae_database}.groups.id = #{@darmokdatabase}.activities.community_id
+  WHERE #{@darmokdatabase}.activities.activitycode IN (201, 203, 212, 214, 110)
   END_SQL
   
   benchmark = Benchmark.measure do
