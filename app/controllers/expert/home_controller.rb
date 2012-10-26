@@ -48,19 +48,20 @@ class Expert::HomeController < ApplicationController
     
     @questions = Question.where("location_id = ?", @location.id).order("questions.status_state DESC").limit(8)
     @question_total_count = Question.where("location_id = ?", @location.id).count
-    @experts = User.with_expertise_location(@location.id).order("users.last_sign_in_at ASC").limit(8)
+    @experts = User.with_expertise_location(@location.id).order("users.last_sign_in_at ASC").limit(5)
     @expert_total_count = User.with_expertise_location(@location.id).count
-    @groups = Group.with_expertise_location(@location.id).limit(8)
+    @groups = Group.with_expertise_location(@location.id).limit(5)
     @group_total_count = Group.with_expertise_location(@location.id).count
   end
   
   def county
     @county = County.find_by_id(params[:id])
     @location = Location.find_by_id(@county.location_id)
+    @locations = Location.order('fipsid ASC')
     
-    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(8)
+    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(5)
     @question_total_count = Question.where("county_id = ?", @county.id).count
-    @experts = User.with_expertise_county(@county.id).order("users.last_sign_in_at ASC").limit(8)
+    @experts = User.with_expertise_county(@county.id).order("users.last_sign_in_at ASC").limit(5)
     @expert_total_count = User.with_expertise_county(@county.id).count
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
