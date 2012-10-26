@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
+  has_many :preferences, :as => :prefable
   has_one :yo_lo
   
   # sunspot/solr search
@@ -265,6 +266,18 @@ class User < ActiveRecord::Base
       self.group_connections.create(group: group, connection_type: "member")
       GroupEvent.log_removed_as_leader(group, self, self)
     end
+  end
+  
+  def send_assignment_notification?(group)
+    self.preferences.setting('notification.question.assigned_to_me',group)
+  end
+  
+  def send_incoming_notifiation?(group)
+    self.preferences.setting('notification.question.incoming', group)
+  end
+  
+  def send_daily_summary?(group)
+    self.preferences.setting('notification.question.daily_summary', group)
   end
     
 end

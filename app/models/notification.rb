@@ -1,3 +1,9 @@
+# === COPYRIGHT:
+# Copyright (c) North Carolina State University
+# Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+# see LICENSE file
+
 class Notification < ActiveRecord::Base
   belongs_to :notifiable, :polymorphic => true
   serialize :additional_data
@@ -11,24 +17,9 @@ class Notification < ActiveRecord::Base
   
   GROUP_USER_JOIN = 101
   GROUP_USER_LEFT = 102
-  #GROUP_USER_WANTSTOJOIN = 103
-  #GROUP_USER_ACCEPT_INVITATION= 104
-  #GROUP_USER_DECLINE_INVITATION= 105
-  #GROUP_USER_NOWANTSTOJOIN= 106
-  #GROUP_USER_INTEREST = 107
-  #GROUP_USER_NOINTEREST = 108
-
-  #GROUP_LEADER_INVITELEADER = 201
-  #GROUP_LEADER_INVITEMEMBER = 202
-  #GROUP_LEADER_RESCINDINVITATION = 203
-  #GROUP_LEADER_INVITEREMINDER = 204
   
-  GROUP_LEADER_JOIN = 301
-  GROUP_LEADER_LEFT = 302
-  #GROUP_LEADER_ADDLEADER = 303
-  #GROUP_LEADER_ADDMEMBER = 304
-  #GROUP_LEADER_REMOVELEADER = 401
-  #GROUP_LEADER_REMOVEMEMBER = 402
+  GROUP_LEADER_JOIN = 201
+  GROUP_LEADER_LEFT = 202
 
   ##########################################
   #  Ask an Expert Notifications - Internal
