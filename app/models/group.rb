@@ -37,6 +37,9 @@ class Group < ActiveRecord::Base
   scope :tagged_with_any, lambda { |tag_list| 
         {:select => "groups.*, COUNT(groups.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "groups.id", :order => "tag_count DESC"}
   }
+  scope :tagged_with, lambda {|tag_id| 
+    {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Group'"}
+  }
   scope :patternsearch, lambda {|searchterm|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key

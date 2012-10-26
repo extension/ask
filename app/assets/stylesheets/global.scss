@@ -379,6 +379,7 @@ body#expert {
 	.county_list {list-style:none;}
 	.county_list li {padding:.2em;}
 	.map {width:80px; height:80px; border:1px solid #bbb; background:#D2E7BC url(/assets/map_marker.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
+	.bigtag {width:80px; height:80px; border:1px solid #bbb; background:#bbb url(/assets/tag_80px.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
 	#user_masthead {margin:0 0 4em;}
 	.cursor {cursor:pointer;}
 	#searchform {margin:0;padding:0; float:left;}
@@ -400,6 +401,8 @@ body#expert {
   #public_question {background:#CCECA0 !important; color:green;}
   #public_question a {color:green;}
   .nomatches {padding:2em;}
+  
+  .listview {padding-top:3em;}
 }
 
 /*body#expert.demo .container-fluid {margin-top:40px;}*/

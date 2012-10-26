@@ -1,4 +1,8 @@
-<h1><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %> questions tagged with '<%= @tag.name %>'</h1>
+<h1><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %> questions tagged '<%= @tag.name %>'</h1>
+
+<h3><%= link_to "View everything tagged '#{@tag.name}'", expert_home_tags_path(:name => @tag.name) %></h3>
+
+<div class="listview">
 
 <% if @questions.length > 0 %>
   <% @questions.each do |question| %>
@@ -8,3 +12,5 @@
 <% else %>
   <p>There are no questions in this group with this tag</p>
 <% end %>
+
+</div>
