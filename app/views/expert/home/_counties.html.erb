@@ -1,2 +1,9 @@
-<%= select_tag("question[county_id]", options_for_select(get_county_options)) %>
+<%= select_tag("county_option", options_for_select(get_county_options(location_obj), @county_pref)) %>
 
+<script class="code" type="text/javascript">
+$("#county_option").change(function() {
+    var county_id = $('select#county_option :selected').val();
+    jQuery.post("/expert/users/save_listview_filter", { list_view: '<%= listview %>', county_id: county_id });
+    return false;
+});
+</script>

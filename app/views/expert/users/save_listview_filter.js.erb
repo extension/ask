@@ -1,0 +1,8 @@
+$('#filtered_question_list').html('<%= escape_javascript(render "/expert/home/list_of_questions") %>');
+<% if !params[:location_id].nil? %>
+  <% if !params[:location_id].blank? %> 
+    $('#county_list').html('<%= escape_javascript(render "/expert/home/counties", :location_obj => @location_pref, :listview => params[:list_view]) %>');
+  <% else %>
+    $('#county_list').html('');
+  <% end %>
+<% end %>

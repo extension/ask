@@ -16,8 +16,7 @@ class PublicMailer < ActionMailer::Base
     @question = options[:question]
     @subject = "[eXtension Question:#{@question.id}] Your question has been responded to by one of our experts."
     
-    signature_pref = @expert.user_preferences.find_by_name(UserPreference::AAE_SIGNATURE)
-    signature_pref ? @signature = signature_pref.setting : @signature = "-#{@expert.name}"
+    @expert.signature.present? ? @signature = @expert.signature : @signature = "-#{@expert.name}"
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     

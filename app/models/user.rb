@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :responses
   has_many :user_locations
   has_many :user_counties
-  has_many :user_preferences
+  has_one  :user_preference
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
   has_many :notification_exceptions
@@ -24,8 +24,7 @@ class User < ActiveRecord::Base
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
-  has_many :preferences, :as => :prefable
-  has_one :yo_lo
+  has_one  :yo_lo
   
   # sunspot/solr search
   searchable do

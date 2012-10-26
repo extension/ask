@@ -44,6 +44,7 @@ Aae::Application.routes.draw do
     resources :users, :except => [:destroy] do
       collection do
         get 'tags'
+        post 'save_listview_filter'
       end
     end
 

@@ -73,5 +73,45 @@ class ApplicationController < ActionController::Base
     end
     @yolo.nil? ? nil : @yolo.county
   end
+  
+  def questions_based_on_pref_filter(list_view, filter_pref)
+    condition_array = Array.new
+    if filter_pref
+      !filter_pref.setting[:question_filter][:locations].blank? ? @location_pref = filter_pref.setting[:question_filter][:locations][0].to_i : @location_pref = nil
+      filter_pref.setting[:question_filter][:counties].present? ? @county_pref = filter_pref.setting[:question_filter][:counties][0].to_i : @county_pref = nil
+      filter_pref.setting[:question_filter][:groups].present? ? @group_pref = filter_pref.setting[:question_filter][:groups][0].to_i : @group_pref = nil
+      filter_pref.setting[:question_filter][:tags].present? ? @tag_pref = filter_pref.setting[:question_filter][:tags][0].to_i : @tag_pref = nil 
+    end
+    
+    if @location_pref.present?
+      condition_array << "questions.location_id = #{@location_pref.to_i}"
+    end
+    
+    if @county_pref.present?
+      condition_array << "questions.county_id = #{@county_pref.to_i}"
+    end
+    
+    if @group_pref.present?
+      condition_array << "questions.assigned_group_id = #{@group_pref.to_i}"
+    end
+    
+    condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
+    
+    if list_view.present? 
+      if list_view == 'resolved'
+        question_order = "questions.resolved_at DESC"
+      elsif list_view == 'incoming'
+        question_order = "questions.created_at DESC"
+      end
+    else
+      question_order = "questions.created_at DESC"
+    end    
+      
+    if @tag_pref.present?
+      return Question.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).limit(20)
+    else
+      return Question.where(condition_string).order(question_order).limit(20)
+    end
+  end
 
 end
