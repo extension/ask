@@ -1,6 +1,6 @@
 <div id="main" class="span8">
   
-  <p><%= select_tag(:location_id, options_for_select(get_location_options)) %></p>
+  <p><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location"}) %></p>
   
   <div class="map"></div>
   <h1><%= @location.name %></h1>
