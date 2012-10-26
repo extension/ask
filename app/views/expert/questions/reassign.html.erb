@@ -1,53 +1,26 @@
 <% @page_title = "Reassign"%>
 
-<div id="main" class="span8">
-
+<div id="reassign_header">
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
 <h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
-
-<% if @question.assignee != current_user %>
-  <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
-<% end %>
-<p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-
-<input id="expert_name" placeholder="Search for Experts and Groups by Name" />
-
-
-<script class="code" type="text/javascript">
-    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
-		$("#expert_name").autocomplete({
-      source: "/ajax/experts",
-			minLength: 2,
-			select: function(e, ui) {
-			  if(ui.item.class_type == "User") {
-			    window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
-			  }
-			  else if (ui.item.class_type == "Group") {
-		        window.location = '<%= group_assign_options_expert_question_url(:id => @question.id) %>?group_id=' + ui.item.id
-		      }
-			}
-		}).keypress(function(e) {
-      if (e.keyCode === 13) {
-        window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + this.value
-      }
-    });
-
-</script>
+</div>
 
 
 
-<% if (!@question.location.present?) && (@question.tags.length == 0) %>
-  <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. Please add some tags to generate some matches.</h3>
+<div class="span7">
 
-<% else %>
+  <% if (!@question.location.present?) && (@question.tags.length == 0) %>
+    <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. Please add some tags to generate some matches.</h3>
+
+    <% else %>
 
 
 <table class="table table-bordered">
 
   <tr id="filter_terms">
     <td>
-      <strong>Best Matches</strong>
+      <h2>Best Matches</h2>
 
     </td>
   <% filter_terms = [] %>
@@ -115,7 +88,7 @@
 	          <% elsif @question.location.present? && term == @question.location.name && expert_expertise_locations.include?(@question.location) %>
 	            <td class="match"><i>yes</i></td>
 	          <% elsif expert_tags.map(&:name).include?(term) %>
-	            <td><i class="icon-ok"></i></td>
+	            <td class="match"><i>yes</i></td>
 	          <% else %>
 	            <td class="nomatch"><i>no</i></td>
 	          <% end %>
@@ -132,6 +105,19 @@
 
 <% end %>
 
+</div>
+
+<div class="span3">
+<div id="reassign_actions">
+  <% if @question.assignee != current_user %>
+    <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
+  <% end %>
+  <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+
+  <input id="expert_name" placeholder="Search for Experts and Groups by Name" />
+</div>
+</div>
+
 <script class="code" type="text/javascript">
 /* Append the function to the "document ready" chain */
 jQuery(function($) {
@@ -145,4 +131,23 @@ jQuery(function($) {
     });
   });
 })
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#expert_name").autocomplete({
+      source: "/ajax/experts",
+			minLength: 2,
+			select: function(e, ui) {
+			  if(ui.item.class_type == "User") {
+			    window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
+			  }
+			  else if (ui.item.class_type == "Group") {
+		        window.location = '<%= group_assign_options_expert_question_url(:id => @question.id) %>?group_id=' + ui.item.id
+		      }
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + this.value
+      }
+    });
+
 </script>
