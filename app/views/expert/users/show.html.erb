@@ -29,60 +29,13 @@
   <% if @answered_questions.length == 0 %>
     <h3>This person hasn't answered any questions</h3>
   <% else %>
-  
-    <h3>Answered Questions</h3>
-    <% @answered_questions.each do |q| %> 
-      <div class="question list">
-        <%= link_to expert_question_path(q.id) do %>
-          <% if q.title.present? %>
-            <h3><%= format_text_for_display(q.title) -%></h3>
-          <% else %>
-            <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
-          <% end %>
-          <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
-        <% end %>
-      
-        <p>
-          <% if q.location.present? %>
-            <% if q.county.present? %>
-              <span class="tag tag-geography"><%= link_to "#{q.county.name}", expert_view_county_path(q.county.id) %></span>
-            <% end %>
-            <% if q.location.present? %>
-              <span class="tag tag-geography"><%= link_to q.location.abbreviation, expert_view_location_path(q.location.id) %></span>
-            <% end %>
-          <% else %>
-            <span class="label label-inverse"><%= link_to "No Location" %></span>
-          <% end %>
-          
-          
     
-
-        
-        <% if q.tags.length > 0 %>
-          <% q.tags.each do |tag| %>
-            <% if q.assigned_group %>
-              <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
-            <% else %>
-              <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span>
-            <% end %>
-          <% end %>
-        <% else %>
-          <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
-        <% end %>
-         <%= time_ago_in_words(q.created_at) %> ago
-        </p>
-      
-       
-       <% if q.assigned_group %>
-   	      <p><%= link_expert_group_avatar(q.assigned_group, :mini) %> <%= link_to q.assigned_group.name, expert_group_path(q.assigned_group.id) %></p>
-   		<% else %>
-   			<p><strong>This question is groupless</strong></p>
-   		<% end %>
-      </div>
+    <h3>Answered Questions</h3>
+    
+    <% @answered_questions.each do |question| %>
+      <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
     <% end %>
-	    
-	    
-	    
+      
   <% end %>
 
 </div>
@@ -105,41 +58,10 @@
     
     
   <h2>Currently Assigned (<%= @open_questions.length %>)</h2>
-      <% @open_questions.each do |q| %> 
-      <div class="question list">
-        <%= link_to expert_question_path(q.id) do %>
-          <% if q.title.present? %>
-            <h4><%= format_text_for_display(q.title) -%></h4>
-          <% else %>
-            <h4><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h4>
-          <% end %>
-        <% end %>
-
-        <p>Location 
-        <% if q.tags.length > 0 %>
-          <% q.tags.each do |tag| %>
-            <% if q.assigned_group %>
-              <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => q.assigned_group.id, :tag_id => tag.id) %></span>
-            <% else %>
-              <span class="label"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span>
-            <% end %>
-          <% end %>
-        <% else %>
-          <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(q.id) %></span>
-        <% end %>
-         <%= time_ago_in_words(q.created_at) %> ago
-        </p>
-
-
-         <% if q.assigned_group %>
-     	      <p><%= link_expert_group_avatar(q.assigned_group, :mini) %> <%= link_to q.assigned_group.name, expert_group_path(q.assigned_group.id) %></p>
-     		<% else %>
-     			<p><strong>This question is groupless</strong></p>
-     		<% end %>
-     		</div>
-<% end %>
-
   
+  <% @open_questions.each do |question| %>
+    <%= render :partial => 'expert/shared/title_question', :locals => {:question => question} %>
+  <% end %>
    
        
   <% end %>

@@ -1,16 +1,15 @@
 <% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
+<% show_assignments = local_assigns[:show_assignments].nil? ? false : show_assignments %>
 
 <div class="incoming_question">
   
   <div class="row-fluid">
-    
-    <div class="span8">
+  
       
       <%= link_to expert_question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
-        <p><%= question.body -%></p>
       <%- end -%>
-      
+
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
       <% question.images.each do |image| %>
@@ -34,15 +33,10 @@
         <% end %>
       <% end %>
       
-    </div> <!-- end .span8 -->
     
-    <div class="span4">
+      <% if show_assignments %>
       <div class="expert">
         <% if question.assignee_id.present? %>
-        
-
-        
-        
           <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
 	      <% else %>
 	        <p><strong>This question does not have an assignee.</strong></p>
@@ -54,7 +48,7 @@
 		      <p><strong>This question is groupless</strong></p>
         <% end %>
       </div>
-    </div><!-- end .span4 -->
+      <% end %>
   
   </div>
   

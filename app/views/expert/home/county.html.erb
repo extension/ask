@@ -3,31 +3,15 @@
 
 <div class="tag_summary">
   <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
-<% if @questions.length > 0 %>
-  <table>
-    <tr>
-      <th>Status</th>
-      <th>Question</th>  
-    </tr>
-  <% @questions.each do |question| %>
-    <tr>
-      <td><%= question.status %></td>
-      <td>
-        <% # ToDo: Override title method in question to take care of this instead of repeating this logic. %>
-        <% if question.title.present? %>
-          <%= format_text_for_display(question.title) %>
-        <% else %>
-          <%= link_to format_text_for_display(question.body.truncate(80, separator: ' ')), expert_question_path(question) %>
-        <% end %>
-      </td>
-    </tr>
+
+  <% if @questions.length > 0 %>
+    <% @questions.each do |question| %>
+      <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
+    <% end %>
+
+  <% else %>
+    <p>There are no questions in this county</p>
   <% end %>
-  </table>
-  <p>view all</p>
-<% else %>
-  <p>There are no questions in this county</p>
-<% end %>
-</div>
 
 <div class="tag_summary">
   <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>

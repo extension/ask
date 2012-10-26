@@ -1,31 +1,10 @@
 <h1><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %> questions tagged with '<%= @tag.name %>'</h1>
 
-<br>
-<br>
-<h4>TODO: until pagination is turned on, only returning 25 tags.</h4>
-<br>
-<br>
-
 <% if @questions.length > 0 %>
-  <table>
-    <tr>
-      <th>Status</th>
-      <th>Question</th>  
-    </tr>
   <% @questions.each do |question| %>
-    <tr>
-      <td><%= question.status %></td>
-      <td>
-        <% # ToDo: Override title method in question to take care of this instead of repeating this logic. %>
-        <% if question.title.present? %>
-          <%= format_text_for_display(question.title) %>
-        <% else %>
-          <%= link_to format_text_for_display(question.body.truncate(80, separator: ' ')), expert_question_path(question) %>
-        <% end %>
-      </td>
-    </tr>
+    <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
   <% end %>
-  </table>
+
 <% else %>
   <p>There are no questions in this group with this tag</p>
 <% end %>
