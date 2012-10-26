@@ -18,11 +18,13 @@
   <table class="table table-bordered">
     <% @my_groups.each do |group| %>
       <tr>
-        <td>
-          <%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %>
+        <td class="large_groups">
+          <%= link_expert_group_avatar(group, :medium) %> 
+          <h3><%= link_to group.name, expert_group_path(group.id) %></h3>
           <% if @user.leader_of_group(group)%>
-            <strong>Leader <i class="icon-user"></i></strong>
+            <h4><strong>Leader <i class="icon-user"></i></strong></h4>
           <% end %>
+          <p><%= group.joined.count %> Members</p>
         </td>
         
         <td>
