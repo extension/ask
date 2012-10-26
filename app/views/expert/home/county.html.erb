@@ -1,5 +1,7 @@
 <div id="main" class="span8">
   
+  <p><%= select_tag(:location_id, options_for_select(get_location_options)) %></p>
+  
   <div class="map"></div>
   <h1><%= @county.name %>, <%= link_to @location.name, expert_view_location_path(@location.id) %></h1>
   
@@ -48,9 +50,14 @@
 </div>
 
 <div id="secondary" class="span4">
-  <ul class="county_list">
-  <% @locations.each do |location| %>
-    <li><span class="tag tag-geography"><%= link_to "#{location.name}", expert_view_location_path(location.id) %></span></li>
-  <% end %>
-  </ul>
+  
+  
+  
 </div>
+
+<script type="text/javascript">
+  $("#location_id").change(function() {
+    var location_id = $('select#location_id :selected').val();
+    window.location = '/expert/home/locations/' + location_id
+  });
+</script>
