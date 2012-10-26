@@ -48,6 +48,14 @@ body {
 	input.xs {width: 4em;}
 	input.xl, textarea.xl {width: 80%;}
 	
+	.medium .badge {
+	  height: 24px;
+    font-size:18px;
+    line-height: 24px;
+    @include rounded16;
+    padding: 0 7px;
+	}
+	
 	.avatar_with_badge {
 	  position:relative; 
     display:inline-block;
