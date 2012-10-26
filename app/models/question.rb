@@ -132,6 +132,15 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def title
+    if self[:title].present?
+      return self[:title]
+    else 
+      return self[:body].truncate(80, separator: ' ')
+    end
+  end
+  
+  
   def auto_assign
     assignee = nil
     system_user = User.system_user
