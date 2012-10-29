@@ -7,7 +7,7 @@
 <h1>Send an Answer <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
 
 <% if @question.assignee != current_user %>
-  <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_login => current_user.login), :method => :post, :class => "btn-primary btn" %></p>
+  <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
 <% end %>
 
 <div id="response_form">

@@ -49,7 +49,7 @@
       <% group_tags = group.tags %>
       <tr>
       <td>
-          <%= link_to get_avatar_for_group(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
+          <%= link_to link_expert_group_avatar_group_label(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
         <% filter_terms.each do |term| %>
 	          <% if @question.county.present? && term == @question.county.name && group_expertise_counties.include?(@question.county) %>
 	            <td class="match"><i>yes</i></td>
@@ -109,7 +109,8 @@
 
 <div class="span3">
 <div id="reassign_actions">
-  <% if @question.assignee != current_user %>
+  <% if (@question.assignee != current_user) || 
+    (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
     <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
   <% end %>
   <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
