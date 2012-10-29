@@ -4,10 +4,8 @@
   
   <h1>Answered Questions</h1>
 
-  <div id="filtered_question_list">  
-    <%= render :partial => 'list_of_questions', :locals => {:questions => @recently_answered_questions} %>
+  <div id="filtered_question_list"> 
+    <%= render :partial => 'list_of_questions', :locals => {:questions => @recently_answered_questions, :listview => 'resolved'} %>
   </div>
-  
-  <p><%= link_to "TODO: View all" %></p>
   
 </div>

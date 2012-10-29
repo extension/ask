@@ -108,9 +108,21 @@ class ApplicationController < ActionController::Base
     end    
       
     if @tag_pref.present?
-      return Question.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).limit(20)
+      if !list_view.present?
+        return Question.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
+      elsif list_view == 'resolved'
+        return Question.answered.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
+      elsif list_view == 'incoming'
+        return Question.submitted.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
+      end
     else
-      return Question.where(condition_string).order(question_order).limit(20)
+      if !list_view.present?
+        return Question.where(condition_string).order(question_order).page(params[:page])
+      elsif list_view == 'resolved'
+        return Question.answered.where(condition_string).order(question_order).page(params[:page])
+      elsif list_view == 'incoming'
+        return Question.submitted.where(condition_string).order(question_order).page(params[:page])
+      end
     end
   end
 

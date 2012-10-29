@@ -4,8 +4,7 @@
   
   <h1>Incoming Questions</h1>
   <div id="filtered_question_list">  
-    <%= render :partial => 'list_of_questions', :locals => {:questions => @recent_questions} %>
+    <%= render :partial => 'list_of_questions', :locals => {:questions => @recent_questions, :listview => 'incoming'} %>
   </div>
-  <p><%= link_to "TODO: View all" %></p>
   
 </div>
