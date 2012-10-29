@@ -15,7 +15,7 @@ class Preference < ActiveRecord::Base
   
   # convenience constants
   PREFERENCE_DEFAULTS = { 
-   'notification.question.assigned_to_me' => false,
+   'notification.question.assigned_to_me' => true,
    'notification.question.incoming' => false,
    'notification.question.daily_summary' => false,
   }
