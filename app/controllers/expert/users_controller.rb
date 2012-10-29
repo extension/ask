@@ -28,4 +28,38 @@ class Expert::UsersController < ApplicationController
     @user = User.find(params[:id])
     @my_groups = @user.group_memberships
   end
+  
+  def save_listview_filter
+    user = current_user
+    pref = user.user_preference
+    
+    if pref.nil?
+      pref = UserPreference.create(:user => user, :setting => {:question_filter => {}})
+    end
+    
+    if !params[:location_id].nil?
+      if params[:location_id].blank?
+        pref.setting[:question_filter].merge!({:locations => nil, :counties => nil})
+      else
+        location = Location.find_by_id(params[:location_id])
+        pref.setting[:question_filter].merge!({:locations => [location.id], :counties => nil})
+        pref.save
+      end
+    elsif params[:county_id].present?
+      county = County.find_by_id(params[:county_id])
+      pref.setting[:question_filter].merge!({:counties => [county.id]})
+      pref.save
+    elsif params[:group_id].present?
+      group = Group.find_by_id(params[:group_id])
+      pref.setting[:question_filter].merge!({:groups => [group.id]})
+      pref.save
+    elsif params[:tag_id].present?
+      tag = Tag.find_by_id(params[:tag_id])
+      pref.setting[:question_filter].merge!({:tags => [tag.id]})
+      pref.save
+    end
+    
+    @recent_questions = questions_based_on_pref_filter(params[:list_view], pref)  
+  end
+    
 end

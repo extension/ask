@@ -10,17 +10,17 @@ class Expert::HomeController < ApplicationController
   before_filter :require_exid
   
   def index
-    @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
+    @recent_questions = questions_based_on_pref_filter('incoming', current_user.user_preference)
   end
   
   def search
   end
   
   def get_counties
-    render :partial => "counties"
+    render :partial => "counties", :locals => {:location_obj => nil}
   end
   
   def answered
@@ -34,6 +34,12 @@ class Expert::HomeController < ApplicationController
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
     @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
+    @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
+    
+    @experts = User.tagged_with(@tag.id).order("users.last_sign_in_at DESC").limit(5)
+    @expert_total_count = User.tagged_with(@tag.id).count
+    @groups = Group.tagged_with(@tag.id).limit(5)
+    @group_total_count = Group.tagged_with(@tag.id).count
   end
   
   def experts
@@ -48,19 +54,20 @@ class Expert::HomeController < ApplicationController
     
     @questions = Question.where("location_id = ?", @location.id).order("questions.status_state DESC").limit(8)
     @question_total_count = Question.where("location_id = ?", @location.id).count
-    @experts = User.with_expertise_location(@location.id).order("users.last_sign_in_at ASC").limit(8)
+    @experts = User.with_expertise_location(@location.id).order("users.last_sign_in_at DESC").limit(5)
     @expert_total_count = User.with_expertise_location(@location.id).count
-    @groups = Group.with_expertise_location(@location.id).limit(8)
+    @groups = Group.with_expertise_location(@location.id).limit(5)
     @group_total_count = Group.with_expertise_location(@location.id).count
   end
   
   def county
     @county = County.find_by_id(params[:id])
     @location = Location.find_by_id(@county.location_id)
+    @locations = Location.order('fipsid ASC')
     
-    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(8)
+    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(5)
     @question_total_count = Question.where("county_id = ?", @county.id).count
-    @experts = User.with_expertise_county(@county.id).order("users.last_sign_in_at ASC").limit(8)
+    @experts = User.with_expertise_county(@county.id).order("users.last_sign_in_at DESC").limit(5)
     @expert_total_count = User.with_expertise_county(@county.id).count
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count

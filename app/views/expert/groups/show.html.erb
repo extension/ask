@@ -7,9 +7,20 @@
   <ul class="nav nav-tabs">
     <li><%= link_to 'Unanswered', expert_group_path(@group) %></li>
     <li><%= link_to 'Answered', expert_group_answered_path(@group) %></li>
+    <li><%= link_to 'Group History', expert_group_history_path() %></li>
   </ul>
-
-  <%= render :partial => 'question_list' %>
+  
+  
+  <% if @questions.length == 0 %>
+    <h3>There are currently no open questions assigned to this group.</h3>
+  <% else %>
+    <h3><%= @question_list_type %></h3>
+    
+    <% @questions.each do |question| %>
+      <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
+    <% end %>
+  <% end %>
+  
 
 </div>
 

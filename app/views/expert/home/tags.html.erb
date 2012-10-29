@@ -1,9 +1,7 @@
 <div id="main" class="span8">
   
-  <p><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location"}) %></p>
-  
-  <div class="map"></div>
-  <h1><%= @location.name %></h1>
+  <div class="bigtag"></div>
+  <h1>Everything tagged '<%= @tag.name %>'</h1>
   
   <br class="clearing" />
   <div class="span5">
@@ -11,8 +9,7 @@
       <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
     <% if @experts.length > 0 %>
       <% @experts.each do |member| %>
-        <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_sign_in_at) %> ago</span></p>
-        
+        <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></p>
       <% end %>
       <p>view all</p> 
     <% else %>
@@ -49,19 +46,3 @@
   </div>
 
 </div>
-
-<div id="secondary" class="span4">
-  <h2>Counties</h2>
-  <ul class="county_list">
-  <% @counties.each do |county| %>
-    <li><span class="tag tag-geography"><%= link_to "#{county.name}", expert_view_county_path(county.id) %></span></li>
-  <% end %>
-  </ul>
-</div>
-
-<script type="text/javascript">
-  $("#location_id").change(function() {
-    var location_id = $('select#location_id :selected').val();
-    window.location = '/expert/home/locations/' + location_id
-  });
-</script>

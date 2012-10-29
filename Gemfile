@@ -14,7 +14,7 @@ end
 # xml parsing
 gem 'nokogiri'
 
-# jquery 
+# jquery
 gem 'jquery-rails'
 
 # bootstrap in sass in rails
@@ -30,7 +30,7 @@ gem "paperclip", "~> 3.0"
 gem 'rmagick'
 
 # ip to geo mapping
-gem 'geokit'
+gem 'geocoder'
 gem 'geoip'
 
 # Deploy with Capistrano
@@ -53,7 +53,7 @@ gem "curb", "0.7.15"
 gem "feedzirra", "0.1.2"
 
 # pagination
-gem 'will_paginate'
+gem 'kaminari'
 
 # server settings
 gem "rails_config"
@@ -77,7 +77,7 @@ gem "loofah"
 gem "htmlentities"
 
 # search on solr
-gem "sunspot_rails", "~> 1.3.0" 
+gem "sunspot_rails", "~> 1.3.0"
 
 # used to post-process mail to convert styles to inline
 gem "csspool", "2.0.1ex"
@@ -88,7 +88,7 @@ gem "rinku", :require => 'rails_rinku'
 
 # require sunspot_solr for test and dev
 group :test, :development do
-  gem 'sunspot_solr', "~> 1.3.0" 
+  gem 'sunspot_solr', "~> 1.3.0"
 end
 
 #god
@@ -102,7 +102,7 @@ gem "daemons"
 # tropo - sms messages
 # gem "tropo-webapi-ruby"
 
-# command line scripts 
+# command line scripts
 gem "thor"
 
 group :development do
@@ -115,7 +115,7 @@ group :development do
   gem 'quiet_assets'
   gem 'pry'
 end
- 
+
 group :test do
   # Pretty printed test output
   gem 'turn', :require => false

@@ -48,6 +48,14 @@ body {
 	input.xs {width: 4em;}
 	input.xl, textarea.xl {width: 80%;}
 	
+	.medium .badge {
+	  height: 24px;
+    font-size:18px;
+    line-height: 24px;
+    @include rounded16;
+    padding: 0 7px;
+	}
+	
 	.avatar_with_badge {
 	  position:relative; 
     display:inline-block;
@@ -102,6 +110,9 @@ body {
   .on_vacation {color: #888 !important;}
   
   .link {cursor:pointer; color:blue;}
+  .notification_options {list-style:none;}
+  
+  .large_groups .medium span {float:left; margin-right:1em;}
 }
 
 
@@ -360,9 +371,15 @@ body#expert {
 	h2.title {line-height:1.2em; margin:1em 0 .65em; color: #201B1B; font-family: Georgia, serif; font-size:1.9em}
 	
 	.tag_summary {padding:1em 2em; clear:left;}
+	.location_section {padding:1em 0; clear:left;}
+	.location_section .incoming_question h3 {font-size:1.15em;}
+/*  .location_section .incoming_question h3 {font-size:1.2em;}*/
+	.title_only {margin-bottom:1em;}
+	
 	.county_list {list-style:none;}
 	.county_list li {padding:.2em;}
-	.map {width:80px; height:80px; border:1px solid #999; background:#D2E7BC; float:left; margin-right:1em;}
+	.map {width:80px; height:80px; border:1px solid #bbb; background:#D2E7BC url(/assets/map_marker.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
+	.bigtag {width:80px; height:80px; border:1px solid #bbb; background:#bbb url(/assets/tag_80px.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
 	#user_masthead {margin:0 0 4em;}
 	.cursor {cursor:pointer;}
 	#searchform {margin:0;padding:0; float:left;}
@@ -384,6 +401,10 @@ body#expert {
   #public_question {background:#CCECA0 !important; color:green;}
   #public_question a {color:green;}
   .nomatches {padding:2em;}
+  
+  .listview {padding-top:3em;}
+  #reassign_actions {padding:1em;}
+  #reassign_header {padding:1em;}
 }
 
 /*body#expert.demo .container-fluid {margin-top:40px;}*/

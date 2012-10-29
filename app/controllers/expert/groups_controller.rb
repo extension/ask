@@ -11,7 +11,7 @@ class Expert::GroupsController < ApplicationController
   
   def index
     @my_groups = current_user.group_memberships
-    @groups = Group.paginate(:page => params[:page]).order(:name)
+    @groups = Group.page(params[:page]).order(:name)
   end
   
   def show

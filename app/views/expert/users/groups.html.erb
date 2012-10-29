@@ -16,25 +16,27 @@
   <% else %>
     
   <table class="table table-bordered">
-    <tr>
-      <th>Name</th>
-      <th>Membership</th>
-      <th>Notifications</th>
-    </tr>
-    
     <% @my_groups.each do |group| %>
       <tr>
-        <td><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></td>
-        <% if @user.leader_of_group(group)%>
-          <td><strong>Leader <i class="icon-user"></i></strong></td>
-        <% else %>
-          <td>member</td>
-        <% end %>
-        <td>
-          <%= radio_button_tag :notification_ty, "", true %> None
-          <%= radio_button_tag :notification_ty, "", true %> All incoming questions 
+        <td class="large_groups">
+          <%= link_expert_group_avatar(group, :medium) %> 
+          <h3><%= link_to group.name, expert_group_path(group.id) %></h3>
+          <% if @user.leader_of_group(group)%>
+            <h4><strong>Leader <i class="icon-user"></i></strong></h4>
+          <% end %>
+          <p><%= group.joined.count %> Members</p>
         </td>
         
+        <td>
+          <%= form_tag('', :class => "form-stacked no_m_t well") do -%>
+          <ul class="notification_options">
+            <li><%= radio_button_tag :notification_ty, "", true %> Notify me when I am assigned a question</li>
+            <li><%= radio_button_tag :notification_ty, "", false %> Notify me when this Group gets a new question</li>
+            <li><%= check_box_tag 'active', '1', false %>  Send me a Daily Summary</li>
+            <li><span class="btn">save</span></li>
+          </ul>
+          <% end %>
+        </td>
       </tr>
     <% end %>
       

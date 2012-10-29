@@ -19,6 +19,12 @@
 	border-radius: 10px;
 }
 
+@mixin rounded16 {
+    -moz-border-radius:16px;
+    -webkit-border-radius:16px;
+	border-radius: 16px;
+}
+
 @mixin rounded3 {
     -moz-border-radius:3px;
     -webkit-border-radius:3px;

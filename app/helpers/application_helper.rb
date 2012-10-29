@@ -47,13 +47,17 @@ module ApplicationHelper
   def link_expert_user(user)
     return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
+  
+  def link_expert_group(group)
+    return link_to(group.name, expert_group_path(group.id), {:title => group.name}).html_safe
+  end
 
   def link_public_user_avatar(user, image_size = :medium)
     return link_to(get_avatar_for_user(user, image_size), user_path(user.id), {:title => user.name}).html_safe
   end
 
   def link_expert_user_avatar(user, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
 
   def link_public_group_avatar(group, image_size = :medium)
@@ -61,7 +65,7 @@ module ApplicationHelper
   end
 
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name, :class => (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
 
   def get_avatar_for_group(group, image_size = :medium)

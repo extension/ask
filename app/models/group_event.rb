@@ -15,10 +15,10 @@ class GroupEvent < ActiveRecord::Base
   GROUP_EDITED_ATTRIBUTES = 600
   
   GROUP_EVENT_STRINGS = {
-    212 => 'added as group leader',
+    212 => 'joined group leadership',
     201 => 'joined group',
     203 => 'left group',
-    214 => 'removed as group leader',
+    214 => 'left group leadership',
     110 => 'created group',
     600 => 'edited attributes'
   }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121025014038) do
+ActiveRecord::Schema.define(:version => 20121026140137) do
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -212,6 +212,21 @@ ActiveRecord::Schema.define(:version => 20121025014038) do
     t.datetime "created_at",                                         :null => false
     t.datetime "updated_at",                                         :null => false
   end
+
+  create_table "preferences", :force => true do |t|
+    t.integer  "prefable_id"
+    t.integer  "group_id"
+    t.string   "prefable_type",  :limit => 30
+    t.string   "classification"
+    t.string   "name",                         :null => false
+    t.string   "datatype"
+    t.string   "value"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "preferences", ["classification"], :name => "index_preferences_on_classification"
+  add_index "preferences", ["prefable_id", "prefable_type", "name"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
     t.integer  "question_id",                        :null => false

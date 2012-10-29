@@ -1,0 +1,55 @@
+<% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
+<% show_assignments = local_assigns[:show_assignments].nil? ? false : show_assignments %>
+
+<div class="incoming_question title_only">
+  
+  <div class="row-fluid">
+  
+      
+      <%= link_to expert_question_path(question.id) do %>
+        <h3><%= format_text_for_display(question.title) -%></h3>
+      <%- end -%>
+
+      <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
+      
+      <% question.images.each do |image| %>
+        <% if FileTest.exist?(image.url()) %>
+
+          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+
+          <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+              <p>
+                <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+                <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+              <p>
+            </div>
+            <div class="modal-body">
+              <%= image_tag image.url() %>
+            </div>
+          </div>
+        <% else %>
+          <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+        <% end %>
+      <% end %>
+      
+    
+      <% if show_assignments %>
+      <div class="expert">
+        <% if question.assignee_id.present? %>
+          <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
+	      <% else %>
+	        <p><strong>This question does not have an assignee.</strong></p>
+        <% end %>
+	
+	      <% if question.assigned_group %>
+          <p><%= link_expert_group_avatar(question.assigned_group, :mini, suppress_single_badges) %> <%= link_expert_group(question.assigned_group) %></p>
+	      <% else %>
+		      <p><strong>This question is groupless</strong></p>
+        <% end %>
+      </div>
+      <% end %>
+  
+  </div>
+  
+</div>

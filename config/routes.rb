@@ -44,6 +44,7 @@ Aae::Application.routes.draw do
     resources :users, :except => [:destroy] do
       collection do
         get 'tags'
+        post 'save_listview_filter'
       end
     end
 
@@ -95,6 +96,7 @@ Aae::Application.routes.draw do
   end
 
   match "home/about" => "home#about", :via => :get
+  match "home/change_yolo" => "home#change_yolo", :via => [:post]
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
   match "home/private_page" => "home#private_page", :via => :get
