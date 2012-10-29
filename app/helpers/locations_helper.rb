@@ -13,7 +13,7 @@ module LocationsHelper
   end
 
   def get_county_options(provided_location = nil)
-    [['All counties', 'All counties']] + get_county_options_without_all_counties(provided_location)
+    [['All counties', '']] + get_county_options_without_all_counties(provided_location)
   end
 
   def get_county_options_without_all_counties(provided_location = nil)

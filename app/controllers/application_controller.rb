@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   def questions_based_on_pref_filter(list_view, filter_pref)
     condition_array = Array.new
     if filter_pref
-      !filter_pref.setting[:question_filter][:locations].blank? ? @location_pref = filter_pref.setting[:question_filter][:locations][0].to_i : @location_pref = nil
+      filter_pref.setting[:question_filter][:locations].present? ? @location_pref = filter_pref.setting[:question_filter][:locations][0].to_i : @location_pref = nil
       filter_pref.setting[:question_filter][:counties].present? ? @county_pref = filter_pref.setting[:question_filter][:counties][0].to_i : @county_pref = nil
       filter_pref.setting[:question_filter][:groups].present? ? @group_pref = filter_pref.setting[:question_filter][:groups][0].to_i : @group_pref = nil
       filter_pref.setting[:question_filter][:tags].present? ? @tag_pref = filter_pref.setting[:question_filter][:tags][0].to_i : @tag_pref = nil 
