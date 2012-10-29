@@ -67,19 +67,26 @@ module ApplicationHelper
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
     return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
+  
+  def link_expert_group_avatar_group_label(group, image_size = :medium, suppress_single = false)
+    return link_to(get_avatar_for_group(group, image_size, group_label = true), expert_group_path(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+  end
 
-  def get_avatar_for_group(group, image_size = :medium)
+  def get_avatar_for_group(group, image_size = :medium, group_label = false)
     case image_size
         when :medium    then image_size_in_px = "100x100"
         when :thumb     then image_size_in_px = "40x40"
         when :mini     then image_size_in_px = "20x20"
     end
+    
+    group_label = group_label ? raw("<span class=\"group\">Group</span>") : ""
+    
 
     if group.avatar.present?
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag(group.avatar, :size => image_size_in_px) + (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") + raw("</span>")
+      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag(group.avatar, :size => image_size_in_px) + group_label + (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") + raw("</span>")
     else
       # if no avatar, assign a random image
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px) + (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") + raw("</span>")
+      return_string =  raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px) + group_label + (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") + raw("</span>")
     end
     return return_string
   end

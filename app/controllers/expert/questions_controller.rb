@@ -406,7 +406,10 @@ class Expert::QuestionsController < ApplicationController
     
     @experts.uniq!
     @groups.uniq!
-
+    
+    @experts = @experts.first(8)
+    @groups = @groups.first(3)
+    
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
     
 
