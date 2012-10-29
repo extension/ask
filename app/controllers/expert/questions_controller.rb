@@ -157,7 +157,7 @@ class Expert::QuestionsController < ApplicationController
   
   # show the expert form to answer a question
   def answer
-    @question = Question.where(:id => params[:id]).first
+    @question = Question.find_by_id(params[:id])
     
     if !@question
       flash[:failure] = "Invalid question."
@@ -189,10 +189,16 @@ class Expert::QuestionsController < ApplicationController
         return
       end
       
+      if (@question.assignee.present?)
+        if (current_user != @question.assignee)
+          @question.assign_to(current_user, current_user)
+        end
+      end
+      
       @related_question ? contributing_question = @related_question : contributing_question = nil
       (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
       
-      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question)   
+      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question)
       
       # TODO: Add new notification logic here.
       #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })  	    
@@ -324,7 +330,7 @@ class Expert::QuestionsController < ApplicationController
     
   def reactivate
     question = Question.find_by_id(params[:id])
-    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver => nil, :current_response => nil, :resolved_at => nil, :current_resolver_email => nil)
+    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil, :current_resolver_email => nil)
     QuestionEvent.log_reactivate(question, current_user)
     flash[:success] = "Question re-activated"
     redirect_to expert_question_url(question)
