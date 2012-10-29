@@ -329,7 +329,7 @@ body#expert {
 	.question.list {margin:0 0 2em; }
 	#history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:2em;}
 	#history a {color:#363955;}
-	#history li {margin-bottom:.5em; list-style:none;}
+	#history li {margin-bottom:.5em; list-style:none; border-bottom:1px solid #ddd;}
 	textarea {width:30em;}
 	#main {margin:0}
 /*	#secondary {outline:1px solid blue;}*/
@@ -406,6 +406,7 @@ body#expert {
   #reassign_actions {padding:1em;}
   #reassign_header {padding:1em;}
   li small {font-size:11px; color:#999;}
+  #history .comment {background:#FFFFE6; display:inline-block; padding:.25em .5em; margin:0 0 .5em .5em;}
 }
 
 /*body#expert.demo .container-fluid {margin-top:40px;}*/

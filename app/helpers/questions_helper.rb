@@ -18,11 +18,11 @@ module QuestionsHelper
         recipient_class = "class='qw'"
       end
       reassign_msg = "Assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      reassign_msg = reassign_msg + " <span>Comments: #{q_event.response}</span>" if q_event.response
+      reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
     when QuestionEvent::ASSIGNED_TO_GROUP
       reassign_msg = "Assigned to group <strong>#{link_to "#{q_event.assigned_group.name}", expert_group_path(q_event.assigned_group.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      reassign_msg = reassign_msg + " <span>Comments: #{q_event.response}</span>" if q_event.response
+      reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
     when QuestionEvent::RESOLVED 
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
@@ -30,7 +30,7 @@ module QuestionsHelper
       return "No answer available was sent from <strong #{qw}>#{initiator_full_name}</strong><span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CLOSED
       close_msg = "Question Closed Out by <strong #{qw}>#{initiator_full_name}</strong><span> #{humane_date(q_event.created_at)}</span>"
-      close_msg += " <span>Close Out Comments: #{q_event.response}</span>"
+      close_msg += " <span class=\"comment\">#{q_event.response}</span>"
       return close_msg.html_safe
     when QuestionEvent::MARKED_SPAM
       return "Marked as spam by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
@@ -38,7 +38,7 @@ module QuestionsHelper
       return "Marked as non-spam by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::REJECTED
       reject_msg = "Question Rejected by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      reject_msg = reject_msg + " <span>Reject Comments: #{q_event.response}</span>"
+      reject_msg = reject_msg + " <span class=\"reject comment\">#{q_event.response}</span>"
       return reject_msg.html_safe
     when QuestionEvent::REACTIVATE
       return "Question Reactivated by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
