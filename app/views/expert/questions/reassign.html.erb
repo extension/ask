@@ -109,7 +109,8 @@
 
 <div class="span3">
 <div id="reassign_actions">
-  <% if @question.assignee != current_user %>
+  <% if (@question.assignee != current_user) || 
+    (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
     <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
   <% end %>
   <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
