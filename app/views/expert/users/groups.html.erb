@@ -30,8 +30,7 @@
         <td>
           <%= form_tag('', :class => "form-stacked no_m_t well") do -%>
           <ul class="notification_options">
-            <li><%= radio_button_tag :notification_ty, "", true %> Notify me when I am assigned a question</li>
-            <li><%= radio_button_tag :notification_ty, "", false %> Notify me when this Group gets a new question</li>
+            <li><%= check_box_tag :notification_ty, "", false %> Notify me every time this Group gets a new question</li>
             <li><%= check_box_tag 'active', '1', false %>  Send me a Daily Summary</li>
             <li><span class="btn">save</span></li>
           </ul>
