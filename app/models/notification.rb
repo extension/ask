@@ -103,7 +103,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_reassignment
-    InternalMailer.aae_assignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless (self.notifiable.previous_handling_recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_reassignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless (self.notifiable.previous_handling_recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_escalation
