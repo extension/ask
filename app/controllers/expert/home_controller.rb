@@ -10,17 +10,17 @@ class Expert::HomeController < ApplicationController
   before_filter :require_exid
   
   def index
-    @recent_questions = Question.find(:all, :limit => 20, :order => 'created_at DESC')
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
+    @recent_questions = questions_based_on_pref_filter('incoming', current_user.user_preference)
   end
   
   def search
   end
   
   def get_counties
-    render :partial => "counties"
+    render :partial => "counties", :locals => {:location_obj => nil}
   end
   
   def answered

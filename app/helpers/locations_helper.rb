@@ -17,7 +17,7 @@ module LocationsHelper
   end
 
   def get_county_options_without_all_counties(provided_location = nil)
-    if params[:location_id] and params[:location_id].strip != '' and location = Location.find(params[:location_id])
+    if params[:location_id] && params[:location_id].strip != '' && location = Location.find(params[:location_id])
       counties = location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
       counties.map{|c| [c.name, c.id]}
     elsif(provided_location)

@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :responses
   has_many :user_locations
   has_many :user_counties
-  has_many :user_preferences
+  has_one  :user_preference
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
   has_many :notification_exceptions
@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
-  has_one :yo_lo
+  has_one  :yo_lo
   
   # sunspot/solr search
   searchable do
@@ -265,6 +265,18 @@ class User < ActiveRecord::Base
       self.group_connections.create(group: group, connection_type: "member")
       GroupEvent.log_removed_as_leader(group, self, self)
     end
+  end
+  
+  def send_assignment_notification?(group)
+    self.preferences.setting('notification.question.assigned_to_me',group)
+  end
+  
+  def send_incoming_notifiation?(group)
+    self.preferences.setting('notification.question.incoming', group)
+  end
+  
+  def send_daily_summary?(group)
+    self.preferences.setting('notification.question.daily_summary', group)
   end
     
 end

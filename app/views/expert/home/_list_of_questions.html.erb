@@ -1,0 +1,87 @@
+<% @recent_questions.each do |question| %>
+  <div class="incoming_question">
+    
+    <div class="row-fluid">  
+      
+      <div class="span8">
+        <%= link_to expert_question_path(question.id) do %>
+          <% if question.title.present? %>
+            <h3><%= format_text_for_display(question.title) -%></h3>
+          <% else %>
+            <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
+          <% end %>
+          <p><%= question.body -%></p>
+        <%- end -%>
+        <p>
+          <% if !question.is_private %>
+            <span class="label label-warning"><%= link_to "Public", question_path(question.id) %></span>
+          <% end %>
+          
+          <% if question.location.present? %>
+            <% if question.county.present? %>
+              <span class="tag tag-geography"><%= link_to "#{question.county.name}", expert_view_county_path(question.county.id) %></span>
+            <% end %>
+            <% if question.location.present? %>
+              <span class="tag tag-geography"><%= link_to question.location.abbreviation, expert_view_location_path(question.location.id) %></span>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "No Location" %></span>
+          <% end %>
+          
+          <% if question.tags.length > 0 %>
+            <% question.tags.each do |tag| %>
+              <% if question.assigned_group %>
+                <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
+              <% else %>
+                <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span>
+              <% end %>
+            <% end %>
+          <% else %>
+            <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(question.id) %></span>
+          <% end %>
+            <%= time_ago_in_words(question.created_at) %> ago
+        </p>
+        
+        <% question.images.each do |image| %>
+          <% if FileTest.exist?(image.url()) %>
+
+          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+
+          <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+            <p>
+              <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+              <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+            <p>
+              </div>
+            <div class="modal-body">
+              <%= image_tag image.url() %>
+            </div>
+          </div>
+          <% else %>
+            <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+          <% end %>
+        <% end %>
+        
+      </div>
+      
+      <div class="span4">
+	    <div class="expert">
+	    <% if question.assignee_id.present? %>
+        <%= link_expert_user_avatar(question.assignee, :thumb, true) %> <%= link_expert_user(question.assignee) %> 
+		  <% else %>
+		    <p><strong>This question does not have an assignee.</strong></p>
+	    <% end %>
+		
+		<% if question.assigned_group %>
+	      <p><%= link_expert_group_avatar(question.assigned_group, :mini, true) %> <%= link_to question.assigned_group.name, expert_group_path(question.assigned_group.id) %></p>
+		<% else %>
+			<p><strong>This question is groupless</strong></p>
+		<% end %>
+        </div>
+      </div>
+    
+    </div>
+    
+  </div>
+  <% end %>
