@@ -76,11 +76,11 @@ class Preference < ActiveRecord::Base
     end
   end
     
-  def self.create_or_update(prefable,name,value)
-    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).first)
+  def self.create_or_update(prefable,name,value,group=nil)
+    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(group_id: group).first)
       preference.update_attribute(:value, value)
     else
-      preference = self.create(prefable: prefable, name: name, value: value)
+      preference = self.create(prefable: prefable, name: name, value: value, group_id: group)
     end
     preference
   end

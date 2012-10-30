@@ -28,11 +28,12 @@
         </td>
         
         <td>
-          <%= form_tag('', :class => "form-stacked no_m_t well") do -%>
+          <%= form_tag('/expert/users/save_notification_prefs', :class => "form-stacked no_m_t well", :method => "post") do -%>
           <ul class="notification_options">
-            <li><%= check_box_tag :notification_ty, "", false %> Notify me every time this Group gets a new question</li>
-            <li><%= check_box_tag 'active', '1', false %>  Send me a Daily Summary</li>
-            <li><span class="btn">save</span></li>
+            <%= hidden_field_tag(:group_id, group.id) %>
+            <li><%= check_box_tag :send_incoming_notification, true, @user.send_incoming_notifiation?(group) %> Notify me every time this Group gets a new question</li>
+            <li><%= check_box_tag :send_daily_summary, true, @user.send_daily_summary?(group) %>  Send me a Daily Summary</li>
+            <li><%= submit_tag "save", :class => 'btn'%></li>
           </ul>
           <% end %>
         </td>

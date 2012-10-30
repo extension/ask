@@ -14,7 +14,7 @@ class CreatePreferences < ActiveRecord::Migration
       t.timestamps
     end
     
-    add_index 'preferences', ['prefable_id','prefable_type','name'], :unique => true, :name => 'pref_uniq_ndx'
+    add_index 'preferences', ['prefable_id','prefable_type','name','group_id'], :unique => true, :name => 'pref_uniq_ndx'
     add_index 'preferences', ['classification']
 
   end

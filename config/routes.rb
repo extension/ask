@@ -45,6 +45,7 @@ Aae::Application.routes.draw do
       collection do
         get 'tags'
         post 'save_listview_filter'
+        post 'save_notification_prefs'
       end
     end
 

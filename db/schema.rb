@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(:version => 20121026140137) do
   end
 
   add_index "preferences", ["classification"], :name => "index_preferences_on_classification"
-  add_index "preferences", ["prefable_id", "prefable_type", "name"], :name => "pref_uniq_ndx", :unique => true
+  add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
     t.integer  "question_id",                        :null => false

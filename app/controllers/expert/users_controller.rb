@@ -73,5 +73,16 @@ class Expert::UsersController < ApplicationController
     
     @recent_questions = questions_based_on_pref_filter(params[:list_view], pref)  
   end
+  
+  def save_notification_prefs
+    user = current_user
+    if params[:group_id].present? 
+      send_incoming_notification = params[:send_incoming_notification].present?
+      Preference.create_or_update(user, 'notification.question.incoming', send_incoming_notification, params[:group_id])
+      send_daily_summary =  params[:send_daily_summary].present?
+      Preference.create_or_update(user, 'notification.question.daily_summary', send_daily_summary, params[:group_id])
+    end
+    redirect_to :back
+  end
     
 end
