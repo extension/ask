@@ -33,7 +33,7 @@
 	<td>You can view the question and respond here: <%= link_to question_url(@question),question_url(@question)%></td>
   </tr>
   <tr>
-	 <td>Please resolve this question before <%= @respond_by.strftime("%A, %B %e, %Y, %l:%M %p") %> UTC (EST + 5:00).</td>
+	 <td>Please resolve this question before <%= @respond_by.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</td>
   </tr>
   <tr>
 	<td>Thanks for your help!</td>
@@ -62,7 +62,7 @@
         	</td>
         </tr>
         <tr>
-        	<td>The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p") %> UTC (EST + 5:00).</td>
+        	<td>The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</td>
         </tr>
         <tr>
           <td>*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>

@@ -27,7 +27,7 @@
     <td>One of the questions assigned to you in the Ask an Expert system has been rejected by another expert.</td>
   </tr>
   <tr>
-    <td>The question was rejected <%= @rejected_event.created_at.strftime("%A, %B %e, %Y, %l:%M %p") %> UTC (EST + 5:00)
+    <td>The question was rejected <%= @rejected_event.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.
   </tr>
   <tr>
     <td>"<%=@rejected_event.response %>"</td>
