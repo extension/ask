@@ -46,6 +46,8 @@ class User < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
     
+  validates :email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+    
   before_update :update_vacated_aae
   
   DEFAULT_NAME = 'Anonymous'

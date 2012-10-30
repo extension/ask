@@ -22,16 +22,16 @@ class QuestionsController < ApplicationController
         @question = Question.new(params[:question])
 
         # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
-        @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : @question.submitter_email
+        @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : params[:question][:submitter_email]
 
         # make sure email and confirmation email match up
-        if @question.submitter_email != @email_confirmation
+        if params[:question][:submitter_email] != @email_confirmation
           @argument_errors = "Email address does not match the confirmation email address."
           raise ArgumentError
         end
 
-        if !(@submitter = User.find_by_email(@question.submitter_email))
-          @submitter = User.create({:email => @question.submitter_email})
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+          @submitter = User.create({:email => params[:question][:submitter_email]})
           if !@submitter.valid?
             @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
             raise ArgumentError

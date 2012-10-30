@@ -120,9 +120,12 @@ class Question < ActiveRecord::Base
     return_results
   end
   
+  def email
+    self.submitter.email
+  end
   
   def auto_assign_by_preference
-    if existing_question = Question.find(:first, :conditions => ["id != #{self.id} and body = ? and submitter_email = '#{self.submitter_email}'", self.body])
+    if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
       reject_msg = "This question was a duplicate of incoming question ##{existing_sq.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
@@ -356,7 +359,7 @@ class Question < ActiveRecord::Base
 
   def generate_fingerprint
     create_time = Time.now.to_s
-    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.submitter_email)
+    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
   end
   
   # TODO: probably needs to be changed, not sure to what yet.
