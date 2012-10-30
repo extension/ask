@@ -4,7 +4,7 @@
     <p>You currently are not a member any groups.</p>
   <% else %>
     <% @my_groups.each do |group| %>  
-      <div class="group"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></div>
+      <div><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></div>
     <% end %>
   <% end %>
   
