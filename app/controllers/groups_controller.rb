@@ -32,7 +32,7 @@ class GroupsController < ApplicationController
       @question = Question.new(params[:question])
       
       if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-        @submitter = User.create({:email => params[:question][:submitter_email]})
+        @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
         if !@submitter.valid?
           @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
           raise ArgumentError

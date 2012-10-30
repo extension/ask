@@ -121,7 +121,7 @@ class Question < ActiveRecord::Base
   end
   
   def email
-    self.submitter.email
+    self.submitter.present? ? self.submitter.email : ''
   end
   
   def auto_assign_by_preference
