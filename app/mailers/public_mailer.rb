@@ -5,6 +5,7 @@
 # see LICENSE file
 
 class PublicMailer < ActionMailer::Base
+  helper ApplicationHelper
   default_url_options[:host] = Settings.urlwriter_host
   default from: "aae-notify@extension.org"
   default bcc: "systemsmirror@extension.org"
