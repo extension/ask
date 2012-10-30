@@ -14,7 +14,7 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @question = options[:question]
     @subject = "[eXtension Question:#{@question.id}] Incoming question assigned to you"
-    @assigned_at = @question.last_assigned_at
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
@@ -91,7 +91,7 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @question = options[:question]
     @subject = "[eXtension Question:#{@question.id}] Incoming question edited by submitter"
-    @assigned_at = @question.last_assigned_at
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
@@ -119,7 +119,7 @@ class InternalMailer < ActionMailer::Base
     @comment = options[:comment]
     @question = @comment.question
     @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new comment."
-    @assigned_at = @question.last_assigned_at
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
