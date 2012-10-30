@@ -46,7 +46,10 @@ class User < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
     
+  validates :email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+    
   before_update :update_vacated_aae
+  before_save :update_aae_status_for_public
   
   DEFAULT_NAME = 'Anonymous'
   scope :tagged_with, lambda {|tag_id| 
@@ -257,6 +260,12 @@ class User < ActiveRecord::Base
     # question wrangler group?
     if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
       self.update_attribute(:is_question_wrangler, false)
+    end
+  end
+  
+  def update_aae_status_for_public
+    if self.kind == 'PublicUser'
+      self.away = true
     end
   end
   
