@@ -16,4 +16,6 @@ aae_escalation_delta: 24
 request_ip_address: "152.46.27.154"
 geoip_data_file: 'notset'
 geoname_data_file: 'notset'
+default_display_timezone: 'Eastern Time (US & Canada)'
+
 

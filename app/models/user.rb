@@ -6,6 +6,9 @@
 #  see LICENSE file
 
 class User < ActiveRecord::Base
+  DEFAULT_TIMEZONE = 'America/New_York'
+  DEFAULT_NAME = 'Anonymous'
+
   has_many :authmaps
   has_many :comments
   has_many :questions
@@ -26,7 +29,7 @@ class User < ActiveRecord::Base
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
   has_one  :yo_lo
-  
+
   # sunspot/solr search
   searchable do
     text :name
@@ -37,25 +40,24 @@ class User < ActiveRecord::Base
     boolean :is_blocked
     string :kind
   end
-  
-  
+
+
   devise :rememberable, :trackable, :database_authenticatable
-  
+
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
-  
+
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
-    
+
   validates :email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
-    
+
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
-  
-  DEFAULT_NAME = 'Anonymous'
-  scope :tagged_with, lambda {|tag_id| 
+
+  scope :tagged_with, lambda {|tag_id|
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'User'"}
   }
-  
+
   scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("user_counties.county_id = #{county_id}") }
   scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :question_wranglers, conditions: { is_question_wrangler: true }
@@ -64,27 +66,27 @@ class User < ActiveRecord::Base
   scope :exid_holder, conditions: { kind: 'User' }
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
-  
-  scope :tagged_with_any, lambda { |tag_list| 
+
+  scope :tagged_with_any, lambda { |tag_list|
         {:select => "users.*, COUNT(users.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "users.id", :order => "tag_count DESC"}
   }
-  
-  
+
+
   scope :patternsearch, lambda {|searchterm|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
     # strip '+' characters because it's causing a repitition search error
     # strip parens '()' to keep it from messing up mysql query
     sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
-    
+
     if sanitizedsearchterm == ''
       return []
     end
-    
+
     # in the format wordone wordtwo?
     words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
     if(words.length > 1)
-      findvalues = { 
+      findvalues = {
        :firstword => words[0],
        :secondword => words[1]
       }
@@ -94,17 +96,17 @@ class User < ActiveRecord::Base
     end
     {:conditions => conditions}
   }
-  
-  
+
+
   def name
     if (self.first_name.present? && self.last_name.present?)
-      return self.first_name + " " + self.last_name 
+      return self.first_name + " " + self.last_name
     elsif self.public_name.present?
       return self.public_name
     end
     return DEFAULT_NAME
   end
-  
+
   def public_name
     if self[:public_name].present?
       return self[:public_name]
@@ -113,50 +115,50 @@ class User < ActiveRecord::Base
     end
     return DEFAULT_NAME
   end
-  
+
   def tag_fulltext
     self.tags.map(&:name).join(' ')
   end
-  
+
   def member_of_group(group)
     find_group = self.group_connections.where('group_id = ?', group.id)
     !find_group.blank?
   end
-  
+
   def leader_of_group(group)
     find_group = self.group_connections.where('group_id = ?', group.id).where('connection_type = ?', 'leader')
     !find_group.blank?
   end
-  
+
   def self.system_user_id
     return 1
   end
-  
+
   def self.system_user
    find(1)
   end
-  
+
   def has_exid?
     return self.kind == 'User'
   end
-  
+
   def retired?
     return self.retired
   end
-  
+
   def set_tag(tag)
     if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
       return false
-    else 
+    else
       if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
         self.tags << tag
         return tag
       end
     end
   end
-  
+
   def update_vacated_aae
-    if self.away_changed? 
+    if self.away_changed?
       if self.away == true
         self.vacated_aae_at = Time.now
       else
@@ -164,29 +166,29 @@ class User < ActiveRecord::Base
       end
     end
   end
-  
+
   def join_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
       connection.destroy
     end
-    
+
     self.group_connections.create(group: group, connection_type: connection_type)
-    
+
     if connection_type == 'leader'
       GroupEvent.log_added_as_leader(group, self, self)
     else
       GroupEvent.log_group_join(group, self, self)
     end
-    
+
     # question wrangler group?
     if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
       if(connection_type == 'leader' || connection_type == 'member')
         self.update_attribute(:is_question_wrangler, true)
       end
     end
-    
+
   end
-  
+
   # instance method version of aae_handling_event_count
   def aae_handling_event_count(options = {})
     myoptions = options.merge({:group_by_id => true, :limit_to_handler_ids => [self.id]})
@@ -198,41 +200,41 @@ class User < ActiveRecord::Base
     end
     return returnvalues
   end
-   
+
   def self.aae_handling_event_count(options = {})
     # narrow by recipients
     !options[:limit_to_handler_ids].blank? ? recipient_condition = "previous_handling_recipient_id IN (#{options[:limit_to_handler_ids].join(',')})" : recipient_condition = nil
     # default date interval is 6 months
-    date_condition = "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"    
+    date_condition = "created_at > date_sub(curdate(), INTERVAL 6 MONTH)"
     # group by user id's or user objects?
     group_clause = (options[:group_by_id] ? 'previous_handling_recipient_id' : 'previous_handling_recipient')
-    
+
     # get the total number of handling events
-    conditions = []      
+    conditions = []
     conditions << date_condition
     conditions << recipient_condition if recipient_condition.present?
     totals_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
-    
+
     # pull all question events for where someone pulled the question from them within 24 hours and do not count those
     conditions = ["initiated_by_id <> previous_handling_recipient_id"]
     conditions << date_condition
     conditions << "duration_since_last_handling_event <= 86400"
     conditions << recipient_condition if recipient_condition.present?
     negated_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
-    
+
     # get the total number of handling events for which I am the previous recipient *and* I was the initiator.
     conditions = ["initiated_by_id = previous_handling_recipient_id"]
     conditions << date_condition
     conditions << recipient_condition if recipient_condition.present?
     handled_hash = QuestionEvent.handling_events.count(:all, :conditions => conditions.compact.join(' AND '), :group => group_clause)
-    
+
     # loop through the total list, build a return hash
     # that will return the values per user_id (or user object)
     returnvalues = {}
     returnvalues[:all] = {:total => 0, :handled => 0, :ratio => 0}
     totals_hash.keys.each do |groupkey|
       total = totals_hash[groupkey]
-      total = total - negated_hash[groupkey].to_i if !negated_hash[groupkey].nil? 
+      total = total - negated_hash[groupkey].to_i if !negated_hash[groupkey].nil?
       handled = (handled_hash[groupkey].nil?? 0 : handled_hash[groupkey])
       # calculate a floating point ratio
       if(handled > 0)
@@ -242,7 +244,7 @@ class User < ActiveRecord::Base
       end
       returnvalues[groupkey] = {:total => total, :handled => handled, :ratio => ratio}
       returnvalues[:all][:total] += total
-      returnvalues[:all][:handled] += handled       
+      returnvalues[:all][:handled] += handled
     end
     if(returnvalues[:all][:handled] > 0)
       returnvalues[:all][:ratio] = returnvalues[:all][:handled].to_f / returnvalues[:all][:total].to_f
@@ -250,25 +252,25 @@ class User < ActiveRecord::Base
 
     return returnvalues
   end
-    
+
   def leave_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
       GroupEvent.log_group_leave(group, self, self)
     end
-    
+
     # question wrangler group?
     if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
       self.update_attribute(:is_question_wrangler, false)
     end
   end
-  
+
   def update_aae_status_for_public
     if self.kind == 'PublicUser'
       self.away = true
     end
   end
-  
+
   def leave_group_leadership(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
       connection.destroy
@@ -276,17 +278,62 @@ class User < ActiveRecord::Base
       GroupEvent.log_removed_as_leader(group, self, self)
     end
   end
-  
+
   def send_assignment_notification?(group)
     self.preferences.setting('notification.question.assigned_to_me',group)
   end
-  
+
   def send_incoming_notifiation?(group)
     self.preferences.setting('notification.question.incoming', group)
   end
-  
+
   def send_daily_summary?(group)
     self.preferences.setting('notification.question.daily_summary', group)
   end
-    
+
+  # override timezone writer/reader
+  # returns Eastern by default, use convert=false
+  # when you need a timezone string that mysql can handle
+  def time_zone(convert=true)
+    tzinfo_time_zone_string = read_attribute(:time_zone)
+    if(tzinfo_time_zone_string.blank?)
+      tzinfo_time_zone_string = DEFAULT_TIMEZONE
+    end
+
+    if(convert)
+      reverse_mappings = ActiveSupport::TimeZone::MAPPING.invert
+      if(reverse_mappings[tzinfo_time_zone_string])
+        reverse_mappings[tzinfo_time_zone_string]
+      else
+        nil
+      end
+    else
+      tzinfo_time_zone_string
+    end
+  end
+
+  def time_zone=(time_zone_string)
+    mappings = ActiveSupport::TimeZone::MAPPING
+    if(mappings[time_zone_string])
+      write_attribute(:time_zone, mappings[time_zone_string])
+    else
+      write_attribute(:time_zone, nil)
+    end
+  end
+
+  # since we return a default string from timezone, this routine
+  # will allow us to check for a null/empty value so we can
+  # prompt people to come set one.
+  def has_time_zone?
+    tzinfo_time_zone_string = read_attribute(:time_zone)
+    return (!tzinfo_time_zone_string.blank?)
+  end
+
+  # this is mostly for the mailer situation where
+  # we aren't setting Time.zone for the web request
+  def time_for_user(datetime)
+    logger.debug "In time_for_user #{self.id}"
+    self.has_time_zone? ? datetime.in_time_zone(self.time_zone) : datetime.in_time_zone(Settings.default_display_timezone)
+  end
+
 end
