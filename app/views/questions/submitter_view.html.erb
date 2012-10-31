@@ -1,0 +1,82 @@
+<% @title_tag = "Ask an Expert Question - #{@question.title}"%>
+
+<div id="public_aae">
+    <h1>Your Question</h1>
+    
+    <br /><br />
+    <div id="primary">
+        <div id="question_area">
+          <div class="question"><%= format_text_for_display(@question.body) %></div>
+            <% @question.images.each do |image| %>
+              <% if image.persisted? %>
+			    <%= image_tag image.url(:thumb) %>
+			  <% end %>
+			<% end %>
+
+			<% if @question.current_response.blank? %>
+			    <p class="inc_descriptive editpitch">
+			    <%= link_to_function 'Edit my question', "$('#edit_question').toggle();" %>.
+			                  Need to clarify or correct any information? Your question is editable until one of our experts responds. Thanks!
+			    </p>
+			
+			    <div id="edit_question" style="display:none">
+				  <%= form_for @question do |f| %>
+				      <%= f.text_area :body, :rows => "10", :cols => "60" %>
+					  <div id="aae_image_div">
+						
+						<% @question.images.each do |image| %>
+						  <%= f.fields_for :images, image do |image_fields| %>
+						    <% if image.persisted? %>
+						      <p>
+						      Delete <%= image_fields.check_box :_destroy %> 
+						      <%= image_tag image.url(:thumb) %>
+						      </p>
+		                    <% else %>
+		                      <p>
+							    <%= image_fields.file_field :attachment  %>
+							  </p>
+		                    <% end %>
+						  <% end %>
+						<% end %>
+					  </div>
+					  		
+				      <%= submit_tag "Save changes" %>    
+				      <%= link_to_function "Cancel", "$('#edit_question').hide()" %>
+				      </p>
+				  <% end %>
+				</div>
+			<% else %>
+			  <div id="responses">
+			    <% if @question.responses.length > 0 %>
+			        <h3>Responses:</h3>
+			        <% @question.responses.each do |response| %> 
+			            <div class="commentblock <%= (response.submitter.present? && response.submitter.kind == 'PublicUser') ? "public": "expert" %>" >
+			              <div class="comment_wrapper">
+			                <%= format_text_for_display(response.body) %>
+			                <%= response.signature.present? ? response.signature : '' %>
+			                <p class="meta">Posted <%= time_ago_in_words(response.created_at) %> ago</p>
+			               </div>
+			            </div>
+			        <% end %>
+			    <% end %>
+			  </div>
+			 <% end %>
+        </div>
+        </div>
+
+        <br /><br />
+        <p class="inc_descriptive">This question was submitted <%= time_ago_in_words(@question.created_at) %> ago.</p>
+    
+        <% if @question.current_response.blank? %>
+            <div id="no_answer">
+                <h2>We don’t have an answer for you yet...</h2>
+                <p>As soon as we have one, we’ll send you an email.</p>
+                <h3>Need to clarify or correct any information?</h3>
+                <p>Your question is editable until one of our experts responds. Click the "Edit my question" link above.</p>
+            </div>
+        <% end %>
+
+
+        <p class="aae_pitch">Have another question? <%= link_to 'Ask one of our Experts', ask_url %></p>
+    
+</div>

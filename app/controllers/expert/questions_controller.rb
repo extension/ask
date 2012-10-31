@@ -191,7 +191,7 @@ class Expert::QuestionsController < ApplicationController
       
       if (@question.assignee.present?)
         if (current_user != @question.assignee)
-          @question.assign_to(current_user, current_user)
+          @question.assign_to(current_user, current_user, nil)
         end
       end
       

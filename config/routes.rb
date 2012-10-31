@@ -7,7 +7,13 @@ Aae::Application.routes.draw do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
-  resources :questions
+  resources :questions do
+    member do
+      post 'submitter_edit'
+      get 'submitter_edit'
+    end  
+  end
+  
   resources :comments, :only => [:create, :update, :destroy, :show]
   resources :users
   resources :groups do
@@ -95,7 +101,12 @@ Aae::Application.routes.draw do
     match "search/questions" => "search#questions", :via => [:get]
     match "home/search" => "home#search", :via => [:get]
   end
-
+  
+  # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
+  match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'
+  
+  match "questions/authorize_submitter" => "questions#authorize_submitter", :via => :post, :as => 'authorize_submitter'
+  
   match "home/about" => "home#about", :via => :get
   match "home/change_yolo" => "home#change_yolo", :via => [:post]
   match "home/locations/:id" => "home#locations", :as => 'view_location'

@@ -18,7 +18,7 @@ class Question < ActiveRecord::Base
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   
-  accepts_nested_attributes_for :images
+  accepts_nested_attributes_for :images, :allow_destroy => true
   accepts_nested_attributes_for :responses
   
   validates :body, :presence => true

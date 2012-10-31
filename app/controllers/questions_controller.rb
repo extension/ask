@@ -7,7 +7,62 @@ class QuestionsController < ApplicationController
     @question_responses = @question.responses
     @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.public_visible.count))
   end
-
+  
+  def submitter_view
+    @question = Question.find_by_question_fingerprint(params[:fingerprint])
+    
+    if @question.present?
+      @question_responses = @question.responses 
+      @current_response = @question.current_response
+      # max of 3 total images allowed (including existing)
+      new_image_count = 3 - @question.images.count
+      if new_image_count > 0
+        new_image_count.times do    
+          @question.images.build
+        end
+      end
+    else
+      do_404
+      return
+    end
+    
+    if !session[:submitter_id].present?
+      return render :template => 'questions/submitter_signin'
+    else
+      @user = User.find_by_id(session[:submitter_id])
+      if @user.blank? || @question.submitter.blank? || @question.submitter.id != @user.id
+        session[:submitter_id] = nil
+        return render :template => 'questions/submitter_signin'
+      end
+    end  
+  end
+  
+  def authorize_submitter
+    @question = Question.find_by_question_fingerprint(params[:fingerprint])
+    
+    return do_404 if !@question
+    
+    if params[:email_address].present? && (submitter = User.find_by_email(params[:email_address].strip.downcase)) 
+      # make sure that this question belongs to this user
+      if(@question.submitter.id == submitter.id)
+        session[:submitter_id] = submitter.id
+        return redirect_to submitter_view_url(:fingerprint => params[:fingerprint])
+      end
+    end
+    
+    flash.now[:warning] = "The email address you entered does not match the email used to submit the question. Please check the email address and try again."
+    render :template => 'questions/submitter_signin'
+  end
+    
+  def update
+    @question = Question.find_by_id(params[:id])
+    if !@question.update_attributes(params[:question])
+      flash[:notice] = "There was an error saving your question, please make sure the question field is not blank."
+    end
+    
+    redirect_to submitter_view_url(:fingerprint => @question.question_fingerprint)
+  end
+  
   # TODO: incorporate title into this.
   def create
     if request.post?
