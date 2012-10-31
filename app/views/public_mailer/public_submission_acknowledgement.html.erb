@@ -1,19 +1,161 @@
-<p>Hello,</p>
+<!DOCTYPE html>
 
-<p>Thank you for submitting your question.</p>
+<html style="margin: 0; padding: 0;">
 
-<p>Your question has been assigned to one of our experts and they will try to answer it within 48 hours.</p>
+<head>
+  <title>Ask an Expert Question Submitted</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <style type="text/css">
+  body {margin:0 auto; padding:10px; background:#f5f5f5;}
+  #wrapper {
+    -webkit-box-shadow: rgba(0,0,0,.4) 0 3px 10px;
+    margin:20px;
+    -webkit-border-radius: 10px;
+    background:#fff;
+    width:599px;
+    font-family: Arial, Verdana, sans-serif;
+  }
+  
+  a {text-decoration: none; color:#0069D6; padding:.5em 0;}
+	a:hover { text-decoration: none !important; }
+	
+	h1 {color: #d98837 !important; font: normal 30px Georgia, serif; margin: 0 0 0 10px; padding: 0; line-height: 40px;}
+	tr.tagline  {background:#000; color:#fff; padding:10px;}
+	tr.demotagline td  {background:#FF0; color:#000; padding:10px; font: normal 20px Arial, Verdana, sans-serif; text-align:center;}
+	tr.tagline td  {background:#000; color:#fff; padding:10px; font: normal 20px Arial, Verdana, sans-serif;}
+	tr.options  {background:#585858; color:#fff; padding:10px;}
+	tr.options td  {background:#585858; color:#ddd; padding:5px 9px;}
+	tr.options td a {color:#aaa; padding:6px; font: normal 14px  Arial, Verdana, sans-serif; text-decoration:none;}
+	tr.options td a:hover {color:#fff;}	
+	tr.date td {font: normal 12px  Arial, Verdana, sans-serif; text-align:center; padding:15px 10px; color:#888; text-transform:uppercase;}
+	.footer td {padding:10px;}
+	table.footer {margin:0 0 30px;}
+	table.footer p {color:#888; font: normal 13px  Arial, sans-serif;}
+	table.footer tr.options td {color:#888; font: normal 13px  Arial, sans-serif; background:#fff; padding:0 5px;}
+	table.footer tr.options td a {color:#0069D6; font: normal 13px  Arial, sans-serif; background:#fff;}
+	td.footer {padding-top:1em;}
+	.bgcolor {background:#fff;}
+	#reminder_title {font: bold 20px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	#email_body {font: normal 17px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	#subheader {font: bold 17px Arial, Verdana, sans-serif; padding:1.5em 0 2em;}
+	.meta_details {font: normal 12px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	.meta {color:#777; font-size:13px;}
+	#event_start_time {font: normal 20px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
+	#event_start_time strong {font-size:24px;}
+	#event_start_time a {color:#000; text-decoration:none;}
+	#callout {background:#e5e5e5; padding:10px; color:#333;}
+	.callout a {color:#0069D6; padding:.5em 0; text-decoration:none; font: bold 22px Arial, Verdana, sans-serif; display:block;}
+	table p {margin:0;padding:10px 10px 0;}
+	
+	#question_title a {font: bold 18px Arial, Verdana, sans-serif; padding:0 0 0; display:block;}
+	#question_body a {font: normal 14px Arial, Verdana, sans-serif; padding:.5em 0 .75em; display:block; color:#16426D;}
+	.action {color:#0069D6 !important; font-weight:bold;}
+	#reminder_description {padding-top:1.5em;}
+	#question_meta .tag a {font: normal 12px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
+	.tag {background:#D2E7BC; padding:4px 8px;}
+	</style>
+	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
+</head>
+<body>
 
-<p>We will notify you with an email when our experts have responded and you can view your question and any answers at our website:</p>
+<div id="wrapper">
+  <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
+  <%- if Settings.app_location != 'production' -%>
+    <tr class="demotagline">
+      <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
+    </tr>
+  <%- end -%>
+  <tr>
+    <th align="left" class="bgcolor">
+      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
+      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
+    </th>
+  </tr>
+  
+  <tr class="tagline">
+    <td>Ask an Expert Question Submitted</td>
+  </tr>
+  <tr class="options">
+    <td>
+      <%- if @mailer_cache -%>
+        <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+      <%- else -%>
+        <a href="">View in a browser</a> 
+      <%- end -%>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      
+      <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
+          <tr>
+            <td id="email_body">
+              <p>Hello,</p>
 
-<p><%= link_to question_url(@question), question_url(@question) %></p>
+              <p>Thank you for submitting your question.</p>
 
-<p>You can also edit your question if you need to clarify or correct any information. A better question usually gets a better answer. Thanks! (Your question is editable until one of our experts responds.)</p>
+              <p>Your question has been assigned to one of our experts and they will try to answer it within 48 hours.</p>
 
-<p>Question asked:</p>
+              <p>We will notify you with an email when our experts have responded and you can view your question and any answers at our website:</p>
+            </td>
+          </tr>
+              <tr>
+                <td id="callout">
+                  <table cellpadding="0" cellspacing="0" border="0" align="left">
+                    <tr>
+                      <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
+                      <td class="callout"><%= link_to("View your Question", question_url(@question)) -%></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><%= @question.body %></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td>
 
-<p><%= @question.body %></p>
+              <p>You can also edit your question if you need to clarify or correct any information. A better question usually gets a better answer. Thanks! (Your question is editable until one of our experts responds.)</p>
+              
+              <p>Thank you for using Ask an Expert.</p>
 
-<p>Thank you for using our 'Ask an Expert' system!</p>
+            </td>
+          </tr>
 
-<p>*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</p>
+          <tr>
+            <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
+          </tr>
+        </table>
+      
+      
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="footer">
+      <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
+        <tr>
+          <td class="bgcolor">
+            <p><p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals.eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to  the terms of use http://www.extension.org/main/termsofuse which may be revised at any time.</p></p>
+          </td>
+        </tr>
+        <tr class="options">
+          <td>
+            <%- if @mailer_cache -%>
+              <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+            <%- else -%>
+              <a href="">View in a browser</a> 
+            <%- end -%>
+          </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</div>  
+</body>
+</html>
+

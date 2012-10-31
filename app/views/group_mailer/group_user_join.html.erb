@@ -3,63 +3,151 @@
 <html style="margin: 0; padding: 0;">
 
 <head>
-  <title>
-    Someone has joined <%= @group.name %>
-  </title>
+  <title>Someone has joined <%= @group.name %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <style type="text/css">
+  body {margin:0 auto; padding:10px; background:#f5f5f5;}
+  #wrapper {
+    -webkit-box-shadow: rgba(0,0,0,.4) 0 3px 10px;
+    margin:20px;
+    -webkit-border-radius: 10px;
+    background:#fff;
+    width:599px;
+    font-family: Arial, Verdana, sans-serif;
+  }
+  
+  a {text-decoration: none; color:#0069D6; padding:.5em 0;}
+	a:hover { text-decoration: none !important; }
+	
+	h1 {color: #d98837 !important; font: normal 30px Georgia, serif; margin: 0 0 0 10px; padding: 0; line-height: 40px;}
+	tr.tagline  {background:#000; color:#fff; padding:10px;}
+	tr.demotagline td  {background:#FF0; color:#000; padding:10px; font: normal 20px Arial, Verdana, sans-serif; text-align:center;}
+	tr.tagline td  {background:#000; color:#fff; padding:10px; font: normal 20px Arial, Verdana, sans-serif;}
+	tr.options  {background:#585858; color:#fff; padding:10px;}
+	tr.options td  {background:#585858; color:#ddd; padding:5px 9px;}
+	tr.options td a {color:#aaa; padding:6px; font: normal 14px  Arial, Verdana, sans-serif; text-decoration:none;}
+	tr.options td a:hover {color:#fff;}	
+	tr.date td {font: normal 12px  Arial, Verdana, sans-serif; text-align:center; padding:15px 10px; color:#888; text-transform:uppercase;}
+	.footer td {padding:10px;}
+	table.footer {margin:0 0 30px;}
+	table.footer p {color:#888; font: normal 13px  Arial, sans-serif;}
+	table.footer tr.options td {color:#888; font: normal 13px  Arial, sans-serif; background:#fff; padding:0 5px;}
+	table.footer tr.options td a {color:#0069D6; font: normal 13px  Arial, sans-serif; background:#fff;}
+	td.footer {padding-top:1em;}
+	.bgcolor {background:#fff;}
+	#reminder_title {font: bold 20px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	#subheader {font: bold 17px Arial, Verdana, sans-serif; padding:1.5em 0 2em;}
+	.meta_details {font: normal 12px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	.meta {color:#777; font-size:13px;}
+	#event_start_time {font: normal 20px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
+	#event_start_time strong {font-size:24px;}
+	#event_start_time a {color:#000; text-decoration:none;}
+	#callout {background:#e5e5e5; padding:10px; color:#333;}
+	.callout a {color:#0069D6; padding:.5em 0; text-decoration:none; font: bold 22px Arial, Verdana, sans-serif; display:block;}
+	table p {margin:0;padding:10px 10px 0;}
+	
+	#question_title a {font: bold 18px Arial, Verdana, sans-serif; padding:0 0 0; display:block;}
+	#question_body a {font: normal 14px Arial, Verdana, sans-serif; padding:.5em 0 .75em; display:block; color:#16426D;}
+	.group {font: bold 18px Arial, Verdana, sans-serif; padding:.5em 0 .75em; color:#16426D;}
+	.action {color:#0069D6 !important; font-weight:bold;}
+	#reminder_description {padding-top:1.5em;}
+	#question_meta .tag a {font: normal 12px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
+	.tag {background:#D2E7BC; padding:4px 8px;}
+	.badge {display:none;}
+	</style>
+	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
 </head>
 <body>
-
-<div id="wrapper" class="bgcolor">
-<table cellpadding="0" cellspacing="0" border="0" align="center" width="599" class="bgcolor">
-  <%- if Settings.app_location != 'production' -%>
-    <tr class="demotagline">
-      <td>This email is being sent from a demonstration install of Ask an Expert. Please feel free to ignore this test email.</td>
-    </tr>
-  <%- end -%>
-  <tr>
-    <th align="left" class="bgcolor">
-      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/ex_logo_micro.png" : "#{ssl_webmail_logo}" -%>
-      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
-    </th>
-  </tr>
-  <tr class="tagline">
-    <td><%= @new_member.name %> has joined <%= @group.name %></td>
-  </tr>
-  <tr class="options">
-    <td>
-      <%- if @mailer_cache -%>
-        <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-      <%- else -%>
-        <a href="">View in a browser</a> 
-      <%- end -%>
-    </td>
-  </tr>
   
-    
-  <tr>
-    <td class="footer">
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-        <tr>
-          <td class="bgcolor">
-            <p>This email was sent to <%= @user.email %>. You received this email because you signed up to receive notifications from <%= root_url %>.</p>
-          </td>
-        </tr>
-        <tr class="options">
-          <td>
-            <%- if @mailer_cache -%>
-              <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-            <%- else -%>
-              <a href="">View in a browser</a> 
-            <%- end -%>
-              <%= link_to "Unsubscribe (NYI)", "unsubscribe_url" %>
-          </td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-      </table>
-    </td>
-  </tr>
-</table>
-</div>  
-</body>
-</html>
+  
+  <div id="wrapper">
+    <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
+    <%- if Settings.app_location != 'production' -%>
+      <tr class="demotagline">
+        <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
+      </tr>
+    <%- end -%>
+    <tr>
+      <th align="left" class="bgcolor">
+        <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
+        <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
+      </th>
+    </tr>
+
+    <tr class="tagline">
+      <td>There's a New Member in One of Your Groups</td>
+    </tr>
+    <tr class="options">
+      <td>
+        <%- if @mailer_cache -%>
+          <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+        <%- else -%>
+          <a href="">View in a browser</a> 
+        <%- end -%>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+
+        <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
+            <tr>
+              <td id="reminder_title">
+                <%= @new_member.name %> has joined <%= @group.name %>
+              </td>
+            </tr>
+            <tr>
+              <td id="callout">
+                <table cellpadding="0" cellspacing="0" border="0" align="left">
+                  <tr>
+                    <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
+                    <td class="callout"><%= link_to("View the Group History", expert_group_history_url(@group)) -%></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td class="group"><p><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %></p></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td class="group"><p><%= link_expert_user_avatar(@new_member, :thumb) %> <%= link_to @new_member.name, expert_user_path(@new_member.id) %></p></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
+            </tr>
+
+          </table>
+
+
+      </td>
+    </tr>
+
+    <tr>
+      <td class="footer">
+        <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
+          <tr>
+            <td class="bgcolor">
+              <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. You can change your notification settings in <%= link_to "your preferences", expert_settings_assignment_url() %>.</p>
+            </td>
+          </tr>
+          <tr class="options">
+            <td>
+              <%- if @mailer_cache -%>
+                <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+              <%- else -%>
+                <a href="">View in a browser</a> 
+              <%- end -%>
+                <%= link_to "Change your email settings", expert_settings_assignment_url() %>
+            </td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  </div>  
+  </body>
+  </html>
