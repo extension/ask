@@ -23,7 +23,7 @@
   <fieldset>
     <p><%= f.label :avatar, 'Profile Avatar' %></p>
     <p class="clearing">
-      <%= link_expert_user_avatar(@group) %>
+      <%= get_avatar_for_group(@group) %>
       <% if @group.avatar.present? %>
         <p class="clearing">
           <label>
