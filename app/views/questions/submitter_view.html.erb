@@ -53,7 +53,6 @@
 			            <div class="commentblock <%= (response.submitter.present? && response.submitter.kind == 'PublicUser') ? "public": "expert" %>" >
 			              <div class="comment_wrapper">
 			                <%= format_text_for_display(response.body) %>
-			                <%= response.signature.present? ? response.signature : '' %>
 			                <% response.images.each do |image| %>
                         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 
@@ -74,6 +73,7 @@
                           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
                         <% end %>
                       <% end %>
+			                <%= response.signature.present? ? response.signature : '' %>
 			                <p class="meta">Posted <%= time_ago_in_words(response.created_at) %> ago</p>
 			               </div>
 			            </div>
