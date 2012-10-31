@@ -9,6 +9,11 @@
     <div id="extension_people_data">
       <h3><%= @user.name %></h3>
       <h4><%= @user.email %></h4>
+      <%- if @user.has_time_zone? -%>
+        <h4><%= @user.time_zone %></h4>
+      <%- else -%>
+        <p>No timezone currently set <small><%= link_to("set your timezone now", "http://www.extension.org/people/profile/edit") %></small></p>
+      <%- end -%>
       
       <p id="people_edit"><%= link_to("The above items can be edited in people.extension.org", "http://www.extension.org/people/profile/me") %></p>
     </div>

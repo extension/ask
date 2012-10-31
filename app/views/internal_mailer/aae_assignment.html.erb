@@ -13,8 +13,12 @@
     -webkit-border-radius: 10px;
     background:#fff;
     width:599px;
+    font-family: Arial, Verdana, sans-serif;
   }
+  
+  a {text-decoration: none; color:#0069D6; padding:.5em 0;}
 	a:hover { text-decoration: none !important; }
+	
 	h1 {color: #d98837 !important; font: normal 30px Georgia, serif; margin: 0 0 0 10px; padding: 0; line-height: 40px;}
 	tr.tagline  {background:#000; color:#fff; padding:10px;}
 	tr.demotagline td  {background:#FF0; color:#000; padding:10px; font: normal 20px Arial, Verdana, sans-serif; text-align:center;}
@@ -24,34 +28,30 @@
 	tr.options td a {color:#aaa; padding:6px; font: normal 14px  Arial, Verdana, sans-serif; text-decoration:none;}
 	tr.options td a:hover {color:#fff;}	
 	tr.date td {font: normal 12px  Arial, Verdana, sans-serif; text-align:center; padding:15px 10px; color:#888; text-transform:uppercase;}
-	.article h3 {font: bold 24px  Georgia, serif; margin: 0;}
-	.article p {font: normal 14px  Arial, sans-serif; margin: 20px 0 0; margin:0 0 0; line-height:18px;}
-	.article td {padding:10px;}
 	.footer td {padding:10px;}
 	table.footer {margin:0 0 30px;}
 	table.footer p {color:#888; font: normal 13px  Arial, sans-serif;}
 	table.footer tr.options td {color:#888; font: normal 13px  Arial, sans-serif; background:#fff; padding:0 5px;}
 	table.footer tr.options td a {color:#0069D6; font: normal 13px  Arial, sans-serif; background:#fff;}
 	td.footer {padding-top:1em;}
-	#learn_logo {height: 96px;}
 	.bgcolor {background:#fff;}
 	#reminder_title {font: bold 20px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
-	#reminder_title a {color:#000; text-decoration:none;}
-	#reminder_title span a, #reminder_title span  {color:#555; font-weight:normal;}
-	
 	#subheader {font: bold 17px Arial, Verdana, sans-serif; padding:1.5em 0 2em;}
 	.meta_details {font: normal 12px Arial, Verdana, sans-serif; padding:1.5em 0 .75em;}
+	.meta {color:#777; font-size:13px;}
 	#event_start_time {font: normal 20px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
 	#event_start_time strong {font-size:24px;}
 	#event_start_time a {color:#000; text-decoration:none;}
-	#button {background:#e5e5e5; padding:10px;}
-	#button a {color:#0069D6; padding:.5em 0; text-decoration:none; font: bold 22px Arial, Verdana, sans-serif; display:block;}
+	#callout {background:#e5e5e5; padding:10px; color:#333;}
+	.callout a {color:#0069D6; padding:.5em 0; text-decoration:none; font: bold 22px Arial, Verdana, sans-serif; display:block;}
+	table p {margin:0;padding:10px 10px 0;}
 	
-	#question_title a {font: bold 18px Arial, Verdana, sans-serif; padding:0 0 0;}
-	#question_body a {font: normal 14px Arial, Verdana, sans-serif; padding:.5em 0 .75em;}
-	
+	#question_title a {font: bold 18px Arial, Verdana, sans-serif; padding:0 0 0; display:block;}
+	#question_body a {font: normal 14px Arial, Verdana, sans-serif; padding:.5em 0 .75em; display:block; color:#16426D;}
+	.action {color:#0069D6 !important; font-weight:bold;}
 	#reminder_description {padding-top:1.5em;}
 	#question_meta .tag a {font: normal 12px Arial, Verdana, sans-serif; padding:.65em; background:#e5e5e5;}
+	.tag {background:#D2E7BC; padding:4px 8px;}
 	</style>
 	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
 </head>
@@ -61,7 +61,7 @@
   <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
   <%- if Settings.app_location != 'production' -%>
     <tr class="demotagline">
-      <td>This email is being sent from a demonstration install of Ask an Expert. Please feel free to ignore this test email.</td>
+      <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
     </tr>
   <%- end -%>
   <tr>
@@ -90,47 +90,53 @@
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
             <td id="reminder_title">
-              You have been assigned a question:
+              You have been assigned an Ask an Expert Question
             </td>
           </tr>
           <tr>
-            <td id="button">
-                  <table cellpadding="0" cellspacing="0" border="0" align="left">
+            <td id="callout">
+              <table cellpadding="0" cellspacing="0" border="0" align="left">
                 <tr>
                   <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                  <td id="question_title"><%= link_to(@question.title, expert_question_url(@question)) -%></td>
+                  <td class="callout"><%= link_to("View your Question", expert_question_url(@question)) -%></td>
                 </tr>
                 <tr>
                   <td></td>
-                  <td id="question_body"><%= link_to(@question.body, expert_question_url(@question)) -%></td>
+                  <td id="question_title"><p><%= link_to(@question.title, expert_question_url(@question)) -%></p></td>
                 </tr>
                 <tr>
                   <td></td>
-                  <td id="question_meta">
-                    
-                      <% if !@question.is_private %>
-                        <span class="label label-warning"><%= link_to "Public", question_path(@question.id) %></span>
-                      <% end %>
-
-                      <% if @question.location.present? %>
-                        <% if @question.county.present? %>
-                          <span class="tag tag-geography"><%= @question.county.name %></span>
+                  <td id="question_body"><p><%= link_to(@question.body, expert_question_url(@question)) -%></p></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td id="question_meta">  
+                      <p>
+                        <% if @question.location.present? %>
+                          <% if @question.county.present? %>
+                            <span class="tag tag-geography"><%= @question.county.name %></span>
+                          <% end %>
+                            <span class="tag tag-geography"><%= @question.location.name %></span>
+                        <% else %>
+                            <span class="tag label-inverse">No Location</span>
                         <% end %>
-                          <span class="tag tag-geography"><%= @question.location.name %></span>
-                      <% else %>
-                        <span class="label label-inverse"><%= link_to "No Location" %></span>
-                      <% end %>
-
+                      </p>
+                      
+                      <p>
                       <% if @question.tags.length > 0 %>
                         <% @question.tags.each do |tag| %>
                             <span class="tag tag-topic"><%= tag.name %></span>
                         <% end %>
                       <% else %>
-                        <p><span class="label label-inverse">This question needs tags. <%= link_to("Can you help tag it?", expert_question_url(@question)) -%></span></p>
+                        <span class="label label-inverse">This question needs tags. <%= link_to("Can you help tag it?", expert_question_url(@question), :class => "action") -%></span>
                       <% end %>
-
-                      <p>Question submitted <%= time_ago_in_words(@question.created_at) %> ago</p>
-
+                      </p>
+                      
+                      <% if !@question.is_private %>
+                        <p class="meta">Submitted as a public question <%= time_ago_in_words(@question.created_at) %> ago</p>
+                      <% else %>
+                        <p class="meta">Submitted <%= time_ago_in_words(@question.created_at) %> ago</p>
+                      <% end %>
                   </td>
                 </tr>
                 
@@ -140,35 +146,25 @@
           
           <tr>
             <td id="subheader">
-              Please <%= link_to("answer", expert_question_url(@question)) -%> or <%= link_to "reassign", reassign_expert_question_path(@question.id) %> to someone who can as soon as possible. Thanks for your help!
+              Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_path(@question.id), :class => "action" %> to someone who can as soon as possible. Thanks for your help!
             </td>
           </tr>
-          
           <tr>
             <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
           </tr>
-          
           <tr>
           	<td class="meta_details">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</td>
           </tr>
-          
-          <tr>
-          	<td class="meta_details">If you have questions please contact us at: http://www.extension.org/aae/help</td>
-          	</tr>
+
         </table>
       
       
     </td>
   </tr>
   
-
-  
-    
   <tr>
     <td class="footer">
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-
-        
         <tr>
           <td class="bgcolor">
             <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. You can change your notification settings in <%= link_to "your preferences", expert_settings_assignment_url() %>.</p>

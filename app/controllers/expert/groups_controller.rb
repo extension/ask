@@ -38,6 +38,8 @@ class Expert::GroupsController < ApplicationController
   def members
     @group = Group.find(params[:id])
     @group_members = @group.joined.order('connection_type ASC')
+    
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @group_members.map(&:id)})
   end
   
   def questions_by_tag
@@ -47,7 +49,7 @@ class Expert::GroupsController < ApplicationController
     return record_not_found if (!@group || !@tag)
     
     @questions = Question.from_group(@group.id).tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
-  end
+  end  
   
   def profile
     @group = Group.find_by_id(params[:id])
@@ -65,6 +67,12 @@ class Expert::GroupsController < ApplicationController
       
       if @group.description_changed? 
         change_hash[:description] = {:old => @group.description_was, :new => @group.description}
+      end
+      
+      if params[:test].present? && params[:test] == '1'
+        @group.test = true
+      else
+        @group.test = false
       end
       
       if @group.save

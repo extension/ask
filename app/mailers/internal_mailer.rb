@@ -5,10 +5,12 @@
 # see LICENSE file
 
 class InternalMailer < ActionMailer::Base
+  helper ApplicationHelper
   default_url_options[:host] = Settings.urlwriter_host
   default from: "aae-notify@extension.org"
   default bcc: "systemsmirror@extension.org"
   helper_method :ssl_root_url, :ssl_webmail_logo
+  
   
   def aae_assignment(options = {})
     @user = options[:user]
