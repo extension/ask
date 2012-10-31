@@ -79,7 +79,7 @@ module ApplicationHelper
         when :mini     then image_size_in_px = "20x20"
     end
     
-    group_label = group_label ? raw("<span class=\"group\">Group</span>") : ""
+    group_label = group_label ? raw("<span class=\"group_label\">Group</span>") : ""
     
 
     if group.avatar.present?
