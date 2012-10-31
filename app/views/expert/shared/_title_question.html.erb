@@ -13,7 +13,7 @@
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
       <% question.images.each do |image| %>
-        <% if image.exists? %>
+        <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 
           <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
 
