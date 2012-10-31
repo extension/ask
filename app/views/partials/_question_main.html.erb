@@ -8,7 +8,7 @@
 <p class="question_body"><%= format_text_for_display(@question.body) %></p>
 
   <% @question.images.each do |image| %>
-    <% if FileTest.exist?(image.url()) %>
+    <% if image.exists? %>
   
     <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
     
