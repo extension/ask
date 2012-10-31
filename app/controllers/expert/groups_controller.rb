@@ -47,7 +47,7 @@ class Expert::GroupsController < ApplicationController
     return record_not_found if (!@group || !@tag)
     
     @questions = Question.from_group(@group.id).tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
-  end
+  end  
   
   def profile
     @group = Group.find_by_id(params[:id])
@@ -65,6 +65,12 @@ class Expert::GroupsController < ApplicationController
       
       if @group.description_changed? 
         change_hash[:description] = {:old => @group.description_was, :new => @group.description}
+      end
+      
+      if params[:test].present? && params[:test] == '1'
+        @group.test = true
+      else
+        @group.test = false
       end
       
       if @group.save

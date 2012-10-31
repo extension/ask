@@ -18,6 +18,13 @@
       <%= f.label :description, 'Group Description (optional)' %>
       <%= f.text_area :description, :rows => "2",  :class => "xl" %>
     </p>
+    
+    <p>
+        <label>        
+          <%= check_box_tag 'test', '1', @group.test %>  This is a test group
+			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
+        </label>
+    </p>
   </fieldset>
   
   <fieldset>
