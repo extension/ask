@@ -22,8 +22,7 @@ class QuestionsController < ApplicationController
         end
       end
     else
-      do_404
-      return
+      return record_not_found
     end
     
     if !session[:submitter_id].present?
