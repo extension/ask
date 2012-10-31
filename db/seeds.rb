@@ -309,16 +309,16 @@ end
 def transfer_assets
   puts 'Transferring assets...'
   question_asset_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.assets(type, assetable_id, assetable_type, attachment_file_name, attachment_content_type, attachment_file_size, attachment_updated_at, created_at, updated_at)
-  SELECT 'Question::Image', #{@darmokdatabase}.file_attachments.submitted_question_id, 'Question', #{@darmokdatabase}.file_attachments.attachment_file_name, #{@darmokdatabase}.file_attachments.attachment_content_type,
+  INSERT INTO #{@aae_database}.assets(id,type, assetable_id, assetable_type, attachment_file_name, attachment_content_type, attachment_file_size, attachment_updated_at, created_at, updated_at)
+  SELECT id,'Question::Image', #{@darmokdatabase}.file_attachments.submitted_question_id, 'Question', #{@darmokdatabase}.file_attachments.attachment_file_name, #{@darmokdatabase}.file_attachments.attachment_content_type,
          #{@darmokdatabase}.file_attachments.attachment_file_size, #{@darmokdatabase}.file_attachments.attachment_updated_at, #{@darmokdatabase}.file_attachments.created_at, NOW()
   FROM   #{@darmokdatabase}.file_attachments
   WHERE  #{@darmokdatabase}.file_attachments.submitted_question_id IS NOT NULL AND #{@darmokdatabase}.file_attachments.response_id IS NULL
   END_SQL
   
   response_asset_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.assets(type, assetable_id, assetable_type, attachment_file_name, attachment_content_type, attachment_file_size, attachment_updated_at, created_at, updated_at)
-  SELECT 'Response::Image', #{@darmokdatabase}.file_attachments.response_id, 'Response', #{@darmokdatabase}.file_attachments.attachment_file_name, #{@darmokdatabase}.file_attachments.attachment_content_type,
+  INSERT INTO #{@aae_database}.assets(id,type, assetable_id, assetable_type, attachment_file_name, attachment_content_type, attachment_file_size, attachment_updated_at, created_at, updated_at)
+  SELECT id,'Response::Image', #{@darmokdatabase}.file_attachments.response_id, 'Response', #{@darmokdatabase}.file_attachments.attachment_file_name, #{@darmokdatabase}.file_attachments.attachment_content_type,
          #{@darmokdatabase}.file_attachments.attachment_file_size, #{@darmokdatabase}.file_attachments.attachment_updated_at, #{@darmokdatabase}.file_attachments.created_at, NOW()
   FROM   #{@darmokdatabase}.file_attachments
   WHERE  #{@darmokdatabase}.file_attachments.submitted_question_id IS NULL AND #{@darmokdatabase}.file_attachments.response_id IS NOT NULL
