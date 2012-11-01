@@ -123,7 +123,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_expert_response
-    #NYI
+    PublicMailer.public_expert_response(user:self.notifiable.question.submitter, expert: self.notifiable.question.current_resolver, question: self.notifiable.question).deliver
   end
   
   def process_aae_public_submission_acknowledgement
