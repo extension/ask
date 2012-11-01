@@ -74,6 +74,12 @@ class QuestionEvent < ActiveRecord::Base
       :response => assignment_comment})
   end
   
+  def self.log_public_edit(question)
+    return self.log_event({:question => question, 
+      :event_state => EDIT_QUESTION, 
+      :additional_data => question.body})    
+  end
+  
   def self.log_reopen_to_group(question, group, initiated_by, assignment_comment)
     question.update_attribute(:last_opened_at, Time.now)
     
