@@ -371,27 +371,27 @@ class Expert::QuestionsController < ApplicationController
       county_groups = []
     end
     
-    question_tags = @question.tags.map{|t| "'#{t.name}'"}.join(',')
+    question_tags_array = @question.tags.all
       
     if question_tags.present?
       if @question.county_id?
         expert_ids = county_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
         
         group_ids = county_groups.map(&:id)
-        @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+        @groups.concat(Group.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end      
     
       if @question.location_id?
         expert_ids = location_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
         
         group_ids = location_groups.map(&:id)
-        @groups.concat(Group.tagged_with_any(question_tags).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+        @groups.concat(Group.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end
     
-      @experts.concat(User.active.tagged_with_any(question_tags))
-      @groups.concat(Group.tagged_with_any(question_tags))
+      @experts.concat(User.active.tagged_with_any(question_tags_array))
+      @groups.concat(Group.tagged_with_any(question_tags_array))
     end
     
     if county_experts.length > 0

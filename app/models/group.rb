@@ -33,14 +33,13 @@ class Group < ActiveRecord::Base
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED} AND questions.spam = false"
 
   scope :public_visible, where(test: false).where(active: true)
-  scope :with_expertise_county, lambda {|county_id| {:include => :expertise_counties, :conditions => "group_counties.county_id = #{county_id}"}}
-  scope :with_expertise_location, lambda {|location_id| {:include => :expertise_locations, :conditions => "group_locations.location_id = #{location_id}"}}
-  scope :tagged_with_any, lambda { |tag_list| 
-        {:select => "groups.*, COUNT(groups.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "groups.id", :order => "tag_count DESC"}
+  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_locations.county_id = #{county_id}")}
+  scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("group_locations.location_id = #{location_id}")}
+  scope :tagged_with_any, lambda { |tag_array|
+    tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
+    joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
-  scope :tagged_with, lambda {|tag_id| 
-    {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Group'"}
-  }
+  scope :tagged_with, lambda {|tag_id| includes(:taggings => :tag).where("tags.id = '#{tag_id}'").where("taggings.taggable_type = 'Group'")}
   scope :patternsearch, lambda {|searchterm|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
@@ -50,8 +49,7 @@ class Group < ActiveRecord::Base
     if sanitizedsearchterm == ''
       return []
     end
-    conditions = ["(name rlike ?)", sanitizedsearchterm]
-    {:conditions => conditions}
+    where("name rlike ?", sanitizedsearchterm)
   }
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
