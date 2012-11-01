@@ -12,7 +12,11 @@
 <div id="main" class="span12">
   
   <% if @my_groups.length == 0 %>
-    <li>You currently are not a member or leader of a group.</li>
+    <% if current_user.id == @user.id %>
+      <h2>You currently are not a member or leader of any groups.</h2>
+    <% else %>
+      <h2>This person is not a member or leader of any groups.</h2>
+    <% end %>
   <% else %>
     
   <table class="table table-bordered">
@@ -27,6 +31,7 @@
           <p><%= group.joined.count %> Members</p>
         </td>
         
+        <% if current_user.id == @user.id %>
         <td>
           <%= form_tag('/expert/users/save_notification_prefs', :class => "form-stacked no_m_t well", :method => "post") do -%>
           <ul class="notification_options">
@@ -37,6 +42,7 @@
           </ul>
           <% end %>
         </td>
+        <% end %>
       </tr>
     <% end %>
       
