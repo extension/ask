@@ -373,7 +373,7 @@ class Expert::QuestionsController < ApplicationController
     
     question_tags_array = @question.tags.all
       
-    if question_tags.present?
+    if question_tags_array.present?
       if @question.county_id?
         expert_ids = county_experts.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0

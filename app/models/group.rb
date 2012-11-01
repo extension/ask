@@ -33,7 +33,7 @@ class Group < ActiveRecord::Base
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED} AND questions.spam = false"
 
   scope :public_visible, where(test: false).where(active: true)
-  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_locations.county_id = #{county_id}")}
+  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_counties.county_id = #{county_id}")}
   scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("group_locations.location_id = #{location_id}")}
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
