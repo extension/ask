@@ -127,7 +127,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_submission_acknowledgement
-    PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable)
+    PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
   
   def queue_delayed_notifications
