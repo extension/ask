@@ -177,10 +177,7 @@ class QuestionEvent < ActiveRecord::Base
   def create_question_event_notification
     case self.event_state
     when ASSIGNED_TO
-      #assigned and reassigned, submission ack
-      if self.previous_event_id.nil? and !self.recipient_id.nil? #new incoming question
-        Notification.create(notifiable: self, created_by: self.question.submitter, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
-      end
+      #assigned and reassigned
       if (self.recipient_id != self.previous_handling_recipient_id) && (self.recipient_id != self.previous_handling_initiator_id) #reassigned
         # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.previous_handling_recipient_id.nil?
       end

@@ -25,18 +25,14 @@
   </div>
   
   
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Currently Assigned', expert_user_path(@user) %></li>
+    <li><%= link_to 'Answered', expert_user_answered_path(@user) %></li>
+    <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+  </ul>
   
-  <% if @answered_questions.length == 0 %>
-    <h3>This person hasn't answered any questions</h3>
-  <% else %>
-    
-    <h3>Answered Questions</h3>
-    
-    <% @answered_questions.each do |question| %>
-      <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
-    <% end %>
-      
-  <% end %>
+  
+  <%= render :partial => 'question_list' %>
 
 </div>
 
@@ -51,20 +47,6 @@
   
   <aside>
   
-  <% if @open_questions.length == 0 %>
-    <h2>Currently Assigned</h2>
-      <p>No Questions currently assigned</p>
-  <% else %>
-    
-    
-  <h2>Currently Assigned (<%= @open_questions.length %>)</h2>
-  
-  <% @open_questions.each do |question| %>
-    <%= render :partial => 'expert/shared/title_question', :locals => {:question => question} %>
-  <% end %>
-   
-       
-  <% end %>
     <p class="downplay">Last active: <%= time_ago_in_words(@user.last_sign_in_at) %> ago</p>
     <% if @handling_event_count[:handled] > 0 %>
        <p class="downplay"><span id="handling_rate" rel="popover" data-content="How likely will this person handle an assigned question? A high handling rate means they are likely to handle it. A low rate means someone else usually has to step in. There's a 24-hour grace period after a question is assigned. No penalties are recorded during the grace period." data-original-title="Handling Rate">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>

@@ -11,10 +11,17 @@ class Expert::UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    @answered_questions = @user.answered_questions.limit(10)
-    @open_questions = @user.open_questions.limit(10)
+    @open_questions = @user.open_questions.page(params[:page]).order('created_at DESC')
+    @open_questions_count = @user.open_questions.length
     @my_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count 
+  end
+  
+  def answered
+    @user = User.find(params[:id])
+    @answered_questions = @user.answered_questions.page(params[:page]).order('created_at DESC')
+    @answered_questions_count = @user.answered_questions.length
+    render :action => 'show'
   end
   
   def tags

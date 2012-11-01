@@ -7,7 +7,6 @@ urlwriter_host: 'aae.dev'
 airbrake_api_key: 'notset'
 app_location: 'localdev'
 darmokdatabase: 'prod_darmok'
-send_notifications: false
 engineering_list: 'engineering@extension.org'
 auto_assign_incoming_questions: true
 group_avatar_count: 3
@@ -17,5 +16,9 @@ request_ip_address: "152.46.27.154"
 geoip_data_file: 'notset'
 geoname_data_file: 'notset'
 default_display_timezone: 'Eastern Time (US & Canada)'
+send_notifications: false
+notification_whitelist:
+   - 2001
+   - 2010
 
 

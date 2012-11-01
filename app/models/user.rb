@@ -67,10 +67,10 @@ class User < ActiveRecord::Base
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
 
-  scope :tagged_with_any, lambda { |tag_list|
-        {:select => "users.*, COUNT(users.id) AS tag_count", :joins => (:tags), :conditions => "tags.name IN (#{tag_list})", :group => "users.id", :order => "tag_count DESC"}
+  scope :tagged_with_any, lambda { |tag_array|
+    tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
+    joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
-
 
   scope :patternsearch, lambda {|searchterm|
     # remove any leading * to avoid borking mysql

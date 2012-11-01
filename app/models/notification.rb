@@ -50,9 +50,9 @@ class Notification < ActiveRecord::Base
   
   
   def process
-    return true if !Settings.send_notifications
+    return true if (!Settings.send_notifications and !Settings.notification_whitelist.include?(self.notification_type))
     
-    case self.notificationtype
+    case self.notification_type
     when GROUP_USER_JOIN
       process_group_user_join
     when GROUP_USER_LEFT
@@ -123,11 +123,11 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_expert_response
-    #NYI
+    PublicMailer.public_expert_response(user:self.notifiable.question.submitter, expert: self.notifiable.question.current_resolver, question: self.notifiable.question).deliver
   end
   
   def process_aae_public_submission_acknowledgement
-    PublicMailer.public_submission_acknowledgement(user:self.notifiable.question.submitter, question: self.notifiable.question)
+    PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
   
   def queue_delayed_notifications

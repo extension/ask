@@ -61,7 +61,8 @@ Aae::Application.routes.draw do
         post 'new'
       end
     end
-
+    
+    match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'

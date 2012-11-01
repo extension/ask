@@ -10,7 +10,7 @@ class HomeController < ApplicationController
   def index
     @recent_questions = Question.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
     if current_location
-      @groups = Group.with_expertise_location(current_location.id).limit(6)
+      @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
     end
   end
 
