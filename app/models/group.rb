@@ -32,6 +32,7 @@ class Group < ActiveRecord::Base
   
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED} AND questions.spam = false"
   
+  scope :public_visible, conditions: { test: false, active: true}
   scope :with_expertise_county, lambda {|county_id| {:include => :expertise_counties, :conditions => "group_counties.county_id = #{county_id}"}}
   scope :with_expertise_location, lambda {|location_id| {:include => :expertise_locations, :conditions => "group_locations.location_id = #{location_id}"}}
   scope :tagged_with_any, lambda { |tag_list| 

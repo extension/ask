@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(:version => 20121026140137) do
     t.boolean  "assignment_outside_locations", :default => true
     t.boolean  "individual_assignment",        :default => true
     t.integer  "created_by",                                      :null => false
-    t.boolean  "test"
+    t.boolean  "test",                         :default => false
     t.string   "widget_fingerprint"
     t.boolean  "widget_upload_capable"
     t.boolean  "widget_show_location"
