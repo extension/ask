@@ -37,7 +37,7 @@ module ApplicationHelper
   end
 
   def link_public_user(user)
-    return link_to(user.name, user_path(user.id), {:title => user.name}).html_safe
+    return link_to(user.public_name, user_path(user.id), {:title => user.public_name}).html_safe
   end
 
   def expert_user(user)
@@ -53,7 +53,7 @@ module ApplicationHelper
   end
 
   def link_public_user_avatar(user, image_size = :medium)
-    return link_to(get_avatar_for_user(user, image_size, false), user_path(user.id), {:title => user.name}).html_safe
+    return link_to(get_avatar_for_user(user, image_size, false), user_path(user.id), {:title => user.public_name}).html_safe
   end
 
   def link_expert_user_avatar(user, image_size = :medium, suppress_single = false)

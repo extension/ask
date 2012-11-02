@@ -1,6 +1,6 @@
 <div class="comment">
   <%= link_public_user_avatar(comment.user, :thumb) %>
-  <span class="comment_author"><%= comment.user.has_exid? ? "eXtension Affiliate" : "" %></span>
+  <span class="comment_author"><%= comment.user.has_exid? ? link_public_user(comment.user) : "Anonymous" %></span>
   
   <p class="content">
     <%= format_text_for_display(comment.content) %>
