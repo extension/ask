@@ -7,7 +7,7 @@
 class AjaxController < ApplicationController
   def tags
     if params[:term]
-      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
+      search_term = params[:term]
       tags = Tag.where("name like '%#{params[:term]}%'").limit(12)
     else
       tags = Tag.order('created_at DESC').limit(12)
@@ -22,7 +22,7 @@ class AjaxController < ApplicationController
 
   def experts
     if params[:term]
-      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
+      search_term = params[:term]
       groups = Group.patternsearch(params[:term]).limit(9)
       experts = User.exid_holder.active.not_retired.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
     else
@@ -38,8 +38,10 @@ class AjaxController < ApplicationController
 
   def groups
     if params[:term]
-      search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
-      groups = Group.where("name like '%#{params[:term]}%'").limit(12)
+      search_term = params[:term]
+      groups_including = Group.where("name like '%#{params[:term]}%'").limit(12)
+      groups_starting_with = Group.where("name like '#{params[:term]}%'").limit(12)
+      groups = (groups_starting_with + groups_including).uniq.take(12)
     else
       groups = Group.order('created_at DESC').limit(12)
     end

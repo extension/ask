@@ -8,7 +8,7 @@ class CreateGroups < ActiveRecord::Migration
       t.boolean :assignment_outside_locations, :default => 1
       t.boolean :individual_assignment, :default => 1
       t.integer :created_by, :null => false
-      t.boolean :test, :default => 0
+      t.boolean :is_test, :default => 0
       t.string  :widget_fingerprint
       t.boolean :widget_upload_capable
       t.boolean :widget_show_location

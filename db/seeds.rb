@@ -147,10 +147,14 @@ def transfer_widget_communities_to_groups
     VALUES (1, 'Orphan Group', 'Group that holds orphaned questions that have no other group assignment.', true, #{User.system_user_id}, NULL, false, false, false, NULL, NULL, NULL, false, NOW(), NOW()) 
   END_SQL
 
+  ## take the groups with "test" in the name and flag them as test groups
+  test_group_update_query = "Update #{@aae_database}.groups set is_test = 1 where name like '%test%'"
+
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(group_insert_query)
     ActiveRecord::Base.connection.execute(wrangler_group_insert_query)
     ActiveRecord::Base.connection.execute(orphan_group_insert_query)
+    ActiveRecord::Base.connection.execute(test_group_update_query)
   end
   
   # Need to use a little Ruby/Rails here to create a widget for the Question Wrangler group
