@@ -1,8 +1,8 @@
 <% if question_count == 0 %>
-  <h3>This Group doesn't have any <%= @quesiton_list %> questions</h3>
+  <h3>This Group doesn't have any <%= @question_list %> questions</h3>
 <% else %>
   
-  <h3><%= @quesiton_list.capitalize %> (<%= question_count %>)</h3>
+  <h3><%= @question_list.capitalize %> (<%= question_count %>)</h3>
   
   <%= paginate questions %>
   <% questions.each do |question| %>

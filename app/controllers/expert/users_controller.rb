@@ -11,7 +11,7 @@ class Expert::UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    @quesiton_list = "assigned"
+    @question_list = "assigned"
     @questions = @user.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.open_questions.length
     @my_groups = @user.group_memberships
@@ -20,7 +20,7 @@ class Expert::UsersController < ApplicationController
   
   def answered
     @user = User.find(params[:id])
-    @quesiton_list = "answered"
+    @question_list = "answered"
     @questions = @user.answered_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.answered_questions.length
     @my_groups = @user.group_memberships

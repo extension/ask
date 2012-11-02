@@ -20,7 +20,7 @@ class Expert::GroupsController < ApplicationController
       return record_not_found
     end
     
-    @quesiton_list = "unanswered"
+    @question_list = "unanswered"
     @questions = @group.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @group.open_questions.length
     @group_members = @group.group_members_with_self_first(current_user, 5)
@@ -29,7 +29,7 @@ class Expert::GroupsController < ApplicationController
   
   def answered
     @group = Group.find(params[:id])
-    @quesiton_list = "answered"
+    @question_list = "answered"
     @questions = @group.answered_questions.page(params[:page]).order('created_at DESC')
     @question_count = @group.answered_questions.length
     @group_members = @group.group_members_with_self_first(current_user, 5)
