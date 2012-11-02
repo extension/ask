@@ -71,10 +71,10 @@ class Expert::GroupsController < ApplicationController
         change_hash[:description] = {:old => @group.description_was, :new => @group.description}
       end
       
-      if params[:test].present? && params[:test] == '1'
-        @group.test = true
+      if params[:is_test].present? && params[:is_test] == '1'
+        @group.is_test = true
       else
-        @group.test = false
+        @group.is_test = false
       end
       
       if @group.save
