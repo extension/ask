@@ -39,6 +39,7 @@ class GroupsController < ApplicationController
         end
       end
       
+      session[:submitter_id] = @submitter.id
       @question.submitter = @submitter
       @question.assigned_group = @group
       @question.group_name = @group.name
