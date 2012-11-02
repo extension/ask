@@ -80,6 +80,13 @@ class QuestionEvent < ActiveRecord::Base
       :additional_data => question.body})    
   end
   
+  def self.log_public_response(question, submitter_id)
+    return self.log_event({:question => question,
+      :initiated_by_id => User.system_user_id,
+      :event_state => PUBLIC_RESPONSE,
+      :submitter_id => submitter_id})  
+  end
+  
   def self.log_reopen_to_group(question, group, initiated_by, assignment_comment)
     question.update_attribute(:last_opened_at, Time.now)
     

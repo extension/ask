@@ -36,7 +36,9 @@
 				  <%= form_for @question do |f| %>
 				      <%= f.text_area :body, :rows => "10", :cols => "60" %>
 					  <div id="aae_image_div">
-						
+						<h3>Images</h3>
+				        <p>You can include up to 3 images:</p>
+				        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
 						<% @question.images.each do |image| %>
 						  <%= f.fields_for :images, image do |image_fields| %>
 						    <% if image.persisted? %>
@@ -68,7 +70,7 @@
 			                <%= format_text_for_display(response.body) %>
 			                <% response.images.each do |image| %>
                         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-
+                        <%= button_to "Delete", remove_image_response_path(:id => response.id, :image_id => image.id) %>
                         <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
 
                         <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -110,6 +112,32 @@
         <% end %>
 
 
+        <% if @question_responses.length > 0 %>
+		    <h3><%= link_to_function 'Add a comment', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_url %></h3>
+		    <div id="additional_comment" style="display:none;">
+		    <%= form_for @response do |r_form| %>
+		        <%= r_form.text_area :body, :cols => "20", :rows => "3" %>
+		        <%= hidden_field_tag :question_id, @question.id %>
+                <h3>Images</h3>
+		        <p>You can include up to 3 images:</p>
+		        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+		        <%= r_form.fields_for :images do |image_form| %>
+				    <p>
+				      <%= image_form.file_field :attachment %>
+				    </p>
+				<% end %>
+		
+                <%= submit_tag "Post response" %>
+                <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
+		    <% end %>
+		    </div>
+		<% end %>
+
+		<div id="privacy_options">
+		<h4>Who can see this page?</h4>
+		<p>This page is private.</p>
+        <p>To view this page you have to know its web address (which is not public) and the email address used to submit the question.</p>
+		
         <p class="aae_pitch">Have another question? <%= link_to 'Ask one of our Experts', ask_url %></p>
-    
+ 
 </div>

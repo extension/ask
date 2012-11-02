@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121026140137) do
+ActiveRecord::Schema.define(:version => 20121101172608) do
+
+  create_table "activity_logs", :force => true do |t|
+    t.integer  "user_id",                     :null => false
+    t.integer  "loggable_id"
+    t.string   "loggable_type", :limit => 30
+    t.integer  "ipaddr"
+    t.text     "additional"
+    t.datetime "created_at"
+  end
+
+  add_index "activity_logs", ["user_id", "loggable_id", "loggable_type"], :name => "activity_ndx"
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -189,6 +200,20 @@ ActiveRecord::Schema.define(:version => 20121026140137) do
   end
 
   add_index "locations", ["name"], :name => "idx_locations_on_name", :unique => true
+
+  create_table "mailer_caches", :force => true do |t|
+    t.string   "hashvalue",      :limit => 40,                      :null => false
+    t.integer  "user_id"
+    t.integer  "cacheable_id"
+    t.string   "cacheable_type", :limit => 30
+    t.integer  "open_count",                         :default => 0
+    t.text     "markup",         :limit => 16777215
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
+  end
+
+  add_index "mailer_caches", ["hashvalue"], :name => "hashvalue_ndx"
+  add_index "mailer_caches", ["user_id", "open_count"], :name => "open_learner_ndx"
 
   create_table "notification_exceptions", :force => true do |t|
     t.integer  "user_id"

@@ -6,10 +6,13 @@ class Response < ActiveRecord::Base
   has_many :images, :as => :assetable, :class_name => "Response::Image", :dependent => :destroy
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
-  accepts_nested_attributes_for :images
+  accepts_nested_attributes_for :images, :allow_destroy => true
   
   before_create :calculate_duration_since_last, :clean_response
   after_save :index_parent_question
+  
+  validates :body, :presence => true
+  validate :validate_attachments
   
   def calculate_duration_since_last
     parent_question_id = self.question_id
@@ -24,6 +27,12 @@ class Response < ActiveRecord::Base
   #TODO: Need to Fill This In
   def clean_response
     return
+  end
+  
+  def validate_attachments
+    allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
+    images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
+    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
   end
   
   class Response::Image < Asset

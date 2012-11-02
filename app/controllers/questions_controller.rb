@@ -10,6 +10,11 @@ class QuestionsController < ApplicationController
   
   def submitter_view
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
+    @response = Response.new
+    
+    3.times do    
+      @response.images.build
+    end
     
     if @question.present?
       @question_responses = @question.responses 

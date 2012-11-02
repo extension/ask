@@ -23,6 +23,7 @@ class Question < ActiveRecord::Base
   
   validates :body, :presence => true
   validates :submitter_email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+  validate :validate_attachments
   
   before_create :generate_fingerprint, :clean_question_and_answer, :set_last_opened
   before_update :clean_question_and_answer
@@ -210,7 +211,7 @@ class Question < ActiveRecord::Base
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
     if public_comment
-      asker_comment = public_comment.response
+      asker_comment = public_comment.body
     else
       asker_comment = nil
     end
@@ -344,6 +345,12 @@ class Question < ActiveRecord::Base
     question_event = self.question_events.find(:first, :conditions => "event_state = #{QuestionEvent::RESOLVED} OR event_state = #{QuestionEvent::NO_ANSWER}", :order => "created_at DESC")
     return question_event if question_event
     return nil
+  end
+  
+  def validate_attachments
+    allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
+    images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
+    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
   end
   
   private
