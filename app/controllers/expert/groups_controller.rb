@@ -20,16 +20,18 @@ class Expert::GroupsController < ApplicationController
       return record_not_found
     end
     
-    @question_list_type = "Unanswered"
-    @questions = @group.open_questions
+    @quesiton_list = "unanswered"
+    @questions = @group.open_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @group.open_questions.length
     @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
   end
   
   def answered
     @group = Group.find(params[:id])
-    @question_list_type = "Answered"
-    @questions = @group.answered_questions.limit(10).order('updated_at DESC')
+    @quesiton_list = "answered"
+    @questions = @group.answered_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @group.answered_questions.length
     @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
     render :action => 'show'
