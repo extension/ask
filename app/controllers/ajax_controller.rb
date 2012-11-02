@@ -37,12 +37,16 @@ class AjaxController < ApplicationController
   end
 
   def groups
+    groups_direct_hit = []
     if params[:term]
       search_term = params[:term].gsub('%', '') #TODO figure out why params[:term] appends a "%" sign
       groups = Group.where("name like '%#{params[:term]}%'").limit(12)
+      groups_direct_hit = Group.where("name like '#{params[:term]}%'").limit(12)
     else
       groups = Group.order('created_at DESC').limit(12)
     end
+    groups = groups_direct_hit + groups
+    groups = groups.uniq
     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
     render json: list
   end
