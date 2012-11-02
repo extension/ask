@@ -89,9 +89,9 @@ class Expert::UsersController < ApplicationController
     user = current_user
     if params[:group_id].present? 
       send_incoming_notification = params[:send_incoming_notification].present?
-      Preference.create_or_update(user, 'notification.question.incoming', send_incoming_notification, params[:group_id])
+      Preference.create_or_update(user, Preference::NOTIFICATION_INCOMING, send_incoming_notification, params[:group_id])
       send_daily_summary =  params[:send_daily_summary].present?
-      Preference.create_or_update(user, 'notification.question.daily_summary', send_daily_summary, params[:group_id])
+      Preference.create_or_update(user, Preference::NOTIFICATION_DAILY_SUMMARY, send_daily_summary, params[:group_id])
     end
     redirect_to :back
   end

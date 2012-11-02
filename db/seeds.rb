@@ -570,6 +570,26 @@ def transfer_geo_names
   puts " Geonames transferred: #{benchmark.real.round(2)}s"
 end
 
+def create_notification_prefs_for_groups_with_notifications
+  puts 'Creating default notification prefs'
+  benchmark = Benchmark.measure do
+    Group.where(:group_notify => true).each do |group|
+      group.joined.each do |group_member|
+        Preference.create(:prefable_id => group_member.id, 
+                          :group_id => group.id, 
+                          :prefable_type => 'User', 
+                          :classification => 'notification', 
+                          :name => Preference::NOTIFICATION_INCOMING, 
+                          :datatype => 'Boolean', 
+                          :value => '1', 
+                          :created_at => Time.now, 
+                          :updated_at => Time.now)
+      end
+    end
+  end
+  puts " Notification prefs transferred: #{benchmark.real.round(2)}s"
+end
+
 
 transfer_accounts
 transfer_locations
@@ -595,3 +615,4 @@ transfer_aae_user_prefs
 transfer_widget_group_locations
 transfer_misfit_questions_to_groups
 transfer_geo_names
+create_notification_prefs_for_groups_with_notifications

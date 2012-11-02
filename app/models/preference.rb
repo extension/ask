@@ -20,6 +20,11 @@ class Preference < ActiveRecord::Base
    'notification.question.daily_summary' => false,
   }
   
+  NOTIFICATION_ASSIGNED_TO_ME = 'notification.question.assigned_to_me'
+  NOTIFICATION_INCOMING = 'notification.question.incoming'
+  NOTIFICATION_DAILY_SUMMARY = 'notification.question.daily_summary'
+  
+  
   def set_datatype
     if(self.value.nil?)
       self.datatype = nil

@@ -280,15 +280,15 @@ class User < ActiveRecord::Base
   end
 
   def send_assignment_notification?(group)
-    self.preferences.setting('notification.question.assigned_to_me',group)
+    self.preferences.setting(Preference::NOTIFICATION_ASSIGNED_TO_ME,group)
   end
 
   def send_incoming_notifiation?(group)
-    self.preferences.setting('notification.question.incoming', group)
+    self.preferences.setting(Preference::NOTIFICATION_INCOMING, group)
   end
 
   def send_daily_summary?(group)
-    self.preferences.setting('notification.question.daily_summary', group)
+    self.preferences.setting(Preference::NOTIFICATION_DAILY_SUMMARY, group)
   end
 
   # override timezone writer/reader
