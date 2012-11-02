@@ -26,13 +26,12 @@
   
   
   <ul class="nav nav-tabs">
-    <li><%= link_to 'Currently Assigned', expert_user_path(@user) %></li>
-    <li><%= link_to 'Answered', expert_user_answered_path(@user) %></li>
+    <li><%= link_to "Currently Assigned (#{@user.open_questions.length.to_s})", expert_user_path(@user) %></li>
+    <li><%= link_to "Answered (#{@user.answered_questions.length.to_s})", expert_user_answered_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
   </ul>
   
-  
-  <%= render :partial => 'question_list' %>
+  <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
 
 </div>
 

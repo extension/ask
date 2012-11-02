@@ -1,12 +1,12 @@
-<% if @open_questions_count == 0 %>
-  <h3>This person isn't assigned any questions</h3>
+<% if question_count == 0 %>
+  <h3>This person doesn't have any <%= @quesiton_list %> questions</h3>
 <% else %>
   
-  <h3>Currently Assigned (<%= @open_questions_count %>)</h3>
+  <h3><%= @quesiton_list.capitalize %> (<%= question_count %>)</h3>
   
-  <%= paginate @open_questions %>
-  <% @open_questions.each do |question| %>
+  <%= paginate questions %>
+  <% questions.each do |question| %>
     <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
   <% end %>
-  <%= paginate @open_questions %>
+  <%= paginate questions %>
 <% end %>
