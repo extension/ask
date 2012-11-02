@@ -41,7 +41,7 @@ GEM
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
     builder (3.0.3)
-    capatross (1.4)
+    capatross (1.4.1)
       capistrano (>= 2.11)
       grit (>= 2.4)
       mysql2 (>= 0.3.11)
