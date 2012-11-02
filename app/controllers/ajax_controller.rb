@@ -37,16 +37,14 @@ class AjaxController < ApplicationController
   end
 
   def groups
-    groups_starting_with = []
     if params[:term]
       search_term = params[:term]
       groups_including = Group.where("name like '%#{params[:term]}%'").limit(12)
       groups_starting_with = Group.where("name like '#{params[:term]}%'").limit(12)
+      groups = (groups_starting_with + groups_including).uniq.take(12)
     else
-      groups_including = Group.order('created_at DESC').limit(12)
+      groups = Group.order('created_at DESC').limit(12)
     end
-    groups = groups_starting_with + groups_including
-    groups = groups.uniq
     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
     render json: list
   end
