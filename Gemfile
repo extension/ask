@@ -80,7 +80,7 @@ gem "htmlentities"
 gem "sunspot_rails", "~> 1.3.0"
 
 # used to post-process mail to convert styles to inline
-gem "csspool", "2.0.1ex"
+gem "csspool"
 gem "inline-style", "0.5.2ex"
 
 # auto_link replacement
