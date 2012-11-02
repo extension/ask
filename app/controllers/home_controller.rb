@@ -65,7 +65,7 @@ class HomeController < ApplicationController
       @yolo.save
       
       if current_location
-        @groups = Group.with_expertise_location(current_location.id).limit(6)
+        @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
       end
     end
   end
