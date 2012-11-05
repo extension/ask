@@ -8,7 +8,7 @@
 <p>Send a comment</p>
 <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
 <p>
-<%= submit_tag "Assign to #{@group.name}" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
+<%= submit_tag "Assign to #{@group.name}", :class => "btn" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
 </p>
 <% end %>
 

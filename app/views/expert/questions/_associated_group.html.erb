@@ -12,9 +12,31 @@
   	<span>This does not reassign the question</span>
   	<input id="group_picker" placeholder="Type and select a group" />
   </div>
+  <br />
+  <p><span id="remove_group_association" class="btn">Remove Group</span></p>
 </div>
 
 <script class="code" type="text/javascript">
+  
+  $("#remove_group_association").click(function () {
+    $.ajax({
+      type: "POST",
+      url: "<%= expert_questions_associate_with_group_path(:id => @question.id) %>",
+      cache: false,
+      data: {group_id: 1}
+    })
+    .done(function() {
+			$("#tag_picker").autocomplete("close");
+			$("#tag_picker").val('');
+			return false;
+    })  
+    .fail(function() {
+      alert("error");
+      $("#tag_picker").autocomplete("close");
+			$("#tag_picker").val('');
+			return false;
+    })
+  });
   
   $(".associated_group_picker_toggle").click(function () {
     $("#associated_group_picker").toggle();
