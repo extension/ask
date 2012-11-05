@@ -12,8 +12,10 @@
   	<span>This does not reassign the question</span>
   	<input id="group_picker" placeholder="Type and select a group" />
   </div>
-  <br />
-  <p><span id="remove_group_association" class="btn">Remove Group</span></p>
+  <% if @question.assigned_group.id != Group::ORPHAN_GROUP_ID %>
+    <br />
+    <p><span id="remove_group_association" class="btn">Remove Group</span></p>
+  <% end %>
 </div>
 
 <script class="code" type="text/javascript">
@@ -23,7 +25,7 @@
       type: "POST",
       url: "<%= expert_questions_associate_with_group_path(:id => @question.id) %>",
       cache: false,
-      data: {group_id: 1}
+      data: {group_id: <%= Group::ORPHAN_GROUP_ID %>}
     })
     .done(function() {
 			$("#tag_picker").autocomplete("close");
