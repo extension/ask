@@ -6,56 +6,38 @@ class QuestionsController < ApplicationController
 
     @question_responses = @question.responses
     @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.public_visible.count))
+    @authenticated_submitter = nil
+    
+    if session[:submitter_id].present? 
+      if (@authenticated_submitter = User.find_by_id(session[:submitter_id])) && (@authenticated_submitter.id == @question.submitter.id) 
+        @response = Response.new
+        3.times do    
+          @response.images.build
+        end
+
+        # max of 3 total images allowed (including existing)
+        new_image_count = 3 - @question.images.count
+        if new_image_count > 0
+          new_image_count.times do    
+            @question.images.build
+          end
+        end
+      else
+        session[:submitter_id] = nil
+        @authenticated_submitter = nil
+      end
+    end
   end
   
   def submitter_view
-    @question = Question.find_by_question_fingerprint(params[:fingerprint])
-    @response = Response.new
-    
-    3.times do    
-      @response.images.build
-    end
-    
-    if @question.present?
-      @question_responses = @question.responses 
-      @current_response = @question.current_response
-      # max of 3 total images allowed (including existing)
-      new_image_count = 3 - @question.images.count
-      if new_image_count > 0
-        new_image_count.times do    
-          @question.images.build
-        end
-      end
+    question = Question.find_by_question_fingerprint(params[:fingerprint])
+    # the hash will authenticate the question submitter to edit their question.
+    if question.present?
+      session[:submitter_id] = question.submitter.id
+      redirect_to question_url(question)
     else
       return record_not_found
     end
-    
-    if !session[:submitter_id].present?
-      return render :template => 'questions/submitter_signin'
-    else
-      @user = User.find_by_id(session[:submitter_id])
-      if @user.blank? || @question.submitter.blank? || @question.submitter.id != @user.id
-        session[:submitter_id] = nil
-        return render :template => 'questions/submitter_signin'
-      end
-    end  
-  end
-  
-  def authorize_submitter
-    @question = Question.find_by_question_fingerprint(params[:fingerprint])
-    
-    return do_404 if !@question
-    
-    if params[:email_address].present? && (submitter = User.find_by_email(params[:email_address].strip.downcase)) 
-      # make sure that this question belongs to this user
-      if(@question.submitter.id == submitter.id)
-        session[:submitter_id] = submitter.id
-        return redirect_to submitter_view_url(:fingerprint => params[:fingerprint])
-      end
-    end
-    
-    flash.now[:warning] = "The email address you entered does not match the email used to submit the question. Please check the email address and try again."
-    render :template => 'questions/submitter_signin'
   end
     
   def update
@@ -68,7 +50,7 @@ class QuestionsController < ApplicationController
     
     QuestionEvent.log_public_edit(@question)
     
-    redirect_to submitter_view_url(:fingerprint => @question.question_fingerprint)
+    redirect_to question_url(@question)
   end
   
   # TODO: incorporate title into this.

@@ -1,8 +1,8 @@
-<% if @question.is_private? %>
+<% if @question.is_private? && @authenticated_submitter.blank? %>
     
   <p>This question is private. If you asked this question, you can view and edit this question by clicking the link in the email you received.</p>
   
-  <% if current_user && current_user.has_exid? %>
+  <% if current_user && current_user.has_exid? && !@authenticated_submitter.present? %>
     <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
   <% end %>
   

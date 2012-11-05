@@ -1,0 +1,36 @@
+<% if @question.current_response.blank? %>
+    <p class="inc_descriptive editpitch">
+    <%= link_to_function 'Edit my question', "$('#edit_question').toggle();" %>.
+                  Need to clarify or correct any information? Your question is editable until one of our experts responds. Thanks!
+    </p>
+
+    <div id="edit_question" style="display:none">
+	  <%= form_for @question do |f| %>
+	      <%= f.text_field :title, {:type => "text"} %> <br />
+	      <%= f.text_area :body, :rows => "10", :cols => "60" %>
+		  <div id="aae_image_div">
+			<h3>Images</h3>
+	        <p>You can include up to 3 images:</p>
+	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+			<% @question.images.each do |image| %>
+			  <%= f.fields_for :images, image do |image_fields| %>
+			    <% if image.persisted? %>
+			      <p>
+			      Delete <%= image_fields.check_box :_destroy %> 
+			      <%= image_tag image.url(:thumb) %>
+			      </p>
+                <% else %>
+                  <p>
+				    <%= image_fields.file_field :attachment  %>
+				  </p>
+                <% end %>
+			  <% end %>
+			<% end %>
+		  </div>
+		  		
+	      <%= submit_tag "Save changes" %>    
+	      <%= link_to_function "Cancel", "$('#edit_question').hide()" %>
+	      </p>
+	  <% end %>
+	</div>
+<% end %>
