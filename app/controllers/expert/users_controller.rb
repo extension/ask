@@ -42,10 +42,10 @@ class Expert::UsersController < ApplicationController
   
   def save_listview_filter
     user = current_user
-    pref = user.user_preference
+    pref = user.filter_preference
     
     if pref.nil?
-      pref = UserPreference.create(:user => user, :setting => {:question_filter => {}})
+      pref = FilterPreference.create(:user => user, :setting => {:question_filter => {}})
     end
     
     if !params[:location_id].nil?

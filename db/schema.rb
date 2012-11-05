@@ -90,6 +90,15 @@ ActiveRecord::Schema.define(:version => 20121101172608) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "filter_preferences", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.text     "setting",    :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "filter_preferences", ["user_id"], :name => "fk_filter_prefs_user_id"
+
   create_table "geo_names", :force => true do |t|
     t.string  "feature_name",       :limit => 121
     t.string  "feature_class",      :limit => 51
@@ -399,15 +408,6 @@ ActiveRecord::Schema.define(:version => 20121101172608) do
   end
 
   add_index "user_locations", ["user_id", "location_id"], :name => "fk_locations_users", :unique => true
-
-  create_table "user_preferences", :force => true do |t|
-    t.integer  "user_id",    :null => false
-    t.text     "setting",    :null => false
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "user_preferences", ["user_id"], :name => "fk_user_prefs_user_id"
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"

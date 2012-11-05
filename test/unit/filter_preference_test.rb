@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class UserPreferenceTest < ActiveSupport::TestCase
+class FilterPreferenceTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

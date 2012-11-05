@@ -13,7 +13,7 @@ class Expert::HomeController < ApplicationController
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
-    @recent_questions = questions_based_on_pref_filter('incoming', current_user.user_preference)
+    @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
   end
   
   def search
@@ -24,7 +24,7 @@ class Expert::HomeController < ApplicationController
   end
   
   def answered
-    @recently_answered_questions = questions_based_on_pref_filter('resolved', current_user.user_preference)
+    @recently_answered_questions = questions_based_on_pref_filter('resolved', current_user.filter_preference)
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags

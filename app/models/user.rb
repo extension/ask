@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   has_many :user_locations
   has_many :user_counties
   has_many :preferences, :as => :prefable
-  has_one  :user_preference
+  has_one  :filter_preference
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
   has_many :notification_exceptions
