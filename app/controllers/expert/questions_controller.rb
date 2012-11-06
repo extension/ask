@@ -39,6 +39,13 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def submitted
+    @user = User.find_by_id(params[:id])
+    @question_list = "submitted"
+    @questions = @user.submitted_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @user.submitted_questions.length
+  end
+  
   def assign_options
     @user = User.find_by_id(params[:expert_id])
     @question = Question.find_by_id(params[:id])

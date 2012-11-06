@@ -1,0 +1,3 @@
+<h1>Questions received from <%= @user.public_name %></h1>
+
+<%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
