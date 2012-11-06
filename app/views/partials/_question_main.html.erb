@@ -1,8 +1,4 @@
-<% if @question.title.present? %>
-  <h2 class="title"><%= format_text_for_display(@question.title) %></h2>
-<% else %>
-  <h2 class="title"><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
-<% end %>
+<h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
 <div id="question">
 <p class="question_body"><%= format_text_for_display(@question.body) %></p>

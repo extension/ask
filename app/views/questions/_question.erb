@@ -1,12 +1,8 @@
 <% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
 
 <div id="main" class="span8">
-
-  <% if @question.title.present? %>
-    <h2 class="title"><%= format_text_for_display(@question.title) %></h2>
-  <% else %>
-    <h2 class="title"><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
-  <% end %>
+  
+  <h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
   <div id="question">
   <p class="question_body"><%= format_text_for_display(@question.body) %></p>
@@ -151,16 +147,9 @@
     
   <aside>
     <h4>Related Questions</h4>
-    <% @fake_related.each do |question| %>
-      <%= link_to question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
+    <% @question.public_similar_questions.each do |question,score| %>
+      <p><%= link_to(format_text_for_display(question.title), question_path(question.id)) %></p>
     <% end %>
-    <h4 class="subtle">TODO: Replace with actual related questions. This is just a placeholder.</h4>
   </aside>
   
 </div>

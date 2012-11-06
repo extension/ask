@@ -5,7 +5,6 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
 
     @question_responses = @question.responses
-    @fake_related = Question.public_visible.find(:all, :limit => 3, :offset => rand(Question.public_visible.count))
     @authenticated_submitter = nil
     
     if session[:submitter_id].present? 

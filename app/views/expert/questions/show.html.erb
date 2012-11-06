@@ -142,15 +142,8 @@
   
   <aside class="nobg">
     <h4>Related Questions</h4>
-
     <% @question.similar_questions.each do |question,score| %>
-      <%= link_to expert_question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
+      <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
     <% end %>
   </aside>
   
