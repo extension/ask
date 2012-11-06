@@ -1,12 +1,12 @@
-<% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
+<% @page_title = "\"#{@question.title}\"" %>
 
 <div id="main" class="span8">
   <div id="question_wrapper">
     <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
   
-    <%= render :partial => 'partials/question_main' %>
+    <%= render :partial => 'question_main' %>
   
-    <%= render :partial => 'partials/history' %>
+    <%= render :partial => 'history' %>
   </div>
 </div>
 
@@ -142,15 +142,8 @@
   
   <aside class="nobg">
     <h4>Related Questions</h4>
-
     <% @question.similar_questions.each do |question,score| %>
-      <%= link_to expert_question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
+      <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
     <% end %>
   </aside>
   

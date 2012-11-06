@@ -103,11 +103,28 @@ class Question < ActiveRecord::Base
   def response_list
     self.responses.map(&:body).join(' ')
   end
-  
+
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
     search_results = self.more_like_this do
       with(:spam, false)
+      without(:status_state, Question::STATUS_REJECTED)
+      paginate(:page => 1, :per_page => count)
+      adjust_solr_params do |params|
+        params[:fl] = 'id,score'
+      end
+    end
+    return_results = {}
+    search_results.each_hit_with_result do |hit,event|
+      return_results[event] = hit.score
+    end
+    return_results
+  end
+  
+  def public_similar_questions(count = 4)
+    search_results = self.more_like_this do
+      with(:spam, false)
+      with(:is_private, false)
       without(:status_state, Question::STATUS_REJECTED)
       paginate(:page => 1, :per_page => count)
       adjust_solr_params do |params|

@@ -344,7 +344,8 @@ body#expert {
 	.headerinfo {color:#666; margin-bottom:2em; border-bottom:1px solid #eee; background:#eee; padding:1em; font-size:.9em;}
 	.legal {color:#999; font-size:.9em;} 
 	.question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
-	.response_block p.response {font-size:1.3em; line-height:1.4em; font-family: Georgia, serif;}
+	.response_block div.response {font-size:1.3em; line-height:1.4em; font-family: Georgia, serif;}
+	.response_block div.signature {font-size:1.1em; line-height:1.4em; font-family: Georgia, serif;}
 	.response_block {margin-bottom:2em;}
 	.response_block .author {padding: 0 0 0 1em;}
 	#aaeid {color:#999; font-size:1.3em;}

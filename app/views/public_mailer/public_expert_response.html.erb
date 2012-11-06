@@ -105,8 +105,8 @@
                 <tr>
                   <td></td>
                   <td>
-                    <p><%= @question.current_response %></p>
-                    <p><%= @signature %></p>
+                    <div class="response"><%= format_text_for_display(@response.body) %></div>
+                    <div class="signature"><%= format_text_for_display(@response.signature) %></div>
                   </td>
               </table>
             </td>

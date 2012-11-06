@@ -1,8 +1,4 @@
-<% if @question.title.present? %>
-  <h2 class="title"><%= format_text_for_display(@question.title) %></h2>
-<% else %>
-  <h2 class="title"><%= format_text_for_display(@question.body.truncate(80, separator: ' ')) %></h2>    
-<% end %>
+<h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
 <div id="question">
 <p class="question_body"><%= format_text_for_display(@question.body) %></p>
@@ -53,7 +49,8 @@
   <h3 class="h3">Responses</h3>
   <% @question_responses.each do |response| %>
     <div class="response_block">
-      <p class="response"><%= format_text_for_display(response.body) %></p>
+      <div class="response"><%= format_text_for_display(response.body) %></div>
+      <div class="signature"><%= format_text_for_display(response.signature) %></div>
       <% response.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 
