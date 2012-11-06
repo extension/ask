@@ -1,4 +1,4 @@
-<% @page_title = "\"" + (@question.try(:title) ? @question.title : @question.body.truncate(80, separator: ' ')) + "\""%>
+<% @page_title = "\"#{@question.title}\"" %>
 
 <div id="main" class="span8">
   <div id="question_wrapper">
