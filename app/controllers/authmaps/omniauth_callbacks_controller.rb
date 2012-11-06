@@ -11,7 +11,7 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
       
       sign_in_and_redirect @user, :event => :authentication
     else
-      session["devise.twitter_data"] = env["omniauth.auth"]
+      session["devise.twitter_data"] = env["omniauth.auth"].except('extra')
       redirect_to new_user_session_url
     end
   end
