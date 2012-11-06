@@ -45,6 +45,7 @@ class Authmap < ActiveRecord::Base
     else
       new_user.kind = 'PublicUser'
     end
+
     new_user.save
     return new_user
   end

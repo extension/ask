@@ -49,7 +49,10 @@ class User < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
 
-  validates :email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+  # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
+  # does not pass email information back.
+  validates :email, :presence => true, unless: Proc.new { |u| u.kind == 'PublicUser' && !u.persisted? && u.authmaps.detect{|am| am.source == 'twitter'}.present? }
+  validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, allow_blank: true
 
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
