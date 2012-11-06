@@ -4,9 +4,9 @@
   <div id="question_wrapper">
     <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
   
-    <%= render :partial => 'partials/question_main' %>
+    <%= render :partial => 'question_main' %>
   
-    <%= render :partial => 'partials/history' %>
+    <%= render :partial => 'history' %>
   </div>
 </div>
 
