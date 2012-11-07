@@ -5,7 +5,7 @@
   <h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
   <div id="question">
-  <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+  <div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
     <% @question.images.each do |image| %>
       <% if image.persisted? %>
@@ -13,7 +13,7 @@
       <% end %>
     <% end %>
 
-  <p>Asked <%= time_ago_in_words(@question.created_at) %> ago</p>
+  <p><small>Asked <%= time_ago_in_words(@question.created_at) %> ago</small></p>
 
     <p>
       <% if @question.location.present? %>
@@ -69,29 +69,28 @@
       </div>
     <% end %>
 
-    <% if @authenticated_submitter.present? %>
+    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id %>
 	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_url %></h3>
 	    <div id="additional_comment" style="display:none;">
-	    <%= form_for @response do |r_form| %>
-	        <%= r_form.text_area :body, :cols => "20", :rows => "3" %>
+	      <%= form_for @response do |r_form| %>
+          <%= r_form.text_area :body, :cols => "20", :rows => "3" %>
 	        <%= hidden_field_tag :question_id, @question.id %>
-            <h3>Images</h3>
+          <h3>Images</h3>
 	        <p>You can include up to 3 images:</p>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+	        
 	        <%= r_form.fields_for :images do |image_form| %>
-			    <p>
-			      <%= image_form.file_field :attachment %>
-			    </p>
-			<% end %>
-	
-            <%= submit_tag "Post response" %>
-            <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
-	    <% end %>
+			      <p><%= image_form.file_field :attachment %></p>
+          <% end %>
+          
+          <%= submit_tag "Post response" %>
+          <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
+        <% end %>
 	    </div>
-	<% end %>
+    <% end %>
 
   <% end %>
-  <br /><br />
+
 
 
 <% if @question_responses.length < 1 %>

@@ -15,7 +15,7 @@
 
 .groupmasthead {border:1px solid #ddd; background:#eee; padding:2em; margin-bottom:3em;}
 
-#comments_form textarea { width:70%; display:block;}
+#comments_form textarea { width:100%; display:block; font-size:1.2em;}
 h2.title {line-height:1.2em; margin:1em 0 .65em; color: #161F21; font-family: Georgia, serif; font-size:1.9em}
 
 
@@ -39,3 +39,5 @@ input.error, select.error, textarea.error  {
 }
 
 fieldset {margin-bottom:1.75em;}
+
+.editpitch {background:#eee; padding:1em;}
