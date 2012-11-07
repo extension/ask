@@ -100,7 +100,7 @@
               <table cellpadding="0" cellspacing="0" border="0" align="left">
                 <tr>
                   <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                  <td class="callout"><%= link_to("View your Question and Response", question_url(@question)) -%></td>
+                  <td class="callout"><%= link_to("View your Question and Response", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></td>
                 </tr>
                 <tr>
                   <td></td>
