@@ -1,10 +1,12 @@
 <h3>Comment on this Question</h3>
 
-<% if current_user %>
-  <%= link_public_user_avatar(current_user, :thumb) %>
+<% if current_user && current_user.has_exid? %>
+  <p><%= link_public_user_avatar(current_user, :thumb) %> <%= link_to current_user.public_name, user_path(current_user.id) %></p>
+<% elsif current_user %>
+  <p><strong><%= current_user.public_name %></strong></p>
 <% end %>
 
-<div id="comments_form">
+<div id="comments_form" class="commentfield_container">
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
       <div class="commentfield">
@@ -29,6 +31,9 @@
   
   <br class="clearing" />
 </div>
+
+
+<br class="clearing" />
 
 <div id="comment-list">
   <%= render :partial => 'comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>

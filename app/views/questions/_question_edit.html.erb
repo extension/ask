@@ -1,8 +1,6 @@
 <% if @question.current_response.blank? %>
     <p class="inc_descriptive editpitch">
-    <%= link_to_function 'Edit my question', "$('#edit_question').toggle();" %>.
-                  Need to clarify or correct any information? Your question is editable until one of our experts responds. Thanks!
-    </p>
+    <%= link_to_function 'Edit my question', "$('#edit_question').toggle();" %>. Need to clarify or correct any information? Your question is editable until one of our experts responds.</p>
 
     <div id="edit_question" style="display:none">
 	  <%= form_for @question do |f| %>

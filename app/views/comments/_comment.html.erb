@@ -1,6 +1,10 @@
 <div class="comment">
-  <%= link_public_user_avatar(comment.user, :thumb) %>
-  <span class="comment_author"><%= comment.user.has_exid? ? link_public_user(comment.user) : "Anonymous" %></span>
+  
+  <% if comment.user.has_exid? %>
+    <p><%= link_public_user_avatar(comment.user, :thumb) %> <%= link_to comment.user.public_name, user_path(comment.user.id) %></p>
+  <% else %>
+    <p><strong><%= comment.user.public_name %></strong></p>
+  <% end %>
   
   <p class="content">
     <%= format_text_for_display(comment.content) %>

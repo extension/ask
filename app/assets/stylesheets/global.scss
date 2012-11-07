@@ -126,7 +126,7 @@ body {
       }
   .signintovote:hover .signintovote_content {display:block;}
   .signintovote .signintovote_content p {font-size:1.5em;}
-  .sitv_element_wrapper {position:relative; float:left; width:500px;}
+  .sitv_element_wrapper {position:relative; float:left; width:100%;}
 
   .sitv_targetarea {background:transparent; position:absolute; left:0; top:0; z-index:101; display:block; cursor:pointer; width:70%;
   //    outline:1px solid blue;
@@ -141,6 +141,7 @@ body {
   .sitv_content .btn {width:auto !important; float:left !important;}
   .sitv_content p {font-size:1.2em !important; color:#fff !important; font-weight:normal !important;}
   .sitv_element {}
+    .clearing {clear:both !important;}
 }
 
 
@@ -149,13 +150,14 @@ body {
 
 
 body#public {
-
+  
+  
   background:#f4f4f4;
   #publicbar.navbar-inner {height:80px !important; background:#f47B28;
 /*    opacity:0.4;*/
   }
   #publicbar.navbar-inner .container {height:80px !important;}
-  
+  .question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
   
   #publicbar .nav .active > a,
 	#publicbar .nav .active > a:hover {
@@ -296,7 +298,6 @@ body#expert {
     .cancel.btn.left {float:left; margin-left:2em;}
     .cancel.btn.right {float:right;}
     #location_option {float:left;}
-    .clearing {clear:both;}
     #location_picker {margin-bottom:3em;}
     #add_location {margin-bottom:1em;}
 	.ux_actions.edit {margin:.5em 0 1em;}
