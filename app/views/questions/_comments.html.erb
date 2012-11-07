@@ -1,7 +1,9 @@
 <h3>Comment on this Question</h3>
+
 <% if current_user %>
-<%= link_public_user_avatar(current_user, :thumb) %>
+  <%= link_public_user_avatar(current_user, :thumb) %>
 <% end %>
+
 <div id="comments_form">
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
@@ -31,3 +33,30 @@
 <div id="comment-list">
   <%= render :partial => 'comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
 </div>
+
+
+<script class="code" type="text/javascript">
+    // sitv = sign in to vote
+    $('.nojs_display').hide();
+    
+    $('.sitv_element_wrapper').each(function(index) {
+        var $sitv_element = $(this).find('.sitv_element')
+        var $h = $sitv_element.outerHeight();
+        var $w = $sitv_element.outerWidth();
+        $(this)
+          .find('.sitv_targetarea').height($h).width($w);
+    });
+    
+    $('.sitv_targetarea').bind('click', function () {
+        $(this)
+          .siblings('.sitv_content')
+          .fadeIn('fast');
+    });
+    
+    $('.sitv_content')
+      .mouseleave(function() {
+        $(this)
+          .fadeOut('fast');
+    });
+
+</script>
