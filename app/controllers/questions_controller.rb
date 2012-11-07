@@ -29,14 +29,34 @@ class QuestionsController < ApplicationController
   end
   
   def submitter_view
-    question = Question.find_by_question_fingerprint(params[:fingerprint])
+    @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
-    if question.present?
-      session[:submitter_id] = question.submitter.id
-      redirect_to question_url(question)
+    if @question.present?
+      if session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter.id
+        redirect_to question_url(@question)
+      else
+        return render :template => 'questions/submitter_signin'
+      end
     else
       return record_not_found
     end
+  end
+  
+  def authorize_submitter
+    @question = Question.find_by_question_fingerprint(params[:fingerprint])
+
+    return record_not_found if !@question
+
+    if params[:email_address].present? && (submitter = User.find_by_email(params[:email_address].strip.downcase)) 
+      # make sure that this question belongs to this user
+      if(@question.submitter.id == submitter.id)
+        session[:submitter_id] = submitter.id
+        return redirect_to question_url(@question)
+      end
+    end
+
+    flash.now[:warning] = "The email address you entered does not match the email used to submit the question. Please check the email address and try again."
+    render :template => 'questions/submitter_signin'
   end
     
   def update
