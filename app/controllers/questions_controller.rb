@@ -1,14 +1,19 @@
+# === COPYRIGHT:
+# Copyright (c) North Carolina State University
+# Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+# see LICENSE file
+
 class QuestionsController < ApplicationController
+  before_filter :set_submitter, only: [:show]
   layout 'public'
 
   def show
     @question = Question.find_by_id(params[:id])
-
     @question_responses = @question.responses
-    @authenticated_submitter = nil
-    
+
     if session[:submitter_id].present? 
-      if (@authenticated_submitter = User.find_by_id(session[:submitter_id])) && (@authenticated_submitter.id == @question.submitter.id) 
+      if (@authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id)
         @response = Response.new
         3.times do    
           @response.images.build
@@ -21,10 +26,15 @@ class QuestionsController < ApplicationController
             @question.images.build
           end
         end
-      else
-        session[:submitter_id] = nil
-        @authenticated_submitter = nil
       end
+    end
+
+    # should this show as private?
+    @private_view = true
+    if(!@question.is_private?)
+      @private_view = false
+    elsif(@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
+      @private_view = false
     end
   end
   
@@ -32,6 +42,7 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
+      session[:question_id] = @question.id
       if session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter.id
         redirect_to question_url(@question)
       else
@@ -51,6 +62,7 @@ class QuestionsController < ApplicationController
       # make sure that this question belongs to this user
       if(@question.submitter.id == submitter.id)
         session[:submitter_id] = submitter.id
+        session[:question_id] = @question.id
         return redirect_to question_url(@question)
       end
     end
@@ -199,6 +211,14 @@ class QuestionsController < ApplicationController
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
       return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+    end
+  end
+
+  private
+
+  def set_submitter
+    if(!@authenticated_submitter = User.find_by_id(session[:submitter_id]))
+      session[:submitter_id] = nil
     end
   end
 end

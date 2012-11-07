@@ -65,6 +65,7 @@ class GroupsController < ApplicationController
       end
       
       if @question.save
+        session[:question_id] = @question.id
         redirect_to(@question, :notice => 'Question was successfully created.')
       end
     end
