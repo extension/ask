@@ -165,6 +165,8 @@ Aae::Application.routes.draw do
 
   #debug items
   match "debug/session_information", to: "debug#session_information"
+  match "debug/signatures", to: "debug#signatures"
+
   root :to => 'home#index'
 
 end

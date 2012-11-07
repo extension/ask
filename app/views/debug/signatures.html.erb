@@ -1,0 +1,17 @@
+<% @page_title = "Signatures" %>
+
+<%= paginate @userlist %>
+<table class='table'>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Signature</th>
+  </tr>
+  <%- @userlist.each do |user|%>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= format_text_for_display(user.signature) %></td>
+      </tr>
+  <%- end -%>
+  </table>
+<%= paginate @userlist %>
