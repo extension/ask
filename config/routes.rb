@@ -164,9 +164,8 @@ Aae::Application.routes.draw do
     end
   end
 
-  #debug items
-  match "debug/session_information", to: "debug#session_information"
-  match "debug/signatures", to: "debug#signatures"
+  # wildcard
+  match "debug/:action", to: "debug", :via => [:get]
 
   root :to => 'home#index'
 
