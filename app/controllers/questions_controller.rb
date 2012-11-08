@@ -114,7 +114,6 @@ class QuestionsController < ApplicationController
           end
         end
         
-        session[:submitter_id] = @submitter.id
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.group_name = @group.name
@@ -177,7 +176,8 @@ class QuestionsController < ApplicationController
         end
 
         if @question.save
-          #session[:account_id] = @submitter.id
+          session[:question_id] = @question.id
+          session[:submitter_id] = @submitter.id
           #TODO: keep???
           # tags
           # if(@group.widget_enable_tags?)
