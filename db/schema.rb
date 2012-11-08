@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121101172608) do
+ActiveRecord::Schema.define(:version => 20121108201005) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -294,6 +294,16 @@ ActiveRecord::Schema.define(:version => 20121101172608) do
   add_index "question_events", ["question_id"], :name => "idx_question_id"
   add_index "question_events", ["recipient_id"], :name => "idx_recipient_id"
   add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
+
+  create_table "question_viewlogs", :force => true do |t|
+    t.integer  "user_id",                    :null => false
+    t.integer  "question_id"
+    t.integer  "activity"
+    t.integer  "view_count",  :default => 1, :null => false
+    t.datetime "updated_at"
+  end
+
+  add_index "question_viewlogs", ["user_id", "question_id", "activity"], :name => "activity_uniq_ndx", :unique => true
 
   create_table "questions", :force => true do |t|
     t.integer  "current_resolver_id"

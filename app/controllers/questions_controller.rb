@@ -36,6 +36,15 @@ class QuestionsController < ApplicationController
     elsif(@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
       @private_view = false
     end
+    
+    if(current_user or session[:submitter_id])
+      @viewer = current_user.present? ? current_user : User.find_by_id(session[:submitter_id])
+      @last_viewed_at = @viewer.last_view_for_question(@question)
+      # log view
+      QuestionViewlog.log_view(@viewer,@question)
+    end
+
+
   end
   
   def submitter_view
