@@ -37,7 +37,6 @@ class Question < ActiveRecord::Base
     text :body, more_like_this: true
     text :response_list, more_like_this: true
     integer :status_state
-    boolean :spam
     boolean :is_private
   end  
   
@@ -61,16 +60,14 @@ class Question < ActiveRecord::Base
    1 => "public",
    2 => "private by submitter",
    3 => "private by expert",
-   4 => "private because of spam/offensive",
-   5 => "private because of rejected/duplicate"
+   4 => "private because of rejected/duplicate"
   }
   
   # privacy constants
   PRIVACY_REASON_PUBLIC = 1
   PRIVACY_REASON_SUBMITTER = 2
   PRIVACY_REASON_EXPERT = 3
-  PRIVACY_REASON_SPAM = 4
-  PRIVACY_REASON_REJECTED = 5
+  PRIVACY_REASON_REJECTED = 4
   
   # disclaimer info
   EXPERT_DISCLAIMER = "This message for informational purposes only. " +  
@@ -95,8 +92,8 @@ class Question < ActiveRecord::Base
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
-  scope :answered, where(:status_state => Question::STATUS_RESOLVED, :spam => false)
-  scope :submitted, where(:status_state => Question::STATUS_SUBMITTED, :spam => false)
+  scope :answered, where(:status_state => Question::STATUS_RESOLVED)
+  scope :submitted, where(:status_state => Question::STATUS_SUBMITTED)
 
 
   # for purposes of solr search
@@ -107,7 +104,6 @@ class Question < ActiveRecord::Base
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
     search_results = self.more_like_this do
-      with(:spam, false)
       without(:status_state, Question::STATUS_REJECTED)
       paginate(:page => 1, :per_page => count)
       adjust_solr_params do |params|
@@ -123,7 +119,6 @@ class Question < ActiveRecord::Base
   
   def public_similar_questions(count = 4)
     search_results = self.more_like_this do
-      with(:spam, false)
       with(:is_private, false)
       without(:status_state, Question::STATUS_REJECTED)
       paginate(:page => 1, :per_page => count)
@@ -269,7 +264,7 @@ class Question < ActiveRecord::Base
 
     case q_status
       when STATUS_RESOLVED    
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :current_resolver_email => resolver.email, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         @response = Response.new(:resolver => resolver, 
                                  :question => self, 
                                  :body => response,
@@ -279,7 +274,7 @@ class Question < ActiveRecord::Base
         @response.save
         QuestionEvent.log_resolution(self)    
       when STATUS_NO_ANSWER
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :current_resolver_email => resolver.email, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         @response = Response.new(:resolver => resolver, 
                                  :question => self, 
                                  :body => response, 
@@ -289,7 +284,7 @@ class Question < ActiveRecord::Base
         @response.save
         QuestionEvent.log_no_answer(self)  
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :current_resolver_email => resolver.email, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
         QuestionEvent.log_rejection(self)
     end
   end

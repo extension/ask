@@ -255,36 +255,6 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
-  def report_spam
-    question = Question.find_by_id(params[:id])
-    if question.blank?
-      flash[:failure] = "Question specified does not exist."
-      return redirect_to expert_home_url
-    end
-      
-    question.update_attributes(:spam => true, :is_private => true, :is_private_reason => Question::PRIVACY_REASON_SPAM)
-    QuestionEvent.log_spam(question, current_user)       
-        
-    flash[:success] = "Incoming question has been successfully marked as spam."
-    redirect_to expert_home_url
-  end
-  
-  def report_ham
-    question = Question.find_by_id(params[:id])
-    if question.blank?
-      flash[:failure] = "Question specified does not exist."
-      return redirect_to expert_home_url
-    end
-    
-    # we don't know at this point whether the submitter marked it as public or private originally before it was marked as spam, so 
-    # we do the safe thing here and mark it as private by the submitter.  
-    question.update_attributes(:spam => false, :is_private => true, :is_private_reason => Question::PRIVACY_REASON_SUBMITTER)
-    QuestionEvent.log_ham(question, current_user)       
-        
-    flash[:success] = "Incoming question has been successfully marked as not spam."
-    redirect_to expert_question_url(question)
-  end
-  
   def close_out
     @question = Question.find_by_id(params[:id])
     @submitter_name = @question.submitter_name
@@ -311,15 +281,13 @@ class Expert::QuestionsController < ApplicationController
                                       :status_state => Question::STATUS_NO_ANSWER,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
-                                      :current_response => last_response.response,
-                                      :current_resolver_email => resolver.email)
+                                      :current_response => last_response.response)
         else    
           @question.update_attributes(:status => Question::RESOLVED_TEXT, 
                                       :status_state => Question::STATUS_RESOLVED,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
-                                      :current_response => last_response.response,
-                                      :current_resolver_email => resolver.email)
+                                      :current_response => last_response.response)
         end
       # else, we're closing it out with no response, which is not supposed to happen
       # close out is only being used for questions with a response now, for purposes like
@@ -337,7 +305,7 @@ class Expert::QuestionsController < ApplicationController
     
   def reactivate
     question = Question.find_by_id(params[:id])
-    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil, :current_resolver_email => nil)
+    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil)
     QuestionEvent.log_reactivate(question, current_user)
     flash[:success] = "Question re-activated"
     redirect_to expert_question_url(question)

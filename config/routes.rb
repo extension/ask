@@ -38,8 +38,6 @@ Aae::Application.routes.draw do
         post 'make_public'
         get  'reject'
         post 'reject'
-        post 'report_spam'
-        post 'report_ham'
         get  'reassign'
         post 'reassign'
         post 'reactivate'

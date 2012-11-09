@@ -22,13 +22,12 @@ class CreateQuestions < ActiveRecord::Migration
       t.datetime "resolved_at"
       t.datetime "question_updated_at"
       t.text     "current_response"
-      t.string   "current_resolver_email"     # from resolver_email
       t.string   "question_fingerprint",                         :null => false
       t.string   "submitter_firstname",       :default => "",    :null => false
       t.string   "submitter_lastname",        :default => "",    :null => false
       t.integer  "county_id"
       t.integer  "location_id"
-      t.boolean  "spam",                      :default => false, :null => false
+      t.boolean  "spam_legacy",                      :default => false, :null => false
       t.string   "user_ip",                   :default => "",    :null => false
       t.string   "user_agent",                :default => "",    :null => false
       t.string   "referrer",                  :default => "",    :null => false

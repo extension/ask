@@ -21,7 +21,6 @@ class Expert::SearchController < ApplicationController
     
     questions = Question.search do
                   fulltext(params[:q])
-                  with :spam, false
                   without(:status_state, Question::STATUS_REJECTED)
                   paginate :page => 1, :per_page => 10
                 end
@@ -58,7 +57,6 @@ class Expert::SearchController < ApplicationController
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     questions = Question.search do
                   fulltext(params[:q])
-                  with :spam, false
                   without(:status_state, Question::STATUS_REJECTED)
                   paginate :page => params[:page], :per_page => 15
                 end

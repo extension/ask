@@ -15,22 +15,20 @@ class QuestionEvent < ActiveRecord::Base
   
   ASSIGNED_TO = 1
   RESOLVED = 2
-  MARKED_SPAM = 3
-  MARKED_NON_SPAM = 4
-  REACTIVATE = 5
-  REJECTED = 6
-  NO_ANSWER = 7
-  RECATEGORIZED = 8
-  WORKING_ON = 9
-  EDIT_QUESTION = 10
-  PUBLIC_RESPONSE = 11
-  REOPEN = 12
-  CLOSED = 13
-  COMMENT = 14
-  ASSIGNED_TO_GROUP = 15
+  REACTIVATE = 3
+  REJECTED = 4
+  NO_ANSWER = 5
+  RECATEGORIZED = 6
+  WORKING_ON = 7
+  EDIT_QUESTION = 8
+  PUBLIC_RESPONSE = 9
+  REOPEN = 10
+  CLOSED = 11
+  COMMENT = 12
+  ASSIGNED_TO_GROUP = 13
   
-  EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 'marked as spam', 4 => 'marked as non-spam', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
-                            8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented', 15 => 'assigned to group' }
+  EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 3 => 're-activated by', 4 => 'rejected by', 5 => 'no answer given', 
+                            6 => 're-categorized by', 7 => 'worked on by', 8 => 'edited question', 9 => 'public response', 10 => 'reopened', 11 => 'closed', 12 => 'commented', 13 => 'assigned to group' }
   
   scope :latest, {:order => "created_at desc", :limit => 1}
   scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
@@ -115,18 +113,6 @@ class QuestionEvent < ActiveRecord::Base
       :initiator => question.current_resolver,
       :event_state => NO_ANSWER,
       :response => question.current_response})
-  end
-  
-  def self.log_spam(question, initiated_by)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :event_state => MARKED_SPAM})
-  end
-  
-  def self.log_ham(question, initiated_by)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :event_state => MARKED_NON_SPAM})
   end
   
   def self.log_close(question, initiated_by, close_out_reason)

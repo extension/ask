@@ -32,10 +32,6 @@ module QuestionsHelper
       close_msg = "Question Closed Out by <strong #{qw}>#{initiator_full_name}</strong><span> #{humane_date(q_event.created_at)}</span>"
       close_msg += " <span class=\"comment\">#{q_event.response}</span>"
       return close_msg.html_safe
-    when QuestionEvent::MARKED_SPAM
-      return "Marked as spam by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
-    when QuestionEvent::MARKED_NON_SPAM
-      return "Marked as non-spam by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::REJECTED
       reject_msg = "Question Rejected by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       reject_msg = reject_msg + " <span class=\"reject comment\">#{q_event.response}</span>"

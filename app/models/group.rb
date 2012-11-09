@@ -5,7 +5,7 @@ class Group < ActiveRecord::Base
   has_many :questions
   has_many :group_locations
   has_many :group_counties
-  has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED} AND spam = false"
+  has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   belongs_to :widget_location, :foreign_key => "widget_location_id", :class_name => "Location"
   belongs_to :widget_county, :foreign_key => "widget_county_id", :class_name => "County"
@@ -31,7 +31,7 @@ class Group < ActiveRecord::Base
   has_many :expertise_locations, :through => :group_locations, :source => :location
   has_many :expertise_counties, :through => :group_counties, :source => :county
   
-  has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED} AND questions.spam = false"
+  has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED}"
 
   scope :public_visible, where(is_test: false).where(active: true)
   scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_counties.county_id = #{county_id}")}
