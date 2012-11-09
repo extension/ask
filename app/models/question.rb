@@ -14,6 +14,7 @@ class Question < ActiveRecord::Base
   has_many :ratings
   has_many :responses
   has_many :question_events
+  has_many :question_viewlogs, dependent: :destroy
   
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
