@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
+  has_many :question_viewlogs
   has_one  :yo_lo
 
   # sunspot/solr search
@@ -338,6 +339,15 @@ class User < ActiveRecord::Base
   def time_for_user(datetime)
     logger.debug "In time_for_user #{self.id}"
     self.has_time_zone? ? datetime.in_time_zone(self.time_zone) : datetime.in_time_zone(Settings.default_display_timezone)
+  end
+  
+  def last_view_for_question(question)
+    activity = self.question_viewlogs.views.where(question_id: question.id).first
+    if(!activity.blank?)
+      activity.activity_logs.order('created_at DESC').pluck(:created_at).first
+    else
+      nil
+    end
   end
 
 end

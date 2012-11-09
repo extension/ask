@@ -33,13 +33,8 @@ class GroupsController < ApplicationController
       
       if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
         @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
-        if !@submitter.valid?
-          @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
-          raise ArgumentError
-        end
       end
       
-      session[:submitter_id] = @submitter.id
       @question.submitter = @submitter
       @question.assigned_group = @group
       @question.group_name = @group.name
@@ -66,6 +61,7 @@ class GroupsController < ApplicationController
       
       if @question.save
         session[:question_id] = @question.id
+        session[:submitter_id] = @submitter.id
         redirect_to(@question, :notice => 'Question was successfully created.')
       end
     end

@@ -14,6 +14,7 @@ class Question < ActiveRecord::Base
   has_many :ratings
   has_many :responses
   has_many :question_events
+  has_many :question_viewlogs, dependent: :destroy
   
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
@@ -139,7 +140,7 @@ class Question < ActiveRecord::Base
   
   def auto_assign_by_preference
     if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
-      reject_msg = "This question was a duplicate of incoming question ##{existing_sq.id}"
+      reject_msg = "This question was a duplicate of incoming question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
     end

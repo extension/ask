@@ -11,7 +11,27 @@ class QuestionsController < ApplicationController
   def show
     @question = Question.find_by_id(params[:id])
     @question_responses = @question.responses
-
+    
+    ga_tracking = []
+    
+    if @question.tags.length > 0
+      ga_tracking = ["|tags"] + @question.tags.map(&:name)
+    end
+    
+    question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
+    
+    if question_resolves_with_resolver.length > 0
+      ga_tracking += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
+    end
+    
+    if @question.assigned_group
+      ga_tracking += ["|group"] + [@question.assigned_group.name]
+    end
+    
+    if ga_tracking.length > 0
+      flash.now[:googleanalytics] = question_url(@question.id) + "?" + ga_tracking.join(",")
+    end
+    
     if session[:submitter_id].present? 
       if (@authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id)
         @response = Response.new
@@ -36,6 +56,15 @@ class QuestionsController < ApplicationController
     elsif(@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
       @private_view = false
     end
+    
+    if(current_user or session[:submitter_id])
+      @viewer = current_user.present? ? current_user : User.find_by_id(session[:submitter_id])
+      @last_viewed_at = @viewer.last_view_for_question(@question)
+      # log view
+      QuestionViewlog.log_view(@viewer,@question)
+    end
+
+
   end
   
   def submitter_view
@@ -114,7 +143,6 @@ class QuestionsController < ApplicationController
           end
         end
         
-        session[:submitter_id] = @submitter.id
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.group_name = @group.name
@@ -177,7 +205,8 @@ class QuestionsController < ApplicationController
         end
 
         if @question.save
-          #session[:account_id] = @submitter.id
+          session[:question_id] = @question.id
+          session[:submitter_id] = @submitter.id
           #TODO: keep???
           # tags
           # if(@group.widget_enable_tags?)

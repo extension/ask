@@ -1,4 +1,4 @@
-<div class="comment">
+<div class="<%= comment_class(comment) %>">
   
   <% if comment.user.has_exid? %>
     <p><%= link_public_user_avatar(comment.user, :thumb) %> <%= link_to comment.user.public_name, user_path(comment.user.id) %></p>
