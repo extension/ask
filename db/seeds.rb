@@ -375,11 +375,23 @@ def transfer_spam_and_rejected_data
   end
   
   # update for question_events marked as spam in the old system
+  # this will transition to rejected questions (a subset of rejected.)
+  # even though marking things as rejected is a handling event, and spam should technically be,
+  # the marking of spam questions was not recorded as a handling event in darmok, so for the 
+  # question events for spam, we cannot take and put handling duration timestamps and last handling event id's for 
+  # the question events that referenced these spam question events. that data just will not be there for the old spam 
+  # questions, but it never was to begin with in darmok.
   spam_events = QuestionEvent.where({:event_state => 3})
   spam_events.each do |se|
     se.update_attributes(:response => 'Spam', :event_state => QuestionEvent::REJECTED)
   end
-    
+  
+  # update for question_events marked as not spam in the old system, this will transition to reactivated.
+  non_spam_events = QuestionEvent.where({:event_state => 4})
+  non_spam_events.each do |nse|
+    nse.update_attribute(:event_state, QuestionEvent::REACTIVATE)
+  end
+  
   puts " Spam and Rejected Data transferred: #{benchmark.real.round(2)}s"
 end
 
@@ -637,3 +649,4 @@ transfer_widget_group_locations
 transfer_misfit_questions_to_groups
 transfer_geo_names
 create_notification_prefs_for_groups_with_notifications
+transfer_spam_and_rejected_data
