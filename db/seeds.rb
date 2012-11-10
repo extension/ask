@@ -208,7 +208,7 @@ def transfer_widget_community_connections_to_group_connections
          #{@darmokdatabase}.communityconnections.connected_by, #{@darmokdatabase}.communityconnections.created_at, NOW()  
   FROM  #{@darmokdatabase}.communityconnections
   JOIN  #{@aae_database}.groups ON #{@aae_database}.groups.id = #{@darmokdatabase}.communityconnections.community_id
-  WHERE #{@aae_database}.groups.darmok_expertise_id IS NULL
+  WHERE #{@aae_database}.groups.darmok_expertise_id IS NULL and #{@aae_database}.groups.id != 1
   END_SQL
   
   benchmark = Benchmark.measure do
