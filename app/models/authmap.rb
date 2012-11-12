@@ -23,7 +23,6 @@ class Authmap < ActiveRecord::Base
   # UPDATE: Will handle account merges manually (through a call from the console to the merge_account_with method on the user model) 
   # on a case by case basis for now
   # TODO: Logic needs to be changed here for account merge
-  # Todo: Need to check for user email existing, and if so, connect a authmap record to it.
   def self.process_user_info(omniauth_auth_hash, logged_in_user)
     if !logged_in_user.blank?
       return logged_in_user
@@ -34,6 +33,15 @@ class Authmap < ActiveRecord::Base
     
     if authmap = Authmap.where({:authname => user_screen_name, :source => user_provider}).first
       return authmap.user
+    end
+    
+    if omniauth_auth_hash['info']['email'].present?
+      user = User.find_by_email(omniauth_auth_hash['info']['email'])
+      if user.present?
+        user.authmaps << self.new(:authname => user_screen_name, :source => user_provider)
+        user.save
+        return user
+      end
     end
     
     new_user = User.create

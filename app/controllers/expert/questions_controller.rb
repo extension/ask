@@ -393,9 +393,9 @@ class Expert::QuestionsController < ApplicationController
   def associate_with_group
     @question = Question.find_by_id(params[:id])
     @group = Group.find_by_id(params[:group_id])
-    
-    @question.assigned_group = @group 
-    @question.save
+    if(@question and @group)
+      @question.change_group(@group,current_user)
+    end
   end
   
 end

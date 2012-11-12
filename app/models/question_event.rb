@@ -9,9 +9,11 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_handling_recipient, :class_name => "User", :foreign_key => "previous_handling_recipient_id"
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
-  
+  belongs_to :previous_group, class_name: 'Group'
+  belongs_to :changed_group, class_name: 'Group'
+
   after_create :create_question_event_notification
-  
+
   # #'s 3 and 4 were the old marked spam and marked non spam question events from darmok, these were 
   # just pulled instead of renumbering all these so to not disturb the other status numbers being pulled over from the other sytem
   ASSIGNED_TO = 1
@@ -27,14 +29,27 @@ class QuestionEvent < ActiveRecord::Base
   CLOSED = 13
   COMMENT = 14
   ASSIGNED_TO_GROUP = 15
-  
-  EVENT_TO_TEXT_MAPPING = { 1 => 'assigned to', 2 => 'resolved by', 5 => 're-activated by', 6 => 'rejected by', 7 => 'no answer given', 
-                            8 => 're-categorized by', 9 => 'worked on by', 10 => 'edited question', 11 => 'public response', 12 => 'reopened', 13 => 'closed', 14 => 'commented', 15 => 'assigned to group' }
-  
+  CHANGED_GROUP = 16
+
+  EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
+                            RESOLVED => 'resolved by',
+                            REACTIVATE => 're-activated by',
+                            REJECTED => 'rejected by',
+                            NO_ANSWER => 'no answer given',
+                            RECATEGORIZED => 're-categorized by',
+                            WORKING_ON => 'worked on by',
+                            EDIT_QUESTION => 'edited question',
+                            PUBLIC_RESPONSE => 'public response',
+                            REOPEN => 'reopened',
+                            CLOSED => 'closed',
+                            COMMENT => 'commented',
+                            ASSIGNED_TO_GROUP => 'assigned to group',
+                            CHANGED_GROUP => 'group changed' }
+
   scope :latest, {:order => "created_at desc", :limit => 1}
   scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
   scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
-  
+
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
@@ -61,6 +76,18 @@ class QuestionEvent < ActiveRecord::Base
       :recipient_id => nil,
       :event_state => ASSIGNED_TO_GROUP,
       :response => assignment_comment})
+  end
+
+  def self.log_group_change(options = {})
+    question = options[:question]
+    previous_group = options[:old_group]
+    changed_group = options[:new_group]
+    initiated_by = options[:initiated_by]
+    if(question and previous_group and changed_group and initiated_by)
+      return self.log_event(question: question, previous_group_id: previous_group.id, changed_group_id: changed_group.id, initiated_by_id: initiated_by.id, event_state: CHANGED_GROUP)
+    else
+      return false
+    end
   end
   
   def self.log_reopen(question, recipient, initiated_by, assignment_comment)
