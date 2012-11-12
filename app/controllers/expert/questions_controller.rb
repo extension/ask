@@ -35,7 +35,7 @@ class Expert::QuestionsController < ApplicationController
     end
     
     if ga_tracking.length > 0
-      flash.now[:googleanalytics] = expert_question_url(@question.id) + "?" + ga_tracking.join(",")
+      flash.now[:googleanalytics] = expert_question_path(@question.id) + "?" + ga_tracking.join(",")
     end
   end
   

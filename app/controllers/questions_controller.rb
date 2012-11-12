@@ -29,7 +29,7 @@ class QuestionsController < ApplicationController
     end
     
     if ga_tracking.length > 0
-      flash.now[:googleanalytics] = question_url(@question.id) + "?" + ga_tracking.join(",")
+      flash.now[:googleanalytics] = question_path(@question.id) + "?" + ga_tracking.join(",")
     end
     
     if session[:submitter_id].present? 
