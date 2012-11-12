@@ -21,6 +21,8 @@ class CreateQuestionEvents < ActiveRecord::Migration
       t.integer  "previous_handling_recipient_id"
       t.integer  "previous_handling_initiator_id"
       t.text     "previous_tags"
+      t.integer  "previous_group_id"
+      t.integer  "changed_group_id"
       t.timestamps
     end
   

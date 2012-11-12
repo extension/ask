@@ -284,6 +284,8 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
     t.integer  "previous_handling_recipient_id"
     t.integer  "previous_handling_initiator_id"
     t.text     "previous_tags"
+    t.integer  "previous_group_id"
+    t.integer  "changed_group_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
   end
