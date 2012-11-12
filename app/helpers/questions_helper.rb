@@ -24,6 +24,12 @@ module QuestionsHelper
       reassign_msg = "Assigned to group <strong>#{link_to "#{q_event.assigned_group.name}", expert_group_path(q_event.assigned_group.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
+    when QuestionEvent::CHANGED_GROUP
+      previous_group_link = link_to(q_event.previous_group.name, expert_group_path(q_event.previous_group))
+      changed_group_link = link_to(q_event.changed_group.name, expert_group_path(q_event.changed_group))
+      msg = "Group changed from <strong>#{previous_group_link}</strong> to <strong>#{changed_group_link}</strong> by <strong #{qw}>#{initiator_full_name}</strong>"
+      msg += " <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      return msg.html_safe
     when QuestionEvent::RESOLVED 
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::NO_ANSWER

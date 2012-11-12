@@ -246,9 +246,14 @@ class Question < ActiveRecord::Base
     return true if self.assigned_group && (group.id == self.assigned_group.id) && self.assignee.nil?
     
     # update and log
-    self.update_attributes(:assigned_group => group, :assignee => nil)  
-    QuestionEvent.log_group_assignment(self,group,assigned_by,comment)    
-    # if this is a reopen reassignment due to the public user commenting on the sq                                  
+    current_assigned_group = self.assigned_group
+    self.update_attributes(:assigned_group => group, :assignee => nil)
+    QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
+    if(current_assigned_group != group)
+      QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
+    end
+
+    # if this is a reopen reassignment due to the public user commenting on the sq
     if public_comment
       asker_comment = public_comment.response
     else
@@ -261,6 +266,20 @@ class Question < ActiveRecord::Base
     #     if(is_reassign and public_reopen == false)
     #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
     #     end
+  end
+
+  def change_group(group, changed_by)
+    current_assigned_group = self.assigned_group
+    if(current_assigned_group != group)
+      if(self.update_attribute(:assigned_group,group))
+        QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: changed_by)
+        return true
+      else
+        return false
+      end
+    else
+      return true
+    end
   end
 
   # updates the question, creates a response and  
