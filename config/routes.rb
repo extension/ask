@@ -126,6 +126,7 @@ Aae::Application.routes.draw do
   match "ajax/add_location" => "ajax#add_location", :via => [:post]
   match "ajax/remove_county" => "ajax#remove_county", :via => [:post]
   match "ajax/remove_location" => "ajax#remove_location", :via => [:post]
+  match "ajax/group_by_category_id" => "ajax#group_by_category_id", :via => [:get]
 
   # wildcard
   match "ajax/:action", to: "ajax", :via => [:post]

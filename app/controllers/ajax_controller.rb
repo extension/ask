@@ -48,6 +48,17 @@ class AjaxController < ApplicationController
     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
     render json: list
   end
+  
+  def group_by_category_id
+     if params[:darmok_expertise_id]
+       search_term = params[:darmok_expertise_id]
+       groups = Group.where("darmok_expertise_id like '#{params[:darmok_expertise_id]}'").limit(1)
+     else
+       groups = Group.order('created_at DESC').limit(1)
+     end
+     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
+     render json: list
+   end
 
   def counties
     if params[:term]
