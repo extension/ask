@@ -5,8 +5,9 @@
     <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
   
     <%= render :partial => 'question_main' %>
-  
-    <%= render :partial => 'history' %>
+    <div id="history"
+      <%= render :partial => 'history' %>
+    </div>
   </div>
 </div>
 
