@@ -52,6 +52,7 @@ def transfer_accounts
     SELECT #{@aae_database}.users.id, CONCAT('https://people.extension.org/',#{@darmokdatabase}.accounts.login), 'people', #{@darmokdatabase}.accounts.created_at, NOW()
     FROM #{@aae_database}.users,#{@darmokdatabase}.accounts
     WHERE #{@aae_database}.users.id = #{@darmokdatabase}.accounts.id
+    AND #{@darmokdatabase}.accounts.type = 'User'
   END_SQL
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(authmap_insert_query)
