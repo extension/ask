@@ -466,7 +466,7 @@ class Question < ActiveRecord::Base
   
   # TODO: setup notifications here
   def notify_submitter
-    Notification.create(notifiable: self, created_by: self.submitter, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
+    Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
   end
   
   # TODO: setup notifications here
