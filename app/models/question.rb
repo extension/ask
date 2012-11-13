@@ -1,4 +1,12 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#  BSD(-compatible)
+#  see LICENSE file
+
 class Question < ActiveRecord::Base
+  include MarkupScrubber
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"

@@ -83,10 +83,10 @@ class Group < ActiveRecord::Base
   BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'
 
   # hardcoded for support purposes
-  SUPPORT_GROUP = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
+  SUPPORT_WIDGET_FINGERPRINT = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
   
   def self.support_group
-    self.find_by_widget_fingerprint(SUPPORT_GROUP)
+    self.find_by_widget_fingerprint(SUPPORT_WIDGET_FINGERPRINT)
   end
   
   def is_bonnie_plants?

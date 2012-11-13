@@ -243,6 +243,76 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def account_review_request
+    # check parameters
+    if(!params[:fullname] or !params[:idstring] or !params[:email] or !params[:account_review_key])
+      returninformation = {'message' => 'Missing parameters', 'success' => false}
+      return render :json => returninformation.to_json, :status => :unprocessable_entity
+    end
+
+    # check reviewkey
+    if(params[:account_review_key] != Settings.account_review_key)
+      returninformation = {'message' => 'Review key does not match', 'success' => false}
+      return render :json => returninformation.to_json, :status => :unprocessable_entity
+    end
+
+    # signup affiliation text
+    if(params[:additional_information])
+      additional_information = <<-MOARINFO.strip_heredoc
+        Additional information from #{params[:fullname]} about their Extension involvement:
+
+        #{Question.html_to_text(params[:additional_information])}
+      MOARINFO
+    else
+      additional_information = ''
+    end
+
+    review_text = <<-REVIEWTEXT.strip_heredoc
+      This is a system-generated account review request on behalf of:
+
+      #{params[:fullname]}
+      #{params[:email]}
+
+      #{additional_information}
+      Please vouch for the account at:
+
+      https://people.extension.org/colleagues/showuser/#{params[:idstring]}
+
+      Accounts not vouched with 14 days will automatically be retired. If you are a people
+      administrator, please go ahead and retire the account if it cannot be vouched for.
+    REVIEWTEXT
+
+
+    if !(@submitter = User.find_by_email(params[:email]))
+      @submitter = User.new({:email => params[:email], :kind => 'PublicUser'})
+      if !@submitter.valid?
+        returninformation = {'message' => @submitter.errors.full_messages.join("\n"), 'success' => false}
+        return render :json => returninformation.to_json, :status => :unprocessable_entity
+      end
+    end
+
+    @question = Question.new
+    @question.is_private = true
+    @question.title = 'Account Review Request'
+    @question.body = review_text
+    @question.submitter = @submitter
+    @question.assigned_group = Group.support_group
+    @question.user_ip = request.remote_ip
+    @question.user_agent = request.env['HTTP_USER_AGENT']
+    @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+    @question.status = Question::SUBMITTED_TEXT
+    @question.status_state = Question::STATUS_SUBMITTED
+    # TODO: review - this make no sense to me - jayoung
+    @question.group_name = @question.assigned_group.name
+    if(@question.save)
+      returninformation = {'question_id' => @question.id, 'success' => true}
+      return render :json => returninformation.to_json, :status => :ok
+    else
+      returninformation = {'message' => @question.errors.full_messages.join("\n"), 'success' => false}
+      return render :json => returninformation.to_json, :status => :unprocessable_entity
+    end
+  end
+
   private
 
   def set_submitter

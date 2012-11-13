@@ -7,14 +7,18 @@ Aae::Application.routes.draw do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
-  resources :questions 
-  
+  resources :questions do
+    collection do
+      post 'account_review_request'
+    end
+  end
+
   resources :responses, :only => [:create] do
     member do
       post 'remove_image'
     end
   end
-  
+
   resources :comments, :only => [:create, :update, :destroy, :show]
   resources :users
   resources :groups do
