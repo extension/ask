@@ -61,5 +61,7 @@ class CreateUsers < ActiveRecord::Migration
     add_index "users", ["login"], :name => "login"
     add_index "users", ["retired"], :name => "retired"  
     add_index "users", ["routing_instructions"], :name => "routing_instructions"
+    add_index "users", ["darmok_id"], :name => "people_id_ndx"  
+
   end
 end

@@ -461,6 +461,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
     t.datetime "updated_at",                                                      :null => false
   end
 
+  add_index "users", ["darmok_id"], :name => "people_id_ndx"
   add_index "users", ["email"], :name => "email"
   add_index "users", ["login"], :name => "login"
   add_index "users", ["retired"], :name => "retired"
