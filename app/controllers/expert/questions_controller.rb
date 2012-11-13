@@ -313,7 +313,10 @@ class Expert::QuestionsController < ApplicationController
     
   def add_tag
     @question = Question.find_by_id(params[:id])
+    @previous_tags = @question.tags.collect{|t| t.name}.join(', ')
     @tag = @question.set_tag(params[:tag])
+    @current_tags = @question.tags.collect{|t| t.name}.join(', ')
+    QuestionEvent.log_tag_change(@question, current_user, @current_tags, @previous_tags) if @previous_tags != @current_tags
     if @tag == false
       render :nothing => true
     end
@@ -321,8 +324,11 @@ class Expert::QuestionsController < ApplicationController
   
   def remove_tag
     @question = Question.find_by_id(params[:id])
+    @previous_tags = @question.tags.collect{|t| t.name}.join(', ')
     tag = Tag.find(params[:tag_id])
     @question.tags.delete(tag)
+    @current_tags = @question.tags.collect{|t| t.name}.join(', ')
+    QuestionEvent.log_tag_change(@question, current_user, @current_tags, @previous_tags) if @previous_tags != @current_tags
   end
   
   def reassign

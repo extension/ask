@@ -44,14 +44,14 @@ module QuestionsHelper
       return reject_msg.html_safe
     when QuestionEvent::REACTIVATE
       return "Question Reactivated by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
-    # when QuestionEvent::RECATEGORIZED
-    #       message = "Question Recategorized by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-    #       message += "<span>Category changed to #{q_event.category}"
-    #       if(!q_event.previous_category.blank? and q_event.previous_category != 'unknown')
-    #          message += " from #{q_event.previous_category}"
-    #       end
-    #       message += "</span>"
-    #       return message
+    when QuestionEvent::TAG_CHANGE
+      message = "Tags Changed by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      message += "<br /><span>Tags changed to '#{q_event.tags}'"
+      if(!q_event.previous_tags.blank? && q_event.previous_tags != 'unknown')
+        message += " from '#{q_event.previous_tags}'"
+      end
+      message += "</span>"
+      return message.html_safe
     when QuestionEvent::WORKING_ON
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::EDIT_QUESTION

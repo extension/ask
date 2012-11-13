@@ -1,1 +1,3 @@
-<!-- Empty by design. Handling response with the ajax callback. -->
+<% if @previous_tags != @current_tags %>
+$("#history").html("<%= escape_javascript(render partial: 'history') %>");
+<% end %> 

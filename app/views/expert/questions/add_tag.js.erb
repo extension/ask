@@ -1,3 +1,6 @@
 $( "<p id='tag_<%= escape_javascript(@tag.id.to_s) %>'><span class='tag tag-topic'><%= escape_javascript(link_to @tag.name) %></span> <span class='btn removetag'>x</span></p>" ).prependTo( "#tags" );
 $("#needs_tags").remove();
 $( "#tag_list" ).scrollTop( 0 );
+<% if @previous_tags != @current_tags %>
+$("#history").html("<%= escape_javascript(render partial: 'history') %>");
+<% end %> 

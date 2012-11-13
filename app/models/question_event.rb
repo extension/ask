@@ -21,7 +21,7 @@ class QuestionEvent < ActiveRecord::Base
   REACTIVATE = 5
   REJECTED = 6
   NO_ANSWER = 7
-  RECATEGORIZED = 8
+  TAG_CHANGE = 8
   WORKING_ON = 9
   EDIT_QUESTION = 10
   PUBLIC_RESPONSE = 11
@@ -36,7 +36,7 @@ class QuestionEvent < ActiveRecord::Base
                             REACTIVATE => 're-activated by',
                             REJECTED => 'rejected by',
                             NO_ANSWER => 'no answer given',
-                            RECATEGORIZED => 're-categorized by',
+                            TAG_CHANGE => 'tags changed by',
                             WORKING_ON => 'worked on by',
                             EDIT_QUESTION => 'edited question',
                             PUBLIC_RESPONSE => 'public response',
@@ -88,6 +88,15 @@ class QuestionEvent < ActiveRecord::Base
     else
       return false
     end
+  end
+  
+  def self.log_tag_change(question, initiated_by, tags, previous_tags)
+    return self.log_event({:question => question, 
+                           :initiated_by_id => initiated_by.id,
+                           :tags => tags,
+                           :previous_tags => previous_tags,
+                           :event_state => TAG_CHANGE
+                           })
   end
   
   def self.log_reopen(question, recipient, initiated_by, assignment_comment)
