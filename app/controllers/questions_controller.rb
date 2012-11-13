@@ -6,6 +6,7 @@
 
 class QuestionsController < ApplicationController
   before_filter :set_submitter, only: [:show]
+  skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
 
   def show
@@ -298,7 +299,7 @@ class QuestionsController < ApplicationController
     @question.submitter = @submitter
     @question.assigned_group = Group.support_group
     @question.user_ip = request.remote_ip
-    @question.user_agent = request.env['HTTP_USER_AGENT']
+    @question.user_agent = (request.env['HTTP_USER_AGENT'] ? request.env['HTTP_USER_AGENT'] : '')
     @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
     @question.status = Question::SUBMITTED_TEXT
     @question.status_state = Question::STATUS_SUBMITTED
