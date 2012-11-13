@@ -23,7 +23,6 @@ class Question < ActiveRecord::Base
   accepts_nested_attributes_for :responses
   
   validates :body, :presence => true
-  validates :submitter_email, :presence => true, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
   validate :validate_attachments
   
   before_create :generate_fingerprint, :clean_question_and_answer, :set_last_opened
