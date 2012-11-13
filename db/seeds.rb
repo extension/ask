@@ -29,6 +29,10 @@ def transfer_accounts
            #{@darmokdatabase}.accounts.first_aae_away_reminder, #{@darmokdatabase}.accounts.second_aae_away_reminder, #{@darmokdatabase}.accounts.last_login_at, #{@darmokdatabase}.accounts.last_login_at, #{@darmokdatabase}.accounts.created_at, NOW() 
     FROM   #{@darmokdatabase}.accounts
   END_SQL
+
+  # erase darmok_id for PublicUser accounts
+  # this is simpler than a mysql IF statement above
+  remove_darmok_association_query = "UPDATE #{@aae_database}.users SET darmok_id = NULL where kind = 'PublicUser'"
   
   # transfer data for away status (field has changed from a responder to a away flag)
   # default for this field is false
@@ -42,6 +46,7 @@ def transfer_accounts
 
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(account_insert_query)
+    ActiveRecord::Base.connection.execute(remove_darmok_association_query)
     ActiveRecord::Base.connection.execute(transfer_aae_responder_query)
   end
   
