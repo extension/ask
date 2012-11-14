@@ -262,7 +262,7 @@ class QuestionsController < ApplicationController
       additional_information = <<-MOARINFO.strip_heredoc
         Additional information from #{params[:fullname]} about their Extension involvement:
 
-        #{Question.html_to_text(params[:additional_information])}
+        #{Question.html_to_pretty_text(params[:additional_information])}
       MOARINFO
     else
       additional_information = ''
