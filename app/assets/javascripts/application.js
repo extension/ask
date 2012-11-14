@@ -13,9 +13,9 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
-//= require bootstrap-transition
-//= require bootstrap-collapse
-//= require bootstrap-tooltip
-//= require bootstrap-popover
-//= require bootstrap-modal
+//= require twitter/bootstrap/transition
+//= require twitter/bootstrap/collapse
+//= require twitter/bootstrap/tooltip
+//= require twitter/bootstrap/popover
+//= require twitter/bootstrap/modal
 //= require_tree .

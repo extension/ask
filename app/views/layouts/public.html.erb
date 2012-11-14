@@ -14,7 +14,7 @@
     <% if current_user.has_exid? %>
     <div id="fixed_fixer"></div>
     
-    <div class="navbar navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
+    <div class="navbar navbar-inverse navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
      <div id="expertbar" class="navbar-inner">
         <div class="container">
           <span class="navavatar loggedin">

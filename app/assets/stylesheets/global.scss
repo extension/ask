@@ -1,6 +1,12 @@
 @import "_variables";
 
 body {
+  /*reset bootstrap typography */
+  font-size:13px; line-height: 18px;
+  h1 {font-size:30px; line-height: 34px; margin:0 0 .25em;}
+  h2 {font-size:24px; line-height: 28px; margin:0 0 .25em;}
+  h3 {font-size:18px; line-height: 24px; margin:0 0 .25em;}
+
 	#app_location.demo {background:#FFDC50; padding:.5em 1em .1em;}
 	#app_location.demo p {font-size:1.1em; color:#000;}
 	#app_location.demo p a {color:#000; text-decoration:underline;}
@@ -161,12 +167,17 @@ body#public {
   
   #publicbar .nav .active > a,
 	#publicbar .nav .active > a:hover {
-	    background:#f47B28;
+	  color:#fff;
+    background:#f47B28;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow:none;
 	}
 	#publicbar .brand {color:#000;}
 	
 	#expertbar {border-bottom: 2px solid #000 !important;}
-	#expertbar a.brand {font-size:1.1em;}
+	#expertbar a.brand {font-size:1.1em; }
 	#expertbar a:hover {color:#fff !important; text-decoration:none;}
 	#expertbar .navavatar.loggedin a {color:#999;}
 	#expertbar .navavatar {background:#000;}
@@ -180,7 +191,7 @@ body#public {
   .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
 	
-	a.brand {color:#fff !important;}
+	a.brand {color:#fff !important; text-shadow:none;}
 /*  .navbar {height:80px !important;}*/
 	
 	.navavatar {float:right; padding:.5em 2em; color:#fff;}
@@ -233,7 +244,7 @@ body#expert {
 	  
 	}
 	
-	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:2em;}
+	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:1.8em;}
 	background:#504848;
 	padding-bottom:5em;
 	.row-fluid {background:#f9f9f9;}
@@ -416,7 +427,7 @@ body#expert {
 	#user_masthead {margin:0 0 4em;}
 	.cursor {cursor:pointer;}
 	#searchform {margin:0;padding:0; float:left;}
-	#search input {float:left; margin:0 .5em 0 0; }
+	#search input {margin:0 .5em 0 0; }
 	#search {padding:.5em;}
 	#search .btn {margin:0;}
 	#search_field {}
