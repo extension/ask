@@ -10,40 +10,23 @@ module MarkupScrubber
   end
 
   def scrub_and_sanitize(html_string)
-    # make valid html if we don't have it - not sure if this
-    # may ever throw an exception, if it does, I probably
-    # want to know what caused it, so not catching for now
-    valid_html = Nokogiri::HTML::DocumentFragment.parse(html_string).to_html
-
     # scrub with Loofah prune in order to strip unknown and "unsafe" tags
-    # http://loofah.rubyforge.org/loofah/classes/Loofah/Scrubbers/Prune.html#M000036
-    scrubbed_html = Loofah.scrub_fragment(valid_html, :prune).to_s
+    # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Whitewash
 
-    # use ActionController sanitize to sanitize the Loofah scrubbed html
-    # see: ActionView::Base.sanitized_allowed_tags for the list of allowed tags
-    sanitized_html =  ActionController::Base.helpers.sanitize(scrubbed_html)
-
-    # return the sanitized_html
-    sanitized_html
+    # this should be the list of allowed tags:
+    # https://github.com/flavorjones/loofah/blob/master/lib/loofah/html5/whitelist.rb
+    Loofah.scrub_fragment(html_string, :whitewash).to_s
   end
 
   def html_to_text(html_string)
-    parsed_html = Nokogiri::HTML::DocumentFragment.parse(html_string)
-    # text markup (via: http://stackoverflow.com/questions/10144739/convert-html-to-plain-text-with-inclusion-of-brs)
-
-    blocks = %w[p div address]                      # els to put newlines after
-    swaps  = { "br"=>"\n", "hr"=>"\n#{'-'*70}\n" }  # content to swap out
-
-    # Get rid of superfluous whitespace in the source
-    parsed_html.xpath('.//text()').each{ |t| t.content=t.text.gsub(/\s+/,' ') }
-
-    # Swap out the swaps
-    parsed_html.css(swaps.keys.join(',')).each{ |n| n.replace( swaps[n.name] ) }
-
-    # Slap a couple newlines after each block level element
-    parsed_html.css(blocks.join(',')).each{ |n| n.after("\n\n") }
-
-    # Return the modified text content
-    parsed_html.text
+    Loofah.fragment(html_string).text
   end
+
+  # adds some cleverness with regard to whitespace and block elements
+  # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/TextBehavior#to_text-instance_method
+  def html_to_pretty_text(html_string)
+    Loofah.fragment(html_string).to_text
+  end
+
+
 end
