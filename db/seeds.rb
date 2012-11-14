@@ -672,6 +672,15 @@ def cleanup_responses
   puts " Finished!: #{benchmark.real.round(2)}s"
 end
 
+def reindex_searchable_objects
+  [Question,Group,User].each do |class_object|
+    puts "Re-indexing #{class_object.name.pluralize}"
+    benchmark = Benchmark.measure do
+      class_object.reindex
+    end
+    puts " Finished!: #{benchmark.real.round(2)}s"  
+  end
+end
 
 transfer_accounts
 transfer_locations
@@ -702,3 +711,4 @@ transfer_spam_and_rejected_data
 cleanup_questions
 cleanup_question_event_responses
 cleanup_responses
+reindex_searchable_objects
