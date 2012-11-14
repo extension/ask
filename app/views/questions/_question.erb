@@ -109,7 +109,12 @@
       <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
   <% end %>
   
-  <% if @question.status_state != Question::STATUS_REJECTED %>
+  <% if @question.status_state == Question::STATUS_REJECTED %>
+    <aside class="public_rejected">
+      <h3>This question has been rejected</h3>
+      <p><strong>Rejection comment:</strong> <%= wrap_text(@question.current_response) %></p>
+    </aside>
+  <% elsif @question.status_state != Question::STATUS_REJECTED %>
     <aside>
       <h3>About this question</h3>
       

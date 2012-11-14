@@ -194,6 +194,9 @@ body#public {
 	.container-fluid {max-width:1180px; margin: 0 auto;}
 	.right {float:right;}
 	
+	.public_rejected {border:1px solid #ff0000; background:#fff;}
+	.public_rejected {color:#ff0000;}
+	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		padding-top:0;
