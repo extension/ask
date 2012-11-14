@@ -211,7 +211,6 @@ class Expert::GroupsController < ApplicationController
     @group = Group.new(params[:group])
     @group.created_by = current_user.id
     @group.set_fingerprint(current_user)
-    current_user.join_group(@group,"member")
     current_user.join_group(@group,"leader")
     if @group.save
       redirect_to(expert_group_path(@group.id), :notice => 'Group was successfully created.')
