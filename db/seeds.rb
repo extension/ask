@@ -629,6 +629,39 @@ def create_notification_prefs_for_groups_with_notifications
   puts " Notification prefs transferred: #{benchmark.real.round(2)}s"
 end
 
+# triggers the html sanitization
+def cleanup_questions
+  puts 'Cleaning up any html in questions'
+  benchmark = Benchmark.measure do
+    Question.find_each do |q|
+      q.update_attribute(:body, q.body)
+    end
+  end
+  puts " Finished!: #{benchmark.real.round(2)}s"
+end
+
+# triggers the html sanitization
+def cleanup_comments
+  puts 'Cleaning up any html in comments'
+  benchmark = Benchmark.measure do
+    Comment.find_each do |c|
+      c.update_attribute(:content, c.content)
+    end
+  end
+  puts " Finished!: #{benchmark.real.round(2)}s"
+end
+
+# triggers the html sanitization
+def cleanup_responses
+  puts 'Cleaning up any html in responses'
+  benchmark = Benchmark.measure do
+    Response.find_each do |r|
+      r.update_attribute(:body, r.body)
+    end
+  end
+  puts " Finished!: #{benchmark.real.round(2)}s"
+end
+
 
 transfer_accounts
 transfer_locations
@@ -656,3 +689,6 @@ transfer_misfit_questions_to_groups
 transfer_geo_names
 create_notification_prefs_for_groups_with_notifications
 transfer_spam_and_rejected_data
+cleanup_questions
+cleanup_comments
+cleanup_responses
