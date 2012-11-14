@@ -634,18 +634,24 @@ def cleanup_questions
   puts 'Cleaning up any html in questions'
   benchmark = Benchmark.measure do
     Question.find_each do |q|
-      q.update_attribute(:body, q.body)
+      scrubbed = q.whitewash_html(q.body)
+      if(scrubbed != q.body)
+        q.update_column(:body, scrubbed)
+      end
     end
   end
   puts " Finished!: #{benchmark.real.round(2)}s"
 end
 
 # triggers the html sanitization
-def cleanup_comments
-  puts 'Cleaning up any html in comments'
+def cleanup_question_event_responses
+  puts 'Cleaning up any html in question events'
   benchmark = Benchmark.measure do
-    Comment.find_each do |c|
-      c.update_attribute(:content, c.content)
+    QuestionEvent.where('response IS NOT NULL').find_each do |qe|
+      scrubbed = qe.whitewash_html(qe.response)
+      if(scrubbed != qe.response)
+        qe.update_column(:response, qe.response)
+      end
     end
   end
   puts " Finished!: #{benchmark.real.round(2)}s"
@@ -655,8 +661,12 @@ end
 def cleanup_responses
   puts 'Cleaning up any html in responses'
   benchmark = Benchmark.measure do
+    Response.skip_callback(:save,:after,:perform_index_tasks)
     Response.find_each do |r|
-      r.update_attribute(:body, r.body)
+      scrubbed = r.whitewash_html(r.body)
+      if(scrubbed != r.body)
+        r.update_column(:body, scrubbed)
+      end
     end
   end
   puts " Finished!: #{benchmark.real.round(2)}s"
@@ -690,5 +700,5 @@ transfer_geo_names
 create_notification_prefs_for_groups_with_notifications
 transfer_spam_and_rejected_data
 cleanup_questions
-cleanup_comments
+cleanup_question_event_responses
 cleanup_responses
