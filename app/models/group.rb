@@ -101,6 +101,11 @@ class Group < ActiveRecord::Base
     return group_members
   end
   
+  def set_fingerprint(user)
+    create_time = Time.now.to_s
+    self.widget_fingerprint = Digest::SHA1.hexdigest(create_time + user.id.to_s + self.name)
+  end
+  
   def self.orphan_group
     self.find_by_id(ORPHAN_GROUP_ID)
   end
