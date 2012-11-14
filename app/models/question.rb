@@ -334,7 +334,7 @@ class Question < ActiveRecord::Base
   end
   
   def resolved?
-    self.status_state == STATUS_SUBMITTED
+    self.status_state != STATUS_SUBMITTED
   end
   
   def assigned_to_group_queue?
