@@ -32,6 +32,6 @@ class Comment < ActiveRecord::Base
   
   # attr_writer override for content to scrub html
   def content=(comment_content)
-    write_attribute(:content, self.scrub_and_sanitize(comment_content))
+    write_attribute(:content, self.whitewash_html(comment_content))
   end
 end

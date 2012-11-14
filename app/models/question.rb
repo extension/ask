@@ -167,7 +167,7 @@ class Question < ActiveRecord::Base
 
   # attr_writer override for body to scrub html
   def body=(bodycontent)
-    write_attribute(:body, self.scrub_and_sanitize(bodycontent))
+    write_attribute(:body, self.whitewash_html(bodycontent))
   end
 
   # attr_writer override for title to strip html

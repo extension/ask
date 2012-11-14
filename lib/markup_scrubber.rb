@@ -9,7 +9,7 @@ module MarkupScrubber
     base.extend(self)
   end
 
-  def scrub_and_sanitize(html_string)
+  def whitewash_html(html_string)
     # scrub with Loofah prune in order to strip unknown and "unsafe" tags
     # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Whitewash
 
