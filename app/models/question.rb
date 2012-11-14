@@ -334,7 +334,11 @@ class Question < ActiveRecord::Base
   end
   
   def resolved?
-    !self.status_state == STATUS_SUBMITTED
+    self.status_state == STATUS_SUBMITTED
+  end
+  
+  def assigned_to_group_queue?
+    self.assignee_id.nil? and self.assigned_group_id.present? ? true : false
   end
   
   # utility function to convert status_state numbers to status strings
