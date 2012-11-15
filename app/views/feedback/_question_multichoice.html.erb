@@ -1,0 +1,25 @@
+<h3><%= question.prompt %></h3>
+
+<!-- Answer Form -->
+<div class="question_answers">
+<%= form_tag(addanswer_event_path(@event), {remote: true, id: "answer_form_for_question_#{question.id}"}) do -%>
+  <%= hidden_field_tag('question', question.id) %>
+  
+  <%- if !current_learner -%>
+    <%= render(partial: 'sign_in_to_vote')%>
+  <%- end -%>
+  
+  <div class="control-group a_mvb">
+    <div class="controls <%= "sitv_element" if !current_learner %>">
+      <%- question.responses.each_with_index do |response, index| -%>
+        <label class="color_code_<%= index %>"><%= check_box_tag('values[]',response,is_multivote_answer_checked?(question,response),{class: 'submittable'}) %> <span><%= response %></span></label>
+      <%- end -%>
+    </div>
+  </div>
+  
+  <%- if !current_learner -%>
+    </div> <!-- end .sitv_element_wrapper  -->
+  <%- end -%>
+  
+<%- end -%>
+</div>
