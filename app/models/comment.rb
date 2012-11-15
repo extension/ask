@@ -1,4 +1,13 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#  BSD(-compatible)
+#  see LICENSE file
+
 class Comment < ActiveRecord::Base
+  include MarkupScrubber
+
   belongs_to :question
   belongs_to :user
   has_many :ratings
@@ -21,4 +30,8 @@ class Comment < ActiveRecord::Base
     self.children.update_all(parent_removed: true)
   end
   
+  # attr_writer override for content to scrub html
+  def content=(comment_content)
+    write_attribute(:content, self.whitewash_html(comment_content))
+  end
 end

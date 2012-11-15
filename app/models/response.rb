@@ -1,4 +1,12 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#  BSD(-compatible)
+#  see LICENSE file
+
 class Response < ActiveRecord::Base
+  include MarkupScrubber
   belongs_to :question
   belongs_to :resolver, :class_name => "User", :foreign_key => "resolver_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
@@ -33,6 +41,11 @@ class Response < ActiveRecord::Base
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
     images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
+  end
+
+  # attr_writer override for body to scrub html
+  def body=(bodycontent)
+    write_attribute(:body, self.whitewash_html(bodycontent))
   end
   
   class Response::Image < Asset

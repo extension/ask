@@ -161,9 +161,20 @@ class Question < ActiveRecord::Base
     if self[:title].present?
       return self[:title]
     else 
-      return self[:body].truncate(80, separator: ' ')
+      return self.html_to_text(self[:body]).truncate(80, separator: ' ')
     end
   end
+
+  # attr_writer override for body to scrub html
+  def body=(bodycontent)
+    write_attribute(:body, self.whitewash_html(bodycontent))
+  end
+
+  # attr_writer override for title to strip html
+  def title=(titlecontent)
+    write_attribute(:title, self.html_to_text(titlecontent))
+  end
+
     
   def auto_assign
     assignee = nil

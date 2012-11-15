@@ -1,4 +1,13 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#  BSD(-compatible)
+#  see LICENSE file
+
 class QuestionEvent < ActiveRecord::Base
+  include MarkupScrubber
+
   belongs_to :question
   belongs_to :initiator, :class_name => "User", :foreign_key => "initiated_by_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
@@ -224,5 +233,11 @@ class QuestionEvent < ActiveRecord::Base
       true
     end
   end
+
+  # attr_writer override for response to scrub html
+  def response=(response)
+    write_attribute(:response, self.whitewash_html(response))
+  end
+
     
 end
