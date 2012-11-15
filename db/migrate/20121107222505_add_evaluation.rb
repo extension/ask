@@ -51,6 +51,26 @@ class AddEvaluation < ActiveRecord::Migration
 
     add_index "demographics", ["demographic_question_id", "user_id"], :name => "dq_u_ndx", :unique => true
 
+    create_table "demographic_logs", :force => true do |t|
+      t.integer  "demographic_question_id", :null => false
+      t.integer  "user_id",  :null => false
+      t.text     "response"
+      t.integer  "value"
+      t.text     "changelog"
+      t.timestamps
+    end
+
+
+
+    EvaluationQuestion.create(conference: nexc2012,
+                              prompt: "How would you rate the usefulness of this presentation to your daily work?",
+                              responsetype: EvaluationQuestion::MULTIPLE_CHOICE,
+                              questionorder: 1,
+                              responses: ['Very useful','Somewhat useful','Of very little use','Not at all useful'],
+                              creator: Learner.learnbot)
+
+
+
   end
 
 end
