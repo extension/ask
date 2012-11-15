@@ -1,48 +1,59 @@
 <div id="main" class="span8">
   
-  <div class="bigtag"></div>
-  <h1>Everything tagged '<%= @tag.name %>'</h1>
-  
-  <br class="clearing" />
-  <div class="span5">
-    <div class="location_section">
-      <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
-    <% if @experts.length > 0 %>
-      <% @experts.each do |member| %>
-        <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></p>
-      <% end %>
-      <p>view all</p> 
-    <% else %>
-      <p>There are no experts in this location</p>
-    <% end %>
+  <% if !@tag %>  
+    
+    <div class="bigtag"></div>
+    <h1>There's nothing tagged '<%= @tag_name %>'</h1>
+    <h3>Experts, groups and questions can all be tagged.</h3>
+    <div class="block_callout">
+      <h3>You can edit your tags on your <%= link_to 'profile page', expert_settings_tags_path() %>.</h3>
     </div>
-  </div>
+    
+  <% else %>
+    <div class="bigtag"></div>
+    <h1>Everything tagged '<%= @tag.name %>'</h1>
   
-  <div class="span5">
-    <div class="location_section">
-      <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
-    <% if @groups.length > 0 %>
-      <% @groups.each do |group| %>
-        <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <br class="clearing" />
+    <div class="span5">
+      <div class="location_section">
+        <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
+      <% if @experts.length > 0 %>
+        <% @experts.each do |member| %>
+          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></p>
+        <% end %>
+        <p>view all</p> 
+      <% else %>
+        <p>There are no experts in this location</p>
       <% end %>
-      <p>view all</p> 
-    <% else %>
-      <p>There are no groups in this location</p>
-    <% end %>
+      </div>
     </div>
-  </div>
-
-  <div class="location_section">
-    <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
-
-    <% if @questions.length > 0 %>
-      <% @questions.each do |question| %>
-        <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
+  
+    <div class="span5">
+      <div class="location_section">
+        <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
+      <% if @groups.length > 0 %>
+        <% @groups.each do |group| %>
+          <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+        <% end %>
+        <p>view all</p> 
+      <% else %>
+        <p>There are no groups in this location</p>
       <% end %>
+      </div>
+    </div>
 
-    <% else %>
-      <p>There are no questions in this location</p>
-    <% end %>
-  </div>
+    <div class="location_section">
+      <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
+
+      <% if @questions.length > 0 %>
+        <% @questions.each do |question| %>
+          <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
+        <% end %>
+
+      <% else %>
+        <p>There are no questions in this location</p>
+      <% end %>
+    </div>
+  <% end %>
 
 </div>

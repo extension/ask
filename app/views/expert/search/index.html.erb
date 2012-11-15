@@ -1,18 +1,20 @@
 <h1><%= @list_title %></h1>
 
-<h3>Questions</h3>
+<p><%= link_to "View everything tagged '#{params[:q]}'", expert_home_tags_path(:name => params[:q]) %></p>
+
+<h3>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h3>
 <%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
 <% if @questions.total_entries > 15 %>
 <%= link_to 'see all', expert_search_questions_path(:q => params[:q]) %>
 <% end %>
 
-<h3>Experts</h3>
+<h3>Experts <small>(with '<%= params[:q] %>' in the name)</small></h3>
 <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
 <% if @experts.total_entries > 15 %>
 <%= link_to 'see all', expert_search_experts_path(:q => params[:q]) %>
 <% end %>
 
-<h3>Groups</h3>
+<h3>Groups <small>(with '<%= params[:q] %>' in the name)</small></h3>
 <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
 <% if @groups.total_entries > 15 %>
 <%= link_to 'see all', expert_search_groups_path(:q => params[:q]) %>

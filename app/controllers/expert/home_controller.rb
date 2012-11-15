@@ -32,14 +32,18 @@ class Expert::HomeController < ApplicationController
   
   def tags
     @tag = Tag.find_by_name(params[:name])
-    return record_not_found if (!@tag)
-    @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
-    @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
+    if @tag
+      @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
+      @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     
-    @experts = User.tagged_with(@tag.id).order("users.last_sign_in_at DESC").limit(5)
-    @expert_total_count = User.tagged_with(@tag.id).count
-    @groups = Group.tagged_with(@tag.id).limit(5)
-    @group_total_count = Group.tagged_with(@tag.id).count
+      @experts = User.tagged_with(@tag.id).order("users.last_sign_in_at DESC").limit(5)
+      @expert_total_count = User.tagged_with(@tag.id).count
+      @groups = Group.tagged_with(@tag.id).limit(5)
+      @group_total_count = Group.tagged_with(@tag.id).count
+    else
+      @tag = false
+      @tag_name = params[:name]
+    end
   end
   
   def experts

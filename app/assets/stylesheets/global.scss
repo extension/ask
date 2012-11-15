@@ -148,6 +148,7 @@ body {
   .sitv_content p {font-size:1.2em !important; color:#fff !important; font-weight:normal !important;}
   .sitv_element {}
     .clearing {clear:both !important;}
+  .block_callout {padding:2em; background:#e5e5e5; margin:3em 0 3em; @include rounded10;clear:both;}
 }
 
 
@@ -257,7 +258,7 @@ body#expert {
 	.tags .label:hover {background:#000;}
 	.tags .label a:hover {text-decoration:none !important;}
 	fieldset p {margin-bottom:2em}
-    #content_wrapper {margin:3em 1.5em 1em;}
+    #content_wrapper {margin:3em 1.5em 5em;}
     .container-fluid {max-width:1180px; margin: 0 auto;}
 
     .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
