@@ -23,6 +23,10 @@ class GroupEvent < ActiveRecord::Base
     600 => 'edited attributes'
   }
   
+  def self.log_group_creation(group, initiator, recipient)
+    return self.log_group_changes(group, initiator, recipient, CREATED_GROUP)
+  end
+  
   def self.log_group_join(group, initiator, recipient)
     return self.log_group_changes(group, initiator, recipient, GROUP_JOIN)
   end

@@ -171,7 +171,11 @@ class User < ActiveRecord::Base
       end
     end
   end
-
+  
+  def log_create_group(group)
+    GroupEvent.log_group_creation(group, self, self)
+  end
+  
   def join_group(group, connection_type)
     if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
       connection.destroy
