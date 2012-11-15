@@ -1,0 +1,37 @@
+<h1><%= @user.name %></h1>
+
+<div class="form_group">
+
+<%= form_for @user, :url => nonexid_profile_edit_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+    <p class="bio">
+      <%= f.label :public_name, 'Public Name' %>
+      <%= f.text_field :public_name,  :class => "" %>
+      <span>(if blank, <strong><%= @user.public_name %></strong> will be used on your comments and questions)
+    </p>
+  </fieldset>
+  
+  <fieldset>
+    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p class="clearing">
+      <%= get_avatar_for_user(@user) %>
+      <% if @user.avatar.present? %>
+        <p class="clearing">
+          <label>
+            <%= check_box_tag 'delete_avatar' %>
+            Remove avatar
+          </label> 
+        </p>
+      <% end %>
+      <%= f.file_field :avatar %>
+    </p>
+  </fieldset>
+    
+  <fieldset>
+    <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
+  </fieldset>
+    
+<% end %>
+
+</div>

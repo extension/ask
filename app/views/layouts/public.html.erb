@@ -40,7 +40,7 @@
     <div class="container">
             <% if current_user && !current_user.has_exid? %>
                 <span class="navavatar loggedin">
-                  <%= current_user.name %>
+                  <%= link_to(current_user.public_name, nonexid_profile_edit_path()) %>
                   <%= link_to('Logout', destroy_user_session_path, :method => :delete, :class => "logout") %>
                 </span>
             <% elsif !current_user %>
