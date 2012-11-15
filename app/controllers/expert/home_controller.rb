@@ -33,7 +33,7 @@ class Expert::HomeController < ApplicationController
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag
-      @questions = Question.tagged_with(@tag.id).order("questions.status_state ASC").limit(25)
+      @questions = Question.tagged_with(@tag.id).order("questions.resolved_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     
       @experts = User.tagged_with(@tag.id).order("users.last_sign_in_at DESC").limit(5)
