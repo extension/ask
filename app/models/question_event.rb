@@ -45,7 +45,7 @@ class QuestionEvent < ActiveRecord::Base
                             REACTIVATE => 're-activated by',
                             REJECTED => 'rejected by',
                             NO_ANSWER => 'no answer given',
-                            TAG_CHANGE => 'tags changed by',
+                            TAG_CHANGE => 'tags edited by',
                             WORKING_ON => 'worked on by',
                             EDIT_QUESTION => 'edited question',
                             PUBLIC_RESPONSE => 'public response',

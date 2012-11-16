@@ -45,10 +45,12 @@ module QuestionsHelper
     when QuestionEvent::REACTIVATE
       return "Question Reactivated by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::TAG_CHANGE
-      message = "Tags Changed by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      message += "<br /><span>Tags changed to '#{q_event.tags}'"
+      new_tags = q_event.tags.split(", ").collect{ |t| content_tag(:span, t, :class => "tag tag-topic")}.join(", ").html_safe
+      previous_tags = q_event.previous_tags.split(", ").collect{ |t| content_tag(:span, t, :class => "tag tag-topic")}.join(", ").html_safe
+      message = "Tags edited by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      message += "<span class=\"history_of_tags\">Changed to #{new_tags}"
       if(!q_event.previous_tags.blank? && q_event.previous_tags != 'unknown')
-        message += " from '#{q_event.previous_tags}'"
+        message += " from #{previous_tags}"
       end
       message += "</span>"
       return message.html_safe
