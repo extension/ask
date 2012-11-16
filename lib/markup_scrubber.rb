@@ -9,13 +9,13 @@ module MarkupScrubber
     base.extend(self)
   end
 
-  def whitewash_html(html_string)
+  def cleanup_html(html_string)
     # scrub with Loofah prune in order to strip unknown and "unsafe" tags
-    # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Whitewash
+    # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Prune
 
     # this should be the list of allowed tags:
     # https://github.com/flavorjones/loofah/blob/master/lib/loofah/html5/whitelist.rb
-    Loofah.scrub_fragment(html_string, :whitewash).to_s
+    Loofah.scrub_fragment(html_string, :prune).to_s
   end
 
   def html_to_text(html_string)

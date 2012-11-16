@@ -45,7 +45,7 @@ class Response < ActiveRecord::Base
 
   # attr_writer override for body to scrub html
   def body=(bodycontent)
-    write_attribute(:body, self.whitewash_html(bodycontent))
+    write_attribute(:body, self.cleanup_html(bodycontent))
   end
   
   class Response::Image < Asset

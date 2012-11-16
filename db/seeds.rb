@@ -634,7 +634,7 @@ def cleanup_questions
   puts 'Cleaning up any html in questions'
   benchmark = Benchmark.measure do
     Question.find_each do |q|
-      scrubbed = q.whitewash_html(q.body)
+      scrubbed = q.cleanup_html(q.body)
       if(scrubbed != q.body)
         q.update_column(:body, scrubbed)
       end
@@ -648,7 +648,7 @@ def cleanup_question_event_responses
   puts 'Cleaning up any html in question events'
   benchmark = Benchmark.measure do
     QuestionEvent.where('response IS NOT NULL').find_each do |qe|
-      scrubbed = qe.whitewash_html(qe.response)
+      scrubbed = qe.cleanup_html(qe.response)
       if(scrubbed != qe.response)
         qe.update_column(:response, qe.response)
       end
@@ -663,7 +663,7 @@ def cleanup_responses
   benchmark = Benchmark.measure do
     Response.skip_callback(:save,:after,:perform_index_tasks)
     Response.find_each do |r|
-      scrubbed = r.whitewash_html(r.body)
+      scrubbed = r.cleanup_html(r.body)
       if(scrubbed != r.body)
         r.update_column(:body, scrubbed)
       end
