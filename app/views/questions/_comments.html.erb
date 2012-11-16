@@ -1,3 +1,4 @@
+<% if !@question.is_private %>
 <h3>Comment on this Question</h3>
 
 <% if current_user && current_user.has_exid? %>
@@ -31,7 +32,7 @@
   
   <br class="clearing" />
 </div>
-
+<% end %>
 
 <br class="clearing" />
 

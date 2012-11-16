@@ -19,7 +19,11 @@
   <p class="actions">
   <span class="comment_actions">
     <% if current_user %>
+      <% if !comment.question.is_private %>
       <%= link_to 'reply', '#', :onclick => "show_element($('#comment_reply_to_#{comment.id}'));" %> 
+      <% else %>
+        <p>Replies locked, question is now private.</p>
+      <% end %>
     <% end %>
     
     <% if current_user && (current_user.id == comment.user_id) %>

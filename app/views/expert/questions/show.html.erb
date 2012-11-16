@@ -5,6 +5,12 @@
     <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
   
     <%= render :partial => 'question_main' %>
+
+    <h3>Comments</h3>
+    <div id="comment-list">
+	  <%= render :partial => '/comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
+	</div>
+	   
     <div id="history">
       <%= render :partial => 'history' %>
     </div>
