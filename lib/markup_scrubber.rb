@@ -11,7 +11,7 @@ module MarkupScrubber
 
   def cleanup_html(html_string)
     # scrub with Loofah prune in order to strip unknown and "unsafe" tags
-    # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Whitewash
+    # http://rubydoc.info/github/flavorjones/loofah/master/Loofah/Scrubbers/Prune
 
     # this should be the list of allowed tags:
     # https://github.com/flavorjones/loofah/blob/master/lib/loofah/html5/whitelist.rb
