@@ -243,7 +243,7 @@ class QuestionEvent < ActiveRecord::Base
 
   # attr_writer override for response to scrub html
   def response=(response)
-    write_attribute(:response, self.whitewash_html(response))
+    write_attribute(:response, self.cleanup_html(response))
   end
 
     
