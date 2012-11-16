@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
 
   # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
   # does not pass email information back.
-  validates :email, :presence => true, unless: Proc.new { |u| u.kind == 'PublicUser' && !u.persisted? && u.authmaps.detect{|am| am.source == 'twitter'}.present? }
+  validates :email, :presence => true, unless: Proc.new { |u| u.first_authmap_twitter? }
   validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, allow_blank: true
 
   before_update :update_vacated_aae
@@ -101,6 +101,13 @@ class User < ActiveRecord::Base
     end
     {:conditions => conditions}
   }
+  
+  # the first authmap is twitter if either it's a new record and we're saving the first authmap to it or 
+  # more than one authmap exists for the user and the first one is the twitter authmap
+  def first_authmap_twitter?
+    twitter_authmap = self.authmaps.detect{|am| am.source == 'twitter'}
+    twitter_authmap.present? && (self.authmaps.length == 1 || (self.authmaps.order(:created_at).first.id == twitter_authmap.id))
+  end
 
 
   def name
