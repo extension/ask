@@ -64,7 +64,7 @@ module QuestionsHelper
       return "Comment posted by <strong>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::COMMENT 
       comment_msg = "Comment posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      comment_msg = comment_msg + " <div class='comment_icon'>#{format_text_for_display(q_event.response)}</div>" if q_event.response
+      comment_msg = comment_msg + " <span class=\"comment\">#{format_text_for_display(q_event.response)}</span>" if q_event.response
       return comment_msg.html_safe
     else
       return "Question #{q_event.question.id.to_s} #{QuestionEvent::EVENT_TO_TEXT_MAPPING[q_event.event_state] ||= nil} #{((q_event.recipient) ? q_event.recipient.name : '')} by #{initiator_full_name} <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe

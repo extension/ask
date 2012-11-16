@@ -310,6 +310,14 @@ class Expert::QuestionsController < ApplicationController
     flash[:success] = "Question re-activated"
     redirect_to expert_question_url(question)
   end  
+  
+  def add_history_comment
+    @question = Question.find_by_id(params[:id])
+    if params[:history_comment].present?
+      @question.add_history_comment(current_user, params[:history_comment])
+    end
+    redirect_to expert_question_url(@question)
+  end
     
   def add_tag
     @question = Question.find_by_id(params[:id])

@@ -1,6 +1,26 @@
 <h3>History</h3>
+
+<p id="history_comment_toggle"><span class="btn">Add a comment to the history</span> <small>(only seen by AaE experts)</small></p>
+
+<div id="history_comment" style="display:none;">
+  <%= form_tag(expert_questions_add_history_comment_path(:id => @question.id)) do %>  
+    <p><%= text_area_tag "history_comment", nil, {:cols => 40, :rows => 2, :maxlength => 140, :class => "l"} %></p>
+    <p><%= submit_tag "Post", :class => "btn" %></p>
+  <% end %>
+</div>
+
 <% if @question.question_events.length > 0 %>
   <% @question.question_events.each do |event| %>
     <li><%= stringify_question_event(event) %></li>
   <% end %>
 <% end %>
+
+
+
+<script class="code" type="text/javascript">
+
+  $("#history_comment_toggle span").click(function () {
+    $("#history_comment").toggle();
+  });
+
+</script>

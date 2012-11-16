@@ -217,6 +217,10 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def add_history_comment(user, comment)
+    QuestionEvent.log_history_comment(self, user, comment)
+  end
+  
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.

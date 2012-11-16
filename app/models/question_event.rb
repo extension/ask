@@ -78,6 +78,13 @@ class QuestionEvent < ActiveRecord::Base
       :response => assignment_comment})
   end
   
+  def self.log_history_comment(question, initiated_by, history_comment)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => COMMENT,
+      :response => history_comment})
+  end
+  
   def self.log_group_assignment(question, group, initiated_by, assignment_comment)
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
