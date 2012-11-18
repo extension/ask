@@ -28,6 +28,8 @@ Aae::Application.routes.draw do
     end
   end
 
+
+
   namespace :expert do
     resources :questions, :only => [:show] do
       member do
@@ -135,7 +137,7 @@ Aae::Application.routes.draw do
   match "ajax/group_by_category_id" => "ajax#group_by_category_id", :via => [:get]
 
   # wildcard
-  match "ajax/:action", to: "ajax", :via => [:post]
+  match "ajax/:action", to: "ajax", :via => [:get, :post]
 
   ### Widget iFrame ###
   # route for existing bonnie_plants widget for continued operation.
@@ -168,6 +170,14 @@ Aae::Application.routes.draw do
       match "/:action"
     end
   end
+
+  # evaluation
+  match "evaluation/answer_evaluation", to: "evaluation#answer_evaluation", via: [:post], as: 'answer_evaluation'
+  match "evaluation/answer_demographic", to: "evaluation#answer_demographic", via: [:post], as: 'answer_demographic'
+
+  # wildcard
+  match "evaluation/:action", to: "evaluation", :via => [:get, :post]
+
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]

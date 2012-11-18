@@ -18,4 +18,7 @@
 //= require twitter/bootstrap/tooltip
 //= require twitter/bootstrap/popover
 //= require twitter/bootstrap/modal
-//= require_tree .
+//= require rangeinput.js
+//= require alerts.js
+//= require jquery.validate
+//= require submittable

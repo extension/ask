@@ -1,0 +1,15 @@
+<div>
+  <h1>Evaluation for Question <%= @question.id %></h1>
+  <p>Blah, blah, privacy policy, blah, blah</p>
+
+  <%- EvaluationQuestion.active.order(:questionorder).each do |evaluation_question| -%>
+    <%- case evaluation_question.responsetype -%>
+    <%- when EvaluationQuestion::SCALE -%>
+      <%= render(partial: 'evalquestion_scale', locals: {evaluation_question: evaluation_question, question: @question})%>
+    <%- else # assumes open -%>  
+      <%= render(partial: 'evalquestion_open', locals: {evaluation_question: evaluation_question, question: @question})%>
+    <%- end -%>
+  <%- end -%>
+
+  <p><%= link_to("I'm Done", "#", class: 'btn btn-primary') %></p>
+</div>

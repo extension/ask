@@ -11,21 +11,38 @@ class EvaluationQuestion < ActiveRecord::Base
   has_many :evaluation_answers
 
   # types, strings in case we ever want to inherit from this model
-  MULTIPLE_CHOICE = 'multiple_choice'
-  COMPOUND_MULTIPLE_OPEN = 'compound_multiple_open'
+  SCALE = 'scale'
+  OPEN = 'open'
+  OPEN_DOLLAR_VALUE = 'open_dollar_value'
+  OPEN_TIME_VALUE = 'open_time_value'
+
+  scope :active, where(is_active: true)
 
 
   def answer_for_user_and_question(user,question)
-    self.evaluation_answers.where(user: user.id).where(question: event.id).first
+    self.evaluation_answers.where(user_id: user.id).where(question_id: question.id).first
   end
 
-  def answer_counts_for_event(event)
-    self.evaluation_answers.where(event_id: event.id).group(:response).count
+  def answer_value_for_user_and_question(user,question)
+    if(answer = self.evaluation_answers.where(user_id: user.id).where(question_id: question.id).first)
+      case self.responsetype
+      when SCALE
+        answer.value
+      else
+        answer.response
+      end
+    else
+      nil
+    end
+  end
+
+  def answer_counts_for_question(question)
+    self.evaluation_answers.where(question_id: question.id).group(:response).count
   end
 
 
-  def answer_total_for_event(event)
-    self.evaluation_answers.where(event_id: event.id).count
+  def answer_total_for_question(question)
+    self.evaluation_answers.where(question_id: question.id).count
   end
 
   def answer_counts
@@ -37,72 +54,36 @@ class EvaluationQuestion < ActiveRecord::Base
   end
 
   def response_value(response)
-    if(self.responselist.include?(response))
-      self.responselist.index(response) + 1
+    case self.responsetype
+    when SCALE
+      response.to_i
     else
+      # TODO - maybe something where we interpret
+      # dollar amounts or times
       0
     end
   end
 
-  def is_trigger_response?(response)
-    if(self.responsetype != COMPOUND_MULTIPLE_OPEN)
-      false
-    else
-      self.responses[:triggers].include?(response)
-    end
-  end
-
-  def responselist
-    if(self.responsetype == COMPOUND_MULTIPLE_OPEN)
-      self.responses[:responsestrings]
-    else
-      self.responses
-    end
-  end
-
-  def open_responses_for_event(event)
-    if(self.responsetype != COMPOUND_MULTIPLE_OPEN)
-      []
-    else
-      self.evaluation_answers.where(event_id: event.id).where("secondary_response IS NOT NULL").pluck(:secondary_response)
-    end
-  end
-
-  def open_response_answers
-    if(self.responsetype != COMPOUND_MULTIPLE_OPEN)
-      []
-    else
-      self.evaluation_answers.where("secondary_response IS NOT NULL")
-    end
-  end
-
   def create_or_update_answers(options = {})
-    learner = options[:learner]
-    event = options[:event]
+    user = options[:user]
+    question = options[:question]
     params = options[:params]
 
     case self.responsetype
-    when MULTIPLE_CHOICE
-      if(answer = self.answer_for_learner_and_event(learner,event))
+    when SCALE
+      if(answer = self.answer_for_user_and_question(user,question))
         answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
       else
-        answer = self.evaluation_answers.create(learner: learner, event: event, response: params[:response], value: self.response_value(params[:response]))
+        answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
       end
       answer
-    when COMPOUND_MULTIPLE_OPEN
-      save_attributes = {response: params[:response], value: self.response_value(params[:response])}
-      if(self.is_trigger_response?(params[:response]))
-        save_attributes[:secondary_response] = params[:secondary_response]
-      end
-
-      if(answer = self.answer_for_learner_and_event(learner,event))
-        answer.update_attributes(save_attributes)
-      else
-        save_attributes.merge!({learner: learner, event: event})
-        answer = self.evaluation_answers.create(save_attributes)
-      end
     else
-      # nothing
+      if(answer = self.answer_for_user_and_question(user,question))
+        answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
+      else
+        answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
+      end
+      answer      
     end
   end
 

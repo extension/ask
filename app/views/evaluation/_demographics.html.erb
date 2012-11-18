@@ -1,0 +1,29 @@
+<div>
+  <h1>Tell us about yourself</h1>
+  <p>Blah, blah, privacy policy, blah, blah</p>
+
+  <%- DemographicQuestion.active.order(:questionorder).each do |question| -%>
+    <div class="well">
+      <%= form_tag(answer_demographic_path(question), {remote: true, id: "answer_form_for_demographic_question_#{question.id}"}) do -%>
+        <%= hidden_field_tag('demographic_question_id', question.id) -%>
+          <legend><%= question.prompt %></legend>
+          <div class="control-group">
+            <div class="controls">
+              <%- question.responses.each_with_index do |response, index| -%>
+                <label class="radio"><%= radio_button_tag('response',response,is_multichoice_demographic_checked_for_user?(@evaluator,question,response),{class: 'submittable'}) %> <%= response %></label>
+              <%- end -%>
+            </div>
+        </div>
+      <%- end -%>
+    </div>
+
+  <%- end -%>
+
+  <p><%= link_to("I'm Done", "#", class: 'btn btn-primary') %></p>
+</div>
+
+
+
+
+
+
