@@ -28,6 +28,16 @@ class Expert::UsersController < ApplicationController
     render :action => 'show'
   end
   
+  def rejected
+    @user = User.find(params[:id])
+    @question_list = "rejected"
+    @questions = @user.rejected_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @user.rejected_questions.length
+    @my_groups = @user.group_memberships
+    @handling_event_count = @user.aae_handling_event_count
+    render :action => 'show'
+  end
+  
   def tags
     @tag = Tag.find_by_id(params[:tag_id])
     @user = User.find_by_id(params[:user_id])

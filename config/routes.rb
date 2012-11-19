@@ -66,6 +66,7 @@ Aae::Application.routes.draw do
     end
     
     match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
+    match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
