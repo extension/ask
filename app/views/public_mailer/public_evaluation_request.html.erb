@@ -3,10 +3,10 @@
 <html style="margin: 0; padding: 0;">
 
 <head>
-  <title>Ask an Expert Answer</title>
+  <title>Ask an Expert Evaluation</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <%= render(partial: 'public_mailer/public_styles') %>
-	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
+  <%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
 </head>
 <body>
 
@@ -25,7 +25,7 @@
   </tr>
   
   <tr class="tagline">
-    <td>Ask an Expert Answer</td>
+    <td>Ask an Expert Evaulation</td>
   </tr>
   <tr class="options">
     <td>
@@ -42,38 +42,41 @@
       
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
-            <td id="reminder_title">
-              There's a response to your 'Ask an Expert' Question 
+            <td id="email_body">
+              <p>Hello,</p>
+
+              <p>A week ago, you received an answer to a question you asked using our Ask an Expert system.</p>
+
+              <p>We'd love if you could help us improve Ask an Expert by answering just a few short questions about your experience.</p>
             </td>
           </tr>
-          
-          
-          <tr>
-            <td id="callout">
-              <table cellpadding="0" cellspacing="0" border="0" align="left">
-                <tr>
-                  <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                  <td class="callout"><%= link_to("View your Question and Response", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>
-                    <div class="response"><%= format_text_for_display(@response.body) %></div>
-                    <div class="signature"><%= format_text_for_display(@response.signature) %></div>
-                  </td>
-              </table>
+              <tr>
+                <td id="callout">
+                  <table cellpadding="0" cellspacing="0" border="0" align="left">
+                    <tr>
+                      <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
+                      <%- if @example_survey %>
+                        <td class="callout"><%= link_to("View the evaluation survey", example_evaluation_url) -%></td>
+                      <%- else -%>
+                        <td class="callout"><%= link_to("View the evaluation survey", view_evaluation_url(:fingerprint => @question.question_fingerprint)) -%></td>
+                      <%- end -%>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td>
+              
+              <p>Thank you for using Ask an Expert.</p>
+
             </td>
-          </tr>
-          
-          <tr>
-            <td class="meta_details">Thank you for using 'Ask an Expert'</td>
           </tr>
 
           <tr>
             <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
           </tr>
         </table>
-      
+
       
     </td>
   </tr>

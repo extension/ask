@@ -1,0 +1,15 @@
+<div class="span12">
+  <h1><%= @page_title %></h1>
+  <p>ToDo: short preamble, link to privacy? <%= link_to('link to their question?','#',{target: '_blank'}) %></p>
+
+  <%- EvaluationQuestion.active.order(:questionorder).each do |evaluation_question| -%>
+    <%- case evaluation_question.responsetype -%>
+    <%- when EvaluationQuestion::SCALE -%>
+      <%= render(partial: 'evalquestion_scale', locals: {evaluation_question: evaluation_question, question: nil, question_testing: true})%>
+    <%- else # assumes open -%>  
+      <%= render(partial: 'evalquestion_open', locals: {evaluation_question: evaluation_question, question: nil, question_testing: true})%>
+    <%- end -%>
+  <%- end -%>
+
+
+</div>

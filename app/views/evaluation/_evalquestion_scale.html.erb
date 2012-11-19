@@ -1,0 +1,36 @@
+<%- if local_assigns.has_key?(:question_testing) and question_testing 
+      question_id = 0
+    else
+      question_id = question.id
+    end 
+-%>
+<div class="well">
+<%= form_tag(answer_evaluation_path, {remote: true, id: "answer_form_for_evaluation_question_#{evaluation_question.id}"}) do -%>
+  <%= hidden_field_tag('question_id', question_id) %>
+  <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
+  <legend><%= evaluation_question.prompt %> <small><em>on a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
+  <div class="control-group">
+    <div class="controls">
+      <div class="slider_ranges">
+        <p>
+      <span class="range_start"><%= evaluation_question.responses[0] %> (<strong><%= evaluation_question.range_start %></strong>)</span>
+      <span class="range_end"><%= evaluation_question.responses[1] %> (<strong><%= evaluation_question.range_end %></strong>)</span>
+      </p>
+      </div>
+      <div class="center_slider">
+      <%= number_field_tag('response', scale_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), 
+          {min: evaluation_question.range_start, max: evaluation_question.range_end, id: "range_#{evaluation_question.id}", class: 'range', type: 'range', step: '1'}) %>
+      </div>  
+    </div>
+  </div>
+<%- end -%>
+</div>
+
+<script class="code" type="text/javascript">
+  // jquery tools rangeinput
+  $("#range_<%= evaluation_question.id %>").rangeinput();
+  $("#range_<%= evaluation_question.id %>").change(function(event, value) {
+    $(this).parents('form:first').submit();
+  });
+</script>
+

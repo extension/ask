@@ -5,7 +5,8 @@
 # see LICENSE file
 
 class Webmail::ExamplesController < ApplicationController
-  
+  skip_before_filter :set_yolo
+
   def group_user_join
     mail = GroupMailer.group_user_join(user: User.first, group: Group.last, new_member:User.first, cache_email: false)
     return render_mail(mail)
@@ -57,7 +58,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def public_expert_response
-    mail = PublicMailer.public_expert_response(user: User.first, question: Question.last, expert: User.offset(rand(User.count)).first, cache_email: false)
+    mail = PublicMailer.public_expert_response(user: User.first, question: Question.answered.last, expert: User.offset(rand(User.count)).first, cache_email: false)
     return render_mail(mail)
   end
   
@@ -65,6 +66,13 @@ class Webmail::ExamplesController < ApplicationController
     mail = PublicMailer.public_submission_acknowledgement(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
+  
+  def public_evaluation_request
+    show_example_survey = !(params[:example_survey] and ['f','false','no','0'].include?(params[:example_survey].downcase))
+    mail = PublicMailer.public_evaluation_request(user: User.first, question: Question.answered.last, cache_email: false, example_survey: show_example_survey)
+    return render_mail(mail)
+  end
+
   
   
   protected
