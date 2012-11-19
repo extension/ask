@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   has_many :tags, :through => :taggings
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
+  has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
   has_many :question_viewlogs
@@ -72,7 +73,9 @@ class User < ActiveRecord::Base
   scope :exid_holder, conditions: { kind: 'User' }
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
-
+  
+  scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}")
+  
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
@@ -360,6 +363,12 @@ class User < ActiveRecord::Base
     else
       nil
     end
+  end
+  
+  def daily_summary_group_list
+    list = []
+    self.group_memberships.each{|group| list.push(group) if (send_daily_summary?(group) and group.include_in_daily_summary?)}
+    return list
   end
 
   def completed_demographics?

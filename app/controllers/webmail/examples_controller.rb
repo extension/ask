@@ -37,8 +37,8 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
-  def internal_aae_escalation
-    mail = InternalMailer.aae_escalation(user: User.first, group: Group.first, cache_email: false)
+  def internal_aae_daily_summary
+    mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last,Group.find(Group::QUESTION_WRANGLER_GROUP_ID)], cache_email: false)
     return render_mail(mail)
   end
   
