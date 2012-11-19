@@ -27,7 +27,7 @@ class Notification < ActiveRecord::Base
   NOTIFICATION_AAE_INTERNAL = [1000,1999]   # 'aae-internal'
   AAE_ASSIGNMENT = 1001  # assignment notification
   AAE_REASSIGNMENT = 1002  # reassignment notification
-  AAE_ESCALATION = 1003  # escalation notification
+  AAE_DAILY_SUMMARY = 1003  # escalation notification
   AAE_PUBLIC_EDIT = 1004  # a public user edited their question
   AAE_PUBLIC_COMMENT = 1005 # a public user posted another comment
   AAE_REJECT = 1006 # an expert has rejected a question
@@ -65,8 +65,8 @@ class Notification < ActiveRecord::Base
       process_aae_assignment
     when AAE_REASSIGNMENT
       process_aae_reassignment
-    when AAE_ESCALATION
-      process_aae_escalation
+    when AAE_DAILY_SUMMARY
+      process_aae_daily_summary
     when AAE_PUBLIC_EDIT
       process_aae_public_edit
     when AAE_PUBLIC_COMMENT
@@ -106,8 +106,8 @@ class Notification < ActiveRecord::Base
     InternalMailer.aae_reassignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless (self.notifiable.previous_handling_recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
-  def process_aae_escalation
-    User.not_retired.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_escalation(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away?}
+  def process_aae_daily_summary
+    User.not_retired.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or groups.empty?}
   end
   
   def process_aae_public_edit

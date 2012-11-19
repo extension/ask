@@ -64,7 +64,7 @@ class InternalMailer < ActionMailer::Base
     return_email
   end
   
-  def aae_escalation(options = {})
+  def aae_daily_summary(options = {})
     @user = options[:user]
     @groups = options[:groups]
     @subject = "eXtension Initiative: Ask an Expert Escalation Report"

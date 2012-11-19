@@ -149,7 +149,7 @@ class Group < ActiveRecord::Base
   end
   
   def include_in_daily_summary?
-    self.open_questions.where("last_assigned_at < '#{1.day.ago}'").empty? ? false : true
+    self.open_questions.where("last_assigned_at < '#{Settings.aae_escalation_delta.hours.ago}'").empty? ? false : true
   end
   
 end
