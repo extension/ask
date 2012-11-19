@@ -93,20 +93,22 @@
         <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
             <tr>
               <td id="reminder_title">
-                There are questions in the following Groups that are more than 24 hours old
+                There are questions in the following Groups that are more than 24 hours old that you've chosen to be notified about
               </td>
             </tr>
             <tr>
               <td id="callout">
                 <table cellpadding="0" cellspacing="0" border="0" align="left">
                   <tr>
-                    <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                    <td class="callout"><%= link_to("View Unanswered Questions", expert_group_url(@group)) -%></td>
+                    <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>                    
+                    <td class="callout">View Unanswered Questions</td>
                   </tr>
+                  <% @groups.each do |group| %>
                   <tr>
                     <td></td>
-                    <td class="group"><p><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %></p></td>
+                    <td class="group"><p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p></td>
                   </tr>
+                  <% end %>
                 </table>
               </td>
             </tr>

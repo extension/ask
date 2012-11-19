@@ -107,7 +107,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_escalation
-    self.members.each{|user| InternalMailer.aae_escalation(user: user, group: self.notifiable).deliver unless user.email.nil?}
+    User.not_retired.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_escalation(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away?}
   end
   
   def process_aae_public_edit

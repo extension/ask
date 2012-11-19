@@ -66,15 +66,15 @@ class InternalMailer < ActionMailer::Base
   
   def aae_escalation(options = {})
     @user = options[:user]
-    @group = options[:group]
-    @subject = "eXtension Initiative: Ask an Expert Escalation Report: #{@group.name}"
+    @groups = options[:groups]
+    @subject = "eXtension Initiative: Ask an Expert Escalation Report"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
         # the rendered email.
-        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @groups[0])
       end
       
       return_email = mail(to: @user.email, subject: @subject)
