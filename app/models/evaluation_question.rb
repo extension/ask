@@ -24,6 +24,7 @@ class EvaluationQuestion < ActiveRecord::Base
   end
 
   def answer_value_for_user_and_question(user,question)
+    return nil if(question.nil? or user.nil?)
     if(answer = self.evaluation_answers.where(user_id: user.id).where(question_id: question.id).first)
       case self.responsetype
       when SCALE
@@ -57,9 +58,12 @@ class EvaluationQuestion < ActiveRecord::Base
     case self.responsetype
     when SCALE
       response.to_i
-    else
-      # TODO - maybe something where we interpret
-      # dollar amounts or times
+    when OPEN_DOLLAR_VALUE
+      response.gsub(%r{[^\d\.]},'').to_i
+    when OPEN_TIME_VALUE
+      # interpret as days
+      response.gsub(%r{[^\d]},'').to_i
+    else 
       0
     end
   end

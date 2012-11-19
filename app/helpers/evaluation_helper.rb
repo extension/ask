@@ -26,4 +26,8 @@ module EvaluationHelper
   def scale_value_for_evalquestion_question_user(evaluation_question,question,user)
     evaluation_question.answer_value_for_user_and_question(user,question) || 3
   end
+
+  def open_value_for_evalquestion_question_user(evaluation_question,question,user)
+    evaluation_question.answer_value_for_user_and_question(user,question) || ''
+  end
 end

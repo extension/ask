@@ -47,7 +47,7 @@ class AddEvaluation < ActiveRecord::Migration
     EvaluationQuestion.create(prompt: "The response given by the Ask an Expert service to my question...",
                               responsetype: EvaluationQuestion::SCALE,
                               questionorder: 2,
-                              responses: ['did not answer my question(s)','completely answered my question(s)'],
+                              responses: ['did not answer my question','completely answered my question'],
                               range_start: 1,
                               range_end: 5,
                               creator_id: User.system_user_id)
@@ -73,7 +73,7 @@ class AddEvaluation < ActiveRecord::Migration
                               questionorder: 5,
                               creator_id: User.system_user_id)
 
-    EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a  response to my question was:",
+    EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a  response to my question was (in days):",
                               responsetype: EvaluationQuestion::OPEN_TIME_VALUE,
                               questionorder: 6,
                               creator_id: User.system_user_id)
