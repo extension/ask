@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
   has_many :question_viewlogs
   has_one  :yo_lo
+  has_many :demographics
 
   # sunspot/solr search
   searchable do
@@ -359,6 +360,12 @@ class User < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  def completed_demographics?
+    active_demographic_questions = DemographicQuestion.active.pluck(:id)
+    my_demographic_questions = self.demographics.pluck(:demographic_question_id)
+    (active_demographic_questions - my_demographic_questions).blank?
   end
 
 end

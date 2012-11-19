@@ -177,8 +177,9 @@ Aae::Application.routes.draw do
   match "evaluation/question/:id", to: "evaluation#question", via: [:get], as: 'evaluation_form'
   match "evaluation/view/:fingerprint" => "evaluation#view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get], :as => 'view_evaluation'
   match "evaluation/authorize" => "evaluation#authorize", via: [:post], :as => 'authorize_evaluation'
+  match "evaluation/example" => "evaluation#example", via: [:get], :as => 'example_evaluation'
+  match "evaluation/thanks" => "evaluation#thanks", via: [:get], :as => 'evaluation_thanks'
   
-
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 

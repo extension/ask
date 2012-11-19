@@ -42,6 +42,7 @@ class EvaluationController < ApplicationController
 
 
   def question
+    @page_title = 'Evaluation Questions'
     @question = Question.find(params[:id])
     if(@evaluator != @question.submitter)
       return render(template: 'evaluation/private')
@@ -54,6 +55,8 @@ class EvaluationController < ApplicationController
 
   def example
     @page_title = 'Example Evaluation Questions'
+    @question_testing = true
+    return render(template: 'evaluation/question')
   end
 
   def answer_demographic
@@ -72,6 +75,11 @@ class EvaluationController < ApplicationController
     return render :json => {'success'=> true}.to_json, :status => :ok
   end
 
+  def thanks
+    flash[:success] = "Thank you for your response and helping us make Ask an Expert better!"
+    return redirect_to(root_path)
+  end
+
   private
 
   def set_evaluator
@@ -80,6 +88,7 @@ class EvaluationController < ApplicationController
     elsif(session[:submitter_id])
       @evaluator = User.find_by_id(session[:submitter_id])
     end
+    return redirect_to(root_path) if @evaluator.nil?
   end
 
 end

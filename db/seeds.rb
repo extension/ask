@@ -629,6 +629,96 @@ def create_notification_prefs_for_groups_with_notifications
   puts " Notification prefs transferred: #{benchmark.real.round(2)}s"
 end
 
+def seed_evaluation_questions
+  puts 'Seeding evaluation questions'
+
+  EvaluationQuestion.create(prompt: "The question you asked was...",
+                            responsetype: EvaluationQuestion::SCALE,
+                            questionorder: 1,
+                            responses: ['a personal curiousity that was not too important','critically important to me'],
+                            range_start: 1,
+                            range_end: 5,
+                            creator_id: User.system_user_id)
+
+  EvaluationQuestion.create(prompt: "The response given by the Ask an Expert service to my question...",
+                            responsetype: EvaluationQuestion::SCALE,
+                            questionorder: 2,
+                            responses: ['did not answer my question','completely answered my question'],
+                            range_start: 1,
+                            range_end: 5,
+                            creator_id: User.system_user_id)
+
+  EvaluationQuestion.create(prompt: "The advice that was offered was...",
+                            responsetype: EvaluationQuestion::SCALE,
+                            questionorder: 3,
+                            responses: ['too complex','too simplistic'],
+                            range_start: 1,
+                            range_end: 5,
+                            creator_id: User.system_user_id)
+
+  EvaluationQuestion.create(prompt: "In this story, the need for an answer was of...",
+                            responsetype: EvaluationQuestion::SCALE,
+                            questionorder: 4,
+                            responses: ['little economic consequence to me','of significant economic concern to me'],
+                            range_start: 1,
+                            range_end: 5,
+                            creator_id: User.system_user_id)
+
+  EvaluationQuestion.create(prompt: "If the answer had an economic benefit to you, what would you estimate that benefit to be in U.S. dollars?",
+                            responsetype: EvaluationQuestion::OPEN_DOLLAR_VALUE,
+                            questionorder: 5,
+                            creator_id: User.system_user_id)
+
+  EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a  response to my question was (in days):",
+                            responsetype: EvaluationQuestion::OPEN_TIME_VALUE,
+                            questionorder: 6,
+                            creator_id: User.system_user_id)
+end
+
+def seed_demographic_questions
+  puts 'Seeding demographic questions'
+
+  DemographicQuestion.create(prompt: "Your gender:",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 1,
+                             responses: ['Female','Male'],
+                             creator_id: User.system_user_id)
+
+  DemographicQuestion.create(prompt: "Your age:",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 2,
+                             responses: ['18-29','30-49','50-64','65+'],
+                             creator_id: User.system_user_id)
+
+  DemographicQuestion.create(prompt: "Which of the following best describes your formal education:",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 3,
+                             responses: ['Less than high school','High school graduate/GED','Some college','College graduate','Master degree','Doctorate/Law degree'],
+                             creator_id: User.system_user_id)
+
+  DemographicQuestion.create(prompt: "Your yearly family income is:",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 4,
+                             responses: ['Less than $25K','$25K - $49K','$50K - $74K','$75K - $99K','Greater than $100K','Decline to answer'],
+                             creator_id: User.system_user_id)
+
+  DemographicQuestion.create(prompt: "Are you of Hispanic, Latino or Spanish origin?",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 5,
+                             responses: ['yes, Mexican, Mexican American, Chicano','yes, Puerto Rican','yes, Cuban','no, not Hispanic, Latino, or Spanish origin','don\'t know'],
+                             creator_id: User.system_user_id)
+
+  DemographicQuestion.create(prompt: "What race do you consider yourself to be?",
+                             responsetype: DemographicQuestion::MULTIPLE_CHOICE,
+                             questionorder: 6,
+                             responses: ['White','Black/African American','American Indian or Alaska Native','Asian Indian',
+                                         'Chinese','Japanese','Filipino','Korean','Vietnamese','Some other Asian','Native Hawaiian',
+                                         'Samoan','Guamanian or Chamorro','some other Pacific Islander','other race','don\'t know'],
+                             creator_id: User.system_user_id)
+
+end
+
+
 # triggers the html sanitization
 def cleanup_questions
   puts 'Cleaning up any html in questions'
@@ -682,6 +772,8 @@ def reindex_searchable_objects
   end
 end
 
+
+
 transfer_accounts
 transfer_locations
 transfer_counties
@@ -708,6 +800,8 @@ transfer_misfit_questions_to_groups
 transfer_geo_names
 create_notification_prefs_for_groups_with_notifications
 transfer_spam_and_rejected_data
+seed_evaluation_questions
+seed_demographic_questions
 cleanup_questions
 cleanup_question_event_responses
 cleanup_responses
