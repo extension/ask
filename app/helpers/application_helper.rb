@@ -65,11 +65,11 @@ module ApplicationHelper
   end
 
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_group(group, image_size), expert_group_path(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
   
   def link_expert_group_avatar_group_label(group, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_group(group, image_size, group_label = true), expert_group_path(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_group(group, image_size, group_label = true), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
 
   def get_avatar_for_group(group, image_size = :medium, group_label = false, show_badge = true)
