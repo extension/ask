@@ -5,7 +5,8 @@
 # see LICENSE file
 
 class Webmail::ExamplesController < ApplicationController
-  
+  skip_before_filter :set_yolo
+
   def group_user_join
     mail = GroupMailer.group_user_join(user: User.first, group: Group.last, new_member:User.first, cache_email: false)
     return render_mail(mail)
