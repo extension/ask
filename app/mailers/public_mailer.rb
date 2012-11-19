@@ -34,9 +34,12 @@ class PublicMailer < ActionMailer::Base
         @mailer_cache.update_attribute(:markup, return_email.body.to_s)
       end
     end
+
+    # the email if we got it
+    return_email
   end
     
-    def public_submission_acknowledgement(options = {})
+  def public_submission_acknowledgement(options = {})
       @user = options[:user]
       @question = options[:question]
       @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
