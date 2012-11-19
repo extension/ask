@@ -106,7 +106,7 @@
                   <% @groups.each do |group| %>
                   <tr>
                     <td></td>
-                    <td class="group"><p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p></td>
+                    <td class="group"><p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_url(group.id) %></p></td>
                   </tr>
                   <% end %>
                 </table>
