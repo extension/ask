@@ -174,6 +174,8 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @group = options[:group]
     @question = options[:question]
+    @expert_comment_event = options[:expert_comment_event]
+    @expert_comment = @expert_comment_event.response
     @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new comment from an expert"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     

@@ -52,6 +52,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def internal_aae_expert_comment
+    mail = InternalMailer.aae_expert_comment(user: User.first, question: Question.last, expert_comment_event: QuestionEvent.last, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def internal_aae_reject
     mail = InternalMailer.aae_reject(user: User.first, rejected_event: QuestionEvent.where(event_state:QuestionEvent::REJECTED).first, cache_email: false)
     return render_mail(mail)
