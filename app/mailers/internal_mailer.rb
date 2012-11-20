@@ -67,7 +67,7 @@ class InternalMailer < ActionMailer::Base
   def aae_daily_summary(options = {})
     @user = options[:user]
     @groups = options[:groups]
-    @subject = "eXtension Initiative: Ask an Expert Escalation Report"
+    @subject = "eXtension Initiative: Ask an Expert Daily Summary"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if(!@user.email.blank?)
