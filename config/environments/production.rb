@@ -65,6 +65,6 @@ Aae::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
   
-  config.action_mailer.asset_host = "http://#{Settings.urlwriter_host}"
+  config.action_mailer.asset_host = "https://#{Settings.urlwriter_host}"
   
 end
