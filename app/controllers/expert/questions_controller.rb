@@ -186,6 +186,7 @@ class Expert::QuestionsController < ApplicationController
   
     @sampletext = params[:sample] if params[:sample]
     current_user.signature.present? ? @signature = current_user.signature : @signature = "-#{current_user.public_name}"
+    @image_count = 3
     
     if request.post?
       answer = params[:current_response]
@@ -205,7 +206,7 @@ class Expert::QuestionsController < ApplicationController
       @related_question ? contributing_question = @related_question : contributing_question = nil
       (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
       
-      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question)
+      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question, params[:response])
       
       # TODO: Add new notification logic here.
       #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })  	    
