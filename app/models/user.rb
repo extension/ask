@@ -11,7 +11,6 @@ class User < ActiveRecord::Base
 
   has_many :authmaps
   has_many :comments
-  has_many :questions
   has_many :responses
   has_many :user_locations
   has_many :user_counties
