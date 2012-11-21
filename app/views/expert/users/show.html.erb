@@ -26,9 +26,9 @@
   
   
   <ul class="nav nav-tabs">
-    <li><%= link_to "Currently Assigned (#{@user.open_questions.size.to_s})", expert_user_path(@user) %></li>
-    <li><%= link_to "Answered (#{@user.answered_questions.size.to_s})", expert_user_answered_path(@user) %></li>
-    <li><%= link_to "Rejected (#{@user.rejected_questions.size.to_s})", expert_user_rejected_path(@user) %></li>
+    <li><%= link_to "Currently Assigned (#{@user.open_questions.size})", expert_user_path(@user) %></li>
+    <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_user_answered_path(@user) %></li>
+    <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_user_rejected_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
   </ul>
   
