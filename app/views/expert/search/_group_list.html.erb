@@ -2,7 +2,7 @@
 
 <div id="main" class="span12">
   <% if !defined?(paginate_groups) || paginate_groups != false %>
-	<p>Displaying <strong><%= @groups.offset + 1 %>-<%= @groups.offset + @groups.length %> of <%= @groups.total_entries %></strong></p>
+	<p>Displaying <strong><%= @groups.offset + 1 %>-<%= @groups.offset + @groups.size %> of <%= @groups.total_entries %></strong></p>
   <% end %>  
 
  

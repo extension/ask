@@ -5,9 +5,9 @@
 <div class="ux_actions"></div>
   
 <div class="show_counties">
-  <% if @object.expertise_locations.where("location_id = ?", location.id).length > 0 %>
+  <% if @object.expertise_locations.where("location_id = ?", location.id).size > 0 %>
 
-    <% if @object.expertise_counties.where("location_id = ?", location.id).length > 0 %>
+    <% if @object.expertise_counties.where("location_id = ?", location.id).size > 0 %>
       <ul>
         <% @object.expertise_counties.where("location_id = ?", location.id).each do |c| %>
           <li><%= c.name %></li>

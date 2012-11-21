@@ -2,7 +2,7 @@
 
 
 
-  <% if @recent_questions.length == 0 %>
+  <% if @recent_questions.size == 0 %>
 
     <div id="day_one">
       <h1>Welcome to the new Ask an Expert</h1>
@@ -59,7 +59,7 @@
           <% end %>
         <% end %>
 
-        <% if question.tags.length > 0 %>
+        <% if question.tags.size > 0 %>
           <% question.tags.each do |tag| %>
             <% if question.assigned_group %>
               <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>

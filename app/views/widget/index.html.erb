@@ -80,7 +80,7 @@
         </p>
 
         <p id="county_list">
-          <% if (current_location && current_location.counties.length > 0 ) || (@group.widget_location &&  @group.widget_location.counties.length > 0) %>
+          <% if (current_location && current_location.counties.size > 0 ) || (@group.widget_location &&  @group.widget_location.counties.size > 0) %>
             <label>
               	<%= f.select(:county_id,
                 options_for_select(get_county_options(current_location || @group.widget_location), current_county.present? ? current_county.id : @group.widget_county_id)) %>

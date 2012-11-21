@@ -11,7 +11,7 @@
 </div>
 
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
-<% if @group_tags.length > 0 %>
+<% if @group_tags.size > 0 %>
   <% @group_tags.each do |tag| %>
     <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
   <% end %>

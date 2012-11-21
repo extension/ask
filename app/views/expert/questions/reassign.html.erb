@@ -10,7 +10,7 @@
 
 <div class="span7">
 
-  <% if (!@question.location.present?) && (@question.tags.length == 0) %>
+  <% if (!@question.location.present?) && (@question.tags.size == 0) %>
     <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. Please add some tags to generate some matches.</h3>
 
     <% else %>
@@ -34,7 +34,7 @@
       <td><span class="tag tag-geography"><%= @question.location.abbreviation %></span></td>
     <% end %>
 
-    <% if @question.tags.length > 0 %>
+    <% if @question.tags.size > 0 %>
       <% @question.tags.each do |tag| %>
         <% filter_terms <<  tag.name %> 
         <td><span class="label"><%= tag.name %></span></td>
@@ -42,7 +42,7 @@
     <% end %>
   </tr>
 
-<% if @groups.length > 0 %>
+<% if @groups.size > 0 %>
   	<% @groups.each do |group| %>
       <% group_expertise_counties = group.expertise_counties %>
       <% group_expertise_locations = group.expertise_locations %>
@@ -67,7 +67,7 @@
   </tr>
 <% end %>
 
-<% if @experts.length > 0 %>
+<% if @experts.size > 0 %>
       <% @experts.each do |expert| %>
         <% expert_expertise_counties = expert.expertise_counties %>
         <% expert_expertise_locations = expert.expertise_locations %>

@@ -11,7 +11,7 @@
 
 <div id="main" class="span12">
   
-  <% if @my_groups.length == 0 %>
+  <% if @my_groups.size == 0 %>
     <% if current_user.id == @user.id %>
       <h2>You currently are not a member or leader of any groups.</h2>
     <% else %>

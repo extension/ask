@@ -6,8 +6,8 @@
   
   
   <ul class="nav nav-tabs">
-    <li><%= link_to "Unanswered (#{@group.open_questions.length.to_s})", expert_group_path(@group) %></li>
-    <li><%= link_to "Answered (#{@group.answered_questions.length.to_s})", expert_group_answered_path(@group) %></li>
+    <li><%= link_to "Unanswered (#{@group.open_questions.size})", expert_group_path(@group) %></li>
+    <li><%= link_to "Answered (#{@group.answered_questions.size})", expert_group_answered_path(@group) %></li>
     <li><%= link_to 'Group History', expert_group_history_path() %></li>
   </ul>
   

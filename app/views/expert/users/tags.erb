@@ -3,7 +3,7 @@
 <p><%= link_to 'See which experts have the tag "' + @tag.name + '"', expert_home_experts_path(:tag_id => @tag.id) %>
 
 
-<% if @questions.length > 0 %>
+<% if @questions.size > 0 %>
   <% @questions.each do |question| %>
     <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
   <% end %>

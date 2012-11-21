@@ -33,7 +33,7 @@
 <aside>
   <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3> 
 
-  <% if @group_tags.length > 0 %>
+  <% if @group_tags.size > 0 %>
     <% @group_tags.each do |tag| %>
       <p><span class='tag tag-topic'><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span></p>
     <% end %>

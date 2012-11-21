@@ -82,7 +82,7 @@
                       </p>
                       
                       <p>
-                      <% if @question.tags.length > 0 %>
+                      <% if @question.tags.size > 0 %>
                         <% @question.tags.each do |tag| %>
                             <span class="tag tag-topic"><%= tag.name %></span>
                         <% end %>

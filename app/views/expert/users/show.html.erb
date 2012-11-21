@@ -26,9 +26,9 @@
   
   
   <ul class="nav nav-tabs">
-    <li><%= link_to "Currently Assigned (#{@user.open_questions.length.to_s})", expert_user_path(@user) %></li>
-    <li><%= link_to "Answered (#{@user.answered_questions.length.to_s})", expert_user_answered_path(@user) %></li>
-    <li><%= link_to "Rejected (#{@user.rejected_questions.length.to_s})", expert_user_rejected_path(@user) %></li>
+    <li><%= link_to "Currently Assigned (#{@user.open_questions.size.to_s})", expert_user_path(@user) %></li>
+    <li><%= link_to "Answered (#{@user.answered_questions.size.to_s})", expert_user_answered_path(@user) %></li>
+    <li><%= link_to "Rejected (#{@user.rejected_questions.size.to_s})", expert_user_rejected_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
   </ul>
   
@@ -67,7 +67,7 @@
 
 
   <aside>
-    <% if @user.tags.length > 0 %>
+    <% if @user.tags.size > 0 %>
       <p class="tags">  
         <% @user.tags.each do |tag| %>
         <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
@@ -93,7 +93,7 @@
   <aside>
     <h3>Group Membership <%= link_to "(#{@my_groups.count})", expert_user_groups_path() %></h3>
     <ul class="groups">
-      <% if @my_groups.length == 0 %>
+      <% if @my_groups.size == 0 %>
         <li>You currently are not a member or leader of a group.</li>
       <% else %>
         <% @my_groups.each do |group| %>  

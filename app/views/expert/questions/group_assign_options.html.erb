@@ -12,14 +12,14 @@
 </p>
 <% end %>
 
-<% if @group.expertise_locations.length > 0 %>
+<% if @group.expertise_locations.size > 0 %>
   
   <h3>Locations</h3>
     <% @group.expertise_locations.each do |l| %>
       <div class="location">
         
         <h4><span class="tag tag-geography"><%= l.name %></span></h4>
-          <% if @group.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+          <% if @group.expertise_counties.where("location_id = ?", l.id).size > 0 %>
             <ul>
               <% @group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
                 <li><span class="tag tag-geography"><%= c.name %></span></li>
@@ -33,7 +33,7 @@
       </div>
     <% end %>
     
-    <% if @group.tags.length > 0 %>
+    <% if @group.tags.size > 0 %>
       <p class="tags">  
         <% @group.tags.each do |tag| %>
         <span class="tag tag-topic"><%= tag.name %></span>

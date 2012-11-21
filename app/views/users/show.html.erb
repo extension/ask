@@ -9,7 +9,7 @@
   
   <div id="location_list">
 
-  <% if @user.expertise_locations.length > 0 %>
+  <% if @user.expertise_locations.size > 0 %>
 
     <h3>Locations</h3>
       <% @user.expertise_locations.each do |l| %>
@@ -17,8 +17,8 @@
 
           <h4><span class="tag tag-geography"><%= link_to l.name, view_location_path(l.id) %></span></h4>
 
-          <% if @user.expertise_locations.where("location_id = ?", l.id).length > 0 %>
-            <% if @user.expertise_counties.where("location_id = ?", l.id).length > 0 %>
+          <% if @user.expertise_locations.where("location_id = ?", l.id).size > 0 %>
+            <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
               <ul>
                 <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
                   <li><span class="tag tag-geography"><%= link_to "#{c.name}", view_county_path(c.id) %></span></li>
@@ -49,7 +49,7 @@
     <% end  %>
   </p>
   
-  <% if @user.tags.length > 0 %>
+  <% if @user.tags.size > 0 %>
     <h3>
     <% @user.tags.each do |tag| %>
       <span class="label"><%= tag.name %></span>

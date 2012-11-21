@@ -18,7 +18,7 @@
 <% if current_location.present? %>
 <div>
   <h3>Groups near you</h3>
-<% if @groups.length > 0 %>
+<% if @groups.size > 0 %>
   <% @groups.each do |group| %>
     <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
   <% end %>

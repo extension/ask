@@ -1,6 +1,6 @@
-<% if @object.expertise_locations.where("location_id = ?", location_id).length > 0 %>
+<% if @object.expertise_locations.where("location_id = ?", location_id).size > 0 %>
   
-  <% if @object.expertise_counties.where("location_id = ?", location_id).length > 0 %>
+  <% if @object.expertise_counties.where("location_id = ?", location_id).size > 0 %>
     <ul>
       <% @object.expertise_counties.where("location_id = ?", location_id).each do |c| %>
         <li><%= c.name %> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>

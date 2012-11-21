@@ -2,7 +2,7 @@
 
 <div id="main" class="span12">
   <% if !defined?(paginate_questions) || paginate_questions != false %>
-    <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.length %> of <%= @questions.total_entries %></strong></p>
+    <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.size %> of <%= @questions.total_entries %></strong></p>
   <% end %>
   
   <% @questions.each do |question| %>
@@ -31,7 +31,7 @@
             <span class="label label-inverse"><%= link_to "No Location" %></span>
           <% end %>
           
-          <% if question.tags.length > 0 %>
+          <% if question.tags.size > 0 %>
             <% question.tags.each do |tag| %>
               <% if question.assigned_group %>
                 <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>

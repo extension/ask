@@ -3,7 +3,7 @@
 <div id="main" class="span12">
 
   <% if !defined?(paginate_experts) || paginate_experts != false %>
-    <p>Displaying <strong><%= @experts.offset + 1 %>-<%= @experts.offset + @experts.length %> of <%= @experts.total_entries %></strong></p>
+    <p>Displaying <strong><%= @experts.offset + 1 %>-<%= @experts.offset + @experts.size %> of <%= @experts.total_entries %></strong></p>
   <% end %>  
  
   <% @experts.each do |expert| %>

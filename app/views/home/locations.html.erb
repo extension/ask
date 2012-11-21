@@ -4,7 +4,7 @@
 
 <div class="tag_summary">
   <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
-<% if @questions.length > 0 %>
+<% if @questions.size > 0 %>
   <table>
     <tr>
       <th>Status</th>
@@ -32,7 +32,7 @@
 
 <div class="tag_summary">
   <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
-<% if @experts.length > 0 %>
+<% if @experts.size > 0 %>
   <% @experts.each do |member| %>
     <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
   <% end %>
@@ -44,7 +44,7 @@
 
 <div class="tag_summary">
   <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
-<% if @groups.length > 0 %>
+<% if @groups.size > 0 %>
   <% @groups.each do |group| %>
     <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
   <% end %>

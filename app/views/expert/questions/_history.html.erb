@@ -9,7 +9,7 @@
   <% end %>
 </div>
 
-<% if @question.question_events.length > 0 %>
+<% if @question.question_events.size > 0 %>
   <% @question.question_events.each do |event| %>
     <li><%= stringify_question_event(event) %></li>
   <% end %>
