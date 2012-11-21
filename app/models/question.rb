@@ -15,7 +15,6 @@ class Question < ActiveRecord::Base
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
-  belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
   has_many :comments
