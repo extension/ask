@@ -15,7 +15,6 @@ class Question < ActiveRecord::Base
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
-  belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   
   has_many :comments
@@ -33,8 +32,7 @@ class Question < ActiveRecord::Base
   validates :body, :presence => true
   validate :validate_attachments
   
-  before_create :generate_fingerprint, :clean_question_and_answer, :set_last_opened
-  before_update :clean_question_and_answer
+  before_create :generate_fingerprint, :set_last_opened
 
   after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
   after_update :index_me
@@ -426,16 +424,6 @@ class Question < ActiveRecord::Base
     self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
   end
   
-  # TODO: probably needs to be changed, not sure to what yet.
-  def clean_question_and_answer  
-    # if self.current_response and self.current_response.strip != ''
-    #       self.current_response = Hpricot(self.current_response.sanitize).to_html 
-    #     end
-    # 
-    #     self.asked_question = Hpricot(self.asked_question.sanitize).to_html
-  end
-  
-
   def set_last_opened
     self.last_opened_at = Time.now
   end
