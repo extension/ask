@@ -1,6 +1,6 @@
 <% if @question.assigned_group %>
   <h4>Grouped with</h4>
-  <p><%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Change group</span>
+  <p><%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Group options</span>
   </p>
 <% else %>
   <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>
@@ -8,14 +8,14 @@
 
 <div id="associated_group_picker" style="display:none;">
   <div class="ui-widget">
-  	<label for="group_picker">Place this question in a different group</label>
-  	<span>This does not reassign the question</span>
+    <% if @question.assigned_group.id != Group::ORPHAN_GROUP_ID %>
+      <p><span id="remove_group_association" class="btn">Remove Group</span></p>
+    <% end %>
+    
+  	<label for="group_picker">Place in a different group</label>
+  	<span>(This does not reassign the question)</span>
   	<input id="group_picker" placeholder="Type and select a group" />
   </div>
-  <% if @question.assigned_group.id != Group::ORPHAN_GROUP_ID %>
-    <br />
-    <p><span id="remove_group_association" class="btn">Remove Group</span></p>
-  <% end %>
 </div>
 
 <script class="code" type="text/javascript">
