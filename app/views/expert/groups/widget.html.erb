@@ -1,20 +1,24 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
+<p id="aaeid">Group #<%= @group.id %></p>
 
 <h3>Group Settings > Widget</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
-<p><%= link_to "View Question Form for this Group", ask_group_path(@group.id), :class => "btn btn-primary" %></p>
+<h3 class="ask_form_location">Every Group has an Ask form which can be used to accept questions. This group's Ask form is located at: <br /><%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h3>
+
+<h3 class="ask_form_location">Groups can also use the widget snippet below to embed an Ask form on other web pages.</h3>
 
 <%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
 
   <div class="form_subgroup">
 
     <fieldset>
+      <h3>Ask Form and Widget Options</h3>
 		<p>
         <label>
           <%= check_box_tag 'active', '1', @group.active? %>  Active
-			    <span>(When a widget is not active, questions can not be submitted through it. The widget code should be removed from any web page.)</span>
+			    <span>(When a widget/form is not active, questions can not be submitted through it. The widget code should be removed from any web page.)</span>
         </label>
 		</p>
 
@@ -34,14 +38,13 @@
 	<p>
         <label>        
           <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option
-			    <span>(If enabled, the selected location will override the default location.)</span>
         </label>
 	</p>
 	
 	<p>
       <label>
-        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field on Form
-		    <span>(If no title form is provided, a title will be created from the first 80 characters of the question )</span>
+        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field
+		    <span>(Only applies to widget. Title field is always displayed on the Ask form. If no title field is provided, a title will be created from the first 80 characters of the question.)</span>
       </label>
 	</p>	
 		

@@ -8,11 +8,11 @@
 <% if @group.active %>
 	<p>
 	  <%= link_to ask_group_path(@group.id), :class => "btn btn-success" do %>
-	    <i class="icon-signal icon-white"></i>
 	    Question Form is Live
 	  <% end %>
-	  <%= link_to 'Options', expert_group_widget_path() %>
+	  <%= link_to 'Configure', expert_group_widget_path() %>
 	</p>
+	
 <% else  %>
 	<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
 <% end %>

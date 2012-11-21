@@ -234,6 +234,8 @@ body#public {
 
 
 body#expert {
+  .ask_form_location {background:#fff; padding:1em;}
+  
   #fixed_fixer {height: 68px;}
   @media screen and (max-width: 979px) {
     #fixed_fixer {height: 0;}
