@@ -36,7 +36,7 @@ class QuestionEvent < ActiveRecord::Base
   PUBLIC_RESPONSE = 11
   REOPEN = 12
   CLOSED = 13
-  COMMENT = 14
+  INTERNAL_COMMENT = 14
   ASSIGNED_TO_GROUP = 15
   CHANGED_GROUP = 16
 
@@ -51,7 +51,7 @@ class QuestionEvent < ActiveRecord::Base
                             PUBLIC_RESPONSE => 'public response',
                             REOPEN => 'reopened',
                             CLOSED => 'closed',
-                            COMMENT => 'commented',
+                            INTERNAL_COMMENT => 'commented',
                             ASSIGNED_TO_GROUP => 'assigned to group',
                             CHANGED_GROUP => 'group changed' }
 
@@ -81,7 +81,7 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_history_comment(question, initiated_by, history_comment)
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
-      :event_state => COMMENT,
+      :event_state => INTERNAL_COMMENT,
       :response => history_comment})
   end
   
@@ -230,6 +230,8 @@ class QuestionEvent < ActiveRecord::Base
         Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.recipient_id.nil?
     when REJECTED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
+    when INTERNAL_COMMENT
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_INTERNAL_COMMENT, delivery_time: 1.minute.from_now ) unless (self.question.assignee.nil? or (self.question.assignee.id == self.initiated_by_id))
     when EDIT_QUESTION
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_PUBLIC_EDIT, delivery_time: 1.minute.from_now ) unless self.question.assignee.nil?
     when PUBLIC_RESPONSE

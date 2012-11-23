@@ -170,13 +170,12 @@ class InternalMailer < ActionMailer::Base
     return_email
   end
   
-  def aae_expert_comment(options = {})
+  def aae_internal_comment(options = {})
     @user = options[:user]
-    @group = options[:group]
     @question = options[:question]
-    @expert_comment_event = options[:expert_comment_event]
-    @expert_comment = @expert_comment_event.response
-    @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new comment from an expert"
+    @internal_comment_event = options[:internal_comment_event]
+    @internal_comment = @internal_comment_event.response
+    @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new internal comment from an expert"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if(!@user.email.blank?)

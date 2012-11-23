@@ -32,7 +32,7 @@ class Notification < ActiveRecord::Base
   AAE_PUBLIC_COMMENT = 1005 # a public user posted another comment
   AAE_REJECT = 1006 # an expert has rejected a question
   #AAE_VACATION_RESPONSE = 1007 # received a vacation response to an assigned question
-  #AAE_EXPERT_COMMENT = 1008 # an expert posted a comment
+  AAE_INTERNAL_COMMENT = 1008 # an expert posted a comment
   #AAE_EXPERT_NOREPLY = 1009 # an expert replied to the no-reply address
   #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees 
     
@@ -73,6 +73,8 @@ class Notification < ActiveRecord::Base
       process_aae_public_comment
     when AAE_REJECT
       process_aae_reject
+    when AAE_INTERNAL_COMMENT
+      process_aae_internal_comment
     when AAE_PUBLIC_EXPERT_RESPONSE
       process_aae_public_expert_response
     when AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT
@@ -116,6 +118,10 @@ class Notification < ActiveRecord::Base
   
   def process_aae_public_comment
     #NYI
+  end
+  
+  def process_aae_internal_comment
+    InternalMailer.aae_internal_comment(user: self.notifiable.recipient, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_reject
