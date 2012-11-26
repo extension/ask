@@ -1,6 +1,11 @@
-<h1>About Ask an Expert</h1>
+<div class="about">
+<h1>Welcome to Ask an Expert</h1>
 
-<h2>Ask an Expert is site where you can get expert answers and help from Cooperative Extension/University staff and volunteers from across the United States.</h2>
+<p>Ask an Expert has always offered one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States. The latest version expands that one-to-one relationship via the ability to make questions and answers publicly available, on an opt-in basis.</p>
 
-<h2>When you ask a question you can choose to make it public and share on this site or keep it private.</h2>
 
+<% if !current_user %>
+  <p>If you are a part of Cooperative Extension, please <%= link_to("sign in and tour the new site", new_user_session_path(:redirect_to => expert_home_url) )%>.</p>
+<% end %>
+
+</div>
