@@ -1,50 +1,67 @@
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<h1><%= @user.name %></h1>
+<div id="main" class="span6">
+  <h1>Assign to <%= link_expert_user(@user) %></h1>
+
+  <% if @user.away %>
+    <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
+  <% end %>
+
+  <h2><%= link_expert_user_avatar(@user) %></h2>
+
+  <%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_id => @user.id)) do %>
+    <p>
+      <label>Include a comment
+      <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
+      </label>
+    <p>
+
+    <p><%= submit_tag "Assign to #{@user.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %></p>
+  <% end %>
+
+  <div id="reassign_question">
+    <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
+    <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+  </div>
+
+</div>
 
 
-<% if @user.away %>
-  <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
-<% end %>
 
-<h2><%= link_expert_user_avatar(@user) %></h2>
+<div id="secondary" class="span6">
+  <h4>About <%= @user.name %></h4>
+  <% if @user.tags.size > 0 %>
+    <h5>Tags</h5>
+    <p class="tags">  
+      <% @user.tags.each do |tag| %>
+      <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+      <% end %>
+    </p>
+  <% else %>
+    <p class="subtle">This expert hasn't added any tags</p>
+  <% end %>
 
-<%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_id => @user.id)) do %>
-<p>Send a comment</p>
-<%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
-<p>
-<%= submit_tag "Assign to #{@user.name}", :class => "btn" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
-</p>
-<% end %>
+  <% if @user.expertise_locations.size > 0 %>
 
-<% if @user.expertise_locations.size > 0 %>
-  
-  <h3>Locations</h3>
-    <% @user.expertise_locations.each do |l| %>
-      <div class="location">
-        
-        <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
-          <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
-            <ul>
-              <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
-                <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
-              <% end %>
-            </ul>
-          <% else %>
+    <h5 class="clearing">Locations</h5>
+      <% @user.expertise_locations.each do |l| %>
+        <div class="location">
+
+          <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
+            <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
               <ul>
-                <li class="all_counties">All counties</li>
+                <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                  <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
+                <% end %>
               </ul>
-          <% end %>
-      </div>
-    <% end %>
-    
-    <% if @user.tags.size > 0 %>
-      <p class="tags">  
-        <% @user.tags.each do |tag| %>
-        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
-        <% end %>
-      </p>
-      
-    <% end %>
-  
-<% end %>
+            <% else %>
+                <ul>
+                  <li class="all_counties">All counties</li>
+                </ul>
+            <% end %>
+        </div>
+      <% end %>
+
+  <% end %>
+
+</div>

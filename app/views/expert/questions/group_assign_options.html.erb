@@ -1,20 +1,46 @@
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<h1><%= @group.name %></h1>
+<div id="main" class="span6">
+  <h1>Assign to <%= link_expert_group(@group) %></h1>
 
-<h2><%= link_expert_group_avatar(@group) %></h2>
+  <h2><%= link_expert_group_avatar(@group) %></h2>
 
-<%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
-<p>Send a comment</p>
-<%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
-<p>
-<%= submit_tag "Assign to #{@group.name}", :class => "btn" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
-</p>
-<% end %>
-
-<% if @group.expertise_locations.size > 0 %>
+  <%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
+    <p>
+      <label>Include a comment
+      <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
+      </label>
+    <p>
+    
+    <p>
+      <%= submit_tag "Assign to #{@group.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
+    </p>
+  <% end %>
   
-  <h3>Locations</h3>
+  <div id="reassign_question">
+    <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
+    <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+  </div>
+
+</div>
+
+
+<div id="secondary" class="span6">
+  <h4>About <%= @group.name %></h4>
+    
+  <% if @group.tags.size > 0 %>
+    <h4>Tags</h4>
+    <p class="tags">  
+      <% @group.tags.each do |tag| %>
+      <span class="tag tag-topic"><%= tag.name %></span>
+      <% end %>
+    </p>
+  <% else %>
+    <p class="subtle">This group hasn't added any tags</p>
+  <% end %>
+  
+  <% if @group.expertise_locations.size > 0 %>
+    <h4>Locations</h4>
     <% @group.expertise_locations.each do |l| %>
       <div class="location">
         
@@ -32,14 +58,8 @@
           <% end %>
       </div>
     <% end %>
-    
-    <% if @group.tags.size > 0 %>
-      <p class="tags">  
-        <% @group.tags.each do |tag| %>
-        <span class="tag tag-topic"><%= tag.name %></span>
-        <% end %>
-      </p>
-      
-    <% end %>
-  
-<% end %>
+  <% else %>
+    <p class="subtle">This group hasn't specified any locations and should be considered national in scope.</p>
+  <% end %>
+
+</div>

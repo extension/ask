@@ -234,6 +234,8 @@ body#public {
 
 
 body#expert {
+  #reassign_question {background:#fff; padding:1em; color:#555 !important; margin-bottom:3em;}
+  #reassign_question .title {color:#555 !important; margin:0;}
   .ask_form_location {background:#fff; padding:1em;}
   
   #fixed_fixer {height: 68px;}
@@ -379,7 +381,7 @@ body#expert {
 	#history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:2em;}
 	#history a {color:#363955;}
 	#history li {margin-bottom:.5em; list-style:none; border-bottom:1px solid #ddd;}
-	textarea {width:30em;}
+	textarea {width:30em; max-width:95%;}
 	#main {margin:0}
 /*	#secondary {outline:1px solid blue;}*/
 	.question_actions {margin-bottom:2em;}
