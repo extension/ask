@@ -105,6 +105,10 @@ gem "daemons"
 # command line scripts
 gem "thor"
 
+# jqplot
+gem 'outfielding-jqplot-rails'
+
+
 group :development do
   # require the powder gem
   gem 'powder'
