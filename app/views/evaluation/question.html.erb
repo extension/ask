@@ -1,6 +1,13 @@
 <div class="span12">
   <h1><%= @page_title %></h1>
-  <p>ToDo: short preamble, link to privacy? <%= link_to('link to their question?','#',{target: '_blank'}) %></p>
+  <p>
+    Thanks for making Ask an Expert better by completing this short evaluation about the
+    <%- if @question_testing -%>
+      <%= link_to('answer to your recent question','#', target: '_blank') %>
+    <%- else -%>
+     <%= link_to('answer to your recent question',question_path(@question), target: '_blank') %>
+    <%- end -%>
+  </p>
 
   <%- EvaluationQuestion.active.order(:questionorder).each do |evaluation_question| -%>
     <%- case evaluation_question.responsetype -%>
