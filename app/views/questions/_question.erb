@@ -51,13 +51,17 @@
     <h3 class="h3">Responses</h3>
     <% @question_responses.each do |response| %>
       <div class="response_block">
-        <p class="response"><%= format_text_for_display(response.body) %></p>
+        <div class="response">
+          <%= format_text_for_display(response.body) %>
+        </div>
+        
+        <div id="response_images">
         <% response.images.each do |image| %>
           <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
             <%= button_to "Delete", remove_image_response_path(:id => response.id, :image_id => image.id) %>
           <% end %>
           <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+          <a class="image_wrapper" data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
 
           <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
@@ -74,6 +78,9 @@
             <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
           <% end %>
         <% end %>
+          <br class="clearing" />
+        </div>
+        
         <div class="author">
           <% if response.resolver_id %>
             <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.public_name, user_path(response.resolver.id) %>

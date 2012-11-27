@@ -50,10 +50,12 @@
     <div class="response_block">
       <div class="response"><%= format_text_for_display(response.body) %></div>
       <div class="signature"><%= format_text_for_display(response.signature) %></div>
+      
+      <div id="response_images">
       <% response.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 
-        <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+        <a class="image_wrapper" data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
 
         <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
@@ -70,6 +72,9 @@
           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
         <% end %>
       <% end %>
+        <br class="clearing" />
+      </div>
+      
       <div class="author">
         <% if response.resolver_id %>
           <%= link_to expert_user_path(response.resolver_id) do %>
