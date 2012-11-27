@@ -73,22 +73,12 @@ class EvaluationQuestion < ActiveRecord::Base
     question = options[:question]
     params = options[:params]
 
-    case self.responsetype
-    when SCALE
-      if(answer = self.answer_for_user_and_question(user,question))
-        answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
-      else
-        answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
-      end
-      answer
+    if(answer = self.answer_for_user_and_question(user,question))
+      answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
     else
-      if(answer = self.answer_for_user_and_question(user,question))
-        answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
-      else
-        answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
-      end
-      answer      
+      answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
     end
+    answer
   end
 
 end

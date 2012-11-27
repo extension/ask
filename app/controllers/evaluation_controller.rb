@@ -44,6 +44,8 @@ class EvaluationController < ApplicationController
   def question
     @page_title = 'Evaluation Questions'
     @question = Question.find(params[:id])
+    # set the question id so they can view their question
+    session[:question_id] = @question.id
     if(@evaluator != @question.submitter)
       return render(template: 'evaluation/private')
     end
@@ -67,7 +69,7 @@ class EvaluationController < ApplicationController
 
   def answer_evaluation
     # params[:question_id] is a 'test mode'
-    if(!params[:question_id] == 0)
+    if(params[:question_id].to_i != 0)
       @question = Question.find(params[:question_id])
       @evaluation_question = EvaluationQuestion.find(params[:evaluation_question_id])
       @evaluation_question.create_or_update_answers(user: @evaluator, question: @question, params: params)
