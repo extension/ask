@@ -52,6 +52,18 @@ class Expert::HomeController < ApplicationController
     @experts = User.tagged_with(@tag.id)
   end
   
+  def users_by_tag
+    @tag = Tag.find_by_name(params[:name])
+    return record_not_found if (!@tag)
+    @experts = User.tagged_with(@tag.id)
+  end
+  
+  def groups_by_tag
+    @tag = Tag.find_by_name(params[:name])
+    return record_not_found if (!@tag)
+    @groups = Group.tagged_with(@tag.id)
+  end
+  
   def locations
     @location = Location.find_by_id(params[:id])
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")

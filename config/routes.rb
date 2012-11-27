@@ -89,6 +89,8 @@ Aae::Application.routes.draw do
     match "settings/assignment" => "settings#assignment", :via => [:get, :put]
     match "home" => "home#index"
     match "home/tags/:name" => "home#tags", :as => 'home_tags'
+    match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
+    match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
