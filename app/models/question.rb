@@ -304,29 +304,33 @@ class Question < ActiveRecord::Base
 
   # updates the question, creates a response and  
   # calls the function to log a new resolved question event 
-  def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil)
+  def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil, response_params = nil)
 
     t = Time.now
 
     case q_status
       when STATUS_RESOLVED    
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
-        @response = Response.new(:resolver => resolver, 
-                                 :question => self, 
-                                 :body => response,
-                                 :sent => true, 
-                                 :contributing_question => contributing_question, 
-                                 :signature => signature)
+        response_attributes = {:resolver => resolver, 
+                               :question => self, 
+                               :body => response,
+                               :sent => true, 
+                               :contributing_question => contributing_question, 
+                               :signature => signature}
+        response_attributes.merge!(response_params) if response_params.present?
+        @response = Response.new(response_attributes)
         @response.save
         QuestionEvent.log_resolution(self)    
       when STATUS_NO_ANSWER
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
-        @response = Response.new(:resolver => resolver, 
-                                 :question => self, 
-                                 :body => response, 
-                                 :sent => true, 
-                                 :contributing_question => contributing_question, 
-                                 :signature => signature)
+        response_attributes = {:resolver => resolver, 
+                               :question => self, 
+                               :body => response,
+                               :sent => true, 
+                               :contributing_question => contributing_question, 
+                               :signature => signature}
+        response_attributes.merge!(response_params) if response_params.present?
+        @response = Response.new(response_attributes)
         @response.save
         QuestionEvent.log_no_answer(self)  
       when STATUS_REJECTED
