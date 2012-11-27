@@ -87,12 +87,15 @@
   
   
   
-  
-  <div class="row-fluid">
-    <div id="content_wrapper">
+  <%- if @override_rows.present? and @override_rows -%>
     <%= yield %>
+  <%- else -%>
+    <div class="row-fluid">
+      <div id="content_wrapper">
+        <%= yield %>
+      </div>
     </div>
-  </div>
+  <%- end -%>
   
 
 </div>
