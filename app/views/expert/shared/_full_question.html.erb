@@ -1,4 +1,5 @@
 <% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
+<% hide_groups = local_assigns[:hide_groups].nil? ? false : hide_groups %>
 
 <div class="incoming_question">
   
@@ -39,19 +40,17 @@
     <div class="span4">
       <div class="expert">
         <% if question.assignee_id.present? %>
-        
-
-        
-        
           <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
 	      <% else %>
 	        <p><strong>This question does not have an assignee.</strong></p>
         <% end %>
-	
-	      <% if question.assigned_group %>
-          <p><%= link_expert_group_avatar(question.assigned_group, :mini, suppress_single_badges) %> <%= link_expert_group(question.assigned_group) %></p>
-	      <% else %>
-		      <p><strong>This question is groupless</strong></p>
+	      
+	      <% if !hide_groups %>
+	        <% if question.assigned_group %>
+            <p><%= link_expert_group_avatar(question.assigned_group, :mini, suppress_single_badges) %> <%= link_expert_group(question.assigned_group) %></p>
+  	      <% else %>
+  		      <p><strong>This question is groupless</strong></p>
+          <% end %>
         <% end %>
       </div>
     </div><!-- end .span4 -->
