@@ -14,6 +14,8 @@ class Question < ActiveRecord::Base
   end
 
   include MarkupScrubber
+  include CacheTools
+  extend YearWeek
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
@@ -108,6 +110,10 @@ class Question < ActiveRecord::Base
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
 
+
+  # reporting scopes
+  YEARWEEK_RESOLVED = 'YEARWEEK(questions.resolved_at,3)'
+  scope :closed_not_rejected, where('(status_state = ? OR status_state = ? OR status_state = ?)',STATUS_RESOLVED,STATUS_NO_ANSWER,STATUS_CLOSED)
 
 
   # for purposes of solr search
@@ -512,6 +518,100 @@ class Question < ActiveRecord::Base
     end
   end
 
-  
+  ## Reporting
+
+  def self.increase_group_concat_length
+    set_group_concat_size_query = "SET SESSION group_concat_max_len = #{Settings.group_concat_max_len};"
+    self.connection.execute(set_group_concat_size_query)
+  end
+ 
+  def self.earliest_resolved_at
+    with_scope do
+      self.minimum(:resolved_at)
+    end
+  end
+
+  def self.latest_resolved_at
+    with_scope do
+      self.maximum(:resolved_at)
+    end
+  end
+
+  def self.stats_by_yearweek(cache_options = {})
+    if(!cache_options[:nocache])
+      cache_key = self.get_cache_key(__method__,{scope_sql: current_scope ? current_scope.to_sql : ''})
+      Rails.cache.fetch(cache_key,cache_options) do
+        with_scope do
+          _stats_by_yearweek(cache_options)
+        end
+      end
+    else
+      with_scope do
+        _stats_by_yearweek(cache_options)
+      end
+    end
+  end
+
+  def self._stats_by_yearweek(metric,cache_options = {})
+    stats = YearWeekStats.new
+    # increase_group_concat_length
+    with_scope do
+      era = self.earliest_resolved_at
+      if(era.blank?)
+        return stats
+      end
+      lra = self.latest_resolved_at
+
+      eligible_ids = self.pluck("#{self.table_name}.id")
+      questions_by_yearweek = self.group(YEARWEEK_RESOLVED).count(id)
+
+
+      year_weeks = self.year_weeks_between_dates(era.to_date,lra.to_data)
+
+      year_weeks.each do |year,week|
+        yearweek = self.yearweek(year,week)
+        stats[yearweek] = {}
+        pages = pagetotals[yearweek] || 0
+        total = metric_by_yearweek[yearweek] || 0
+        seen = metric_counts_by_yearweek[yearweek] || 0
+
+        stats[yearweek]['pages'] = pages
+        stats[yearweek]['seen'] = seen
+        stats[yearweek]['total'] = total
+
+        per_page = ((pages > 0) ? total / pages : 0)
+        stats[yearweek]['per_page'] = per_page
+
+        previous_year_key = self.yearweek(year-1,week)
+        (previous_year,previous_week) = self.previous_year_week(year,week)
+        previous_week_key = self.yearweek(previous_year,previous_week)
+
+        previous_week_total = (metric_by_yearweek[previous_week_key]  ? metric_by_yearweek[previous_week_key] : 0)
+        stats[yearweek]['previous_week_total'] = previous_week_total
+        previous_year_total = (metric_by_yearweek[previous_year_key]  ? metric_by_yearweek[previous_year_key] : 0)
+        stats[yearweek]['previous_year_total'] = previous_year_total
+
+        previous_week = ((pagetotals[previous_week_key] and pagetotals[previous_week_key] > 0) ? previous_week_total / pagetotals[previous_week_key] : 0)
+        stats[yearweek]['previous_week'] = previous_week
+        previous_year = ((pagetotals[previous_year_key] and  pagetotals[previous_year_key] > 0) ? previous_year_total / pagetotals[previous_year_key] : 0)
+        stats[yearweek]['previous_year'] = previous_year
+
+
+        # pct_change
+        if(previous_week == 0)
+          stats[yearweek]['pct_change_week'] = nil
+        else
+          stats[yearweek]['pct_change_week'] = (per_page - previous_week) / previous_week
+        end
+
+        if(previous_year == 0)
+          stats[yearweek]['pct_change_year'] = nil
+        else
+          stats[yearweek]['pct_change_year'] = (per_page - previous_year) / previous_year
+        end
+      end
+    end
+    stats
+  end  
     
 end
