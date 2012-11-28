@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   has_many :question_viewlogs
   has_one  :yo_lo
   has_many :demographics
+  has_many :evaluation_answers
 
   # sunspot/solr search
   searchable do
@@ -374,5 +375,14 @@ class User < ActiveRecord::Base
     my_demographic_questions = self.demographics.pluck(:demographic_question_id)
     (active_demographic_questions - my_demographic_questions).blank?
   end
+
+  def answered_evaluation_for_question?(question)
+    active_evaluation_questions = EvaluationQuestion.active.pluck(:id)
+    my_evaluation_questions_for_this_question = self.evaluation_answers.where(question_id: question.id).pluck(:evaluation_question_id)
+    ((active_evaluation_questions & my_evaluation_questions_for_this_question).size > 0)
+  end
+
+
+
 
 end

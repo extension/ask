@@ -22,5 +22,5 @@ send_notifications: false
 notification_whitelist:
    - 2001
    - 2010
-
+days_closed_for_evaluation: 8
 
