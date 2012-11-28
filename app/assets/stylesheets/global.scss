@@ -244,20 +244,29 @@ body#public {
 
 
 body#expert {
+  ul.navavatar.loggedin {margin:0;padding:0; /*outline:lime 1px solid;*/}
+  ul.navavatar.loggedin > li {margin:0;padding:0; list-style:none; /*outline:red 1px solid;*/ float:left; height:44px; line-height:44px;}
+  ul.navavatar.loggedin li.username {padding-left:1em;padding-right:1em;}
+  #user_actions {float:left;}
+  .logout {margin-left:1em;}
   #reassign_question {background:#fff; padding:1em; color:#555 !important; margin-bottom:3em;}
   #reassign_question .title {color:#555 !important; margin:0;}
   .ask_form_location {background:#fff; padding:1em;}
   
   #fixed_fixer {height: 68px;}
   
+  @media screen and (max-width: 1200px) {
+    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
+  }
+  
   @media screen and (max-width: 979px) {
     #fixed_fixer {height: 0;}
+    
 	}
 	
 	@media screen and (min-width: 979px) {
 	  .modal {width:880px; margin: -300px 0 0 -440px;}
 	  .modal-body {max-height:500px;}
-	  
 	}
 	
 	@media screen and (max-width: 767px) {
