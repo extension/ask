@@ -444,7 +444,6 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
     t.integer  "submitter_id"
     t.integer  "question_id",                                 :null => false
     t.text     "body",                                        :null => false
-    t.integer  "duration_since_last",                         :null => false
     t.boolean  "sent",                     :default => false, :null => false
     t.integer  "contributing_question_id"
     t.text     "signature"

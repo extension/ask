@@ -16,21 +16,10 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
-  before_create :calculate_duration_since_last
   after_save :index_parent_question
   
   validates :body, :presence => true
   validate :validate_attachments
-  
-  def calculate_duration_since_last
-    parent_question_id = self.question_id
-    last_response = Response.find(:first, :conditions => {:question_id => parent_question_id}, :order => "created_at DESC")
-    if last_response
-      self.duration_since_last = Time.now - last_response.created_at
-    else
-      self.duration_since_last = 0
-    end
-  end
   
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']

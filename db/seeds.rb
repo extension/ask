@@ -404,8 +404,8 @@ end
 def transfer_responses
   puts 'Transferring responses...'
   responses_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.responses(id, resolver_id, submitter_id, question_id, body, duration_since_last, sent, signature, user_ip, user_agent, referrer, created_at, updated_at)
-  SELECT #{@darmokdatabase}.responses.id, #{@darmokdatabase}.responses.resolver_id, #{@darmokdatabase}.responses.submitter_id, #{@darmokdatabase}.responses.submitted_question_id, #{@darmokdatabase}.responses.response, #{@darmokdatabase}.responses.duration_since_last,
+  INSERT INTO #{@aae_database}.responses(id, resolver_id, submitter_id, question_id, body, sent, signature, user_ip, user_agent, referrer, created_at, updated_at)
+  SELECT #{@darmokdatabase}.responses.id, #{@darmokdatabase}.responses.resolver_id, #{@darmokdatabase}.responses.submitter_id, #{@darmokdatabase}.responses.submitted_question_id, #{@darmokdatabase}.responses.response,
          #{@darmokdatabase}.responses.sent, #{@darmokdatabase}.responses.signature, #{@darmokdatabase}.responses.user_ip, #{@darmokdatabase}.responses.user_agent, 
          #{@darmokdatabase}.responses.referrer, #{@darmokdatabase}.responses.created_at, NOW()
   FROM   #{@darmokdatabase}.responses
