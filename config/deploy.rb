@@ -12,7 +12,7 @@ set :repository,  "git@github.com:extension/aae.git"
 set :scm, "git"
 set :user, "pacecar"
 set :use_sudo, false
-set :keep_releases, 3
+set :keep_releases, 5
 ssh_options[:forward_agent] = true
 set :port, 24
 set :bundle_flags, ''
