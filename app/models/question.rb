@@ -6,6 +6,13 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+
+  class Question::Image < Asset
+    has_attached_file :attachment, 
+                      :styles => { :medium => "300x300>", :thumb => "100x100>" }, 
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  end
+
   include MarkupScrubber
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
