@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121128145739) do
+ActiveRecord::Schema.define(:version => 20121108201005) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -390,6 +390,8 @@ ActiveRecord::Schema.define(:version => 20121128145739) do
     t.datetime "resolved_at"
     t.datetime "question_updated_at"
     t.text     "current_response"
+    t.integer  "initial_response_id"
+    t.integer  "initial_response_time"
     t.string   "question_fingerprint",                        :null => false
     t.string   "submitter_firstname",      :default => "",    :null => false
     t.string   "submitter_lastname",       :default => "",    :null => false
@@ -407,9 +409,9 @@ ActiveRecord::Schema.define(:version => 20121128145739) do
     t.datetime "last_assigned_at"
     t.datetime "last_opened_at",                              :null => false
     t.boolean  "is_api"
+    t.boolean  "evaluation_sent",          :default => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
-    t.boolean  "evaluation_sent",          :default => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
