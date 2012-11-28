@@ -22,6 +22,8 @@ class CreateQuestions < ActiveRecord::Migration
       t.datetime "resolved_at"
       t.datetime "question_updated_at"
       t.text     "current_response"
+      t.integer  "initial_response_id"
+      t.integer  "initial_response_time"
       t.string   "question_fingerprint",                         :null => false
       t.string   "submitter_firstname",       :default => "",    :null => false
       t.string   "submitter_lastname",        :default => "",    :null => false
