@@ -33,7 +33,7 @@ class Expert::HomeController < ApplicationController
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag
-      @questions = Question.tagged_with(@tag.id).order("questions.resolved_at DESC").limit(25)
+      @questions = Question.tagged_with(@tag.id).order("questions.created_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     
       @experts = User.tagged_with(@tag.id).order("users.last_sign_in_at DESC").limit(5)
@@ -46,22 +46,24 @@ class Expert::HomeController < ApplicationController
     end
   end
   
-  def experts
-    @tag = Tag.find_by_id(params[:tag_id])
-    return record_not_found if (!@tag)
-    @experts = User.tagged_with(@tag.id)
-  end
-  
   def users_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
-    @experts = User.tagged_with(@tag.id)
+    @experts = User.tagged_with(@tag.id).page(params[:page]).order("users.last_sign_in_at DESC")
+    @expert_total_count = User.tagged_with(@tag.id).count
   end
   
   def groups_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
-    @groups = Group.tagged_with(@tag.id)
+    @groups = Group.tagged_with(@tag.id).page(params[:page])
+    @group_total_count = Group.tagged_with(@tag.id).count
+  end
+  
+  def questions_by_tag
+    @tag = Tag.find_by_name(params[:name])
+    return record_not_found if (!@tag)
+    @questions = Question.tagged_with(@tag.id).page(params[:page]).order("questions.created_at DESC")
   end
   
   def locations

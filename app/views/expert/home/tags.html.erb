@@ -49,7 +49,7 @@
         <% @questions.each do |question| %>
           <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
         <% end %>
-
+        <p><%= link_to "view all", expert_questions_by_tag_path() %></p>
       <% else %>
         <p>There are no questions in this location</p>
       <% end %>
