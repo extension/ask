@@ -490,7 +490,7 @@ class Question < ActiveRecord::Base
   # TODO: setup notifications here
   def send_global_widget_notifications
     if !self.assigned_to_group_queue?
-      Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.recipient_id.nil? #individual assignment notification
+      Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
     end
     Notification.create(notifiable: self.assigned_group, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     return
