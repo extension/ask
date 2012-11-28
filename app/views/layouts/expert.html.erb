@@ -19,9 +19,8 @@
               <span class="navavatar loggedin">
                 <%= link_expert_user_avatar(current_user, :thumb) %>
                 <%= link_to expert_user_path(current_user.id) do %>
-                  <%= current_user.name %>
+                  <span class="hidecompact420"><%= current_user.name %></span>
                 <% end %>
-                &nbsp;
                 <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
               </span>  
             <% else %>
@@ -36,7 +35,9 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("AaE Experts", expert_home_path(), :class => "brand home") %>
+            <%= link_to expert_home_path(), :class => "brand home" do %>
+              AaE <span class="hidecompact480">Experts</span>
+            <% end %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
