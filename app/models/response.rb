@@ -16,7 +16,7 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
-  before_create :calculate_duration_since_last, :clean_response
+  before_create :calculate_duration_since_last
   after_save :index_parent_question
   
   validates :body, :presence => true
@@ -30,11 +30,6 @@ class Response < ActiveRecord::Base
     else
       self.duration_since_last = 0
     end
-  end
-  
-  #TODO: Need to Fill This In
-  def clean_response
-    return
   end
   
   def validate_attachments
