@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121108201005) do
+ActiveRecord::Schema.define(:version => 20121128145739) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -317,6 +317,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
   create_table "preferences", :force => true do |t|
     t.integer  "prefable_id"
     t.integer  "group_id"
+    t.integer  "question_id"
     t.string   "prefable_type",  :limit => 30
     t.string   "classification"
     t.string   "name",                         :null => false
@@ -327,7 +328,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
   end
 
   add_index "preferences", ["classification"], :name => "index_preferences_on_classification"
-  add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id"], :name => "pref_uniq_ndx", :unique => true
+  add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id", "question_id"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
     t.integer  "question_id",                        :null => false
@@ -408,6 +409,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
     t.boolean  "is_api"
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.boolean  "evaluation_sent",          :default => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -416,6 +418,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
+  add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
   add_index "questions", ["group_name"], :name => "group_name_idx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"

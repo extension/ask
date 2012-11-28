@@ -34,7 +34,8 @@ class Notification < ActiveRecord::Base
   #AAE_VACATION_RESPONSE = 1007 # received a vacation response to an assigned question
   AAE_INTERNAL_COMMENT = 1008 # an expert posted a comment
   #AAE_EXPERT_NOREPLY = 1009 # an expert replied to the no-reply address
-  #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees 
+  #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees
+  AAE_ASSIGNMENT_GROUP = 1011 
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -43,14 +44,16 @@ class Notification < ActiveRecord::Base
   AAE_PUBLIC_EXPERT_RESPONSE = 2001  # notification of an expert response, also "A Space Odyssey"
   #AAE_PUBLIC_NOREPLY = 2002 # public replied to the no-reply address
   #AAE_PUBLIC_NOREPLY_QUESTION = 2003 # public sent a new question to the no-reply address
+  AAE_PUBLIC_EVALUATION_REQUEST = 2004 # request that the question submitter complete an evaluation
   AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT = 2010  # notification of submission, also "The Year We Make Contact"
+
 
   ##########################################
   
   
   
   def process
-    return true if (!Settings.send_notifications and !Settings.notification_whitelist.include?(self.notification_type))
+    #return true if (!Settings.send_notifications and !Settings.notification_whitelist.include?(self.notification_type))
     
     case self.notification_type
     when GROUP_USER_JOIN
@@ -75,8 +78,12 @@ class Notification < ActiveRecord::Base
       process_aae_reject
     when AAE_INTERNAL_COMMENT
       process_aae_internal_comment
+    when AAE_ASSIGNMENT_GROUP
+      process_aae_assignment_group
     when AAE_PUBLIC_EXPERT_RESPONSE
       process_aae_public_expert_response
+    when AAE_PUBLIC_EVALUATION_REQUEST
+      process_aae_public_evaluation_request
     when AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT
       process_aae_public_submission_acknowledgement
     else
@@ -124,6 +131,10 @@ class Notification < ActiveRecord::Base
     InternalMailer.aae_internal_comment(user: self.notifiable.recipient, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
+  def process_aae_assignment_group
+    self.notifiable.incoming_notification_list.each{|user| InternalMailer.aae_assignment_group(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless user.email.nil? or self.notifiable.question.assignee == user }
+  end
+  
   def process_aae_reject
     InternalMailer.aae_reject(rejected_event: self.notifiable, user: self.notifiable.previous_handling_recipient).deliver unless self.notifiable.previous_handling_recipient.nil?
   end
@@ -132,6 +143,11 @@ class Notification < ActiveRecord::Base
     PublicMailer.public_expert_response(user:self.notifiable.question.submitter, expert: self.notifiable.question.current_resolver, question: self.notifiable.question).deliver
   end
   
+  def process_aae_public_evaluation_request
+    PublicMailer.public_evaluation_request(user: self.notifiable.submitter, question: self.notifiable).deliver
+    self.notifiable.update_attribute(:evaluation_sent,true)
+  end
+
   def process_aae_public_submission_acknowledgement
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end

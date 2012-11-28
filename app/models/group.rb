@@ -152,4 +152,13 @@ class Group < ActiveRecord::Base
     self.open_questions.where("last_assigned_at < '#{Settings.aae_escalation_delta.hours.ago}'").empty? ? false : true
   end
   
+  def incoming_notification_list(users_to_exclude=[])
+    list = []
+    self.members.each{|member| list.push(member) if member.send_incoming_notification?(self.id)}
+    if !users_to_exclude.nil?
+      list = list - users_to_exclude
+    end
+    return list
+  end
+  
 end
