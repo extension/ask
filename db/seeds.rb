@@ -419,9 +419,22 @@ def transfer_responses
   WHERE #{@darmokdatabase}.responses.contributing_content_type = 'SubmittedQuestion'
   END_SQL
 
+
+  # set the initial_response_id and initial_response_time
+  set_response_time_query =  <<-END_SQL.gsub(/\s+/, " ").strip
+  UPDATE questions, 
+  (select id,question_id,created_at from responses 
+   where created_at = (select min(created_at) from responses min_responses where min_responses.resolver_id is NOT NULL and responses.question_id = min_responses.question_id) 
+   and id = (select min(id) from responses min_responses where min_responses.resolver_id is NOT NULL and responses.question_id = min_responses.question_id)
+  ) as first_response 
+  SET questions.initial_response_id = first_response.id, questions.initial_response_time = (first_response.created_at - questions.created_at) 
+  WHERE questions.id = first_response.question_id
+  END_SQL
+
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(responses_transfer_query)
     ActiveRecord::Base.connection.execute(transfer_contributing_question_id_query)
+    ActiveRecord::Base.connection.execute(set_response_time_query)
   end
   
   puts " Responses transferred: #{benchmark.real.round(2)}s"
