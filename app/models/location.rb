@@ -6,7 +6,7 @@
 #  see LICENSE file
 
 class Location < ActiveRecord::Base
-  extend CacheTools
+  include CacheTools
   has_many :user_locations
   has_many :users, :through => :user_locations
   has_many :group_locations
