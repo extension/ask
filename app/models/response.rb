@@ -16,7 +16,7 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
-  after_save :index_parent_question
+  after_save :check_first_response, :index_parent_question
   
   validates :body, :presence => true
   validate :validate_attachments
@@ -37,6 +37,12 @@ class Response < ActiveRecord::Base
   end
   
   private
+
+  def check_first_response
+    if(self.question.initial_response_id.blank?)
+      self.question.update_attributes({initial_response_id: self.id, initial_response_time: self.created_at - self.question.created_at})
+    end
+  end
   
   def index_parent_question
     Sunspot.index(self.question)
