@@ -418,9 +418,7 @@ class Question < ActiveRecord::Base
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
     images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
   end
-  
-  private
-  
+   
   def index_me
     # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
     # did not change and these other fields did, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
