@@ -34,7 +34,8 @@ class Notification < ActiveRecord::Base
   #AAE_VACATION_RESPONSE = 1007 # received a vacation response to an assigned question
   AAE_INTERNAL_COMMENT = 1008 # an expert posted a comment
   #AAE_EXPERT_NOREPLY = 1009 # an expert replied to the no-reply address
-  #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees 
+  #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees
+  AAE_ASSIGNMENT_GROUP = 1011 
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -77,6 +78,8 @@ class Notification < ActiveRecord::Base
       process_aae_reject
     when AAE_INTERNAL_COMMENT
       process_aae_internal_comment
+    when AAE_ASSIGNMENT_GROUP
+      process_aae_assignment_group
     when AAE_PUBLIC_EXPERT_RESPONSE
       process_aae_public_expert_response
     when AAE_PUBLIC_EVALUATION_REQUEST
@@ -126,6 +129,10 @@ class Notification < ActiveRecord::Base
   
   def process_aae_internal_comment
     InternalMailer.aae_internal_comment(user: self.notifiable.recipient, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+  end
+  
+  def process_aae_assignment_group
+    self.notifiable.incoming_notification_list.each{|user| InternalMailer.aae_assignment_group(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless user.email.nil? or self.notifiable.question.assignee == user }
   end
   
   def process_aae_reject

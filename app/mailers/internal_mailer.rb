@@ -196,6 +196,33 @@ class InternalMailer < ActionMailer::Base
     # the email if we got it
     return_email
   end
+  
+  def aae_assignment_group(options = {})
+    @user = options[:user]
+    @question = options[:question]
+    @subject = "[eXtension Question:#{@question.id}] Incoming question for {@question.assigned_group.name}"
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
+    @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
+    @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    
+    if(!@user.email.blank?)
+      if(@will_cache_email)
+        # create a cached mail object that can be used for "view this in a browser" within
+        # the rendered email.
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+      end
+      
+      return_email = mail(to: @user.email, subject: @subject)
+      
+      if(@mailer_cache)
+        # now that we have the rendered email - update the cached mail object
+        @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+      end
+    end
+    
+    # the email if we got it
+    return_email
+  end
 
   def ssl_root_url
     if(Settings.app_location != 'localdev')

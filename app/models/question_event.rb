@@ -227,7 +227,6 @@ class QuestionEvent < ActiveRecord::Base
       if (self.recipient_id != self.previous_handling_recipient_id) && (self.recipient_id != self.previous_handling_initiator_id) #reassigned
         # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.previous_handling_recipient_id.nil?
       end
-        Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.recipient_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.recipient_id.nil?
     when REJECTED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
     when INTERNAL_COMMENT
