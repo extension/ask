@@ -41,6 +41,7 @@ class CreateQuestions < ActiveRecord::Migration
       t.datetime "last_assigned_at"
       t.datetime "last_opened_at",                               :null => false
       t.boolean  "is_api"
+      t.boolean  "evaluation_sent",           :default => false
       t.timestamps
     end
 
@@ -58,5 +59,7 @@ class CreateQuestions < ActiveRecord::Migration
     add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
     add_index "questions", ["is_private"], :name => "fk_is_private"
     add_index "questions", ["contributing_question_id"], :name => "fk_contributing_question"
+    add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
+
   end
 end
