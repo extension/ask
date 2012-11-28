@@ -317,6 +317,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
   create_table "preferences", :force => true do |t|
     t.integer  "prefable_id"
     t.integer  "group_id"
+    t.integer  "question_id"
     t.string   "prefable_type",  :limit => 30
     t.string   "classification"
     t.string   "name",                         :null => false
@@ -327,7 +328,7 @@ ActiveRecord::Schema.define(:version => 20121108201005) do
   end
 
   add_index "preferences", ["classification"], :name => "index_preferences_on_classification"
-  add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id"], :name => "pref_uniq_ndx", :unique => true
+  add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id", "question_id"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
     t.integer  "question_id",                        :null => false

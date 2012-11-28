@@ -7,6 +7,7 @@
 class Preference < ActiveRecord::Base
   belongs_to :prefable, :polymorphic => true
   belongs_to :group
+  belongs_to :question
   before_save :set_datatype
   before_save :set_classification_if_nil
   
@@ -18,12 +19,13 @@ class Preference < ActiveRecord::Base
    'notification.question.assigned_to_me' => true,
    'notification.question.incoming' => false,
    'notification.question.daily_summary' => false,
+   'notification.question.comment' => false,
   }
   
   NOTIFICATION_ASSIGNED_TO_ME = 'notification.question.assigned_to_me'
   NOTIFICATION_INCOMING = 'notification.question.incoming'
   NOTIFICATION_DAILY_SUMMARY = 'notification.question.daily_summary'
-  
+  NOTIFICATION_COMMENT = 'notification.question.comment'
   
   def set_datatype
     if(self.value.nil?)
@@ -61,8 +63,8 @@ class Preference < ActiveRecord::Base
     end
   end      
   
-  def self.setting(name,group=nil)
-    if(setting = where(name: name, group_id: group).first)
+  def self.setting(name,group_id=nil,question_id=nil)
+    if(setting = where(name: name, group_id: group_id, question_id: question_id).first)
       setting.value
     else
       self.get_default(name)
@@ -81,14 +83,13 @@ class Preference < ActiveRecord::Base
     end
   end
     
-  def self.create_or_update(prefable,name,value,group=nil)
-    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(group_id: group).first)
+  def self.create_or_update(prefable,name,value,group_id=nil,question_id=nil)
+    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(group_id: group_id).first)
       preference.update_attribute(:value, value)
     else
-      preference = self.create(prefable: prefable, name: name, value: value, group_id: group)
+      preference = self.create(prefable: prefable, name: name, value: value, group_id: group_id, question_id: question_id)
     end
     preference
   end
-      
 
 end

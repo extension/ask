@@ -6,6 +6,7 @@ class CreatePreferences < ActiveRecord::Migration
       # and tighten the index
       t.integer    "prefable_id"
       t.references :group
+      t.references :question
       t.string     "prefable_type", :limit => 30
       t.string     "classification"
       t.string     "name", :null => false
@@ -14,7 +15,7 @@ class CreatePreferences < ActiveRecord::Migration
       t.timestamps
     end
     
-    add_index 'preferences', ['prefable_id','prefable_type','name','group_id'], :unique => true, :name => 'pref_uniq_ndx'
+    add_index 'preferences', ['prefable_id','prefable_type','name','group_id', 'question_id'], :unique => true, :name => 'pref_uniq_ndx'
     add_index 'preferences', ['classification']
 
   end
