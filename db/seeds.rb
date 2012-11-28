@@ -427,7 +427,7 @@ def transfer_responses
    where created_at = (select min(created_at) from responses min_responses where min_responses.resolver_id is NOT NULL and responses.question_id = min_responses.question_id) 
    and id = (select min(id) from responses min_responses where min_responses.resolver_id is NOT NULL and responses.question_id = min_responses.question_id)
   ) as first_response 
-  SET questions.initial_response_id = first_response.id, questions.initial_response_time = (first_response.created_at - questions.created_at) 
+  SET questions.initial_response_id = first_response.id, questions.initial_response_time = TIMESTAMPDIFF(SECOND,questions.created_at,first_response.created_at)
   WHERE questions.id = first_response.question_id
   END_SQL
 
