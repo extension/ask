@@ -204,7 +204,6 @@ body {
 
 
 body#public {
-  
   background:#f4f4f4;
   #publicbar.navbar-inner {height:80px !important; background:#f47B28;
 /*    opacity:0.4;*/
@@ -243,6 +242,7 @@ body#public {
 	
 	.navavatar {float:right; padding:.5em 2em; color:#fff;}
 	.navavatar a {color:#fff;}
+	.navlink {color:#fff;}
 	.navavatar.loggedin img {border:#888 1px solid;}
 	.navavatar.loggedin {padding-top:0;}
   ul.navavatar.loggedin > li {height:30px; line-height:30px;}
@@ -269,6 +269,7 @@ body#public {
 		.navbar #publicbar .container {width: 1170px; padding:2em 0;}
 	}
 	@media screen and (max-width: 420px) {
+	  .navavatar.loggedin.publicuser {display:block;float:none;}
     .hidecompact420 {display:none;}
     .navavatar .avatar_with_badge img {height:20px;width:20px;}
 	}
