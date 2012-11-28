@@ -105,10 +105,9 @@ class Question < ActiveRecord::Base
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
-  scope :answered, where(:status_state => Question::STATUS_RESOLVED)
-  scope :submitted, where(:status_state => Question::STATUS_SUBMITTED)
+  scope :answered, where(:status_state => STATUS_RESOLVED)
+  scope :submitted, where(:status_state => STATUS_SUBMITTED)
 
-  scope :closed_not_rejected, where('(status_state = ? OR status_state = ? or status_state = ?)',STATUS_RESOLVED,STATUS_NO_ANSWER,STATUS_CLOSED)
 
 
   # for purposes of solr search
@@ -119,7 +118,7 @@ class Question < ActiveRecord::Base
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
     search_results = self.more_like_this do
-      without(:status_state, Question::STATUS_REJECTED)
+      without(:status_state, STATUS_REJECTED)
       paginate(:page => 1, :per_page => count)
       adjust_solr_params do |params|
         params[:fl] = 'id,score'
@@ -135,7 +134,7 @@ class Question < ActiveRecord::Base
   def public_similar_questions(count = 4)
     search_results = self.more_like_this do
       with(:is_private, false)
-      without(:status_state, Question::STATUS_REJECTED)
+      without(:status_state, STATUS_REJECTED)
       paginate(:page => 1, :per_page => count)
       adjust_solr_params do |params|
         params[:fl] = 'id,score'
@@ -497,19 +496,19 @@ class Question < ActiveRecord::Base
   end
   
 
-  def is_closed_not_rejected?
-    [STATUS_RESOLVED,STATUS_NO_ANSWER,STATUS_CLOSED].include?(self.status_state)
+  def is_answered?
+    self.status_state == STATUS_RESOLVED
   end
 
   def create_evaluation_notification
-    if(self.is_closed_not_rejected? and !self.submitter.answered_evaluation_for_question?(self))
+    if(self.is_answered? and !self.submitter.answered_evaluation_for_question?(self))
       Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_EVALUATION_REQUEST, delivery_time: 1.minute.from_now )
     end
   end
 
   def self.evaluation_pool(days_closed = Settings.days_closed_for_evaluation)
     with_scope do
-      self.closed_not_rejected.where(evaluation_sent: false).where('DATE(resolved_at) = ?',Date.today - days_closed)
+      self.answered.where(evaluation_sent: false).where('DATE(resolved_at) = ?',Date.today - days_closed)
     end
   end
 
