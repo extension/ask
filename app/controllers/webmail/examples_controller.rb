@@ -32,6 +32,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def internal_aae_assignment_group
+    mail = InternalMailer.aae_assignment_group(user: User.first, question: Question.last, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def internal_aae_reassignment
     mail = InternalMailer.aae_reassignment(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
