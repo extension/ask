@@ -16,14 +16,31 @@
         <div class="navbar-inner">
           <div class="container">
             <% if current_user %>
-              <span class="navavatar loggedin">
-                <%= link_expert_user_avatar(current_user, :thumb) %>
-                <%= link_to expert_user_path(current_user.id) do %>
-                  <%= current_user.name %>
-                <% end %>
-                &nbsp;
-                <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
-              </span>  
+              <ul class="navavatar loggedin">
+                <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
+                <li class="username">
+                  <%= link_to expert_user_path(current_user.id) do %>
+                    <span class="hidecompact420"><%= current_user.name %></span>
+                  <% end %>
+                </li>
+
+                <li>
+                  <ul class="nav" id="user_actions">
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><%= link_to "My profile", expert_user_path(current_user.id) %></li>
+                      <li><%= link_to "My groups", expert_user_groups_path(current_user) %></li>
+                      <li><%= link_to "My settings", expert_settings_profile_path() %></li>
+                      <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+                    </ul>
+                  </li>
+                </ul>
+                </li>
+                
+              </ul>  
             <% else %>
               <span class="navavatar">
                 <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
@@ -36,7 +53,9 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <%= link_to("AaE Experts", expert_home_path(), :class => "brand home") %>
+            <%= link_to expert_home_path(), :class => "brand home" do %>
+              AaE <span class="hidecompact480">Experts</span>
+            <% end %>
             <div class="nav-collapse">
               <ul class="nav">
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
@@ -44,12 +63,12 @@
                 <li <%= "class='active'" if current_page?(:controller => 'groups', :action => "index") %>><%= link_to "Groups", expert_groups_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
-              <p id="search">
-                <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
-                <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
-              </p>
+                <p id="search">
+                  <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
+                  <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
+                </p>
               <% end %>
-              <%= link_to("AaE Public", root_path(), :class => "brand") %>
+              <p><%= link_to("AaE Public", root_path(), :class => "brand") %></p>
             </div><!--/.nav-collapse -->
             
             

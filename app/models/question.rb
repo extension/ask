@@ -6,6 +6,13 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+
+  class Question::Image < Asset
+    has_attached_file :attachment, 
+                      :styles => { :medium => "300x300>", :thumb => "100x100>" }, 
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  end
+
   include MarkupScrubber
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
@@ -100,6 +107,8 @@ class Question < ActiveRecord::Base
   }
   scope :answered, where(:status_state => Question::STATUS_RESOLVED)
   scope :submitted, where(:status_state => Question::STATUS_SUBMITTED)
+
+  scope :closed_not_rejected, where('(status_state = ? OR status_state = ? or status_state = ?)',STATUS_RESOLVED,STATUS_NO_ANSWER,STATUS_CLOSED)
 
 
   # for purposes of solr search
@@ -411,9 +420,7 @@ class Question < ActiveRecord::Base
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
     images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
   end
-  
-  private
-  
+   
   def index_me
     # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
     # did not change and these other fields did, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
@@ -485,9 +492,23 @@ class Question < ActiveRecord::Base
     return
   end
   
-  class Question::Image < Asset
-    has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+
+  def is_closed_not_rejected?
+    [STATUS_RESOLVED,STATUS_NO_ANSWER,STATUS_CLOSED].include?(self.status_state)
   end
+
+  def create_evaluation_notification
+    if(self.is_closed_not_rejected? and !self.submitter.answered_evaluation_for_question?(self))
+      Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_EVALUATION_REQUEST, delivery_time: 1.minute.from_now )
+    end
+  end
+
+  def self.evaluation_pool(days_closed = Settings.days_closed_for_evaluation)
+    with_scope do
+      self.closed_not_rejected.where(evaluation_sent: false).where('DATE(resolved_at) = ?',Date.today - days_closed)
+    end
+  end
+
   
     
 end
