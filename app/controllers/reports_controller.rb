@@ -8,6 +8,9 @@ class ReportsController < ApplicationController
   before_filter :override_rows
 
   def index
+    @question_stats = Question.answered.stats_by_yearweek('questions')
+    @expert_stats = Question.answered.stats_by_yearweek('experts')
+    @responsetime_stats = Question.answered.stats_by_yearweek('responsetime')
   end
 
 

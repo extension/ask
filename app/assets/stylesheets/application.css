@@ -13,5 +13,6 @@
  *= require vendor
  *= require twitter/bootstrap-responsive
  *= require autocomplete
+ *= require jquery.jqplot
  *= require_tree .
 */

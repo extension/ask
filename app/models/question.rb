@@ -113,7 +113,8 @@ class Question < ActiveRecord::Base
 
   # reporting scopes
   YEARWEEK_RESOLVED = 'YEARWEEK(questions.resolved_at,3)'
-
+  # eXtension National launch
+  WWW_LAUNCH                    = Date.parse('2008-02-21')
 
   # for purposes of solr search
   def response_list
@@ -526,7 +527,8 @@ class Question < ActiveRecord::Base
  
   def self.earliest_resolved_at
     with_scope do
-      self.minimum(:resolved_at)
+      era = self.minimum(:resolved_at)
+      (era < WWW_LAUNCH) ? WWW_LAUNCH : era
     end
   end
 
@@ -572,7 +574,7 @@ class Question < ActiveRecord::Base
         responsetime_by_yearweek = self.group(YEARWEEK_RESOLVED).sum(:initial_response_time)
         metric_by_yearweek = {}
         responsetime_by_yearweek.each do |yearweek,total_response_time|
-          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / questions_by_yearweek[yearweek].to_f)
+          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / questions_by_yearweek[yearweek].to_f / 3600.to_f)
         end
       else
         return stats

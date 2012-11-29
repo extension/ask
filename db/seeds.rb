@@ -820,7 +820,7 @@ create_notification_prefs_for_groups_with_notifications
 transfer_spam_and_rejected_data
 seed_evaluation_questions
 seed_demographic_questions
-cleanup_questions
-cleanup_question_event_responses
-cleanup_responses
-reindex_searchable_objects
+# cleanup_questions
+# cleanup_question_event_responses
+# cleanup_responses
+# reindex_searchable_objects
