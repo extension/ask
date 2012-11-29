@@ -190,6 +190,7 @@ Aae::Application.routes.draw do
 
   # reports
   match "reports", to: "reports#index", :via => [:get]
+  match "reports/:action", to: "reports", :via => [:get]
 
 
   # wildcard

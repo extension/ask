@@ -1,0 +1,66 @@
+  <div id="comparison_plot_for_<%= datalabel %>"></div>
+  <script class="code" type="text/javascript">
+    $(document).ready(function(){
+      setTimeout(function(){
+      var data = <%= data.to_json.html_safe %>;
+      var labels = <%= labels.to_json.html_safe %>;
+      var plot1 = jQuery.jqplot("comparison_plot_for_<%= datalabel %>", data,
+        {
+          axesDefaults: {
+            pad: 0
+          },
+          axes: {
+            xaxis: {
+              renderer: $.jqplot.DateAxisRenderer,
+              tickOptions:{
+                formatString:'%b&nbsp;%d&nbsp;%Y'
+              }
+            },
+            yaxis: {
+              min: 0,
+              <%- if local_assigns.has_key?(:ymax) -%>
+              max: <%= ymax %>,
+              <%- end -%>
+            }
+          },
+          seriesDefaults: {
+            showMarker: false,
+            shadow: false
+          },
+          legend: {
+              show: true,
+              renderer: $.jqplot.EnhancedLegendRenderer,
+              placement: "outsideGrid",
+              labels: labels,
+              location: "ne",
+              rowSpacing: "2px",
+              border: "0px",
+              rendererOptions: {
+                  // set to true to replot when toggling series on/off
+                  // set to an options object to pass in replot options.
+                  seriesToggle: 'normal',
+                  seriesToggleReplot: {resetAxes: true},
+                  <%- if local_assigns.has_key?(:legend_columns) -%>
+                  numberColumns: <%= legend_columns %>,
+                  <%- end -%>
+              }
+          },
+          grid: {
+              drawBorder: false,
+              shadow: false,
+              background: "white"
+          },
+          highlighter: {
+            show: true,
+            sizeAdjust: 7.5
+          },
+          cursor: {
+            show: true,
+            zoom: true,
+            showTooltip: false,
+          }
+        }
+      );
+    }, 100);
+    });
+  </script>
