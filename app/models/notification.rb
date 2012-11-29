@@ -132,7 +132,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_assignment_group
-    self.notifiable.incoming_notification_list.each{|user| InternalMailer.aae_assignment_group(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless user.email.nil? or self.notifiable.question.assignee == user }
+    self.notifiable.assigned_group.incoming_notification_list.each{|user| InternalMailer.aae_assignment_group(user: self.notifiable.recipient, question: self.notifiable).deliver unless user.email.nil? or self.notifiable.assignee == user }
   end
   
   def process_aae_reject
