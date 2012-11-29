@@ -275,6 +275,7 @@ class Question < ActiveRecord::Base
     #keep track of the previously assigned user for reassignment if there was one
     if self.assignee.present?
       previously_assigned_user = self.assignee
+      is_reassign = true
     end
     
     # update and log
@@ -292,15 +293,8 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    # TODO: Put New Notification Logic Here
-    # create notifications
-    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
-    #     if(is_reassign and public_reopen == false)
-    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
-    #     end
-    
     Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
-    if(is_reassign and public_reopen == false and !previously_assigned_user.nil?)
+    if(is_reassign)
       Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
     end
     
