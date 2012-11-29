@@ -1,19 +1,19 @@
 <% if !@question.is_private %>
-<h3>Comment on this Question</h3>
-
-<% if current_user && current_user.has_exid? %>
-  <p><%= link_public_user_avatar(current_user, :thumb) %> <%= link_to current_user.public_name, user_path(current_user.id) %></p>
-<% elsif current_user %>
-  <p><strong><%= current_user.public_name %></strong></p>
-<% end %>
+  
+  <h3 class="comment_header">Comment on this Question</h3>
 
 <div id="comments_form" class="commentfield_container">
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
       <div class="commentfield">
-      <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 4} %>
+      <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 2} %>
       <%= hidden_field_tag 'comment[question_id]', @question.id %>
       <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
+      <% if current_user && current_user.has_exid? %>
+        <p class="current_commenter left"><%= link_public_user_avatar(current_user, :thumb) %></p>
+      <% elsif current_user %>
+        <p class="current_commenter left"><strong><%= current_user.public_name %></strong></p>
+      <% end %>
       </div>
       <br class="clearing" />
     <% end %>
@@ -21,7 +21,7 @@
       <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
       <%= render(partial: 'partials/sign_in_to_vote')%>
         <div class="sitv_element commentfield">
-        <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 4} %>
+        <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 2} %>
         <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
         </div>
         <br class="clearing" />

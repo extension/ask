@@ -67,6 +67,7 @@
                 </p>
               <% end %>
               <p><%= link_to("AaE Public", root_path(), :class => "brand") %></p>
+              <span class="help_link"><%= link_to("Help", "http://about.extension.org/ask/") %></span>
             </div><!--/.nav-collapse -->
             
             
@@ -82,7 +83,7 @@
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
     <div id="app_location" class="demo">
       
-      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong>Feel free to test and play</strong>: No notifications, responses or assignments are sent to anyone. <%= link_to("Visit Ask 2.0 Production", "http://ask.extension.org") -%></p>
+      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong>Feel free to test and play</strong>: No notifications, responses or assignments are sent to anyone. <%= link_to("Visit Ask 2.0 Production", "http://ask.extension.org") -%>. Visit the <%= link_to("AaE 2.0 Help page", "http://about.extension.org/ask/") %>.</p>
     </div>
   <% end %>
   

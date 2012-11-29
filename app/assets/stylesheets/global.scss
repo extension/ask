@@ -286,6 +286,7 @@ body#public {
 
 
 body#expert {
+  .help_link a {color:#FFFFBB;}
   #reassign_question {background:#fff; padding:1em; color:#555 !important; margin-bottom:3em;}
   #reassign_question .title {color:#555 !important; margin:0;}
   .ask_form_location {background:#fff; padding:1em;}
