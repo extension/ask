@@ -139,12 +139,11 @@
     </aside>
   <% elsif @question.status_state != Question::STATUS_REJECTED %>
     <aside>
-      <h3>About this question</h3>
       
       <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
-          <h4>Answered by</h4>
+          <h5>Answered by</h5>
         <% else %>
-          <h4>Assigned to</h4>
+          <h5>Assigned to</h5>
         <% end %>
         
         
@@ -158,7 +157,7 @@
     
     <% if !@question.assignee.blank? %>
       <% if @question.assigned_group %>
-        <h4>This question is grouped with</h4>
+        <h5>This question is grouped with</h5>
         <p><%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
       <% end %>
     <% end %>
@@ -168,11 +167,13 @@
   </aside>
   <% end %>
     
+  <% if @question.public_similar_questions.count > 0 %>
   <aside>
     <h4>Related Questions</h4>
     <% @question.public_similar_questions.each do |question,score| %>
       <p><%= link_to(format_text_for_display(question.title), question_path(question.id)) %></p>
     <% end %>
   </aside>
+  <% end %>
   
 </div>
