@@ -431,10 +431,15 @@ def transfer_responses
   WHERE questions.id = first_response.question_id
   END_SQL
 
+  # fix the response times for all questions resolved prior to 2009-10-13 because the response created_at data is flawed prior to that date
+  # this still leaves ~14 records in limbo, but should make things more accurate
+  fix_response_time_query = 'UPDATE questions SET initial_response_time = TIMESTAMPDIFF(SECOND,questions.created_at,questions.resolved_at) WHERE DATE(questions.resolved_at) <= \'2009-10-13\''
+
   benchmark = Benchmark.measure do
     ActiveRecord::Base.connection.execute(responses_transfer_query)
     ActiveRecord::Base.connection.execute(transfer_contributing_question_id_query)
     ActiveRecord::Base.connection.execute(set_response_time_query)
+    ActiveRecord::Base.connection.execute(fix_response_time_query)
   end
   
   puts " Responses transferred: #{benchmark.real.round(2)}s"
