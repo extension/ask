@@ -256,12 +256,11 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    # TODO: Put New Notification Logic Here
-    # create notifications
-    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
-    #     if(is_reassign and public_reopen == false)
-    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
-    #     end
+    Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
+    if(is_reassign and public_reopen == false)
+      Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+    end
+      
   end
   
   # Assigns the question to the group, logs the assignment, and sends an email
@@ -272,6 +271,12 @@ class Question < ActiveRecord::Base
     # don't bother doing anything if this is an assignment to the group already assigned. 
     # if it has an assignee, we need to take the assignee off and log this change.
     return true if self.assigned_group && (group.id == self.assigned_group.id) && self.assignee.nil?
+    
+    #keep track of the previously assigned user for reassignment if there was one
+    if self.assignee.present?
+      previously_assigned_user = self.assignee
+      is_reassign = true
+    end
     
     # update and log
     current_assigned_group = self.assigned_group
@@ -288,12 +293,11 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    # TODO: Put New Notification Logic Here
-    # create notifications
-    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
-    #     if(is_reassign and public_reopen == false)
-    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
-    #     end
+    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
+    if(is_reassign)
+      Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+    end
+    
   end
 
   def change_group(group, changed_by)
@@ -488,11 +492,7 @@ class Question < ActiveRecord::Base
   
   # TODO: setup notifications here
   def send_global_widget_notifications
-    if !self.assigned_to_group_queue?
-      Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
-    end
-    Notification.create(notifiable: self.assigned_group, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
-    return
+    Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
   end
   
 

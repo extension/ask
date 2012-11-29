@@ -647,6 +647,16 @@ def create_notification_prefs_for_groups_with_notifications
   puts " Notification prefs transferred: #{benchmark.real.round(2)}s"
 end
 
+def create_default_daily_summary_prefs_for_group_leaders
+  puts 'Creating default daily summary prefs for group leaders'
+  benchmark = Benchmark.measure do
+    GroupConnection.where(:connection_type => 'leader').each do |connection|
+      Preference.create_or_update(connection.user, Preference::NOTIFICATION_DAILY_SUMMARY, true, connection.group.id) #leaders are opted into daily summaries / escalations
+    end
+  end
+  puts " Daily Summary prefs transferred: #{benchmark.real.round(2)}s"
+end
+
 def seed_evaluation_questions
   puts 'Seeding evaluation questions'
 
@@ -817,6 +827,7 @@ transfer_widget_group_locations
 transfer_misfit_questions_to_groups
 transfer_geo_names
 create_notification_prefs_for_groups_with_notifications
+create_default_daily_summary_prefs_for_group_leaders
 transfer_spam_and_rejected_data
 seed_evaluation_questions
 seed_demographic_questions
