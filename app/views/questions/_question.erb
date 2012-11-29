@@ -114,13 +114,13 @@
 
   <% end %>
 
+  <% if @question_responses.size < 1 %>
+    <div class="not_answered">
+      <h3>This Question is Waiting for an eXtension Answer</h3>
+      <p><strong>What's an eXtension Answer?</strong> Your questions are answered by Cooperative Extension and University staff and volunteers from across the United States. That means the answer given here will be objective, research-based and credible.</p>
+    </div>
+  <% end %>
 
-
-<% if @question_responses.size < 1 %>
-  <div class="not_answered">
-    <h3>This question is waiting for an official answer</h3>
-  </div>
-<% end %>
 
 
 <%= render :partial => 'comments' %>
