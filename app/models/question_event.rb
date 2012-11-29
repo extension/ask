@@ -222,11 +222,6 @@ class QuestionEvent < ActiveRecord::Base
   # NOTE THAT THE RECIPIENT_ID (AND PREVIOUS_RECIPIENT_ID AND PREVIOUS_HANDLING_RECIPIENT_ID) CAN BE NULL HERE DUE TO ASSIGNMENT TO GROUPS IN WHICH THE RECIPIENT_GROUP_ID IS SET
   def create_question_event_notification
     case self.event_state
-    when ASSIGNED_TO
-      #assigned and reassigned
-      if (self.recipient_id != self.previous_handling_recipient_id) && (self.recipient_id != self.previous_handling_initiator_id) #reassigned
-        # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.previous_handling_recipient_id.nil?
-      end
     when REJECTED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
     when INTERNAL_COMMENT
