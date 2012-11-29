@@ -195,6 +195,7 @@ class User < ActiveRecord::Base
 
     if connection_type == 'leader'
       GroupEvent.log_added_as_leader(group, self, self)
+      Preference.create_or_update(self, Preference::NOTIFICATION_DAILY_SUMMARY, true, group.id) #leaders are opted into daily summaries / escalations
     else
       GroupEvent.log_group_join(group, self, self)
     end
@@ -203,6 +204,7 @@ class User < ActiveRecord::Base
     if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
       if(connection_type == 'leader' || connection_type == 'member')
         self.update_attribute(:is_question_wrangler, true)
+        Preference.create_or_update(self, Preference::NOTIFICATION_INCOMING, true, group.id) 
       end
     end
 
