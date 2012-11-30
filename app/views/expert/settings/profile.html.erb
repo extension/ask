@@ -24,7 +24,7 @@
       <%= f.label :bio do %>
       About Me <span>(This description displays on your <%= link_to "Expert Profile", expert_user_path(current_user.id) %> and <%= link_to "Public Profile", user_path(@user.id) %>)</span>
       <% end %>
-      <%= f.text_area :bio, :rows => "2", :class => "l" %>
+      <%= f.text_area :bio, :rows => "2", :class => "l wysiwyg" %>
     </p>
     
     <p class="bio">
@@ -57,3 +57,9 @@
 <% end %>
 
 </div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>

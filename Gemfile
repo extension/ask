@@ -19,6 +19,8 @@ gem 'jquery-rails'
 
 # bootstrap in sass in rails
 gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails'
+# wysihtml5 + bootstrap + asset pipeline
+gem 'bootstrap-wysihtml5-rails'
 
 # storage
 gem 'mysql2'

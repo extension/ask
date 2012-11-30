@@ -64,7 +64,7 @@
     <h3>Email Signature</h3>
     <p class="bio">
       <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
-      <%= f.text_area :signature, "rows" => 3 %>
+      <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg' %>
     </p>
     
   </fieldset>
@@ -74,3 +74,9 @@
   </fieldset>
     
 <% end %>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>
