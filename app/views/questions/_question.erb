@@ -96,7 +96,7 @@
 	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_url %></h3>
 	    <div id="additional_comment" style="display:none;">
 	      <%= form_for @response do |r_form| %>
-          <%= r_form.text_area :body, :cols => "20", :rows => "3" %>
+          <%= r_form.text_area :body, :cols => "20", :rows => "3", class: 'wysiwyg' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>Images</h3>
 	        <p>You can include up to 3 images:</p>
@@ -177,3 +177,9 @@
   <% end %>
   
 </div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>
