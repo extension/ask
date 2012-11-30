@@ -20,7 +20,7 @@ class PublicMailer < ActionMailer::Base
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
-    if @question.group.present? && @question.group.is_bonnie_plants?
+    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
       @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
     end
     
@@ -49,7 +49,7 @@ class PublicMailer < ActionMailer::Base
       @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       
-      if @question.group.present? && @question.group.is_bonnie_plants?
+      if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
         @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
       end
 
