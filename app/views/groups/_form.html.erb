@@ -10,7 +10,7 @@
 
     <p>
       <%= f.label :body, 'Question' %>
-      <%= f.text_area :body, :rows => 6, :class => "xl required" %>
+      <%= f.text_area :body, :rows => 6, :class => "xl required wysiwyg" %>
     </p>
 
     <p>
@@ -65,6 +65,10 @@
 
 <script class="code" type="text/javascript">
   $(document).ready(function () {
+
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
 
     $("#question_location_id").change(function() {
       var location_id = $('select#question_location_id :selected').val();

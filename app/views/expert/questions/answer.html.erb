@@ -37,7 +37,7 @@
                 <% @answer = (@sampletext ? @sampletext : @question.current_response)%>
             <% end %>
             
-            <%= text_area_tag 'current_response', @answer ? @answer : nil,  "rows" => 6 %>
+            <%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 6}) %>
             </p>
 
             <label>Images (optional)</label>
@@ -45,7 +45,7 @@
 	          <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
 	        <% end %>
 
-            <p><%= text_area_tag 'signature', @signature, "rows" => 3 %>
+            <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'wysiwyg'} %>
               <small class="downplay block">You can edit your default signature in your settings</small></p>
             
             <p class="save_it"><%= submit_tag 'Send Reply', :class => "btn btn-primary" %></p>
@@ -80,3 +80,9 @@
   <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-primary" %></p>
 
 </div>
+
+<script type="text/javascript">
+  $('.wysiwyg').each(function(i, elem) {
+    $(elem).wysihtml5({image: false});
+  });
+</script>

@@ -40,6 +40,8 @@ GEM
     ansi (1.4.3)
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
+    bootstrap-wysihtml5-rails (0.3.1.11)
+      railties (>= 3.0)
     builder (3.0.4)
     capatross (1.4.1)
       capistrano (>= 2.11)
@@ -277,6 +279,7 @@ DEPENDENCIES
   airbrake
   ancestry
   anjlab-bootstrap-rails
+  bootstrap-wysihtml5-rails
   capatross
   capistrano
   coffee-rails (~> 3.2.2)
