@@ -291,6 +291,7 @@ body#public {
 
 
 body#expert {
+  .explanation {padding:1em; background:#eee; margin-bottom:2em; font-size:1.1em; line-height:1.4em; color:#777;}
   #extension_people_data {background:#eee; padding:1em; color:#666; margin-bottom:3em;}
   .help_link a {color:#FFFFBB;}
   #reassign_question {background:#fff; padding:1em; color:#555 !important; margin-bottom:3em;}
