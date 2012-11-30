@@ -1,4 +1,4 @@
-set :stages, %w(demo dev)
+set :stages, %w(prod dev)
 set :default_stage, "dev"
 require 'capistrano/ext/multistage'
 require 'capatross'
@@ -91,5 +91,10 @@ namespace :db do
   task :rebuild, :roles => :db, :only => {:primary => true} do
     run "cd #{release_path} && #{rake} db:demo_rebuild RAILS_ENV=production"
   end
+  
+  desc "reload the database with seed data"
+    task :seed do
+      run "cd #{release_path} && #{rake} db:seed RAILS_ENV=production"
+    end
 end  
 
