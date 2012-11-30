@@ -1,10 +1,13 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h3>Group Settings > Locations</h3>
+<h3>Settings > Locations</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
+<div class="explanation">
+  <p><strong>Locations are used for automated assignments.</strong> If you only want questions from specific locations, you can choose that option in your Group <%= link_to 'Assignment Options', expert_group_assignment_options_path() %>. If your Group is national in scope, don't choose any locations.</p>
+</div>
 
 <div id="loc_wrapper" class="group" data-object="group" data-id="<%= @group.id %>">
   <%= render :partial => 'ajax/location_picker' %>
