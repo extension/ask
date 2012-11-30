@@ -7,15 +7,13 @@
 
   <% if @user.has_exid? %>
     <div id="extension_people_data">
-      <h3><%= @user.name %></h3>
-      <h4><%= @user.email %></h4>
+      <h3><%= @user.name %> <small id="people_edit"><%= link_to("these items can be edited in people.extension.org", "http://www.extension.org/people/profile/edit") %></small></h3>
+      <p><%= @user.email %></p>
       <%- if @user.has_time_zone? -%>
-        <h4><%= @user.time_zone %></h4>
+        <p><%= @user.time_zone %></p>
       <%- else -%>
         <p>No timezone currently set <small><%= link_to("set your timezone now", "http://www.extension.org/people/profile/edit") %></small></p>
       <%- end -%>
-      
-      <p id="people_edit"><%= link_to("The above items can be edited in people.extension.org", "http://www.extension.org/people/profile/me") %></p>
     </div>
   <% end %>
 
@@ -23,7 +21,9 @@
 
   <fieldset>
     <p class="bio">
-      <%= f.label :bio, 'Short Bio (140 characters)' %>
+      <%= f.label :bio do %>
+      About Me <span>(This description displays on your <%= link_to "Expert Profile", expert_user_path(current_user.id) %> and <%= link_to "Public Profile", user_path(@user.id) %>)</span>
+      <% end %>
       <%= f.text_area :bio, :rows => "2", :maxlength => 140,  :class => "l" %>
     </p>
     
