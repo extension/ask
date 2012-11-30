@@ -485,12 +485,10 @@ class Question < ActiveRecord::Base
     return User.find(user_id)
   end
   
-  # TODO: setup notifications here
   def notify_submitter
     Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
   end
   
-  # TODO: setup notifications here
   def send_global_widget_notifications
     Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
   end
