@@ -21,7 +21,7 @@ class PublicMailer < ActionMailer::Base
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-      self.from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+      @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
     end
     
     if(!@user.email.blank?)
@@ -50,7 +50,7 @@ class PublicMailer < ActionMailer::Base
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       
       if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-        self.from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+        @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
       end
 
       if(!@user.email.blank?)
