@@ -24,7 +24,7 @@
       <% else %>
         <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
       <% end %>
-      <p><%= question.body -%></p>
+      <p><%= Question.html_to_pretty_text(question.body) -%></p>
     <%- end -%>
     
     <% question.images.each do |image| %>
