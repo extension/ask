@@ -4,7 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class ReportsController < ApplicationController
+class DataController < ApplicationController
   before_filter :override_rows
 
   def index
