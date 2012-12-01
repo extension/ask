@@ -20,6 +20,9 @@ class HomeController < ApplicationController
   def about
   end
 
+  def reports
+  end
+
   def locations
     @location = Location.find_by_id(params[:id])
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")

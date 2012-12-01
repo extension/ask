@@ -187,6 +187,8 @@ Aae::Application.routes.draw do
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
+  # reports placeholder
+  match "reports", to: "home#reports", via: :get, as: 'reports'
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]
