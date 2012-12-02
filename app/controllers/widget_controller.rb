@@ -27,11 +27,6 @@ class WidgetController < ApplicationController
     @question = Question.new
     @question.images.build
 
-    if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))
-      @email = @submitter.email
-      @email_confirmation = @email
-    end
-
     @host_name = request.host_with_port
     if(@group.is_bonnie_plants?)
       return render(:template => 'widget/bonnie_plants', :layout => false)
