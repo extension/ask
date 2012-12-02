@@ -43,7 +43,7 @@ class QuestionsController < ApplicationController
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
-    elsif (@authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id)
+    elsif (@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
@@ -63,9 +63,9 @@ class QuestionsController < ApplicationController
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
       session[:question_id] = @question.id
-      if(current_user and current_user.id == @question.submitter.id)
+      if(current_user and current_user.id == @question.submitter_id)
         redirect_to question_url(@question)
-      elsif session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter.id
+      elsif session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter_id
         redirect_to question_url(@question)
       else
         return render :template => 'questions/submitter_signin'
@@ -101,9 +101,9 @@ class QuestionsController < ApplicationController
 
     # validate that I can edit this question
     @can_edit = false
-    if(current_user and current_user.id == @question.submitter.id)
+    if(current_user and current_user.id == @question.submitter_id)
       @can_edit = true
-    elsif(session[:submitter_id].present? and session[:submitter_id].to_i == @question.submitter.id)
+    elsif(session[:submitter_id].present? and session[:submitter_id].to_i == @question.submitter_id)
       @can_edit = true
     end
 
