@@ -104,11 +104,14 @@
 
     <br />
 
+    <%- if !current_user or !current_user.email.present? -%>
     <p>
         <label for="email">Email
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
+    <%- end -%>
+
 
     <% if @group.widget_public_option %>
        <fieldset>

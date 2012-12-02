@@ -136,14 +136,18 @@ class QuestionsController < ApplicationController
           raise ArgumentError
         end
 
-        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
-          if !@submitter.valid?
-            @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
-            raise ArgumentError
+        if current_user and current_user.email.present?
+          @submitter = current_user
+        else
+          if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+            @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+            if !@submitter.valid?
+              @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
+              raise ArgumentError
+            end
           end
         end
-        
+              
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.group_name = @group.name

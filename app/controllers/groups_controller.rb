@@ -27,8 +27,12 @@ class GroupsController < ApplicationController
     if request.post?
       @question = Question.new(params[:question])
       
-      if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-        @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+      if current_user and current_user.email.present?
+        @submitter = current_user
+      else
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+        end
       end
       
       @question.submitter = @submitter
