@@ -103,17 +103,26 @@ class QuestionsController < ApplicationController
     
   def update
     @question = Question.find_by_id(params[:id])
+    if(!@question)
+      return record_not_found
+    end
+
     # validate that I can edit this question
-    if @question and session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter.id
+    @can_edit = false
+    if(current_user and current_user.id == @question.submitter.id)
+      @can_edit = true
+    elsif(session[:submitter_id].present? and session[:submitter_id].to_i == @question.submitter.id)
+      @can_edit = true
+    end
+
+    if(@can_edit)
       if !@question.update_attributes(params[:question])
         flash[:notice] = "There was an error saving your question, please make sure the question field is not blank."
       else
         flash[:notice] = "Your changes have been saved. Thanks for making your question better!"
       end
-      
       QuestionEvent.log_public_edit(@question)
-    end
-    
+    end  
     redirect_to question_url(@question)
   end
   
