@@ -43,7 +43,7 @@
     </p>
   </div>
 
-  <% if @authenticated_submitter.present? %>
+  <% if @authenticated_submitter.present? and @authenticated_submitter == @question.submitter_id %>
     <%= render :partial => 'question_edit' %>
   <% end %>
 
@@ -93,10 +93,10 @@
     <% end %>
 
     <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id %>
-	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_url %></h3>
+	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_group_path(@question.assigned_group) %></h3>
 	    <div id="additional_comment" style="display:none;">
 	      <%= form_for @response do |r_form| %>
-          <%= r_form.text_area :body, :cols => "20", :rows => "3", class: 'wysiwyg' %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>Images</h3>
 	        <p>You can include up to 3 images:</p>
@@ -106,7 +106,7 @@
 			      <p><%= image_form.file_field :attachment %></p>
           <% end %>
           
-          <%= submit_tag "Post response" %>
+          <%= submit_tag "Post response", :class => 'btn' %>
           <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
         <% end %>
 	    </div>

@@ -20,6 +20,10 @@ class PublicMailer < ActionMailer::Base
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
+    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
+      @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+    end
+    
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
@@ -44,6 +48,10 @@ class PublicMailer < ActionMailer::Base
       @question = options[:question]
       @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+      
+      if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
+        @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+      end
 
       if(!@user.email.blank?)
         if(@will_cache_email)

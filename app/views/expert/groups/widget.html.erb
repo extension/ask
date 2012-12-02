@@ -1,13 +1,18 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h3>Group Settings > Widget</h3>
+<h3>Settings > Ask Form and Widget</h3>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
-<h3 class="ask_form_location">Every Group has an Ask form which can be used to accept questions. This group's Ask form is located at: <br /><%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h3>
-
-<h3 class="ask_form_location">Groups can also use the widget snippet below to embed an Ask form on other web pages.</h3>
+<div class="explanation">
+  <h3>Groups have two ways to accept questions:</h3>
+  <ul>
+    <li>Via the <%= link_to "Group Ask form", ask_group_url(@group.id) %></li>
+    <li>Via an embedded Ask widget on your own web pages (code snippet is below.)</li>
+  </ul>
+  <h5>The link to this Group's Ask form is: <%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h5>
+</div>
 
 <%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
 
@@ -18,14 +23,14 @@
 		<p>
         <label>
           <%= check_box_tag 'active', '1', @group.active? %>  Active
-			    <span>(When a widget/form is not active, questions can not be submitted through it. The widget code should be removed from any web page.)</span>
+			    <span>(If this option is unchecked, the Group's widget and Ask form are disabled. The widget code should be removed from any web page.)</span>
         </label>
 		</p>
 
 		<p>
         <label>        
           <%= check_box_tag 'widget_public_option', '1', @group.widget_public_option %>  Enable "public display" option
-			    <span>(Allows submitter to choose if the question is public or private. If this option is unchecked, all questions submitted will be private.)</span>
+			    <span>(Allows submitter to choose to make their question is public. If this option is unchecked, all questions submitted will be private.)</span>
         </label>
     </p>
 
@@ -37,14 +42,15 @@
 
 	<p>
         <label>        
-          <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option
+          <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option for widgets
+          <span>(Location option is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>.)</span>
         </label>
 	</p>
 	
 	<p>
       <label>
-        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field
-		    <span>(Only applies to widget. Title field is always displayed on the Ask form. If no title field is provided, a title will be created from the first 80 characters of the question.)</span>
+        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field for widgets
+		    <span>(Title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>. If no title field is provided, a title is created from the first 80 characters of the question.)</span>
       </label>
 	</p>	
 		
@@ -58,7 +64,7 @@
   </fieldset>
 
   <h4>Widget iFrame Code</h4>
-  <p>You can embed this group's Ask form on any web page using the following code, or you can link directly to this <%= link_to "group's Ask form", ask_group_path(@group.id) %>.</p>
+  <p>Embed an Ask widget on your own web page using the following code snippet:</p>
   <div id="widgetcode"><textarea><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
 
 </div>
