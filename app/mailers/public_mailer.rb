@@ -31,10 +31,9 @@ class PublicMailer < ActionMailer::Base
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
       
-      if @bonnie_plants_from.present?
+      return_email = mail(to: @user.email, subject: @subject)
+      if !@bonnie_plants_from.blank?
         return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-      else
-        return_email = mail(to: @user.email, subject: @subject)
       end
       
       if(@mailer_cache)
@@ -64,10 +63,9 @@ class PublicMailer < ActionMailer::Base
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        if @bonnie_plants_from.present?
+        return_email = mail(to: @user.email, subject: @subject)
+        if !@bonnie_plants_from.blank?
           return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-        else
-          return_email = mail(to: @user.email, subject: @subject)
         end
         
         if(@mailer_cache)
