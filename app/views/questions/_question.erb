@@ -92,7 +92,7 @@
       </div>
     <% end %>
 
-    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id %>
+    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
 	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_group_path(@question.assigned_group) %></h3>
 	    <div id="additional_comment" style="display:none;">
 	      <%= form_for @response do |r_form| %>
