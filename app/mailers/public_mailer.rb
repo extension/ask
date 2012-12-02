@@ -21,7 +21,7 @@ class PublicMailer < ActionMailer::Base
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
     if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-      @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+      @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
     end
     
     if(!@user.email.blank?)
@@ -31,7 +31,11 @@ class PublicMailer < ActionMailer::Base
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
       
-      return_email = mail(to: @user.email, subject: @subject)
+      if @bonnie_plants_from.present?
+        return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
+      else
+        return_email = mail(to: @user.email, subject: @subject)
+      end
       
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
@@ -50,7 +54,7 @@ class PublicMailer < ActionMailer::Base
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       
       if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-        @from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+        @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
       end
 
       if(!@user.email.blank?)
@@ -60,8 +64,12 @@ class PublicMailer < ActionMailer::Base
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        return_email = mail(to: @user.email, subject: @subject)
-
+        if @bonnie_plants_from.present?
+          return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
+        else
+          return_email = mail(to: @user.email, subject: @subject)
+        end
+        
         if(@mailer_cache)
           # now that we have the rendered email - update the cached mail object
           @mailer_cache.update_attribute(:markup, return_email.body.to_s)
