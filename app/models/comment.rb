@@ -11,6 +11,7 @@ class Comment < ActiveRecord::Base
   belongs_to :question
   belongs_to :user
   has_many :ratings
+  after_create :schedule_activity_notification
   
   # make sure to keep this callback ahead of has_ancestry, which has its own callbacks for destroy
   before_destroy :set_orphan_flag_on_children
@@ -34,4 +35,12 @@ class Comment < ActiveRecord::Base
   def content=(comment_content)
     write_attribute(:content, self.cleanup_html(comment_content))
   end
+  
+  def schedule_activity_notification
+#    if !Notification.pending_activity_notification?(self.question)
+#      Notification.create(notifiable: self.event, notificationtype: Notification::ACTIVITY, delivery_time: Notification::ACTIVITY_NOTIFICATION_INTERVAL.from_now)
+#    end
+#    if self.is_reply?
+#      Notification.create(notifiable: self, notificationtype: Notification::COMMENT_REPLY, delivery_time: 1.minute.from_now) unless self.learner == self.parent.learner
+    end
 end

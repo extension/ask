@@ -29,7 +29,7 @@ class Notification < ActiveRecord::Base
   AAE_REASSIGNMENT = 1002  # reassignment notification
   AAE_DAILY_SUMMARY = 1003  # escalation notification
   AAE_PUBLIC_EDIT = 1004  # a public user edited their question
-  AAE_PUBLIC_COMMENT = 1005 # a public user posted another comment
+  AAE_PUBLIC_RESPONSE = 1005 # a public user posted a response
   AAE_REJECT = 1006 # an expert has rejected a question
   #AAE_VACATION_RESPONSE = 1007 # received a vacation response to an assigned question
   AAE_INTERNAL_COMMENT = 1008 # an expert posted a comment
@@ -72,8 +72,8 @@ class Notification < ActiveRecord::Base
       process_aae_daily_summary
     when AAE_PUBLIC_EDIT
       process_aae_public_edit
-    when AAE_PUBLIC_COMMENT
-      process_aae_public_comment
+    when AAE_PUBLIC_RESPONSE
+      process_aae_public_response
     when AAE_REJECT
       process_aae_reject
     when AAE_INTERNAL_COMMENT
@@ -123,8 +123,8 @@ class Notification < ActiveRecord::Base
     InternalMailer.aae_public_edit(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
-  def process_aae_public_comment
-    #NYI
+  def process_aae_public_response
+    InternalMailer.aae_public_response(user: self.notifiable.recipient, response: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
   
   def process_aae_internal_comment
@@ -155,5 +155,9 @@ class Notification < ActiveRecord::Base
   def queue_delayed_notifications
     delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
     self.update_attribute(:delayed_job_id, delayed_job.id)
+  end
+  
+  def self.pending_activity_notification?(notifiable)
+    Notification.where(notifiable_id: notifiable.id, notificationtype: ACTIVITY, delivery_time: Time.now..ACTIVITY_NOTIFICATION_INTERVAL.from_now).size > 0
   end
 end

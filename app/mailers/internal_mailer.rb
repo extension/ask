@@ -116,11 +116,11 @@ class InternalMailer < ActionMailer::Base
     return_email
   end
   
-  def aae_public_comment(options = {})
+  def aae_public_response(options = {})
     @user = options[:user]
-    @comment = options[:comment]
-    @question = @comment.question
-    @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new comment."
+    @response = options[:response]
+    @question = @response.question
+    @subject = "[eXtension Question:#{@question.id}] A question you have been assigned has a new public response."
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]

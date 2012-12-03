@@ -52,8 +52,8 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
-  def internal_aae_public_comment
-    mail = InternalMailer.aae_public_comment(user: User.first, comment: Comment.last, cache_email: false)
+  def internal_aae_public_response
+    mail = InternalMailer.aae_public_response(user: User.first, response: Response.last, cache_email: false)
     return render_mail(mail)
   end
   
