@@ -1,7 +1,6 @@
 @import "_variables";
 
 body {
-  img {max-width:none !important;}
   .about p {line-height:1.6em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.5em;}
   /*reset bootstrap typography */
   font-size:13px; line-height: 18px;
@@ -168,6 +167,9 @@ body {
   #user_actions {float:left;}
   .logout {margin-left:1em;}
   
+  img {width: 100%;}
+  .size50x50 {width:50px !important; height:50px !important;}
+  
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
   }
@@ -257,6 +259,7 @@ body#public {
 	.public_rejected {border:1px solid #ff0000; background:#fff;}
 	.public_rejected {color:#ff0000;}
 	textarea {width:30em; max-width:95%;}
+	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		padding-top:0;
@@ -513,6 +516,7 @@ body#expert {
   #history .comment {background:#FFFFE6; display:inline-block; padding:.25em .5em; margin:0 0 .5em .5em;}
   .group_label {background:#333; color:#ddd; display:block; margin:0; text-transform:uppercase; font-size:8px; text-align:center; letter-spacing:1px; height:14px; line-height:14px;}
   #people_edit {margin:1em 0 1em;}
+
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
