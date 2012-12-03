@@ -107,6 +107,9 @@ gem "daemons"
 # command line scripts
 gem "thor"
 
+# anti-spam test
+gem 'rakismet'
+
 group :development do
   # require the powder gem
   gem 'powder'

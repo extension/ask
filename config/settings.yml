@@ -24,4 +24,5 @@ notification_whitelist:
    - 2001
    - 2010
 days_closed_for_evaluation: 8
-
+akismet_key: 'notset'
+akismet_host: 'https://ask.extension.org'

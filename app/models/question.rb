@@ -6,6 +6,10 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+  include MarkupScrubber
+  include Rakismet::Model
+  rakismet_attrs :author_email => :email, :content => :body
+
 
   class Question::Image < Asset
     has_attached_file :attachment, 
@@ -13,7 +17,6 @@ class Question < ActiveRecord::Base
                       :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
 
-  include MarkupScrubber
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
