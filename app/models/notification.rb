@@ -131,7 +131,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_response
-    InternalMailer.aae_public_response(user: self.notifiable.recipient, response: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_public_response(user: self.notifiable.question.current_resolver, response: self.notifiable).deliver unless (self.notifiable.question.current_resolver.nil? || self.notifiable.question.current_resolver.email.nil?)
   end
   
   def process_aae_internal_comment
