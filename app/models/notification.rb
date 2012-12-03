@@ -55,7 +55,7 @@ class Notification < ActiveRecord::Base
   
   
   def process
-    return true if (!Settings.send_notifications and !Settings.notification_whitelist.include?(self.notification_type))
+    return true if (!Settings.send_notifications)
     
     case self.notification_type
     when GROUP_USER_JOIN
@@ -114,7 +114,7 @@ class Notification < ActiveRecord::Base
   end  
   
   def process_aae_assignment
-    InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable.question).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
+    InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
   end
   
   def process_aae_reassignment

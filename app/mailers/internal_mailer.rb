@@ -200,7 +200,7 @@ class InternalMailer < ActionMailer::Base
   def aae_assignment_group(options = {})
     @user = options[:user]
     @question = options[:question]
-    @subject = "[eXtension Question:#{@question.id}] Incoming question for {@question.assigned_group.name}"
+    @subject = "[eXtension Question:#{@question.id}] Incoming question for #{@question.assigned_group.name}"
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]

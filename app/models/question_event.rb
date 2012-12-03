@@ -233,7 +233,7 @@ class QuestionEvent < ActiveRecord::Base
     when RESOLVED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_EXPERT_RESPONSE, delivery_time: 1.minute.from_now )
       if !Notification.pending_activity_notification?(self.question)
-        Notification.create(notifiable: self.question, notification_type: Notification::AAE_QUESTION_ACTIVITY, created_by: self.question.user.id, recipient_id: 1, delivery_time: Settings.activity_notification_interval.from_now)
+        Notification.create(notifiable: self.question, notification_type: Notification::AAE_QUESTION_ACTIVITY, created_by: 1, recipient_id: 1, delivery_time: Settings.activity_notification_interval.from_now)
       end
     else
       true
