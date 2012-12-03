@@ -114,11 +114,12 @@ class Notification < ActiveRecord::Base
   end  
   
   def process_aae_assignment
-    InternalMailer.aae_assignment(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable.question).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
   end
   
   def process_aae_reassignment
-    InternalMailer.aae_reassignment(user: self.notifiable.previous_handling_recipient, question: self.notifiable.question).deliver unless (self.notifiable.previous_handling_recipient.nil? || self.notifiable.recipient.email.nil?)
+    user = User.find(self.recipient_id)
+    InternalMailer.aae_reassignment(user: user, question: self.notifiable).deliver unless (user.nil? || user.email.nil?)
   end
   
   def process_aae_daily_summary
