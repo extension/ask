@@ -41,7 +41,7 @@
 
 <body>
 
-    <%= form_for @question, :html => {:multipart => true} do |f| %>
+    <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
