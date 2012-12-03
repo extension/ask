@@ -1,6 +1,7 @@
 @import "_variables";
 
 body {
+  img {width:auto;max-width:auto;}
   .about p {line-height:1.6em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.5em;}
   /*reset bootstrap typography */
   font-size:13px; line-height: 18px;
