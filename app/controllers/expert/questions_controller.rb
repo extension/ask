@@ -413,4 +413,17 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def activity_notificationprefs
+    user = current_user
+    if params[:question].present? and params[:value].present?
+      if params[:value] == '1'
+      Preference.create_or_update(user, Preference::NOTIFICATION_ACTIVITY, true, nil, params[:question])
+      end
+      if params[:value] == '0'
+      Preference.create_or_update(user, Preference::NOTIFICATION_ACTIVITY, false, nil, params[:question])
+      end
+    end
+    redirect_to :back
+  end
+  
 end
