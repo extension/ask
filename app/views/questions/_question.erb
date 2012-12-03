@@ -10,7 +10,7 @@
     <% @question.images.each do |image| %>
       <% if image.persisted? %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-        <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+        <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
 
         <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
