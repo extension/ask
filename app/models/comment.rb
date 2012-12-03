@@ -36,11 +36,16 @@ class Comment < ActiveRecord::Base
     write_attribute(:content, self.cleanup_html(comment_content))
   end
   
+  def is_reply?
+    !self.is_root?
+  end
+  
   def schedule_activity_notification
-#    if !Notification.pending_activity_notification?(self.question)
-#      Notification.create(notifiable: self.event, notificationtype: Notification::ACTIVITY, delivery_time: Notification::ACTIVITY_NOTIFICATION_INTERVAL.from_now)
-#    end
-#    if self.is_reply?
-#      Notification.create(notifiable: self, notificationtype: Notification::COMMENT_REPLY, delivery_time: 1.minute.from_now) unless self.learner == self.parent.learner
+    if !Notification.pending_activity_notification?(self.question)
+      Notification.create(notifiable: self.question, notification_type: Notification::AAE_QUESTION_ACTIVITY, created_by: self.user.id, recipient_id: 1, delivery_time: Settings.activity_notification_interval.from_now)
     end
+    if self.is_reply?
+      Notification.create(notifiable: self, notification_type: Notification::AAE_PUBLIC_COMMENT_REPLY, created_by: self.user.id, recipient_id: 1, delivery_time: 1.minute.from_now) unless self.user == self.parent.user
+    end
+  end
 end

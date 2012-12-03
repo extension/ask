@@ -510,6 +510,9 @@ class Question < ActiveRecord::Base
     end
   end
 
+  def question_activity_preference_list
+    list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+  end
   
     
 end

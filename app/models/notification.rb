@@ -36,6 +36,7 @@ class Notification < ActiveRecord::Base
   #AAE_EXPERT_NOREPLY = 1009 # an expert replied to the no-reply address
   #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees
   AAE_ASSIGNMENT_GROUP = 1011 
+  AAE_QUESTION_ACTIVITY = 1012
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -46,6 +47,7 @@ class Notification < ActiveRecord::Base
   #AAE_PUBLIC_NOREPLY_QUESTION = 2003 # public sent a new question to the no-reply address
   AAE_PUBLIC_EVALUATION_REQUEST = 2004 # request that the question submitter complete an evaluation
   AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT = 2010  # notification of submission, also "The Year We Make Contact"
+  AAE_PUBLIC_COMMENT_REPLY = 2011
 
 
   ##########################################
@@ -86,6 +88,10 @@ class Notification < ActiveRecord::Base
       process_aae_public_evaluation_request
     when AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT
       process_aae_public_submission_acknowledgement
+    when AAE_PUBLIC_COMMENT_REPLY
+      process_aae_public_comment_reply
+    when AAE_QUESTION_ACTIVITY
+      process_aae_question_activity
     else
       # nothing
     end
@@ -152,12 +158,20 @@ class Notification < ActiveRecord::Base
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
   
+  def process_aae_public_comment_reply
+    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless self.notifiable.parent.user.nil? or self.notifiable.parent.user.email.nil?
+  end
+  
+  def process_aae_question_activity
+    self.notifiable.question_activity_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
+  end
+  
   def queue_delayed_notifications
     delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
     self.update_attribute(:delayed_job_id, delayed_job.id)
   end
   
   def self.pending_activity_notification?(notifiable)
-    Notification.where(notifiable_id: notifiable.id, notificationtype: ACTIVITY, delivery_time: Time.now..ACTIVITY_NOTIFICATION_INTERVAL.from_now).size > 0
+    Notification.where(notifiable_id: notifiable.id, notification_type: AAE_QUESTION_ACTIVITY, delivery_time: Time.now..Settings.activity_notification_interval.from_now).size > 0
   end
 end
