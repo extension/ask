@@ -55,7 +55,7 @@ class Notification < ActiveRecord::Base
   
   
   def process
-    return true if (!Settings.send_notifications and !Settings.notification_whitelist.include?(self.notification_type))
+    return true if (!Settings.send_notifications)
     
     case self.notification_type
     when GROUP_USER_JOIN
