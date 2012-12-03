@@ -114,7 +114,7 @@ class Notification < ActiveRecord::Base
   end  
   
   def process_aae_assignment
-    InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable.question).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
+    InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
   end
   
   def process_aae_reassignment
