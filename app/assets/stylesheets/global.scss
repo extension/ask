@@ -460,7 +460,8 @@ body#expert {
 	.tag-topic,
 	.tag-topic a {background:#C2E5EC; color:#1F5983;}
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
-	
+	#reassign_tag_list {margin:0;padding:0;list-style:none;}
+	#reassign_tag_list em {padding:1em; font-weight:bold; }
 	
 	
 	
@@ -498,6 +499,13 @@ body#expert {
 	.public {background: transparent url(/assets/icon_checkmark_32.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat;}
 	.match i, .nomatch i {display:none;}
+	.nomatch {color:#999;}
+	.location_match {background: #DAEAC9  url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; color:#1F5983; height:32px;}
+	.tag_match {background: #C2E5EC  url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; color:#1F5983; height:32px;}
+
+	.matching_term, .matching_code {display:none;}
+	
+	
 /*	.testh1 {outline:1px solid red; margin:1em 1em 3em;}*/
 	.testh1 {}
 	#private_question {}
@@ -506,12 +514,18 @@ body#expert {
   .nomatches {padding:2em;}
   
   .listview {padding-top:3em;}
-  #reassign_actions {padding:1em;}
+  #reassign_actions {padding-bottom:1em;}
   #reassign_header {padding:1em;}
   li small {font-size:11px; color:#999;}
   #history .comment {background:#FFFFE6; display:inline-block; padding:.25em .5em; margin:0 0 .5em .5em;}
   .group_label {background:#333; color:#ddd; display:block; margin:0; text-transform:uppercase; font-size:8px; text-align:center; letter-spacing:1px; height:14px; line-height:14px;}
   #people_edit {margin:1em 0 1em;}
+  
+  #reassign_wrapper {}
+	.assignment_match {border-bottom:1px solid #ccc; margin-bottom:1.25em; padding-bottom:.75em;}
+	.matching_wrapper {border:1px solid blue;}
+	.matching_wrapper td {line-height:1.1em; vertical-align:middle;}
+
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
@@ -538,6 +552,14 @@ body#expert {
     #question_wrapper {padding:1em 0 !important;}
     h2.title {line-height:1.4em; margin:.5em 0 .85em; font-size:1.2em}
     #history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:0;}
+    #reassign_header {padding:0;}
+    h1 {line-height:1.4em; margin:.5em 0 .85em; font-size:1.6em}
+    .location_match {background: #DAEAC9; color:#1F5983; text-align:center; height:40px;}
+  	.tag_match {background: #C2E5EC; color:#1F5983; text-align:center; height:40px;}
+  	.nomatch {color:#aaa; text-align:center; background:#fff; height:40px;}
+  	.matching_term {font-style: normal !important; overflow:hidden; display:block; @include wordwrap;}
+  	.matching_code {display:inline;}
+  	.matching_wrapper td {width:auto;}
 	}
 	
 	@media screen and (max-width: 420px) {
