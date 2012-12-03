@@ -256,9 +256,9 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
+    Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
     if(is_reassign and public_reopen == false)
-      Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
     end
       
   end
@@ -486,11 +486,11 @@ class Question < ActiveRecord::Base
   end
   
   def notify_submitter
-    Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
+    Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
   end
   
   def send_global_widget_notifications
-    Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
+    Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
   end
   
 
@@ -510,6 +510,9 @@ class Question < ActiveRecord::Base
     end
   end
 
+  def question_activity_preference_list
+    list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+  end
   
     
 end

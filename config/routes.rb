@@ -49,6 +49,8 @@ Aae::Application.routes.draw do
         post 'reactivate'
         get  'close_out'
         post 'close_out'
+        post 'activity_notification_prefs'
+        
       end
     end
 
@@ -104,6 +106,7 @@ Aae::Application.routes.draw do
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
     match "questions/add_history_comment" => "questions#add_history_comment", :via => [:post]
     match "questions/associate_with_group" => "questions#associate_with_group", :via => [:post]
+    match "questions/activity_notificationprefs" => "questions#activity_notificationprefs", :via => [:post]
     match "settings/add_tag" => "settings#add_tag", :via => [:post]
     match "settings/remove_tag" => "settings#remove_tag", :via => [:post]
     match "search/all" => "search#all", :via => [:get]

@@ -18,6 +18,7 @@ geoip_data_file: 'notset'
 geoname_data_file: 'notset'
 default_display_timezone: 'Eastern Time (US & Canada)'
 daily_summary_delivery_time: '11:30:00'
+activity_notification_interval: 28800.0
 send_notifications: false
 notification_whitelist:
    - 2001

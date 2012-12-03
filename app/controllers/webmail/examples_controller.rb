@@ -52,8 +52,8 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
-  def internal_aae_public_comment
-    mail = InternalMailer.aae_public_comment(user: User.first, comment: Comment.last, cache_email: false)
+  def internal_aae_public_response
+    mail = InternalMailer.aae_public_response(user: User.first, response: Response.last, cache_email: false)
     return render_mail(mail)
   end
   
@@ -80,6 +80,16 @@ class Webmail::ExamplesController < ApplicationController
   def public_evaluation_request
     show_example_survey = !(params[:example_survey] and ['f','false','no','0'].include?(params[:example_survey].downcase))
     mail = PublicMailer.public_evaluation_request(user: User.first, question: Question.answered.last, cache_email: false, example_survey: show_example_survey)
+    return render_mail(mail)
+  end
+
+  def public_comment_reply
+    mail = PublicMailer.public_comment_reply(user: User.first, comment: Comment.last, cache_email: false)
+    return render_mail(mail)
+  end
+  
+  def internal_aae_question_activity
+    mail = InternalMailer.aae_question_activity(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
 
