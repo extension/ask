@@ -205,10 +205,14 @@ class Question < ActiveRecord::Base
         group_assignee_ids = group.assignees.collect{|ga| ga.id}
         assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
       end
-      # still aint got no one? assign to the group
+      # still aint got no one? assign to a group leader
       if !assignee
-        assign_to_group(group, system_user, nil)
-        return
+        if group.leaders.active.length > 0
+          assignee = pick_user_from_list(group.leaders.active)
+        # still aint got no one? really?? Wrangle that bad boy.
+        else
+          assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+        end
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
@@ -265,7 +269,7 @@ class Question < ActiveRecord::Base
   
   # Assigns the question to the group, logs the assignment, and sends an email
   # to the group members signed up for notifications notifying them that a question has been assigned to their group
-  def assign_to_group(group, assigned_by, comment, public_reopen = false, public_comment = nil)
+  def assign_to_group(group, assigned_by, comment)
     raise ArgumentError unless group and group.instance_of?(Group)  
 
     # don't bother doing anything if this is an assignment to the group already assigned. 
@@ -285,19 +289,17 @@ class Question < ActiveRecord::Base
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
     end
-
-    # if this is a reopen reassignment due to the public user commenting on the sq
-    if public_comment
-      asker_comment = public_comment.response
+    
+    # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change, 
+    # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
+    if group.individual_assignment == true
+      auto_assign
     else
-      asker_comment = nil
+      if(is_reassign)
+        Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      end
     end
-    
-    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
-    if(is_reassign)
-      Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
-    end
-    
+    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?  
   end
 
   def change_group(group, changed_by)
