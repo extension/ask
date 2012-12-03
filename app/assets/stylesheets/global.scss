@@ -210,13 +210,11 @@ body {
 
 
 
-
+body#public {background:#f4f4f4;}
 
 body#public {
-  background:#f4f4f4;
-  #publicbar.navbar-inner {height:80px !important; background:#f47B28;
-/*    opacity:0.4;*/
-  }
+  #publicbar.navbar-inner {height:80px !important; background: #f47B28;}
+  .navbar-inner{ filter:none;}
   #publicbar.navbar-inner .container {height:80px !important;}
   .question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
   
@@ -273,7 +271,7 @@ body#public {
 	@media screen and (min-width: 979px) {
 	  #publicbar .brand { font-size:2.5em;}
 		.navbar #publicbar .container {width: 940px; padding:2em;}
-		#publicbar.navbar-inner {height:120px !important; };
+		#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 	}
 	@media screen and (min-width: 1200px) {
 		.navbar #publicbar .container {width: 1170px; padding:2em 0;}
