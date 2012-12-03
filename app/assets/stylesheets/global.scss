@@ -170,9 +170,11 @@ body {
   img {width: 100%;}
   .size50x50 {width:50px !important; height:50px !important;}
   .size80x80 {width:80px !important; height:80px !important;}
+  .size100w {width:100px !important;}
   .medium {width:100px !important; height:100px !important;}
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
+
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
