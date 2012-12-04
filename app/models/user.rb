@@ -43,6 +43,7 @@ class User < ActiveRecord::Base
     boolean :retired
     boolean :is_blocked
     string :kind
+    time :last_sign_in_at
   end
 
 

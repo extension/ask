@@ -79,6 +79,7 @@ class Expert::SearchController < ApplicationController
               with :is_blocked, false
               with :retired, false
               with :kind, 'User'
+              order_by :last_sign_in_at, :desc
               fulltext(params[:q]) do
                 fields(:name)
                 fields(:bio)

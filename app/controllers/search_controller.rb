@@ -4,7 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class Expert::SearchController < ApplicationController
+class SearchController < ApplicationController
   layout 'public'
   
   
@@ -13,7 +13,7 @@ class Expert::SearchController < ApplicationController
     # for solr and will make it crash, and if you ain't got no q param, no search goodies for you!
     if !params[:q] || params[:q].gsub(/["'+-]/, '').strip.blank?
       flash[:error] = "Empty/invalid search terms"
-      return redirect_to home_url
+      return redirect_to root_url
     end
     
     @list_title = "Search for '#{params[:q]}'"
@@ -22,7 +22,7 @@ class Expert::SearchController < ApplicationController
                   fulltext(params[:q])
                   without(:status_state, Question::STATUS_REJECTED)
                   with :is_private, false
-                  paginate :page => 1, :per_page => 10
+                  paginate :page => params[:page], :per_page => 10
                 end
     @questions = questions.results
   end
