@@ -5,6 +5,9 @@
 #  BSD(-compatible)
 #  see LICENSE file
 
+class SpamError < StandardError
+end
+
 class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
@@ -44,8 +47,10 @@ class Question < ActiveRecord::Base
   
   before_create :generate_fingerprint, :set_last_opened
 
-  after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+
+  after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
   after_update :index_me
+
 
   # sunspot/solr search
   searchable :auto_index => false do
@@ -111,6 +116,18 @@ class Question < ActiveRecord::Base
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
 
+
+  # check for spam - given the process flow, not sure
+  # this is a candidate for delayed job
+  def check_spam
+    if self.spam?
+      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+      # halt callback chain
+      raise SpamError
+    else
+      true
+    end
+  end
 
 
   # for purposes of solr search

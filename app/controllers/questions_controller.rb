@@ -232,6 +232,10 @@ class QuestionsController < ApplicationController
         else
           return render(:template => 'widget/index', :layout => false)
         end
+      rescue SpamError
+        # thank the spammer
+        flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
+        return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false  
       rescue Exception => e
         flash[:notice] = 'An internal error has occured. Please check back later.'
         @host_name = request.host_with_port
@@ -308,11 +312,16 @@ class QuestionsController < ApplicationController
     @question.status_state = Question::STATUS_SUBMITTED
     # TODO: review - this make no sense to me - jayoung
     @question.group_name = @question.assigned_group.name
-    if(@question.save)
-      returninformation = {'question_id' => @question.id, 'success' => true}
-      return render :json => returninformation.to_json, :status => :ok
-    else
-      returninformation = {'message' => @question.errors.full_messages.join("\n"), 'success' => false}
+    begin     
+      if(@question.save)
+        returninformation = {'question_id' => @question.id, 'success' => true}
+        return render :json => returninformation.to_json, :status => :ok
+      else
+        returninformation = {'message' => @question.errors.full_messages.join("\n"), 'success' => false}
+        return render :json => returninformation.to_json, :status => :unprocessable_entity
+      end
+    rescue SpamError
+      returninformation = {'message' => 'Question detected as spam', 'success' => false}
       return render :json => returninformation.to_json, :status => :unprocessable_entity
     end
   end
