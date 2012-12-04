@@ -131,7 +131,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_public_response
-    InternalMailer.aae_public_response(user: self.notifiable.recipient, response: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_public_response(user: self.notifiable.question.current_resolver, response: self.notifiable).deliver unless (self.notifiable.question.current_resolver.nil? || self.notifiable.question.current_resolver.email.nil?)
   end
   
   def process_aae_internal_comment
@@ -164,7 +164,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_question_activity
-    self.notifiable.question_activity_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
+    self.notifiable.question_activity_preference_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
   end
   
   def queue_delayed_notifications

@@ -61,6 +61,7 @@ namespace :deploy do
     rm -rf #{release_path}/config/database.yml && 
     ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml &&
     ln -nfs #{shared_path}/config/settings.local.yml #{release_path}/config/settings.local.yml &&
+    ln -nfs #{shared_path}/config/scout_rails.yml #{release_path}/config/scout_rails.yml &&
     ln -nfs #{shared_path}/config/sunspot.yml #{release_path}/config/sunspot.yml
     CMD
   end

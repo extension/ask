@@ -49,6 +49,16 @@ class Expert::QuestionsController < ApplicationController
   def assign_options
     @user = User.find_by_id(params[:expert_id])
     @question = Question.find_by_id(params[:id])
+    
+    if !@question.present?
+      flash[:error] = "Question does not exist with this ID."
+      return redirect_to expert_home_url
+    end
+    
+    if !@user.present?
+      flash[:error] = "Expert does not exist with this ID."
+      return redirect_to expert_question_url(@question)
+    end
   end
   
   def group_assign_options

@@ -32,6 +32,11 @@ class CronTasks < Thor
       end
       puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
+    
+    def create_daily_summary_notification
+      Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
+      puts "Created notification for daily summary emails"
+    end
 
   end
 
@@ -47,8 +52,11 @@ class CronTasks < Thor
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    create_evaluation_notifications
+    #create_evaluation_notifications
+    create_daily_summary_notification
   end
+  
+  
 
 end
 
