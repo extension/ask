@@ -119,6 +119,7 @@ group :development do
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
+  gem 'net-http-spy'
 end
 
 group :test do
