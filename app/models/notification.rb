@@ -164,7 +164,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_question_activity
-    self.notifiable.question_activity_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
+    self.notifiable.question_activity_preference_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
   end
   
   def queue_delayed_notifications
