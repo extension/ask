@@ -1,21 +1,31 @@
 <h1><%= @list_title %></h1>
 
-<p><%= link_to "View everything tagged '#{params[:q]}'", expert_home_tags_path(:name => params[:q]) %></p>
+<p><%= link_to "See everything tagged '#{params[:q]}'", expert_home_tags_path(:name => params[:q]) %></p>
 
-<h3>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h3>
-<%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
-<% if @questions.total_entries > 15 %>
-<%= link_to 'see all', expert_search_questions_path(:q => params[:q]) %>
-<% end %>
+<p><a href="#expert_results">Jump to Expert results</a> <a href="#group_results">Jump to Group results</a></p>
 
-<h3>Experts <small>(with '<%= params[:q] %>' in the name)</small></h3>
-<%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
-<% if @experts.total_entries > 15 %>
-<%= link_to 'see all', expert_search_experts_path(:q => params[:q]) %>
-<% end %>
+<div class="search_section">
+  <h2>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h2>
+  <p><%= link_to 'see all Question results', expert_search_questions_path(:q => params[:q]) %></p>
+  <%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
+  <br class="clearing" />
+</div>
 
-<h3>Groups <small>(with '<%= params[:q] %>' in the name)</small></h3>
-<%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
-<% if @groups.total_entries > 15 %>
-<%= link_to 'see all', expert_search_groups_path(:q => params[:q]) %>
-<% end %>
+<span class="search_section_anchor" id="expert_results"></span>
+<div class="search_section">
+  <h2>Experts <small>(with '<%= params[:q] %>' in the name)</small></h2>
+  <p><%= link_to 'See all Expert results', expert_search_experts_path(:q => params[:q]) %></p>
+  <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
+  <br class="clearing" />
+</div>
+
+<span class="search_section_anchor" id="group_results"></span>
+<div class="search_section">
+  <h2>Groups <small>(with '<%= params[:q] %>' in the name)</small></h2>
+  <p><%= link_to 'See all Group results', expert_search_groups_path(:q => params[:q]) %></p>
+  <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
+  <br class="clearing" />
+</div>
+
+
+<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
