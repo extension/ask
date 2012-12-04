@@ -59,9 +59,11 @@
       </p>
     </fieldset>
   <% end %>
-
-
-
+  
+  <%- if current_user and current_user.email.present? -%>
+    <p>Your answer will be sent to <%= current_user.email %></p>
+  <% end %>
+  
   <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary" %></p>
 <% end %>
 
