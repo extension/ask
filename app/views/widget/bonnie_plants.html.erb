@@ -69,7 +69,7 @@
         </label>
     </p>
 
-    <%- if !current_user -%>
+    <%- if !current_user or !current_user.email.present? -%>
     <p>
         <label for="email">Email: <span>Type it carefully; this is how you'll receive your answer.</span>
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
