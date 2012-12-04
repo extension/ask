@@ -110,6 +110,9 @@ gem "thor"
 # anti-spam test
 gem 'rakismet'
 
+# scout performance monitoring
+gem 'scout_rails'
+
 group :development do
   # require the powder gem
   gem 'powder'
