@@ -1,16 +1,7 @@
-<h1><%= title %></h1>
+<div class="span12">
 
-<div id="main" class="span12">
-  <% if !defined?(paginate_groups) || paginate_groups != false %>
-	<p>Displaying <strong><%= @groups.offset + 1 %>-<%= @groups.offset + @groups.size %> of <%= @groups.total_entries %></strong></p>
-  <% end %>  
-
- 
   <% @groups.each do |group| %>
-   <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %>
+    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %></p>
   <% end %>
 
-  <% if !defined?(paginate_groups) || paginate_groups != false %>
-  <%= paginate @groups %>
-  <% end %>
 </div>
