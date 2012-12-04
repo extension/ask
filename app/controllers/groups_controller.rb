@@ -77,6 +77,12 @@ class GroupsController < ApplicationController
         end
       end
     end
+  end
+
+  # convenience method to redirect to a widget page for the group
+  def widget
+    @group = Group.find(params[:id])
+    return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
   end  
   
 end
