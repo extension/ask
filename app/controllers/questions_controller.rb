@@ -32,34 +32,24 @@ class QuestionsController < ApplicationController
     if ga_tracking.length > 0
       flash.now[:googleanalytics] = question_path(@question.id) + "?" + ga_tracking.join(",")
     end
-    
-    if session[:submitter_id].present? 
-      if (@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
-        @response = Response.new
-        3.times do    
-          @response.images.build
-        end
-
-        # max of 3 total images allowed (including existing)
-        new_image_count = 3 - @question.images.count
-        if new_image_count > 0
-          new_image_count.times do    
-            @question.images.build
-          end
-        end
-      end
-    end
 
     # should this show as private?
     @private_view = true
     if(!@question.is_private?)
       @private_view = false
-    elsif(@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
+    end
+
+    if(current_user and current_user.id == @question.submitter.id)
+      setup_images_for_edit
       @private_view = false
+      @viewer = current_user
+    elsif (@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
+      setup_images_for_edit
+      @private_view = false
+      @viewer = current_user
     end
     
-    if(current_user or session[:submitter_id])
-      @viewer = current_user.present? ? current_user : User.find_by_id(session[:submitter_id])
+    if( @viewer)
       @last_viewed_at = @viewer.last_view_for_question(@question)
       # log view
       QuestionViewlog.log_view(@viewer,@question)
@@ -73,7 +63,9 @@ class QuestionsController < ApplicationController
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
       session[:question_id] = @question.id
-      if session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter_id
+      if(current_user and current_user.id == @question.submitter_id)
+        redirect_to question_url(@question)
+      elsif session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter_id
         redirect_to question_url(@question)
       else
         return render :template => 'questions/submitter_signin'
@@ -103,17 +95,26 @@ class QuestionsController < ApplicationController
     
   def update
     @question = Question.find_by_id(params[:id])
+    if(!@question)
+      return record_not_found
+    end
+
     # validate that I can edit this question
-    if @question and session[:submitter_id].present? && session[:submitter_id].to_i == @question.submitter_id
+    @can_edit = false
+    if(current_user and current_user.id == @question.submitter_id)
+      @can_edit = true
+    elsif(session[:submitter_id].present? and session[:submitter_id].to_i == @question.submitter_id)
+      @can_edit = true
+    end
+
+    if(@can_edit)
       if !@question.update_attributes(params[:question])
         flash[:notice] = "There was an error saving your question, please make sure the question field is not blank."
       else
         flash[:notice] = "Your changes have been saved. Thanks for making your question better!"
       end
-      
       QuestionEvent.log_public_edit(@question)
-    end
-    
+    end  
     redirect_to question_url(@question)
   end
   
@@ -139,14 +140,18 @@ class QuestionsController < ApplicationController
           raise ArgumentError
         end
 
-        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
-          if !@submitter.valid?
-            @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
-            raise ArgumentError
+        if current_user and current_user.email.present?
+          @submitter = current_user
+        else
+          if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+            @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+            if !@submitter.valid?
+              @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
+              raise ArgumentError
+            end
           end
         end
-        
+              
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.group_name = @group.name
@@ -318,6 +323,21 @@ class QuestionsController < ApplicationController
   end
 
   private
+
+  def setup_images_for_edit
+    @response = Response.new
+    3.times do    
+      @response.images.build
+    end
+
+    # max of 3 total images allowed (including existing)
+    new_image_count = 3 - @question.images.count
+    if new_image_count > 0
+      new_image_count.times do    
+        @question.images.build
+      end
+    end
+  end
 
   def set_submitter
     if(!@authenticated_submitter = User.find_by_id(session[:submitter_id]))

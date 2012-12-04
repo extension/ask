@@ -160,12 +160,22 @@ body {
 	.response_block .author {padding: 0 0 0 1em;}
 	#question {padding-bottom:1.5em; margin-bottom:2em; border-bottom:1px solid #ddd;}
   
-  
+  .search_section {clear:both;}
+  .search_section_anchor {padding-bottom:70px; display:block;}
   ul.navavatar.loggedin {margin:0;padding:0; /*outline:lime 1px solid;*/}
   ul.navavatar.loggedin > li {margin:0;padding:0; list-style:none; /*outline:red 1px solid;*/ float:left; height:44px; line-height:44px;}
   ul.navavatar.loggedin li.username {padding-left:1em;padding-right:1em;}
   #user_actions {float:left;}
   .logout {margin-left:1em;}
+  
+  img {width: 100%;}
+  .size50x50 {width:50px !important; height:50px !important;}
+  .size80x80 {width:80px !important; height:80px !important;}
+  .size100w {width:100px !important;}
+  .medium {width:100px !important; height:100px !important;}
+  .thumb {width:40px !important; height:40px !important;}
+  .mini {width:20px !important; height:20px !important;}
+
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
@@ -201,13 +211,11 @@ body {
 
 
 
-
+body#public {background:#f4f4f4;}
 
 body#public {
-  background:#f4f4f4;
-  #publicbar.navbar-inner {height:80px !important; background:#f47B28;
-/*    opacity:0.4;*/
-  }
+  #publicbar.navbar-inner {height:80px !important; background: #f47B28;}
+  .navbar-inner{ filter:none;}
   #publicbar.navbar-inner .container {height:80px !important;}
   .question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
   
@@ -256,6 +264,7 @@ body#public {
 	.public_rejected {border:1px solid #ff0000; background:#fff;}
 	.public_rejected {color:#ff0000;}
 	textarea {width:30em; max-width:95%;}
+	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		padding-top:0;
@@ -263,7 +272,7 @@ body#public {
 	@media screen and (min-width: 979px) {
 	  #publicbar .brand { font-size:2.5em;}
 		.navbar #publicbar .container {width: 940px; padding:2em;}
-		#publicbar.navbar-inner {height:120px !important; };
+		#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 	}
 	@media screen and (min-width: 1200px) {
 		.navbar #publicbar .container {width: 1170px; padding:2em 0;}
@@ -520,6 +529,7 @@ body#expert {
   #history .comment {background:#FFFFE6; display:inline-block; padding:.25em .5em; margin:0 0 .5em .5em;}
   .group_label {background:#333; color:#ddd; display:block; margin:0; text-transform:uppercase; font-size:8px; text-align:center; letter-spacing:1px; height:14px; line-height:14px;}
   #people_edit {margin:1em 0 1em;}
+
   
   #reassign_wrapper {}
 	.assignment_match {border-bottom:1px solid #ccc; margin-bottom:1.25em; padding-bottom:.75em;}

@@ -49,6 +49,16 @@ class Expert::QuestionsController < ApplicationController
   def assign_options
     @user = User.find_by_id(params[:expert_id])
     @question = Question.find_by_id(params[:id])
+    
+    if !@question.present?
+      flash[:error] = "Question does not exist with this ID."
+      return redirect_to expert_home_url
+    end
+    
+    if !@user.present?
+      flash[:error] = "Expert does not exist with this ID."
+      return redirect_to expert_question_url(@question)
+    end
   end
   
   def group_assign_options
@@ -411,6 +421,19 @@ class Expert::QuestionsController < ApplicationController
     if(@question and @group)
       @question.change_group(@group,current_user)
     end
+  end
+  
+  def activity_notificationprefs
+    user = current_user
+    if params[:question].present? and params[:value].present?
+      if params[:value] == '1'
+      Preference.create_or_update(user, Preference::NOTIFICATION_ACTIVITY, true, nil, params[:question])
+      end
+      if params[:value] == '0'
+      Preference.create_or_update(user, Preference::NOTIFICATION_ACTIVITY, false, nil, params[:question])
+      end
+    end
+    redirect_to :back
   end
   
 end

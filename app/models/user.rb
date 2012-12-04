@@ -308,8 +308,8 @@ class User < ActiveRecord::Base
     self.preferences.setting(Preference::NOTIFICATION_INCOMING, group)
   end
   
-  def send_comment_notification?(question)
-    self.preferences.setting(Preference::NOTIFICATION_COMMENT, nil, question)
+  def send_activity_notification?(question)
+    self.preferences.setting(Preference::NOTIFICATION_ACTIVITY, nil, question)
   end
 
   def send_daily_summary?(group)

@@ -72,7 +72,7 @@ class Expert::SearchController < ApplicationController
       return redirect_to expert_home_url
     end
   
-    @list_title = "Search on experts for '#{params[:q]}'"
+    @list_title = "Search for Experts with '#{params[:q]}' in the name"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     experts = User.search do
               with :is_blocked, false
@@ -94,8 +94,8 @@ class Expert::SearchController < ApplicationController
       flash[:error] = "Empty/invalid search terms"
       return redirect_to expert_home_url
     end
-  
-    @list_title = "Search on groups for '#{params[:q]}'"
+    
+    @list_title = "Search for Groups with '#{params[:q]}' in the name"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     groups = Group.search do
                fulltext(params[:q])
