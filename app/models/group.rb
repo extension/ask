@@ -61,6 +61,7 @@ class Group < ActiveRecord::Base
   # sunspot/solr search
   searchable do
     text :name
+    text :description
   end
     
   # pagination per page default 

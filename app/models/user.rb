@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
   # sunspot/solr search
   searchable do
     text :name
+    text :bio
     text :login
     text :email
     text :tag_fulltext

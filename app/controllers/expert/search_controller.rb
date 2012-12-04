@@ -29,6 +29,7 @@ class Expert::SearchController < ApplicationController
     experts = User.search do
               fulltext(params[:q]) do
                 fields(:name)
+                fields(:bio)
               end
               with :is_blocked, false
               with :retired, false
@@ -80,6 +81,7 @@ class Expert::SearchController < ApplicationController
               with :kind, 'User'
               fulltext(params[:q]) do
                 fields(:name)
+                fields(:bio)
               end
               paginate :page => params[:page], :per_page => 15
             end
