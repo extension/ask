@@ -130,7 +130,11 @@
          <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
        </div>
      <% end %>
-
+     
+     <%- if current_user and current_user.email.present? -%>
+       <p>Your answer will be sent to <%= current_user.email %></p>
+     <% end %>
+     
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
     <% end %>
 
