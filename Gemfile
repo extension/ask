@@ -107,6 +107,9 @@ gem "daemons"
 # command line scripts
 gem "thor"
 
+# anti-spam test
+gem 'rakismet'
+
 group :development do
   # require the powder gem
   gem 'powder'
@@ -116,6 +119,7 @@ group :development do
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
+  gem 'net-http-spy'
 end
 
 group :test do

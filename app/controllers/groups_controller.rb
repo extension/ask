@@ -56,9 +56,13 @@ class GroupsController < ApplicationController
       end
       
       if @question.save
-        session[:question_id] = @question.id
-        session[:submitter_id] = @submitter.id
-        redirect_to(@question, :notice => 'Question was successfully created.')
+        if(!@question.spam?)
+          session[:question_id] = @question.id
+          session[:submitter_id] = @submitter.id
+          redirect_to(@question, :notice => 'Question was successfully created.')
+        else
+          redirect_to(root_url)
+        end
       end
     end
   end  
