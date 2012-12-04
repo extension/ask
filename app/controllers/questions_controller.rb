@@ -131,18 +131,18 @@ class QuestionsController < ApplicationController
         # remove all whitespace in question before putting into db.
         @question = Question.new(params[:question])
 
-        # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
-        @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : params[:question][:submitter_email]
-
-        # make sure email and confirmation email match up
-        if params[:question][:submitter_email] != @email_confirmation
-          @argument_errors = "Email address does not match the confirmation email address."
-          raise ArgumentError
-        end
-
         if current_user and current_user.email.present?
           @submitter = current_user
         else
+          # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
+          @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : params[:question][:submitter_email]
+
+          # make sure email and confirmation email match up
+          if params[:question][:submitter_email] != @email_confirmation
+            @argument_errors = "Email address does not match the confirmation email address."
+            raise ArgumentError
+          end
+          
           if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
             @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
             if !@submitter.valid?
