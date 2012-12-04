@@ -55,17 +55,15 @@ class GroupsController < ApplicationController
         @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
       end
       
-      begin 
-        if @question.save
+      if @question.save
+        if(!@question.spam?)
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
           redirect_to(@question, :notice => 'Question was successfully created.')
+        else
+          redirect_to(root_url)
         end
-      rescue SpamError
-        # don't set session, but don't offend the spammer (or the unwitting person we rejected)
-        redirect_to(root_url)
       end
-
     end
   end  
   

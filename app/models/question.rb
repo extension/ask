@@ -5,9 +5,6 @@
 #  BSD(-compatible)
 #  see LICENSE file
 
-class SpamError < StandardError
-end
-
 class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
@@ -122,11 +119,8 @@ class Question < ActiveRecord::Base
   def check_spam
     if self.spam?
       self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
-      # halt callback chain
-      raise SpamError
-    else
-      true
     end
+    true
   end
 
 
@@ -172,6 +166,7 @@ class Question < ActiveRecord::Base
   end
   
   def auto_assign_by_preference
+    return true if self.spam?
     if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
       reject_msg = "This question was a duplicate of incoming question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
@@ -447,6 +442,7 @@ class Question < ActiveRecord::Base
   end
    
   def index_me
+    return true if self.spam?
     # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
     # did not change and these other fields did, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
     # since a response is not created, then this hook will need to execute, otherwise, we're good to go.
@@ -508,11 +504,15 @@ class Question < ActiveRecord::Base
   end
   
   def notify_submitter
-    Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
+    if(!self.spam?)
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
+    end
   end
   
   def send_global_widget_notifications
-    Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
+    if(!self.spam?)
+      Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
+    end
   end
   
 
