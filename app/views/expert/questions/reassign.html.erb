@@ -1,14 +1,21 @@
 <% @page_title = "Reassign"%>
 
-<div class="span7">
+<div class="span12">
   
   <div id="reassign_header">
-  <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
-
-  <h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
+    <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+    <h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
   </div>
   
+  <div id="reassign_actions">
+    <% if (@question.assignee != current_user) || 
+      (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
+      <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
+    <% end %>
+    <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
 
+    <input id="expert_name" placeholder="Search by name for Experts or Groups" />
+  </div>
 
 
 <% if (!@question.location.present?) && (@question.tags.size == 0) %>
@@ -16,7 +23,8 @@
 <% else %>
 
 <div id="reassign_wrapper">
-    
+  
+  <div id="reassign_tag_list_wrapper">
   <div class="row-fluid">
     <div class="span4">
       <h2>Best Matches</h2>
@@ -28,24 +36,49 @@
         
         <% if @question.location.present? %>
           <% filter_terms <<  @question.location.name %> 
-          <li><span class="tag tag-geography"><em><%= filter_terms.count %></em> <%= @question.location.name %> <span class="matching_code">(<%= @question.location.abbreviation %>)</span></span></li>
+          <li><span class="tag tag-geography"><em class="reassign_tag_list_item"><%= filter_terms.count %></em> <%= @question.location.name %> <span class="matching_code">(<%= @question.location.abbreviation %>)</span></span></li>
         <% end %>
   
         <% if @question.county.present? %>
           <% filter_terms <<  @question.county.name %> 
-          <li><span class="tag tag-geography"><em><%= filter_terms.count %></em> <%= "#{@question.county.name}" %> <span class="matching_code">(Co.)</span></span></li>
+          <li><span class="tag tag-geography"><em class="reassign_tag_list_item"><%= filter_terms.count %></em> <%= "#{@question.county.name}" %> <span class="matching_code">(Co.)</span></span></li>
         <% end %>
   
         <% if @question.tags.size > 0 %>
           <% @question.tags.each do |tag| %>
             <% filter_terms <<  tag.name %> 
-            <li><span class="tag tag-topic"><em><%= filter_terms.count %></em> <%= tag.name %></span></li>
+            <li><span class="tag tag-topic"><em class="reassign_tag_list_item"><%= filter_terms.count %></em> <%= tag.name %></span></li>
           <% end %>
         <% end %>
         
         </ul>
     </div>
   </div>
+  </div>
+  
+  <div class="assignment_match_header <% filter_terms.count %>">
+    <div class="row-fluid">
+    
+      <div class="span4"><h2>Best Matches</h2></div>
+        
+      <div class="span8">
+      <table class="table table-bordered">
+      <tr class="matching_wrapper term_count_<%= filter_terms.count %>">
+      <% filter_terms.to_enum.with_index(1).each do |term, index| %>
+        <% if @question.county.present? && term == @question.county.name %>
+          <td class="match location_match"><em class="matching_term"><%= @question.county.name %></em></td>
+        <% elsif @question.location.present? && term == @question.location.name %>
+          <td class="match location_match"><em class="matching_term"><%= @question.location.abbreviation %></td>
+        <% else %>
+          <td class="match tag_match"><em class="matching_term"><%= term %></em></td>
+        <% end %>
+      <% end %>
+      </tr>
+      </table>
+      </div>
+  </div>
+  </div>
+  
   
 <% if @groups.size > 0 %>
   	<% @groups.each do |group| %>
@@ -132,17 +165,8 @@
 
 </div>
 
-<div class="span3">
-<div id="reassign_actions">
-  <% if (@question.assignee != current_user) || 
-    (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
-    <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
-  <% end %>
-  <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-
-  <input id="expert_name" placeholder="Search for Experts and Groups by Name" />
-</div>
-</div>
+<!-- <div class="span3"> -->
+<!-- </div> -->
 
 <script class="code" type="text/javascript">
 /* Append the function to the "document ready" chain */
