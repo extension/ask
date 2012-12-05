@@ -20,6 +20,10 @@ class PublicMailer < ActionMailer::Base
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
+    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
+      @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+    end
+    
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
@@ -28,6 +32,9 @@ class PublicMailer < ActionMailer::Base
       end
       
       return_email = mail(to: @user.email, subject: @subject)
+      if !@bonnie_plants_from.blank?
+        return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
+      end
       
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
@@ -44,6 +51,10 @@ class PublicMailer < ActionMailer::Base
       @question = options[:question]
       @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+      
+      if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
+        @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+      end
 
       if(!@user.email.blank?)
         if(@will_cache_email)
@@ -53,7 +64,10 @@ class PublicMailer < ActionMailer::Base
         end
 
         return_email = mail(to: @user.email, subject: @subject)
-
+        if !@bonnie_plants_from.blank?
+          return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
+        end
+        
         if(@mailer_cache)
           # now that we have the rendered email - update the cached mail object
           @mailer_cache.update_attribute(:markup, return_email.body.to_s)
@@ -70,6 +84,33 @@ class PublicMailer < ActionMailer::Base
     @example_survey = options[:example_survey]
 
     @subject = "[eXtension Question:#{@question.id}] Tell us about your experience."
+    @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+
+    if(!@user.email.blank?)
+      if(@will_cache_email)
+        # create a cached mail object that can be used for "view this in a browser" within
+        # the rendered email.
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+      end
+
+      return_email = mail(to: @user.email, subject: @subject)
+
+      if(@mailer_cache)
+        # now that we have the rendered email - update the cached mail object
+        @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+      end
+    end
+    
+    # the email if we got it
+    return_email
+  end
+  
+  def public_comment_reply(options = {})
+    @user = options[:user]
+    @comment = options[:comment]
+    @question = @comment.question
+    
+    @subject = "[eXtension Question:#{@question.id}] Someone has replied to your comment."
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
 
     if(!@user.email.blank?)

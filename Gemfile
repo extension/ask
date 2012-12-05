@@ -5,6 +5,8 @@ gem 'rails', "3.2.9"
 
 # Gems used only for assets and not required
 # in production environments by default.
+# speed up sppppppprooooockets
+gem 'turbo-sprockets-rails3'
 group :assets do
   gem 'sass-rails', "~> 3.2.4"
   gem 'coffee-rails', "~> 3.2.2"
@@ -108,6 +110,11 @@ gem "thor"
 # jqplot
 gem 'outfielding-jqplot-rails'
 
+# anti-spam test
+gem 'rakismet'
+
+# scout performance monitoring
+gem 'scout_rails'
 
 group :development do
   # require the powder gem
@@ -118,6 +125,7 @@ group :development do
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
+  gem 'net-http-spy'
 end
 
 group :test do

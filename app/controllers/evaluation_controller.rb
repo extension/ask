@@ -12,7 +12,7 @@ class EvaluationController < ApplicationController
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
-      if(session[:submitter_id].present? and (session[:submitter_id].to_i == @question.submitter.id))
+      if(session[:submitter_id].present? and (session[:submitter_id].to_i == @question.submitter_id))
         return redirect_to(evaluation_form_url(@question))
       else
         return render(template: 'evaluation/email_prompt')

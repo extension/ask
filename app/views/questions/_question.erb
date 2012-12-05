@@ -10,7 +10,7 @@
     <% @question.images.each do |image| %>
       <% if image.persisted? %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-        <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+        <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
 
         <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
@@ -24,7 +24,7 @@
           </div>
         </div>
         <% else %>
-         <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+         <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
     <% end %>  
@@ -43,9 +43,11 @@
     </p>
   </div>
 
-  <% if @authenticated_submitter.present? %>
+  <%- if current_user and current_user.id == @question.submitter_id -%>
     <%= render :partial => 'question_edit' %>
-  <% end %>
+  <%- elsif @authenticated_submitter.present? and @authenticated_submitter.id == @question.submitter_id -%>
+    <%= render :partial => 'question_edit' %>
+  <%- end -%>
 
   <% if @question_responses.size > 0 %>
     <h3 class="h3">Responses</h3>
@@ -75,7 +77,7 @@
             </div>
           </div>
           <% else %>
-            <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+            <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
           <% end %>
         <% end %>
           <br class="clearing" />
@@ -92,11 +94,11 @@
       </div>
     <% end %>
 
-    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter.id and session[:question_id] == @question.id %>
-	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_url %></h3>
+    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
+	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_group_path(@question.assigned_group) %></h3>
 	    <div id="additional_comment" style="display:none;">
 	      <%= form_for @response do |r_form| %>
-          <%= r_form.text_area :body, :cols => "20", :rows => "3" %>
+          <%= r_form.text_area :body, :rows => "3" %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>Images</h3>
 	        <p>You can include up to 3 images:</p>
@@ -106,7 +108,7 @@
 			      <p><%= image_form.file_field :attachment %></p>
           <% end %>
           
-          <%= submit_tag "Post response" %>
+          <%= submit_tag "Post response", :class => 'btn' %>
           <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
         <% end %>
 	    </div>

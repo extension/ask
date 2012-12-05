@@ -18,6 +18,7 @@ geoip_data_file: 'notset'
 geoname_data_file: 'notset'
 default_display_timezone: 'Eastern Time (US & Canada)'
 daily_summary_delivery_time: '11:30:00'
+activity_notification_interval: 28800.0
 send_notifications: false
 notification_whitelist:
    - 2001
@@ -28,4 +29,5 @@ display_percentiles_labels: ['99th percentile','90th percentile', '75th percenti
 recent_weeks: 4
 # mysql group concat size for percentiles
 group_concat_max_len: 1048576
-
+akismet_key: 'notset'
+akismet_host: 'https://ask.extension.org'

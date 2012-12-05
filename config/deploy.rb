@@ -1,4 +1,4 @@
-set :stages, %w(demo dev)
+set :stages, %w(prod dev)
 set :default_stage, "dev"
 require 'capistrano/ext/multistage'
 require 'capatross'
@@ -61,6 +61,7 @@ namespace :deploy do
     rm -rf #{release_path}/config/database.yml && 
     ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml &&
     ln -nfs #{shared_path}/config/settings.local.yml #{release_path}/config/settings.local.yml &&
+    ln -nfs #{shared_path}/config/scout_rails.yml #{release_path}/config/scout_rails.yml &&
     ln -nfs #{shared_path}/config/sunspot.yml #{release_path}/config/sunspot.yml
     CMD
   end
@@ -91,5 +92,10 @@ namespace :db do
   task :rebuild, :roles => :db, :only => {:primary => true} do
     run "cd #{release_path} && #{rake} db:demo_rebuild RAILS_ENV=production"
   end
+  
+  desc "reload the database with seed data"
+    task :seed do
+      run "cd #{release_path} && #{rake} db:seed RAILS_ENV=production"
+    end
 end  
 

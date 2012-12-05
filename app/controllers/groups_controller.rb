@@ -23,16 +23,24 @@ class GroupsController < ApplicationController
       @question.images.build
     end
     
-    if(!session[:account_id].nil? && @submitter = User.find_by_id(session[:account_id]))      
-      @email = @submitter.email
-      @email_confirmation = @email
-    end
-    
+   
     if request.post?
       @question = Question.new(params[:question])
       
-      if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-        @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+      if current_user and current_user.email.present?
+        @submitter = current_user
+      else
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+          if !@submitter.valid?
+            # TODO: to be sure there's a better way to combine errors?
+            @submitter.errors.each do |attribute,message|
+              # message could be an array, but not going to be for User
+              @question.errors[attribute] = message
+            end
+            return
+          end
+        end
       end
       
       @question.submitter = @submitter
@@ -60,11 +68,21 @@ class GroupsController < ApplicationController
       end
       
       if @question.save
-        session[:question_id] = @question.id
-        session[:submitter_id] = @submitter.id
-        redirect_to(@question, :notice => 'Question was successfully created.')
+        if(!@question.spam?)
+          session[:question_id] = @question.id
+          session[:submitter_id] = @submitter.id
+          redirect_to(@question, :notice => 'Question was successfully created.')
+        else
+          redirect_to(root_url)
+        end
       end
     end
+  end
+
+  # convenience method to redirect to a widget page for the group
+  def widget
+    @group = Group.find(params[:id])
+    return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
   end  
   
 end

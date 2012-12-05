@@ -37,9 +37,7 @@
                 <% @answer = (@sampletext ? @sampletext : @question.current_response)%>
             <% end %>
             
-            <!-- TODO: Change this fittextarea stuff, jquery probably has something -->
-            <%= text_area_tag 'current_response', @answer ? @answer : nil, 
-            "onChange" => "fitTextArea(this)", "onKeyUp" => "fitTextArea(this)", "rows" => 6 %>
+            <%= text_area_tag 'current_response', @answer ? @answer : nil,  "rows" => 6 %>
             </p>
 
             <label>Images (optional)</label>

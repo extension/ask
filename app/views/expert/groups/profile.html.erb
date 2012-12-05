@@ -1,7 +1,7 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h3>Group Settings > Profile</h3>
+<h3>Settings > General</h3>
 
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
@@ -17,7 +17,9 @@
     </p>
     
     <p>
-      <%= f.label :description, 'Group Description (optional)' %>
+      <%= f.label :description do %>
+      About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
+      <% end %>
       <%= f.text_area :description, :rows => "2",  :class => "xl" %>
     </p>
     

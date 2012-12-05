@@ -222,11 +222,6 @@ class QuestionEvent < ActiveRecord::Base
   # NOTE THAT THE RECIPIENT_ID (AND PREVIOUS_RECIPIENT_ID AND PREVIOUS_HANDLING_RECIPIENT_ID) CAN BE NULL HERE DUE TO ASSIGNMENT TO GROUPS IN WHICH THE RECIPIENT_GROUP_ID IS SET
   def create_question_event_notification
     case self.event_state
-    when ASSIGNED_TO
-      #assigned and reassigned
-      if (self.recipient_id != self.previous_handling_recipient_id) && (self.recipient_id != self.previous_handling_initiator_id) #reassigned
-        # Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_handling_recipient_id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.previous_handling_recipient_id.nil?
-      end
     when REJECTED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
     when INTERNAL_COMMENT
@@ -234,9 +229,12 @@ class QuestionEvent < ActiveRecord::Base
     when EDIT_QUESTION
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_PUBLIC_EDIT, delivery_time: 1.minute.from_now ) unless self.question.assignee.nil?
     when PUBLIC_RESPONSE
-      Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.current_resolver.id, notification_type: Notification::AAE_PUBLIC_COMMENT, delivery_time: 1.minute.from_now )
+      Notification.create(notifiable: self.question.responses.last, created_by: 1, recipient_id: self.question.current_resolver.id, notification_type: Notification::AAE_PUBLIC_RESPONSE, delivery_time: 1.minute.from_now )
     when RESOLVED
       Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.question.submitter.id, notification_type: Notification::AAE_PUBLIC_EXPERT_RESPONSE, delivery_time: 1.minute.from_now )
+      if !Notification.pending_activity_notification?(self.question)
+        Notification.create(notifiable: self.question, notification_type: Notification::AAE_QUESTION_ACTIVITY, created_by: 1, recipient_id: 1, delivery_time: Settings.activity_notification_interval.from_now)
+      end
     else
       true
     end

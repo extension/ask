@@ -38,7 +38,7 @@
 
 <body>
 
-    <%= form_for @question, :html => {:multipart => true} do |f| %>
+    <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
       <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
@@ -69,17 +69,19 @@
         </label>
     </p>
 
+    <%- if !current_user or !current_user.email.present? -%>
     <p>
         <label for="email">Email: <span>Type it carefully; this is how you'll receive your answer.</span>
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
-
+    
     <p>
         <label for="email_confirmation">Confirm Your Email:
         <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
+    <%- end -%>
 
     <% if @group.widget_show_location %>
       <p>Where does your question take place? (optional, but it helps us give a more precise answer)</p>
@@ -126,7 +128,12 @@
 		</label>
 	  </p>
 	<% end %>
-
+    
+    <%- if current_user and current_user.email.present? -%>
+       <p>Your answer will be sent to <%= current_user.email %></p>
+     <% end %>
+  
+  
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
 

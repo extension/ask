@@ -20,6 +20,10 @@
 <div id="secondary" class="span4">
 
 <!-- <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p> -->
+
+<div id="notificationprefs">
+  <%= render :partial => 'activity_notification' %>
+</div>
   
   
   <div id="privacy_status">
@@ -78,7 +82,7 @@
           <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <% end %>
   
-        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn btn-inverse" %></span>
+        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn" %></span>
       </div>
       
      <% end %>

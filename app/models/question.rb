@@ -6,6 +6,12 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+  include MarkupScrubber
+  include Rakismet::Model
+  include CacheTools
+  extend YearWeek
+  rakismet_attrs :author_email => :email, :content => :body
+
 
   class Question::Image < Asset
     has_attached_file :attachment, 
@@ -13,9 +19,6 @@ class Question < ActiveRecord::Base
                       :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
 
-  include MarkupScrubber
-  include CacheTools
-  extend YearWeek
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
@@ -43,8 +46,10 @@ class Question < ActiveRecord::Base
   
   before_create :generate_fingerprint, :set_last_opened
 
-  after_create :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+
+  after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
   after_update :index_me
+
 
   # sunspot/solr search
   searchable :auto_index => false do
@@ -116,6 +121,15 @@ class Question < ActiveRecord::Base
   # eXtension National launch
   WWW_LAUNCH                    = Date.parse('2008-02-21')
 
+  # check for spam - given the process flow, not sure
+  # this is a candidate for delayed job
+  def check_spam
+    if self.spam?
+      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+    end
+    true
+  end
+
   # for purposes of solr search
   def response_list
     self.responses.map(&:body).join(' ')
@@ -158,6 +172,7 @@ class Question < ActiveRecord::Base
   end
   
   def auto_assign_by_preference
+    return true if self.spam?
     if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
       reject_msg = "This question was a duplicate of incoming question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
@@ -211,10 +226,14 @@ class Question < ActiveRecord::Base
         group_assignee_ids = group.assignees.collect{|ga| ga.id}
         assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
       end
-      # still aint got no one? assign to the group
+      # still aint got no one? assign to a group leader
       if !assignee
-        assign_to_group(group, system_user, nil)
-        return
+        if group.leaders.active.length > 0
+          assignee = pick_user_from_list(group.leaders.active)
+        # still aint got no one? really?? Wrangle that bad boy.
+        else
+          assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+        end
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
@@ -262,22 +281,27 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    # TODO: Put New Notification Logic Here
-    # create notifications
-    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
-    #     if(is_reassign and public_reopen == false)
-    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
-    #     end
+    Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
+    if(is_reassign and public_reopen == false)
+      Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+    end
+      
   end
   
   # Assigns the question to the group, logs the assignment, and sends an email
   # to the group members signed up for notifications notifying them that a question has been assigned to their group
-  def assign_to_group(group, assigned_by, comment, public_reopen = false, public_comment = nil)
+  def assign_to_group(group, assigned_by, comment)
     raise ArgumentError unless group and group.instance_of?(Group)  
 
     # don't bother doing anything if this is an assignment to the group already assigned. 
     # if it has an assignee, we need to take the assignee off and log this change.
     return true if self.assigned_group && (group.id == self.assigned_group.id) && self.assignee.nil?
+    
+    #keep track of the previously assigned user for reassignment if there was one
+    if self.assignee.present?
+      previously_assigned_user = self.assignee
+      is_reassign = true
+    end
     
     # update and log
     current_assigned_group = self.assigned_group
@@ -286,20 +310,17 @@ class Question < ActiveRecord::Base
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
     end
-
-    # if this is a reopen reassignment due to the public user commenting on the sq
-    if public_comment
-      asker_comment = public_comment.response
-    else
-      asker_comment = nil
-    end
     
-    # TODO: Put New Notification Logic Here
-    # create notifications
-    # Notification.create(:notifytype => Notification::AAE_ASSIGNMENT, :account => user, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id, :comment => comment, :asker_comment => asker_comment})
-    #     if(is_reassign and public_reopen == false)
-    #       Notification.create(:notifytype => Notification::AAE_REASSIGNMENT, :account => previously_assigned_to, :creator => assigned_by, :additionaldata => {:submitted_question_id => self.id})
-    #     end
+    # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change, 
+    # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
+    if group.individual_assignment == true
+      auto_assign
+    else
+      if(is_reassign)
+        Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      end
+    end
+    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?  
   end
 
   def change_group(group, changed_by)
@@ -427,6 +448,7 @@ class Question < ActiveRecord::Base
   end
    
   def index_me
+    return true if self.spam?
     # if the responses changed on the last update, we don't need to reindex, because that's handled in the response hook, but if the responses
     # did not change and these other fields did, we need to go ahead and reindex here. example: a question gets it's status changed to something else, say rejected, then 
     # since a response is not created, then this hook will need to execute, otherwise, we're good to go.
@@ -487,18 +509,16 @@ class Question < ActiveRecord::Base
     return User.find(user_id)
   end
   
-  # TODO: setup notifications here
   def notify_submitter
-    Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now )
+    if(!self.spam?)
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
+    end
   end
   
-  # TODO: setup notifications here
   def send_global_widget_notifications
-    if !self.assigned_to_group_queue?
-      Notification.create(notifiable: self, created_by: self.submitter_id, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
+    if(!self.spam?)
+      Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     end
-    Notification.create(notifiable: self.assigned_group, created_by: self.submitter_id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
-    return
   end
   
 
@@ -612,5 +632,9 @@ class Question < ActiveRecord::Base
     end
     stats
   end  
+
+  def question_activity_preference_list
+    list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+  end
     
 end

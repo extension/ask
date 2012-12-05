@@ -40,14 +40,12 @@
   
   <%= link_public_user_avatar(@user) %>
   
-  <p>
-    <strong>About me:</strong>
-    <% if @user.bio %>
+  <% if @user.bio? %>
+    <p>
+      <strong>About me:</strong>
       <%= @user.bio %>
-    <% else %>
-      This person hasn't added a description yet...
-    <% end  %>
-  </p>
+    </p>
+  <% end %>
   
   <% if @user.tags.size > 0 %>
     <h3>

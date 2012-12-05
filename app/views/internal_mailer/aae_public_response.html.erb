@@ -3,7 +3,7 @@
 <html style="margin: 0; padding: 0;">
 
 <head>
-  <title>New comment on a question assigned to you</title>
+  <title>New response to a question assigned to you</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <%= render(partial: 'partials/mail_styles') %>
   <%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
@@ -25,7 +25,7 @@
   </tr>
   
   <tr class="tagline">
-    <td>New Comment on a Question Assigned to You</td>
+    <td>New Response to a Question Assigned to You</td>
   </tr>
   <tr class="options">
     <td>
@@ -43,8 +43,8 @@
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
             <td id="reminder_title">
-              There's a new comment on a question assigned to you:
-              <p>"<%= @comment.content %>"</p>
+              There's a new response to a question assigned to you:
+              <p>"<%= @response.body %>"</p>
             </td>
           </tr>
           <tr>
@@ -52,7 +52,7 @@
               <table cellpadding="0" cellspacing="0" border="0" align="left">
                 <tr>
                   <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                  <td class="callout"><%= link_to("View Comment on the Question", expert_question_url(@question)) -%></td>
+                  <td class="callout"><%= link_to("View the Response", expert_question_url(@question)) -%></td>
                 </tr>
                 <tr>
                   <td></td>
@@ -60,7 +60,7 @@
                 
                       
                       <% if !@question.is_private %>
-                        <p class="meta">Submitted as a public question <%= time_ago_in_words(@question.created_at) %> ago</p>
+                        <p class="meta">Submitted as a public response <%= time_ago_in_words(@response.created_at) %> ago</p>
                       <% else %>
                         <p class="meta">Submitted <%= time_ago_in_words(@question.created_at) %> ago</p>
                       <% end %>

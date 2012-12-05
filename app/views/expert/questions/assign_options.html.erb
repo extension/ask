@@ -12,7 +12,7 @@
   <%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_id => @user.id)) do %>
     <p>
       <label>Include a comment
-      <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :maxlength => 140, :class => "l"} %>
+      <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :class => "l"} %>
       </label>
     <p>
 
