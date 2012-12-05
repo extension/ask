@@ -191,12 +191,10 @@ Aae::Application.routes.draw do
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
-  # reports placeholder
-  match "reports", to: "home#reports", via: :get, as: 'reports'
-
   # reports
-  match "data", to: "data#index", :via => [:get]
-  match "data/:action", to: "reports", :via => [:get]
+  match "reports", to: "reports#index", :via => [:get], as: 'reports_home'
+  match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
+  match "reports/:action", to: "reports", :via => [:get]
 
 
   # wildcard

@@ -8,6 +8,13 @@ class ReportsController < ApplicationController
   before_filter :override_rows
 
   def index
+  end
+
+  def expert
+    @expert = User.find(params[:id])
+  end
+
+  def exploration
     @question_stats = Question.answered.stats_by_yearweek('questions')
     @expert_stats = Question.answered.stats_by_yearweek('experts')
     @responsetime_stats = Question.answered.stats_by_yearweek('responsetime')
@@ -24,7 +31,7 @@ class ReportsController < ApplicationController
   private
 
   def override_rows
-    # setting a layout variable so that we
+    # setting a layout varialble so that we
     # can have control over the rows in the container
     @override_rows = true
   end
