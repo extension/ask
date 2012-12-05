@@ -34,6 +34,7 @@ class Expert::SearchController < ApplicationController
               with :is_blocked, false
               with :retired, false
               with :kind, 'User'
+              order_by :last_sign_in_at, :desc
               paginate :page => 1, :per_page => 10
             end
     @experts = experts.results
