@@ -17,6 +17,7 @@ class Expert::QuestionsController < ApplicationController
     end
     @question_responses = @question.responses
     @last_question_response = @question.last_response
+    @original_group = @question.original_group
     
     ga_tracking = []
     

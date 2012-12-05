@@ -43,9 +43,11 @@
     </p>
   </div>
 
-  <% if @authenticated_submitter.present? and @authenticated_submitter == @question.submitter_id %>
+  <%- if current_user and current_user.id == @question.submitter_id -%>
     <%= render :partial => 'question_edit' %>
-  <% end %>
+  <%- elsif @authenticated_submitter.present? and @authenticated_submitter.id == @question.submitter_id -%>
+    <%= render :partial => 'question_edit' %>
+  <%- end -%>
 
   <% if @question_responses.size > 0 %>
     <h3 class="h3">Responses</h3>

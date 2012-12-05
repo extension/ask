@@ -25,6 +25,7 @@ Aae::Application.routes.draw do
     member do
       get 'ask'
       post 'ask'
+      get 'widget'
     end
   end
 
