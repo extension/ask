@@ -131,7 +131,7 @@
             <br>
             <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
             <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[expert.id]) %></p>
-            <span class="downplay">last active <%= time_ago_in_words(expert.last_sign_in_at) %> ago</span>
+            <span class="downplay">last active <%= time_ago_in_words(expert.last_active_at) %> ago</span>
             </div>
             
             <div class="span8">

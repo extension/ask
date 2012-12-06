@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121205213845) do
+ActiveRecord::Schema.define(:version => 20121206182214) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -529,6 +529,7 @@ ActiveRecord::Schema.define(:version => 20121205213845) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                                                      :null => false
     t.datetime "updated_at",                                                      :null => false
+    t.date     "last_active_at"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"
