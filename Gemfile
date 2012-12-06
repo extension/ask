@@ -113,6 +113,9 @@ gem 'rakismet'
 # scout performance monitoring
 gem 'scout_rails'
 
+# memcached
+gem 'dalli'
+
 group :development do
   # require the powder gem
   gem 'powder'
