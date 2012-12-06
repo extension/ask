@@ -24,7 +24,13 @@
   <% end %>
 
 
-<p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
+<p>Asked 
+  <% if @original_group.present? %>
+    to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+  <% end %>
+	      
+  <%= time_ago_in_words(@question.created_at) %> ago 
+  
   <% if @question.submitter %>
     by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
   <% end %>

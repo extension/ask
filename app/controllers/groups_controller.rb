@@ -27,20 +27,25 @@ class GroupsController < ApplicationController
     if request.post?
       @question = Question.new(params[:question])
       
-      if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-        @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
-        if !@submitter.valid?
-          # TODO: to be sure there's a better way to combine errors?
-          @submitter.errors.each do |attribute,message|
-            # message could be an array, but not going to be for User
-            @question.errors[attribute] = message
+      if current_user and current_user.email.present?
+        @submitter = current_user
+      else
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
+          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+          if !@submitter.valid?
+            # TODO: to be sure there's a better way to combine errors?
+            @submitter.errors.each do |attribute,message|
+              # message could be an array, but not going to be for User
+              @question.errors[attribute] = message
+            end
+            return
           end
-          return
         end
       end
       
       @question.submitter = @submitter
       @question.assigned_group = @group
+      @question.original_group_id = @group.id
       @question.group_name = @group.name
       @question.user_ip = request.remote_ip
       @question.user_agent = request.env['HTTP_USER_AGENT']
@@ -73,6 +78,12 @@ class GroupsController < ApplicationController
         end
       end
     end
+  end
+
+  # convenience method to redirect to a widget page for the group
+  def widget
+    @group = Group.find(params[:id])
+    return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
   end  
   
 end
