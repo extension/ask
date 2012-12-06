@@ -5,7 +5,7 @@
 
   <% @question.images.each do |image| %>
     <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-    <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+    <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
     
     <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">
@@ -19,12 +19,18 @@
       </div>
     </div>
     <% else %>
-      <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+      <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
     <% end %>
   <% end %>
 
 
-<p>Asked <%= time_ago_in_words(@question.created_at) %> ago 
+<p>Asked 
+  <% if @original_group.present? %>
+    to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+  <% end %>
+	      
+  <%= time_ago_in_words(@question.created_at) %> ago 
+  
   <% if @question.submitter %>
     by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
   <% end %>
@@ -69,7 +75,7 @@
           </div>
         </div>
         <% else %>
-          <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image') %>
+          <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
         <br class="clearing" />

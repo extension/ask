@@ -25,6 +25,7 @@ Aae::Application.routes.draw do
     member do
       get 'ask'
       post 'ask'
+      get 'widget'
     end
   end
 
@@ -116,6 +117,9 @@ Aae::Application.routes.draw do
     match "search/questions" => "search#questions", :via => [:get]
     match "home/search" => "home#search", :via => [:get]
   end
+  
+  # public search
+  match "search/all" => "search#all", :via => [:get]
   
   # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
   match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'

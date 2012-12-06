@@ -1,21 +1,7 @@
-<h1><%= title %></h1>
-
-<div id="main" class="span12">
-
-  <% if !defined?(paginate_experts) || paginate_experts != false %>
-    <p>Displaying <strong><%= @experts.offset + 1 %>-<%= @experts.offset + @experts.size %> of <%= @experts.total_entries %></strong></p>
-  <% end %>  
+<div class="span12">
  
   <% @experts.each do |expert| %>
-    <p>
-     <%= link_to expert_user_path(expert) do %>
-     <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert) %>
-     <% end %>
-    </p>
-  <% end %>
-
-  <% if !defined?(paginate_experts) || paginate_experts != false %>
-  <%= paginate @experts %>
+    <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %> <span class="downplay">Last active: <%= time_ago_in_words(expert.last_active_at) %> ago</span></p>  
   <% end %>
   
 </div>
