@@ -1,12 +1,13 @@
 <div class="span12">
   <h1><%= @page_title %></h1>
   <p>
-    Thanks for making Ask an Expert better by completing this short evaluation about the
+    Your feedback about the
     <%- if @question_testing -%>
       <%= link_to('answer to your recent question','#', target: '_blank') %>
     <%- else -%>
      <%= link_to('answer to your recent question',question_path(@question), target: '_blank') %>
     <%- end -%>
+    is very important to us. Thank you for helping us to improve the eXtension Ask an Expert experience!
   </p>
 
   <%- EvaluationQuestion.active.order(:questionorder).each do |evaluation_question| -%>
