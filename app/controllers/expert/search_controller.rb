@@ -34,7 +34,7 @@ class Expert::SearchController < ApplicationController
               with :is_blocked, false
               with :retired, false
               with :kind, 'User'
-              order_by :last_sign_in_at, :desc
+              order_by :last_active_at, :desc
               paginate :page => 1, :per_page => 10
             end
     @experts = experts.results
@@ -74,13 +74,13 @@ class Expert::SearchController < ApplicationController
       return redirect_to expert_home_url
     end
   
-    @list_title = "Search for Experts with '#{params[:q]}' in the name"
+    @list_title = "Search for Experts with '#{params[:q]}' in the name or bio"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     experts = User.search do
               with :is_blocked, false
               with :retired, false
               with :kind, 'User'
-              order_by :last_sign_in_at, :desc
+              order_by :last_active_at, :desc
               fulltext(params[:q]) do
                 fields(:name)
                 fields(:bio)
@@ -99,7 +99,7 @@ class Expert::SearchController < ApplicationController
       return redirect_to expert_home_url
     end
     
-    @list_title = "Search for Groups with '#{params[:q]}' in the name"
+    @list_title = "Search for Groups with '#{params[:q]}' in the name or description"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     groups = Group.search do
                fulltext(params[:q])

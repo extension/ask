@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   has_many :evaluation_answers
 
   # sunspot/solr search
-  searchable do
+  searchable :if => proc { |user| user.has_exid? == true } do
     text :name
     text :bio
     text :login
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
     boolean :retired
     boolean :is_blocked
     string :kind
-    time :last_sign_in_at
+    time :last_active_at
   end
 
 
