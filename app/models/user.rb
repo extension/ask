@@ -6,6 +6,7 @@
 #  see LICENSE file
 
 class User < ActiveRecord::Base
+  extend YearMonth
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
 
@@ -386,6 +387,16 @@ class User < ActiveRecord::Base
     active_evaluation_questions = EvaluationQuestion.active.pluck(:id)
     my_evaluation_questions_for_this_question = self.evaluation_answers.where(question_id: question.id).pluck(:evaluation_question_id)
     ((active_evaluation_questions & my_evaluation_questions_for_this_question).size > 0)
+  end
+
+  # reporting
+
+  def earliest_assigned_at
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
+  end
+
+  def assigned_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
   end
 
 
