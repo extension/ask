@@ -66,6 +66,7 @@ GEM
     curb (0.7.15)
     daemon_controller (1.1.0)
     daemons (1.1.9)
+    dalli (2.5.0)
     delayed_job (3.0.4)
       activesupport (~> 3.0)
     delayed_job_active_record (0.3.3)
@@ -289,6 +290,7 @@ DEPENDENCIES
   csspool
   curb (= 0.7.15)
   daemons
+  dalli
   delayed_job
   delayed_job_active_record
   devise (~> 1.5.1)
