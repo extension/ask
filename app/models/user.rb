@@ -36,12 +36,14 @@ class User < ActiveRecord::Base
   # sunspot/solr search
   searchable do
     text :name
+    text :bio
     text :login
     text :email
     text :tag_fulltext
     boolean :retired
     boolean :is_blocked
     string :kind
+    time :last_sign_in_at
   end
 
 
