@@ -13,7 +13,7 @@
 
 <span class="search_section_anchor" id="expert_results"></span>
 <div class="search_section">
-  <h2>Experts <small>(with '<%= params[:q] %>' in the name)</small></h2>
+  <h2>Experts <small>(with '<%= params[:q] %>' in the name or bio)</small></h2>
   <p><%= link_to 'See all Expert results', expert_search_experts_path(:q => params[:q]) %></p>
   <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
   <br class="clearing" />
@@ -21,7 +21,7 @@
 
 <span class="search_section_anchor" id="group_results"></span>
 <div class="search_section">
-  <h2>Groups <small>(with '<%= params[:q] %>' in the name)</small></h2>
+  <h2>Groups <small>(with '<%= params[:q] %>' in the name or description)</small></h2>
   <p><%= link_to 'See all Group results', expert_search_groups_path(:q => params[:q]) %></p>
   <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
   <br class="clearing" />

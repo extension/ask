@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_location
   helper_method :current_county
   before_filter :set_time_zone_from_user
+  before_filter :set_last_active_at_for_user
 
 
   protect_from_forgery
@@ -85,6 +86,15 @@ class ApplicationController < ActionController::Base
       Time.zone = Settings.default_display_timezone
     end
     true
+  end
+  
+  def set_last_active_at_for_user
+    if current_user
+      if current_user.last_active_at != Date.today 
+        current_user.update_attribute(:last_active_at, Date.today)
+      end
+    end
+    return true
   end
   
   def questions_based_on_pref_filter(list_view, filter_pref)
