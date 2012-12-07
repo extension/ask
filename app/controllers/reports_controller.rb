@@ -47,8 +47,8 @@ class ReportsController < ApplicationController
   def expert_list
     @expert = User.find(params[:id])
     
-    if(params[:set] and ['assigned','answered'].includes?(params[:set]))
-      filter = params[:set]
+    if(params[:filter] and ['assigned','answered'].include?(params[:filter]))
+      filter = params[:filter]
     else
       filter = 'assigned'
     end
