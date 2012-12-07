@@ -398,15 +398,17 @@ class Question < ActiveRecord::Base
   def self.convert_to_string(status_number)
     case status_number
     when STATUS_SUBMITTED
-      return 'submitted'
+      'submitted'
     when STATUS_RESOLVED
-      return 'resolved'
+      'resolved'
     when STATUS_NO_ANSWER
-      return 'no answer'
+      'no answer'
     when STATUS_REJECTED
-      return 'rejected'
+      'rejected'
+    when STATUS_CLOSED
+      'closed'
     else
-      return nil
+      nil
     end
   end
   

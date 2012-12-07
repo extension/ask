@@ -395,10 +395,37 @@ class User < ActiveRecord::Base
     QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
   end
 
+  def assigned_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
   def assigned_count_by_year_month
     QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
   end
 
+  def assigned_list_for_year_month(year_month)
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.recipient_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
+
+  def answered_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def answered_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+
+  def answered_list_for_year_month(year_month)
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.recipient_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
 
 
 

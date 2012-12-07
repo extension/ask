@@ -8,6 +8,10 @@
 module YearMonth
 
 
+  def year_month_string(year,month)
+    "#{year}-" + "%02d" % month
+  end
+
   def year_months_between_dates(start_date,end_date)
     year_months = []
     # construct a set of year-months given the start and end dates

@@ -1,9 +1,57 @@
-<%= render(partial: 'experimental_notice') %>
+<%- @page_title = "Report for #{@expert.name} (ID##{@expert.id})" -%>
+
 
 <div class="page-header">
-  <h2><%= @expert.name %></h2>
+  <h1>Report for <%= @expert.name %></h1>
 </div>
+
+<%= render(partial: 'experimental_notice') %>
+
+<h2>Yearly Assigned/Answered Statistics</h2>
 
 <div class='row-fluid'>
 
+  <div class='span8'>
+    <%- if !@earliest_assigned_at -%>
+      <p><%= @expert.first_name %> has not yet had any assigned questions.</p>
+    <%- else -%>
+      <div class="accordion" id="yearly_breakdown">
+      <%- @counts_by_year_and_year_month.keys.sort.reverse.each_with_index do |year,index| -%>
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <h3>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#yearly_breakdown" href="#collapse_<%= year %>">
+              <%= year %>
+              <small><span>Total Assigned: <%= @counts_by_year[year]['assigned'] %></span> <span>Total Answered: <%= @counts_by_year[year]['answered'] %></span></small>
+            </a>
+            </h3>
+          </div>
+          <div id="collapse_<%= year %>" class="accordion-body collapse <%= 'in' if index == 0 %>">
+            <div class="accordion-inner">
+              <h4></h4>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Year-Month</th>
+                    <th>Assigned Questions</th>
+                    <th>Answered Questions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%- @counts_by_year_and_year_month[year].keys.sort.reverse.each do |year_month| -%>
+                    <tr>
+                      <td><%= year_month %></td>
+                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %></td>
+                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['answered'], {id: @expert.id, filter: 'answered', year_month: year_month}) %></td>
+                    </tr>
+                  <%- end -%>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <%- end # year loop -%>
+    <%- end # has earliest assigned date -%>
+  </div>
 </div>
