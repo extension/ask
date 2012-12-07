@@ -22,7 +22,7 @@
             <h3>
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#yearly_breakdown" href="#collapse_<%= year %>">
               <%= year %>
-              <small><span>Assigned: <%= @counts_by_year[year]['assigned'] %></span> <span>Answered: <%= @counts_by_year[year]['answered'] %></span></small>
+              <small><span>Answered: <%= @counts_by_year[year]['answered'] %></span> <span>Assigned: <%= @counts_by_year[year]['assigned'] %></span></small>
             </a>
             </h3>
           </div>
@@ -34,16 +34,16 @@
                 <thead>
                   <tr>
                     <th>Year-Month</th>
-                    <th>Assigned Questions</th>
                     <th>Answered Questions</th>
+                    <th>Assigned Questions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <%- @counts_by_year_and_year_month[year].keys.sort.reverse.each do |year_month| -%>
                     <tr>
                       <td><%= year_month %></td>
-                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %></td>
                       <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['answered'], {id: @expert.id, filter: 'answered', year_month: year_month}) %></td>
+                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %></td>
                     </tr>
                   <%- end -%>
                 </tbody>
