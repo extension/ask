@@ -10,7 +10,11 @@ class Expert::UsersController < ApplicationController
   before_filter :require_exid
   
   def show
-    @user = User.find(params[:id])
+    @user = User.exid_holder.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "The user specified does not exist as an expert in AaE."
+      return redirect_to expert_home_url 
+    end
     @question_list = "assigned"
     @questions = @user.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.open_questions.length
@@ -19,7 +23,11 @@ class Expert::UsersController < ApplicationController
   end
   
   def answered
-    @user = User.find(params[:id])
+    @user = User.exid_holder.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "The user specified does not exist as an expert in AaE."
+      return redirect_to expert_home_url 
+    end
     @question_list = "answered"
     @questions = @user.answered_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.answered_questions.length
@@ -29,7 +37,11 @@ class Expert::UsersController < ApplicationController
   end
   
   def rejected
-    @user = User.find(params[:id])
+    @user = User.exid_holder.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "The user specified does not exist as an expert in AaE."
+      return redirect_to expert_home_url 
+    end
     @question_list = "rejected"
     @questions = @user.rejected_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.rejected_questions.length
@@ -40,13 +52,17 @@ class Expert::UsersController < ApplicationController
   
   def tags
     @tag = Tag.find_by_id(params[:tag_id])
-    @user = User.find_by_id(params[:user_id])
+    @user = User.exid_holder.find_by_id(params[:user_id])
     return record_not_found if (!@user || !@tag)
     @questions = @user.answered_questions.tagged_with(@tag.id).order("questions.status_state ASC")
   end
   
   def groups
-    @user = User.find(params[:id])
+    @user = User.exid_holder.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "The user specified does not exist as an expert in AaE."
+      return redirect_to expert_home_url 
+    end
     @my_groups = @user.group_memberships
   end
   
