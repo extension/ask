@@ -90,12 +90,12 @@ class User < ActiveRecord::Base
     sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
 
     if sanitizedsearchterm == ''
-      return []
+      return {:conditions => 'false'}
     end
 
     # in the format wordone wordtwo?
     words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
-    if(words.length > 1)
+    if(words.length > 1 && !words[0].blank? && !words[1].blank?)
       findvalues = {
        :firstword => words[0],
        :secondword => words[1]

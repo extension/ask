@@ -48,7 +48,7 @@ class Group < ActiveRecord::Base
     # strip parens '()' to keep it from messing up mysql query
     sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
     if sanitizedsearchterm == ''
-      return []
+      return {:conditions => 'false'}
     end
     where("name rlike ?", sanitizedsearchterm)
   }
