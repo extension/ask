@@ -424,8 +424,8 @@ class User < ActiveRecord::Base
   def answered_list_for_year_month(year_month)
     Question.select("DISTINCT(questions.id), questions.*")
     .joins(:question_events)
-    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
-    .where("question_events.recipient_id = ?",self.id)
+    .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+    .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
   end
 
