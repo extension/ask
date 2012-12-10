@@ -21,7 +21,7 @@
 
 
     <%- if @evaluator.completed_demographics? -%>
-    <p><%= link_to('Previous demographic responses', '#demographic_responses', id: 'demographics_toggler', data: {toggle: 'collapse', target: '#show_demographics'}) %></p>
+    <p id="demographic_block">You shared some demographic info when you submitted a previous evaluation. <%= link_to('View or change your info', '#demographic_responses', id: 'demographics_toggler', data: {toggle: 'collapse', target: '#show_demographics'}) %></p>
     <%- end -%>
   <div id="show_demographics" class="collapse<%= @evaluator.completed_demographics? ? '': ' in'%>">
     <h1><a name="demographic_responses">&nbsp;</a>Your Demographics</h1>
