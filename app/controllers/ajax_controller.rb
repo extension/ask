@@ -8,7 +8,7 @@ class AjaxController < ApplicationController
   def tags
     if params[:term]
       search_term = params[:term]
-      tags = Tag.where("name like '%#{params[:term]}%'").limit(12)
+      tags = Tag.where("name like ?", "'%#{params[:term]}%'").limit(12)
     else
       tags = Tag.order('created_at DESC').limit(12)
     end
@@ -39,8 +39,8 @@ class AjaxController < ApplicationController
   def groups
     if params[:term]
       search_term = params[:term]
-      groups_including = Group.where("name like '%#{params[:term]}%'").limit(12)
-      groups_starting_with = Group.where("name like '#{params[:term]}%'").limit(12)
+      groups_including = Group.where("name like ?", "'%#{params[:term]}%'").limit(12)
+      groups_starting_with = Group.where("name like ?", "'#{params[:term]}%'").limit(12)
       groups = (groups_starting_with + groups_including).uniq.take(12)
     else
       groups = Group.order('created_at DESC').limit(12)
