@@ -52,7 +52,7 @@ class CronTasks < Thor
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    #create_evaluation_notifications
+    create_evaluation_notifications
     create_daily_summary_notification
   end
   
