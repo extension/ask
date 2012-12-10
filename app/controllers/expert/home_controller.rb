@@ -66,6 +66,27 @@ class Expert::HomeController < ApplicationController
     @questions = Question.tagged_with(@tag.id).page(params[:page]).order("questions.created_at DESC")
   end
   
+  def users_by_location
+    @location = Location.find_by_id(params[:id])
+    return record_not_found if (!@location)
+    @experts = User.with_expertise_location(@location.id).page(params[:page]).order("users.last_active_at DESC")
+    @expert_total_count = User.with_expertise_location(@location.id).count
+  end
+  
+  def groups_by_location
+    @location = Location.find_by_id(params[:id])
+    return record_not_found if (!@location)
+    @groups = Group.with_expertise_location(@location.id).page(params[:page])
+    @group_total_count = Group.with_expertise_location(@location.id).count
+  end
+  
+  def questions_by_location
+    @location = Location.find_by_id(params[:id])
+    return record_not_found if (!@location)
+    @questions = Question.where("location_id = ?", @location.id).page(params[:page]).order("questions.status_state DESC")
+    @question_total_count = Question.where("location_id = ?", @location.id).count
+  end
+  
   def locations
     @location = Location.find_by_id(params[:id])
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")

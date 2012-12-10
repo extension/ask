@@ -95,6 +95,9 @@ Aae::Application.routes.draw do
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
+    match "home/users/locations/:id" => "home#users_by_location", :as => 'users_by_location'
+    match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
+    match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
