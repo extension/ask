@@ -12,14 +12,14 @@
   <div class="control-group">
     <div class="controls">
       <div class="slider_ranges">
-        <p>
-      <span class="range_start"><%= evaluation_question.responses[0] %> (<strong><%= evaluation_question.range_start %></strong>)</span>
-      <span class="range_end"><%= evaluation_question.responses[1] %> (<strong><%= evaluation_question.range_end %></strong>)</span>
-      </p>
+        <p><span class="range_start"><%= evaluation_question.responses[0].capitalize! %></span></p>
       </div>
       <div class="center_slider">
       <%= number_field_tag('response', scale_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), 
           {min: evaluation_question.range_start, max: evaluation_question.range_end, id: "range_#{evaluation_question.id}", class: 'range', type: 'range', step: '1'}) %>
+      </div>
+      <div class="slider_ranges">
+        <p><span class="range_end"><%= evaluation_question.responses[1].capitalize! %></span></p>
       </div>  
     </div>
   </div>
