@@ -166,7 +166,7 @@ class User < ActiveRecord::Base
   end
 
   def set_tag(tag)
-    if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
+    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
       return false
     else
       if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
