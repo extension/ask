@@ -95,6 +95,9 @@ Aae::Application.routes.draw do
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
+    match "home/users/locations/:id" => "home#users_by_location", :as => 'users_by_location'
+    match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
+    match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
@@ -194,8 +197,12 @@ Aae::Application.routes.draw do
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
-  # reports placeholder
-  match "reports", to: "home#reports", via: :get, as: 'reports'
+  # reports
+  match "reports", to: "reports#index", :via => [:get], as: 'reports_home'
+  match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
+  match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
+  match "reports/:action", to: "reports", :via => [:get]
+
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]

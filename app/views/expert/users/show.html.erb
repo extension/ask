@@ -53,7 +53,8 @@
     <% else %>
        <p class="downplay">This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
-  </aside>
+    <p class="downplay"><%= link_to('Reports (under construction)',expert_report_path(@user.id)) %></p>
+ </aside>
   
   <script type="text/javascript">
     $('#handling_rate').popover({

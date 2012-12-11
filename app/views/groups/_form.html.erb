@@ -5,7 +5,7 @@
   <fieldset>
     <p>
       <%= f.label :title, 'Give your question a title' %>
-      <%= f.text_field :title, {:type => "text", :class => "xl required"} %>
+      <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "xl required"} %>
     </p>
 
     <p>

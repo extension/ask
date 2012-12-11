@@ -14,5 +14,6 @@
  *= require twitter/bootstrap-responsive
  *= require autocomplete
  *= require bootstrap-wysihtml5
+ *= require jquery.jqplot
  *= require_tree .
 */

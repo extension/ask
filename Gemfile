@@ -109,6 +109,9 @@ gem "daemons"
 # command line scripts
 gem "thor"
 
+# jqplot
+gem 'outfielding-jqplot-rails'
+
 # anti-spam test
 gem 'rakismet'
 

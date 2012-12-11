@@ -831,7 +831,7 @@ create_default_daily_summary_prefs_for_group_leaders
 transfer_spam_and_rejected_data
 seed_evaluation_questions
 seed_demographic_questions
-cleanup_questions
-cleanup_question_event_responses
-cleanup_responses
-reindex_searchable_objects
+# cleanup_questions
+# cleanup_question_event_responses
+# cleanup_responses
+# reindex_searchable_objects

@@ -7,15 +7,20 @@
 
 module CacheTools
 
-  def get_cache_key(method_name,optionshash={})
-   optionshashval = Digest::SHA1.hexdigest(optionshash.inspect)
-   cache_key = "#{self.name}::#{method_name}::#{optionshashval}"
-   return cache_key
+  def self.included(base)
+    base.extend(self)
   end
 
-  def get_instance_cache_key(identifier,method_name,optionshash={})
+  # assumes activerecord - just make sure there's something
+  # that responds to self.id if this is happening on an 
+  # instance
+  def get_cache_key(method_name,optionshash={})
    optionshashval = Digest::SHA1.hexdigest(optionshash.inspect)
-   cache_key = "#{identifier}::#{method_name}::#{optionshashval}"
+   if(self.is_a?(Class))
+     cache_key = "#{self.name}::#{method_name}::#{optionshashval}"
+   else
+     cache_key = "#{self.class.name}##{self.id}::#{method_name}::#{optionshashval}"
+   end    
    return cache_key
   end
 

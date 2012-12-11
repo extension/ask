@@ -100,7 +100,7 @@
   
       <% if @question.assignee.present? %>
         <%= link_to expert_user_path(@question.assignee_id) do %>
-          <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.name, expert_user_path(@question.assignee.id) %>
+          <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_expert_user(@question.assignee) %>
         <% end %>
       <% elsif @question.assigned_group.present? %>
         <%= link_to expert_group_path(@question.assigned_group.id) do %>

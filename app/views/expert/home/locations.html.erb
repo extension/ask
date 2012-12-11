@@ -14,7 +14,7 @@
         <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></p>
         
       <% end %>
-      <p>view all</p> 
+      <p><%= link_to "view all", expert_users_by_location_path() %></p>
     <% else %>
       <p>There are no experts in this location</p>
     <% end %>
@@ -28,7 +28,7 @@
       <% @groups.each do |group| %>
         <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
       <% end %>
-      <p>view all</p> 
+      <p><%= link_to "view all", expert_groups_by_location_path() %></p>
     <% else %>
       <p>There are no groups in this location</p>
     <% end %>
@@ -42,7 +42,7 @@
       <% @questions.each do |question| %>
         <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
       <% end %>
-
+      <p><%= link_to "view all", expert_questions_by_location_path() %></p>
     <% else %>
       <p>There are no questions in this location</p>
     <% end %>

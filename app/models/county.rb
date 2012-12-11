@@ -6,7 +6,7 @@
 #  see LICENSE file
 
 class County < ActiveRecord::Base
-  extend CacheTools
+  include CacheTools
 
   has_many :user_counties
   has_many :users, :through => :user_counties

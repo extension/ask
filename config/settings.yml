@@ -24,5 +24,10 @@ notification_whitelist:
    - 2001
    - 2010
 days_closed_for_evaluation: 8
+display_percentiles: [99,90,75,50]
+display_percentiles_labels: ['99th percentile','90th percentile', '75th percentile', '50th percentile']
+recent_weeks: 4
+# mysql group concat size for percentiles
+group_concat_max_len: 1048576
 akismet_key: 'notset'
 akismet_host: 'https://ask.extension.org'

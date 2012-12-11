@@ -6,6 +6,7 @@
 #  see LICENSE file
 
 class User < ActiveRecord::Base
+  extend YearMonth
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
 
@@ -87,15 +88,16 @@ class User < ActiveRecord::Base
     # remove any '\' characters because it's WAAAAY too close to the return key
     # strip '+' characters because it's causing a repitition search error
     # strip parens '()' to keep it from messing up mysql query
-    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
+    # strip brackets
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').strip
 
     if sanitizedsearchterm == ''
-      return []
+      return {:conditions => 'false'}
     end
 
     # in the format wordone wordtwo?
     words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
-    if(words.length > 1)
+    if(words.length > 1 && !words[0].blank? && !words[1].blank?)
       findvalues = {
        :firstword => words[0],
        :secondword => words[1]
@@ -164,7 +166,7 @@ class User < ActiveRecord::Base
   end
 
   def set_tag(tag)
-    if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
+    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
       return false
     else
       if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
@@ -390,6 +392,43 @@ class User < ActiveRecord::Base
     ((active_evaluation_questions & my_evaluation_questions_for_this_question).size > 0)
   end
 
+  # reporting
+
+  def earliest_assigned_at
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
+  end
+
+  def assigned_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def assigned_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+
+  def assigned_list_for_year_month(year_month)
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.recipient_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
+
+  def answered_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def answered_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+
+  def answered_list_for_year_month(year_month)
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+    .where("question_events.initiated_by_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
 
 
 
