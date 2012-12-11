@@ -4,7 +4,7 @@
   
   <div id="user_masthead">
     <%= link_expert_user_avatar(@user) %>
-    <h1><span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
+    <h1><span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <% if @user.retired %>(Retired Account)<% end %> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
     
     <% if @user.away %>
       <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
@@ -46,7 +46,9 @@
   <% end %>
   
   <aside>
-  
+    <% if @user.retired %>
+      <h4>This account has been retired</h4>
+    <% end %>
     <p class="downplay">Last active: <%= time_ago_in_words(@user.last_active_at) %> ago</p>
     <% if @handling_event_count[:handled] > 0 %>
        <p class="downplay"><span id="handling_rate" rel="popover" data-content="How likely will this person handle an assigned question? A high handling rate means they are likely to handle it. A low rate means someone else usually has to step in. There's a 24-hour grace period after a question is assigned. No penalties are recorded during the grace period." data-original-title="Handling Rate">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
@@ -95,7 +97,7 @@
     <h3>Group Membership <%= link_to "(#{@my_groups.count})", expert_user_groups_path() %></h3>
     <ul class="groups">
       <% if @my_groups.size == 0 %>
-        <li>You currently are not a member or leader of a group.</li>
+        <li>Not currently a member or leader of a group.</li>
       <% else %>
         <% @my_groups.each do |group| %>  
           <li><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
