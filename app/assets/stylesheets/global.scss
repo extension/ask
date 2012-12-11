@@ -175,7 +175,8 @@ body {
   .medium {width:100px !important; height:100px !important;}
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
-
+  
+  
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
@@ -195,6 +196,7 @@ body {
     padding-left:0;padding-right:0;
     .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin-left: 0;margin-right: 0;}
     .incoming_question .span8 {padding:1em 0 !important;}
+    fieldset {width:100%;}
 	}
 	
 	@media screen and (max-width: 480px) {
@@ -264,7 +266,7 @@ body#public {
 	
 	.public_rejected {border:1px solid #ff0000; background:#fff;}
 	.public_rejected {color:#ff0000;}
-	textarea {width:30em; max-width:95%;}
+	textarea {width:40em; max-width:95%;}
 	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
@@ -444,7 +446,7 @@ body#expert {
 	#history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:2em;}
 	#history a {color:#363955;}
 	#history li {margin-bottom:.5em; list-style:none; border-bottom:1px solid #ddd;}
-	textarea {width:30em; max-width:95%;}
+	textarea {width:40em; max-width:95%;}
 	#main {margin:0}
 /*	#secondary {outline:1px solid blue;}*/
 	.question_actions {margin-bottom:2em;}
@@ -539,7 +541,9 @@ body#expert {
   #history .comment {background:#FFFFE6; display:inline-block; padding:.25em .5em; margin:0 0 .5em .5em;}
   .group_label {background:#333; color:#ddd; display:block; margin:0; text-transform:uppercase; font-size:8px; text-align:center; letter-spacing:1px; height:14px; line-height:14px;}
   #people_edit {margin:1em 0 1em;}
-
+  
+  #add_images {margin:1em 0 3em;}
+  #add_images p {margin:0;}
   
   #reassign_wrapper {}
 	.assignment_match {border-bottom:1px solid #ccc; margin-bottom:1.25em; padding-bottom:.75em;}

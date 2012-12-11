@@ -13,14 +13,14 @@
   <fieldset>
     <p>
       <%= f.label :name, 'Group Name' %>
-      <%= f.text_field :name,  :class => "xl" %>
+      <%= f.text_field :name,  :class => "" %>
     </p>
     
     <p>
       <%= f.label :description do %>
       About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
       <% end %>
-      <%= f.text_area :description, :rows => "2",  :class => "xl" %>
+      <%= f.text_area :description, :rows => "4",  :class => "l wysiwyg" %>
     </p>
     
     <p>
@@ -54,3 +54,9 @@
 <% end %>
 
 </div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>
