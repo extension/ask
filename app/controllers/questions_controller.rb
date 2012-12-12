@@ -286,8 +286,9 @@ class QuestionsController < ApplicationController
 
       #{additional_information}
       Please vouch for the account at:
-
+      <a href="https://people.extension.org/colleagues/showuser/#{params[:idstring]}">
       https://people.extension.org/colleagues/showuser/#{params[:idstring]}
+      </a>
 
       Accounts not vouched with 14 days will automatically be retired. If you are a people
       administrator, please go ahead and retire the account if it cannot be vouched for.
