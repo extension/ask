@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   layout 'public'
   
   def show
-    @user = User.not_retired.not_blocked.not_system.find_by_id(params[:id])
+    @user = User.valid_users.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "This user does not exist."
       return redirect_to root_url

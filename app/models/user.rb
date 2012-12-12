@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   extend YearMonth
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
+  SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
 
   has_many :authmaps
   has_many :comments
@@ -35,7 +36,7 @@ class User < ActiveRecord::Base
   has_many :evaluation_answers
 
   # sunspot/solr search
-  searchable :if => proc { |user| user.has_exid? == true } do
+  searchable :if => proc { |user| (user.has_exid? == true) && (user.id > 8) } do
     text :name
     text :bio
     text :login
@@ -72,10 +73,11 @@ class User < ActiveRecord::Base
   scope :question_wranglers, conditions: { is_question_wrangler: true }
   scope :active, conditions: { away: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
-  scope :exid_holder, conditions: { kind: 'User' }
+  scope :exid_holder, conditions: "kind = 'User' AND id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
-  scope :not_system, conditions: "kind = 'User' OR kind = 'PublicUser'"
+  scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
+  scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
   
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   
