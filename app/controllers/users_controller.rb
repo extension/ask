@@ -8,7 +8,11 @@ class UsersController < ApplicationController
   layout 'public'
   
   def show
-    @user = User.find(params[:id])
+    @user = User.not_retired.not_blocked.not_system.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "This user does not exist."
+      return redirect_to root_url
+    end
     @answered_questions = @user.answered_questions.public_visible.limit(10)
     @open_questions = @user.open_questions.public_visible.limit(10)
   end

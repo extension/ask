@@ -2,14 +2,14 @@
   
   <h1>
     <%= @user.public_name %>
-    <% if current_user && current_user.has_exid? %>
+    <% if current_user && current_user.has_exid? && @user.has_exid? %>
       <%= link_to "expert view", expert_user_path(@user.id), :class => "btn" %>
     <% end %>
   </h1>
   
   <div id="location_list">
 
-  <% if @user.expertise_locations.size > 0 %>
+  <% if @user.has_exid? && @user.expertise_locations.size > 0 %>
 
     <h3>Locations</h3>
       <% @user.expertise_locations.each do |l| %>
@@ -58,7 +58,7 @@
   </div>
 </div>
 
-
+<% if @user.has_exid? %>
 <div id="main" class="span6">
   <h3>Assigned Questions</h3>
 
@@ -94,7 +94,6 @@
   
   </div>
   <% end %>
-  
-  
+  <% end %>
   
 </div>

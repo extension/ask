@@ -75,6 +75,7 @@ class User < ActiveRecord::Base
   scope :exid_holder, conditions: { kind: 'User' }
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
+  scope :not_system, conditions: "kind = 'User' OR kind = 'PublicUser'"
   
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   
