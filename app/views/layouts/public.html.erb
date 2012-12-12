@@ -56,28 +56,40 @@
 <div class="navbar">
   <div id="publicbar" class="navbar-inner">
     <div class="container">
-            <% if current_user && !current_user.has_exid? %>
-                <span class="navavatar loggedin publicuser">
-                  <%= link_to(current_user.public_name, nonexid_profile_edit_path()) %>
-                  <%= link_to('Logout', destroy_user_session_path, :method => :delete, :class => "logout") %>
-                </span>
-            <% elsif !current_user %>
-              <span class="navavatar">
-                <%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%>
-              </span>
-            <% end %>
-            
-            <p><%= link_to("eXtension Ask an Expert", root_path(), :class => "brand") %></p>
-            <p><%= link_to("Ask a Question", ask_path(), :class => "btn") %> <%= link_to "About", home_about_path(), :class => "navlink" %></p>
+      
+      <%= link_to root_path() do %>
+        <h1><span id="extension_logo"><%= image_tag("extension_logo.png") %></span> <span id="ask_an_expert_logo"><%= image_tag("ask_an_expert.png") %></span></h1>
+      <%- end -%>
+      
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      
+      
+      <div class="nav-collapse collapse">
+        <ul class="nav pull-right">
+          <li><%= link_to("Ask a Question", ask_path()) %></li>
+          <li><%= link_to "About", home_about_path() %></li>
 
-            <div style="display:none">
-            <%= form_tag(search_all_path, {:method => :get, id: "searchform"}) do %>
-			    <p id="search">
-			      <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
-			      <%= submit_tag 'Search' %>
-			    </p>
-			<% end %>
-			</div>
+          <% if current_user && !current_user.has_exid? %>
+              <li><%= link_to(current_user.public_name, nonexid_profile_edit_path()) %></li>
+              <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+          <% elsif !current_user %>
+            <li><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%></li>
+          <% end %>
+        </ul>
+        <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-search pull-right"}) do %>
+          <p>
+            <%= text_field_tag 'q', params[:q], :class => "input-small", :placeholder => "Search", :id => "search_field" %>
+            <span id="icon-search"><i class="icon-search icon-white"></i></span>
+  			  </p>
+  			<% end %>
+      </div>
+      
+      
             
     </div>
   </div>
@@ -107,6 +119,12 @@
   
 
 </div>
+
+<script class="code" type="text/javascript">
+  $('#icon-search').click(function() {
+    $('#searchform').submit();
+  });
+</script>
 
 </body>
 </html>

@@ -217,9 +217,25 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
-  #publicbar.navbar-inner {height:80px !important; background: #f47B28;}
+  #extension_logo img {width:200px; height:auto;}
+  #ask_an_expert_logo img {width:200px; height:auto;}
+  
+  #publicbar h1 {float:left;}
+  #publicbar.navbar-inner {/*height:80px !important;*/ background: #f47B28;}
+  #searchform input, #searchform .btn  {margin:0;}
+  
+  #searchform span  {margin:0;
+  display: inline-block;
+  padding: 4px 12px 4px 0;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
   .navbar-inner{ filter:none;}
-  #publicbar.navbar-inner .container {height:80px !important;}
+/*  #publicbar.navbar-inner .container {height:80px !important;}*/
   .question_body {font-size:1.5em; line-height:1.3em; font-family: Georgia, serif;}
   
   #publicbar .nav .active > a,
@@ -286,6 +302,8 @@ body#public {
     .navavatar .avatar_with_badge img {height:20px;width:20px;}
 	}
 	@media screen and (max-width: 480px) {
+	  #extension_logo img {width:120px; height:auto;}
+    #ask_an_expert_logo img {width:120px; height:auto;}
     #question_wrapper {padding:1em 0 !important;}
     h2.title {line-height:1.4em; margin:.5em 0 .85em; font-size:1.2em}
     .question_body {font-size:1.1em; line-height:1.3em;}
