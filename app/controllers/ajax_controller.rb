@@ -24,10 +24,10 @@ class AjaxController < ApplicationController
     if params[:term]
       search_term = params[:term]
       groups = Group.patternsearch(params[:term]).limit(9)
-      experts = User.exid_holder.active.not_retired.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
+      experts = User.exid_holder.active.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
     else
       groups = Group.order('created_at DESC').limit(6)
-      experts = User.exid_holder.active.not_retired.not_blocked.order('created_at DESC').limit(6)
+      experts = User.exid_holder.active.not_blocked.order('created_at DESC').limit(6)
     end
 
     combined_array = groups + experts

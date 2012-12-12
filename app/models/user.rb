@@ -71,7 +71,7 @@ class User < ActiveRecord::Base
   scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("user_counties.county_id = #{county_id}") }
   scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :question_wranglers, conditions: { is_question_wrangler: true }
-  scope :active, conditions: { away: false }
+  scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
   scope :exid_holder, conditions: "kind = 'User' AND id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_retired, conditions: { retired: false }
