@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   has_many :evaluation_answers
 
   # sunspot/solr search
-  searchable :if => proc { |user| (user.has_exid? == true) && (user.id > 8) } do
+  searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
     text :name
     text :bio
     text :login
