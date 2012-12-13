@@ -1,6 +1,6 @@
 <h1><%= link_to @user.name, expert_user_path(@user) %></h1>
 
-<h1>Groups</h1>
+<h2>Groups</h2>
 
 <% if current_user.id == @user.id %>
   <%= render :partial => 'expert/settings/settings_navigation' %>
