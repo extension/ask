@@ -48,6 +48,34 @@
       <span class="label label-inverse"><%= link_to "No Location" %></span>
     <% end %>
   </p>
+  
+
+    <div id="tag_picker_wrapper">
+      <div class="ui-widget">
+        <label for="tag_picker">Add Tags</label>
+    	  <input id="tag_picker" placeholder="Type a word and select it..." /> 
+      </div>
+    </div>
+
+    <div id="tags">
+
+    <% if @question.tags.size > 0 %>
+      <% @question.tags.each do |tag| %>
+        <% if @question.assigned_group %>
+          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+        <% else %>
+          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span> <span class="btn removetag">x</span></p>
+        <% end %>
+      <% end %>
+    <% else %>
+
+    <% end %>
+
+    </div>
+
+    <p><small>(All tags are viewable on public questions)</small></p>
+
+  
 </div>
 
 <% if @question_responses.size > 0 %>
@@ -98,3 +126,53 @@
 
 
 
+<script class="code" type="text/javascript">  
+  
+		function add_tag(tag) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
+        cache: false,
+        data: {tag: tag}
+      })
+      .done(function() {
+				$("#tag_picker").autocomplete("close");
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function() {
+        alert("error");
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#tag_picker").autocomplete({
+			source: "/ajax/tags",
+			minLength: 2,
+			select: function(e, ui) {
+			  add_tag(ui.item.name);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        add_tag(this.value);
+      }
+    });
+
+    // remove tags
+     $("#tags").on("click", ".removetag", function(){
+       var tag = $(this).closest(".tagwrapper");
+       $.ajax({
+         type: "POST",
+           url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
+           cache: false,
+           data: {tag_id: tag.attr("id").replace('tag_', '')}
+       })
+       .done(function() {
+         tag.fadeOut(500);
+       })
+     });
+
+</script>

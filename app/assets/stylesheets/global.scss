@@ -513,7 +513,8 @@ body#expert {
 	
 	
 /*	#tags {border:1px solid lime;}*/
-	#tag_picker_wrapper {margin:0 0 1em;}
+	#tag_picker_wrapper {margin:1em 0 1em; padding-top:1em;}
+	#tag_picker_wrapper input {width:16em; }
 	.subtle {color:#bbb;}
 	#question_wrapper {padding:1em 2.5em;}
 	
@@ -629,6 +630,7 @@ body#expert {
   	.assignment_match_header {display:none;}
   	#reassign_tag_list_wrapper {display:block;}
   	.navbar .container {padding:0;}
+  	.question_body {font-size:1.2em; line-height:1.4em;}
 	}
 	
 	@media screen and (max-width: 420px) {
