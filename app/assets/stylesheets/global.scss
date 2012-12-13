@@ -165,7 +165,7 @@ body {
   ul.navavatar.loggedin {margin:0;padding:0; /*outline:lime 1px solid;*/}
   ul.navavatar.loggedin > li {margin:0;padding:0; list-style:none; /*outline:red 1px solid;*/ float:left; height:44px; line-height:44px;}
   ul.navavatar.loggedin li.username {padding-left:1em;padding-right:1em;}
-  #user_actions {float:left;}
+/*  #user_actions {float:left;}*/
   .logout {margin-left:1em;}
   
   img {width: 100%;}
@@ -223,6 +223,7 @@ body#public {
   #publicbar h1 {float:left;}
   #publicbar.navbar-inner {/*height:80px !important;*/ background: #f47B28;}
   #searchform input, #searchform .btn  {margin:0;}
+/*  #publicbar .container {outline:1px solid lime;}*/
   
   #searchform span  {margin:0;
   display: inline-block;
@@ -256,7 +257,8 @@ body#public {
 	#expertbar .navavatar {background:#000;}
 	#expertbar.navbar-inner {min-height:35px; height:35px;}
 	.logout {margin-left:1em;}
-  
+	ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
+/*  #expertbar .container {outline: 1px solid lime !important;}*/
   
   #app_location.demo {margin-top:1em; background:#FFFF7E;}
   #content_wrapper {margin:3em 1.5em 1em;}
@@ -267,7 +269,7 @@ body#public {
 	a.brand {color:#fff !important; text-shadow:none;}
 /*  .navbar {height:80px !important;}*/
 	
-	.navavatar {float:right; padding:.5em 2em; color:#fff;}
+	.navavatar {float:right; /*padding:.5em 2em; */color:#fff;}
 	.navavatar a {color:#fff;}
 	.navlink {color:#fff;}
 	.navavatar.loggedin img {border:#888 1px solid;}
@@ -307,6 +309,12 @@ body#public {
     #question_wrapper {padding:1em 0 !important;}
     h2.title {line-height:1.4em; margin:.5em 0 .85em; font-size:1.2em}
     .question_body {font-size:1.1em; line-height:1.3em;}
+    #publicbar {padding:0;}
+    #expertbar {padding:0;}
+    #expertbar .container {padding:0;}
+/*    #publicbar .container {outline:1px solid purple;}*/
+    #publicbar .container h1 {margin:0;}
+    .brand {padding-left:20px;}
 	}
 }
 
@@ -355,7 +363,7 @@ body#expert {
     .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
     .navavatar {float:right;}
-	.navavatar {background:#000; padding:.5em 2em; border:3px solid #000;}
+	.navavatar {background:#000; border:3px solid #000;}
 	.navavatar a {color:#999;}
 	.navavatar img {border:#888 1px solid;}
 	.navavatar a:hover {color:#fff !important; text-decoration:none;}
@@ -608,6 +616,7 @@ body#expert {
   	#reassign_tag_list {display:block;}
   	.assignment_match_header {display:none;}
   	#reassign_tag_list_wrapper {display:block;}
+  	.navbar .container {padding:0;}
 	}
 	
 	@media screen and (max-width: 420px) {
