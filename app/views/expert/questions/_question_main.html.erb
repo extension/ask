@@ -1,7 +1,7 @@
 <h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
 <div id="question">
-<p class="question_body"><%= format_text_for_display(@question.body) %></p>
+<div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
   <% @question.images.each do |image| %>
     <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
