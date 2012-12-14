@@ -23,9 +23,13 @@ class GroupsController < ApplicationController
       @question.images.build
     end
     
-   
     if request.post?
-      @question = Question.new(params[:question])
+      begin
+        @question = Question.new(params[:question])
+      rescue
+        flash[:error] = "Invalid Parameters."
+        return redirect_to root_url
+      end
       
       if current_user and current_user.email.present?
         @submitter = current_user
