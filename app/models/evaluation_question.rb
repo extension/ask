@@ -72,11 +72,13 @@ class EvaluationQuestion < ActiveRecord::Base
     user = options[:user]
     question = options[:question]
     params = options[:params]
-
-    if(answer = self.answer_for_user_and_question(user,question))
-      answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
-    else
+    
+    begin
       answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
+    rescue ActiveRecord::RecordNotUnique => e
+      if(answer = self.answer_for_user_and_question(user,question))
+        answer.update_attributes({response: params[:response], value: self.response_value(params[:response])})
+      end
     end
     answer
   end
