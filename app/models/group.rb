@@ -42,7 +42,8 @@ class Group < ActiveRecord::Base
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
   scope :tagged_with, lambda {|tag_id| includes(:taggings => :tag).where("tags.id = '#{tag_id}'").where("taggings.taggable_type = 'Group'")}
-  scope :patternsearch, lambda {|searchterm|
+  
+  scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
     # strip '+' characters because it's causing a repitition search error
@@ -51,7 +52,12 @@ class Group < ActiveRecord::Base
     if sanitizedsearchterm == ''
       return {:conditions => 'false'}
     end
-    where("name rlike ?", sanitizedsearchterm)
+    
+    if type.nil?
+      where("name rlike ?", sanitizedsearchterm)
+    elsif type == 'prefix'
+      where("name rlike ?", "^#{sanitizedsearchterm}")
+    end
   }
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"

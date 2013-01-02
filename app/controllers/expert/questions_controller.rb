@@ -286,6 +286,7 @@ class Expert::QuestionsController < ApplicationController
           
       # get the last response type, if a non-answer response was previously sent, respect the status of it in the question, else 
       # set it to resolved
+      # UPDATE: NOW, EXPERTS CAN CLOSE OUT A QUESTION WITHOUT AN EXPERT RESPONSE.
       if last_response = @question.last_response
         resolver = last_response.initiator
         if last_response.event_state == QuestionEvent::NO_ANSWER
@@ -301,12 +302,13 @@ class Expert::QuestionsController < ApplicationController
                                       :resolved_at => last_response.created_at,
                                       :current_response => last_response.response)
         end
-      # else, we're closing it out with no response, which is not supposed to happen
-      # close out is only being used for questions with a response now, for purposes like
-      # when someone responds with a thank you and you need to close it out without a response.
-      else           
-        flash[:error] = "Please either reassign, answer or reject the question." 
-        return redirect_to expert_question_url(@question)
+      # IF NO EXPERT RESPONSE YET...
+      else
+        @question.update_attributes(:status => Question::CLOSED_TEXT, 
+                                    :status_state => Question::STATUS_CLOSED,
+                                    :current_resolver => current_user,
+                                    :resolved_at => Time.now,
+                                    :current_response => close_out_reason)
       end                                    
       
       QuestionEvent.log_close(@question, current_user, close_out_reason)                                                      

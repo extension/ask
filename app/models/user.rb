@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
 
-  scope :patternsearch, lambda {|searchterm|
+  scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
     # strip '+' characters because it's causing a repitition search error
@@ -101,13 +101,25 @@ class User < ActiveRecord::Base
     # in the format wordone wordtwo?
     words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
     if(words.length > 1 && !words[0].blank? && !words[1].blank?)
-      findvalues = {
-       :firstword => words[0],
-       :secondword => words[1]
-      }
+      if type.nil?
+        findvalues = {
+         :firstword => words[0],
+         :secondword => words[1]
+        }
+      elsif type == "prefix"
+        findvalues = {
+         :firstword => "^#{words[0]}",
+         :secondword => "^#{words[1]}"
+        }
+      end
+      
       conditions = ["((first_name rlike :firstword AND last_name rlike :secondword) OR (first_name rlike :secondword AND last_name rlike :firstword))",findvalues]
     else
-      conditions = ["(first_name rlike ? OR last_name rlike ?)", sanitizedsearchterm, sanitizedsearchterm]
+      if type.nil?
+        conditions = ["(first_name rlike ? OR last_name rlike ?)", sanitizedsearchterm, sanitizedsearchterm]
+      elsif type == "prefix"
+        conditions = ["(first_name rlike ? OR last_name rlike ?)", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}"]
+      end
     end
     {:conditions => conditions}
   }

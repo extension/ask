@@ -23,8 +23,14 @@ class AjaxController < ApplicationController
   def experts
     if params[:term]
       search_term = params[:term]
-      groups = Group.patternsearch(params[:term]).limit(9)
-      experts = User.exid_holder.active.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
+      
+      groups_starting_with = Group.pattern_search(params[:term], "prefix").limit(9)
+      groups_including = Group.pattern_search(params[:term]).limit(9)
+      groups = (groups_starting_with + groups_including).uniq.take(9)
+      
+      experts_starting_with = User.exid_holder.active.not_blocked.pattern_search(params[:term], "prefix").limit(18 - groups.length)
+      experts_including = User.exid_holder.active.not_blocked.pattern_search(params[:term]).limit(18 - groups.length)
+      experts = (experts_starting_with + experts_including).uniq.take(9)
     else
       groups = Group.order('created_at DESC').limit(6)
       experts = User.exid_holder.active.not_blocked.order('created_at DESC').limit(6)
@@ -39,8 +45,9 @@ class AjaxController < ApplicationController
   def groups
     if params[:term]
       search_term = params[:term]
-      groups_including = Group.where("name like ?", "%#{params[:term]}%").limit(12)
-      groups_starting_with = Group.where("name like ?", "#{params[:term]}%").limit(12)
+      
+      groups_starting_with = Group.pattern_search(params[:term], "prefix").limit(12)
+      groups_including = Group.pattern_search(params[:term]).limit(12)
       groups = (groups_starting_with + groups_including).uniq.take(12)
     else
       groups = Group.order('created_at DESC').limit(12)
