@@ -71,18 +71,11 @@
       </div>
 	    
 	<% else %>
-      
       <div class="question_actions">
-
-          <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
-
-        <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
-          <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
-        <% end %>
-  
+        <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
+        <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn" %></span>
       </div>
-      
      <% end %>
   </aside>
   
