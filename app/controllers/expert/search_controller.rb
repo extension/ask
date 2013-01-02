@@ -16,34 +16,45 @@ class Expert::SearchController < ApplicationController
       flash[:error] = "Empty/invalid search terms"
       return redirect_to expert_home_url
     end
-  
+    
     @list_title = "Search for '#{params[:q]}'"
+    @number_passed = false
     
-    questions = Question.search do
-                  fulltext(params[:q])
-                  without(:status_state, Question::STATUS_REJECTED)
-                  paginate :page => 1, :per_page => 10
+    # special "id of question, expert or group check"
+    if(params[:q].to_i > 0)
+      @number_passed = true
+      id_number = params[:q].to_i
+      @questions = Question.where(id: id_number).page(1)
+      @experts = User.where(id: id_number, kind: 'User').page(1)
+      @groups = Group.where(id: id_number).page(1)
+    else
+      questions = Question.search do
+                    fulltext(params[:q])
+                     without(:status_state, Question::STATUS_REJECTED)
+                    paginate :page => 1, :per_page => 10
+                  end
+      @questions = questions.results
+    
+      experts = User.search do
+                fulltext(params[:q]) do
+                  fields(:name)
+                  fields(:bio)
                 end
-    @questions = questions.results
-    
-    experts = User.search do
-              fulltext(params[:q]) do
-                fields(:name)
-                fields(:bio)
+                with :is_blocked, false
+                with :retired, false
+                with :kind, 'User'
+                order_by :last_active_at, :desc
+                paginate :page => 1, :per_page => 10
               end
-              with :is_blocked, false
-              with :retired, false
-              with :kind, 'User'
-              order_by :last_active_at, :desc
-              paginate :page => 1, :per_page => 10
-            end
-    @experts = experts.results
+      @experts = experts.results
     
-    groups = Group.search do
-               fulltext(params[:q])
-               paginate :page => 1, :per_page => 10
-             end
-    @groups = groups.results
+      groups = Group.search do
+                 fulltext(params[:q])
+                 paginate :page => 1, :per_page => 10
+               end
+      @groups = groups.results
+    end
+    
     render :action => 'index'
   end
   
