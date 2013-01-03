@@ -178,37 +178,6 @@ class QuestionsController < ApplicationController
           @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
         end
 
-        # if the person overrode location/county - set those session values
-
-        # TODO: Need to update this
-        # # location and county - separate from params[:submitted_question], but probably shouldn't be
-        #         if(params[:location_id] and location = Location.find_by_id(params[:location_id].strip.to_i))
-        #           @question.location = location
-        #           # change session if different
-        #           if(!session[:location_and_county].blank?)
-        #             if(session[:location_and_county][:location_id] != location.id)
-        #               session[:location_and_county] = {:location_id => location.id}
-        #             end
-        #           else
-        #             session[:location_and_county] = {:location_id => location.id}
-        #           end
-        #           if(params[:county_id] and county = County.find_by_id_and_location_id(params[:county_id].strip.to_i, location.id))
-        #             @question.county = county
-        #             if(!session[:location_and_county][:county_id].blank?)
-        #               if(session[:location_and_county][:county_id] != county.id)
-        #                 session[:location_and_county][:county_id] = county.id
-        #               end
-        #             else
-        #               session[:location_and_county][:county_id] = county.id
-        #             end
-        #           end
-        #         elsif(@group.location_id)
-        #           @question.location_id = @group.location_id
-        #           if(@group.county_id)
-        #             @question.county_id = @group.county_id
-        #           end
-        #         end
-
         # validate question
         if !@question.valid?
           @argument_errors = ("Errors occured when saving:<br />" + @question.errors.full_messages.join('<br />'))
