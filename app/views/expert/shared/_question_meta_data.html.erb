@@ -26,7 +26,7 @@
   
   submitted <%= time_ago_in_words(question.created_at) %> ago.
   
-  <% if question.created_at != question.last_assigned_at %>
+  <% if (question.created_at != question.last_assigned_at) && !question.last_assigned_at.nil? %>
   Reassigned <%= time_ago_in_words(question.last_assigned_at) %> ago
   <% end %>
 </p>
