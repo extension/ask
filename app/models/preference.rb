@@ -84,7 +84,7 @@ class Preference < ActiveRecord::Base
   end
     
   def self.create_or_update(prefable,name,value,group_id=nil,question_id=nil)
-    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(group_id: group_id).first)
+    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(question_id: question_id).where(group_id: group_id).first)
       preference.update_attribute(:value, value)
     else
       preference = self.create(prefable: prefable, name: name, value: value, group_id: group_id, question_id: question_id)
