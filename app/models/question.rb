@@ -434,7 +434,7 @@ class Question < ActiveRecord::Base
         begin
           self.tags << tag
         rescue
-          return
+          return false
         end  
         return tag
       end
