@@ -156,7 +156,6 @@ class QuestionsController < ApplicationController
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.original_group_id = @group.id
-        @question.group_name = @group.name
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
@@ -187,13 +186,6 @@ class QuestionsController < ApplicationController
         if @question.save
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
-          #TODO: keep???
-          # tags
-          # if(@group.widget_enable_tags?)
-          #             if(!params[:tag_list])
-          #               @question.tag_myself_with_shared_tags(@widget.system_sharedtags_displaylist)
-          #             end
-          #           end
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
           return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
         else
@@ -284,8 +276,6 @@ class QuestionsController < ApplicationController
     @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
     @question.status = Question::SUBMITTED_TEXT
     @question.status_state = Question::STATUS_SUBMITTED
-    # TODO: review - this make no sense to me - jayoung
-    @question.group_name = @question.assigned_group.name
     if(@question.save)
       returninformation = {'question_id' => @question.id, 'success' => true}
       return render :json => returninformation.to_json, :status => :ok

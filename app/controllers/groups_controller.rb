@@ -50,7 +50,6 @@ class GroupsController < ApplicationController
       @question.submitter = @submitter
       @question.assigned_group = @group
       @question.original_group_id = @group.id
-      @question.group_name = @group.name
       @question.user_ip = request.remote_ip
       @question.user_agent = request.env['HTTP_USER_AGENT']
       @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''

@@ -85,7 +85,6 @@ class Group < ActiveRecord::Base
     
   QUESTION_WRANGLER_GROUP_ID = 38
   ORPHAN_GROUP_ID = 1
-  ORPHAN_GROUP_NAME = 'Orphan Group'
     
   # hardcoded for widget layout difference
   BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'

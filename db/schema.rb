@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121212165800) do
+ActiveRecord::Schema.define(:version => 20130104142105) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -401,7 +401,6 @@ ActiveRecord::Schema.define(:version => 20121212165800) do
     t.string   "user_ip",                  :default => "",    :null => false
     t.string   "user_agent",               :default => "",    :null => false
     t.string   "referrer",                 :default => "",    :null => false
-    t.string   "group_name"
     t.integer  "status_state",                                :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
@@ -421,7 +420,6 @@ ActiveRecord::Schema.define(:version => 20121212165800) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
-  add_index "questions", ["group_name"], :name => "group_name_idx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"

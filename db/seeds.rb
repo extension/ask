@@ -275,13 +275,13 @@ end
 def transfer_questions
   puts 'Transferring questions...'
   question_transfer_query = <<-END_SQL.gsub(/\s+/, " ").strip
-  INSERT INTO #{@aae_database}.questions(id, current_resolver_id, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam_legacy, user_ip, user_agent, referrer, group_name, status_state, zip_code, original_group_id, submitter_id, last_assigned_at, last_opened_at, is_api, created_at, updated_at)
+  INSERT INTO #{@aae_database}.questions(id, current_resolver_id, status, body, title, is_private, is_private_reason, assignee_id, assigned_group_id, duplicate, external_app_id, submitter_email, resolved_at, question_updated_at, current_response, question_fingerprint, submitter_firstname, submitter_lastname, county_id, location_id, spam_legacy, user_ip, user_agent, referrer, status_state, zip_code, original_group_id, submitter_id, last_assigned_at, last_opened_at, is_api, created_at, updated_at)
   SELECT #{@darmokdatabase}.submitted_questions.id, #{@darmokdatabase}.submitted_questions.resolved_by, #{@darmokdatabase}.submitted_questions.status, #{@darmokdatabase}.submitted_questions.asked_question,
          null, true, 2, #{@darmokdatabase}.submitted_questions.user_id, #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.duplicate, #{@darmokdatabase}.submitted_questions.external_app_id, #{@darmokdatabase}.submitted_questions.submitter_email,
          #{@darmokdatabase}.submitted_questions.resolved_at, #{@darmokdatabase}.submitted_questions.question_updated_at, #{@darmokdatabase}.submitted_questions.current_response,
          #{@darmokdatabase}.submitted_questions.question_fingerprint, #{@darmokdatabase}.submitted_questions.submitter_firstname, #{@darmokdatabase}.submitted_questions.submitter_lastname,
          #{@darmokdatabase}.submitted_questions.county_id, #{@darmokdatabase}.submitted_questions.location_id, #{@darmokdatabase}.submitted_questions.spam, #{@darmokdatabase}.submitted_questions.user_ip, #{@darmokdatabase}.submitted_questions.user_agent, 
-         #{@darmokdatabase}.submitted_questions.referrer, #{@darmokdatabase}.submitted_questions.widget_name, #{@darmokdatabase}.submitted_questions.status_state, #{@darmokdatabase}.submitted_questions.zip_code,
+         #{@darmokdatabase}.submitted_questions.referrer, #{@darmokdatabase}.submitted_questions.status_state, #{@darmokdatabase}.submitted_questions.zip_code,
          #{@darmokdatabase}.communities.id, #{@darmokdatabase}.submitted_questions.submitter_id, #{@darmokdatabase}.submitted_questions.last_assigned_at,
          #{@darmokdatabase}.submitted_questions.last_opened_at, #{@darmokdatabase}.submitted_questions.is_api, #{@darmokdatabase}.submitted_questions.created_at, NOW()       
   FROM  #{@darmokdatabase}.submitted_questions
@@ -545,7 +545,7 @@ def transfer_question_source
   JOIN   #{@darmokdatabase}.categories_submitted_questions ON #{@darmokdatabase}.categories_submitted_questions.submitted_question_id = #{@aae_database}.questions.id
   JOIN   #{@darmokdatabase}.categories ON #{@darmokdatabase}.categories_submitted_questions.category_id = #{@darmokdatabase}.categories.id
   JOIN   #{@aae_database}.groups ON #{@aae_database}.groups.darmok_expertise_id = #{@darmokdatabase}.categories.id
-  SET    #{@aae_database}.questions.assigned_group_id = #{@aae_database}.groups.id, #{@aae_database}.questions.group_name = #{@aae_database}.groups.name
+  SET    #{@aae_database}.questions.assigned_group_id = #{@aae_database}.groups.id
   WHERE  #{@aae_database}.questions.original_group_id IS NULL AND #{@darmokdatabase}.categories.parent_id IS NULL
   END_SQL
   
@@ -562,8 +562,8 @@ def transfer_misfit_questions_to_groups
   
   question_misfit_update_query = <<-END_SQL.gsub(/\s+/, " ").strip
   UPDATE #{@aae_database}.questions
-  SET #{@aae_database}.questions.assigned_group_id = #{Group::ORPHAN_GROUP_ID}, #{@aae_database}.questions.group_name = '#{Group::ORPHAN_GROUP_NAME}'
-  WHERE #{@aae_database}.questions.assigned_group_id IS NULL AND #{@aae_database}.questions.group_name IS NULL
+  SET #{@aae_database}.questions.assigned_group_id = #{Group::ORPHAN_GROUP_ID}
+  WHERE #{@aae_database}.questions.assigned_group_id IS NULL 
   END_SQL
   
   benchmark = Benchmark.measure do
