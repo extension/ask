@@ -36,6 +36,20 @@ class Expert::UsersController < ApplicationController
     render :action => 'show'
   end
   
+  def watched
+    @user = User.exid_holder.find_by_id(params[:id])
+    if @user.blank?
+      flash[:error] = "The user specified does not exist as an expert in AaE."
+      return redirect_to expert_home_url 
+    end
+    @question_list = "watched"
+    @questions = @user.watched_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @user.watched_questions.length
+    @my_groups = @user.group_memberships
+    @handling_event_count = @user.aae_handling_event_count
+    render :action => 'show'
+  end
+  
   def rejected
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?

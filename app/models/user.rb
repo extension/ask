@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
+  has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
   has_many :question_viewlogs
   has_one  :yo_lo
   has_many :demographics
