@@ -115,6 +115,7 @@ class Question < ActiveRecord::Base
   }
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
+  scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
 
 
   # reporting scopes

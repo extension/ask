@@ -33,7 +33,7 @@ class Expert::HomeController < ApplicationController
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag
-      @questions = Question.tagged_with(@tag.id).order("questions.created_at DESC").limit(25)
+      @questions = Question.tagged_with(@tag.id).not_rejected.order("questions.created_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     
       @experts = User.tagged_with(@tag.id).order("users.last_active_at DESC").limit(5)
@@ -49,7 +49,7 @@ class Expert::HomeController < ApplicationController
   def users_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
-    @experts = User.tagged_with(@tag.id).page(params[:page]).order("users.last_active_at DESC")
+    @experts = User.tagged_with(@tag.id).page(params[:page]).exid_holder.not_retired.order("users.last_active_at DESC")
     @expert_total_count = User.tagged_with(@tag.id).count
   end
   
@@ -63,14 +63,14 @@ class Expert::HomeController < ApplicationController
   def questions_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
-    @questions = Question.tagged_with(@tag.id).page(params[:page]).order("questions.created_at DESC")
+    @questions = Question.tagged_with(@tag.id).not_rejected.page(params[:page]).order("questions.created_at DESC")
   end
   
   def users_by_location
     @location = Location.find_by_id(params[:id])
     return record_not_found if (!@location)
-    @experts = User.with_expertise_location(@location.id).page(params[:page]).order("users.last_active_at DESC")
-    @expert_total_count = User.with_expertise_location(@location.id).count
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
+    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
   end
   
   def groups_by_location
@@ -83,31 +83,32 @@ class Expert::HomeController < ApplicationController
   def questions_by_location
     @location = Location.find_by_id(params[:id])
     return record_not_found if (!@location)
-    @questions = Question.where("location_id = ?", @location.id).page(params[:page]).order("questions.status_state DESC")
-    @question_total_count = Question.where("location_id = ?", @location.id).count
+    @questions = Question.where("location_id = ?", @location.id).not_rejected.page(params[:page]).order("questions.status_state DESC")
+    @question_total_count = Question.where("location_id = ?", @location.id).not_rejected.count
   end
   
   def locations
     @location = Location.find_by_id(params[:id])
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
     
-    @questions = Question.where("location_id = ?", @location.id).order("questions.status_state DESC").limit(8)
-    @question_total_count = Question.where("location_id = ?", @location.id).count
-    @experts = User.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(5)
-    @expert_total_count = User.with_expertise_location(@location.id).count
+    @questions = Question.where("location_id = ?", @location.id).not_rejected.order("questions.status_state DESC").limit(8)
+    @question_total_count = Question.where("location_id = ?", @location.id).not_rejected.count
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.order("users.last_active_at DESC").limit(5)
+    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
     @groups = Group.with_expertise_location(@location.id).limit(5)
     @group_total_count = Group.with_expertise_location(@location.id).count
   end
   
   def county
     @county = County.find_by_id(params[:id])
+    return record_not_found if @county.blank?
     @location = Location.find_by_id(@county.location_id)
     @locations = Location.order('fipsid ASC')
     
-    @questions = Question.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(5)
-    @question_total_count = Question.where("county_id = ?", @county.id).count
-    @experts = User.with_expertise_county(@county.id).order("users.last_active_at DESC").limit(5)
-    @expert_total_count = User.with_expertise_county(@county.id).count
+    @questions = Question.where("county_id = ?", @county.id).not_rejected.order("questions.status_state DESC").limit(5)
+    @question_total_count = Question.where("county_id = ?", @county.id).not_rejected.count
+    @experts = User.with_expertise_county(@county.id).exid_holder.not_retired.order("users.last_active_at DESC").limit(5)
+    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_retired.count
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
   end
