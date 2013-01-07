@@ -1,0 +1,4 @@
+<h1>Questions in '<%= @county.name %>' (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h1>
+<h3><%= link_to "View everything in '#{@county.name}'", expert_view_county_path(:id => @county.id) %></h3>
+
+<%= render partial: 'expert/home/question_list' %>

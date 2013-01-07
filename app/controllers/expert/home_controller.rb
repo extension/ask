@@ -68,23 +68,44 @@ class Expert::HomeController < ApplicationController
   
   def users_by_location
     @location = Location.find_by_id(params[:id])
-    return record_not_found if (!@location)
+    return record_not_found if @location.blank?
     @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
     @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
   end
   
+  def users_by_county
+    @county = County.find_by_id(params[:id])
+    return record_not_found if @county.blank?
+    @experts = User.with_expertise_county(@county.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
+    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_retired.count
+  end
+  
   def groups_by_location
     @location = Location.find_by_id(params[:id])
-    return record_not_found if (!@location)
+    return record_not_found if @location.blank?
     @groups = Group.with_expertise_location(@location.id).page(params[:page])
     @group_total_count = Group.with_expertise_location(@location.id).count
   end
   
+  def groups_by_county
+    @county = County.find_by_id(params[:id])
+    return record_not_found if @county.blank?
+    @groups = Group.with_expertise_county(@county.id).page(params[:page])
+    @group_total_count = Group.with_expertise_county(@county.id).count
+  end
+  
   def questions_by_location
     @location = Location.find_by_id(params[:id])
-    return record_not_found if (!@location)
+    return record_not_found if @location.blank?
     @questions = Question.where("location_id = ?", @location.id).not_rejected.page(params[:page]).order("questions.status_state DESC")
     @question_total_count = Question.where("location_id = ?", @location.id).not_rejected.count
+  end
+  
+  def questions_by_county
+    @county = County.find_by_id(params[:id])
+    return record_not_found if @county.blank?
+    @questions = Question.where("county_id = ?", @county.id).not_rejected.page(params[:page]).order("questions.status_state DESC")
+    @question_total_count = Question.where("county_id = ?", @county.id).not_rejected.count
   end
   
   def locations
