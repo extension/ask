@@ -1,0 +1,10 @@
+<%= paginate @groups %>
+<% if @groups.size > 0 %>
+    <% @groups.each do |group| %>
+      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <% end %>
+  
+<% else %>
+  <p>There are no groups with this tag</p>
+<% end %>
+<%= paginate @groups %>

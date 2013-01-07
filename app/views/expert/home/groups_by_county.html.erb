@@ -1,0 +1,4 @@
+<h1>Groups in '<%= @county.name %>' (<%= @group_total_count %>)</h1>
+<h3><%= link_to "View everything in '#{@county.name}'", expert_view_county_path(:id => @county.id) %></h3>
+
+<%= render partial: 'expert/home/group_list' %>
