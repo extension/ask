@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
   scope :question_wranglers, conditions: { is_question_wrangler: true }
   scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
-  scope :exid_holder, conditions: "kind = 'User' AND id NOT IN (#{SYSTEMS_USERS.join(',')})"
+  scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
   scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
