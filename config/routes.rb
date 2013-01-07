@@ -136,7 +136,9 @@ Aae::Application.routes.draw do
   match "home/private_page" => "home#private_page", :via => :get
   match "home/county_options_list/:location_id" => "home#county_options_list", :via => :get
   match "settings/profile" => "settings#profile", :via => [:get, :put], :as => 'nonexid_profile_edit'
-
+  
+  match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
+  
   match "ask" => "groups#ask", :id => "38" #id for QW group
 
   match "ajax/tags" => "ajax#tags", :via => [:get]

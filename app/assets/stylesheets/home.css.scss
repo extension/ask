@@ -15,4 +15,28 @@ body#public {
 
 #day_one h1 {margin-bottom:1em;}
 #day_one p{font-size: 1.5em; line-height:1.5em;}
+
+
+.incoming_question a {
+  text-decoration:none;
+} 
+
+.incoming_question p.question_body {
+  font-size: 1.3em;
+  line-height: 1.4em;
+  font-family: Georgia, serif;
+} 
+.incoming_question h3 p {
+  line-height: 1.2em;
+/*  color: #161F21;*/
+  font-size: 1.2em;
+}
+
+@media screen and (max-width: 480px) {
+  .incoming_question p.question_body {font-size: 1.2em;} 
+  .incoming_question h3 p {line-height: 1.2em; font-size: .9em;}
+  
+}
+
+
 }

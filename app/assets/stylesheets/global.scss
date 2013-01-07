@@ -294,6 +294,17 @@ body#public {
 	.public_rejected {color:#ff0000;}
 	textarea {width:40em; max-width:95%;}
 	
+	.smallish {color:#888;}
+	.tag {background:#BDC9B0; @include rounded3; color:#888; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
+	.tag a {padding:.1em .35em; background:#BDC9B0; @include rounded3; color:#888;}
+	.tag a:hover {background:#444; @include rounded3; color:#fff; text-decoration:none;}
+	.tag-geography,
+	.tag-geography a {background:#DAEAC9; color:#3E3553;}
+	.tag-geography a:hover {background:#53785E; color:#fff;}
+	.tag-topic,
+	.tag-topic a {background:#C2E5EC; color:#1F5983;}
+	.tag-topic a:hover {background:#2C1946; color:#fff;}
+	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		padding-top:0;
