@@ -1,13 +1,4 @@
 <h1>Groups in '<%= @location.name %>' (<%= @group_total_count %>)</h1>
 <h3><%= link_to "View everything in '#{@location.name}'", expert_view_location_path(:id => @location.id) %></h3>
 
-<%= paginate @groups %>
-<% if @groups.size > 0 %>
-    <% @groups.each do |group| %>
-      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
-    <% end %>
-  
-<% else %>
-  <p>There are no groups with this tag</p>
-<% end %>
-<%= paginate @groups %>
+<%= render partial: 'expert/home/group_list' %>
