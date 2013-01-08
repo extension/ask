@@ -1,6 +1,10 @@
 # Set the host name for URL creation
 SitemapGenerator::Sitemap.default_host = "https://#{Settings.urlwriter_host}"
 
+if Settings.sitemap_dir != 'notset'
+  SitemapGenerator::Sitemap.sitemaps_path = Settings.sitemap_dir
+end
+
 SitemapGenerator::Sitemap.create do
   # Put links creation logic here.
   #
