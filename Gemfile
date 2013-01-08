@@ -40,7 +40,7 @@ gem 'geoip'
 # Deploy with Capistrano
 gem 'capistrano'
 
-
+gem 'sitemap_generator'
 
 # authentication
 gem 'devise', "~> 1.5.1"

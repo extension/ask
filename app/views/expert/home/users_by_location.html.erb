@@ -1,25 +1,4 @@
 <h1>Experts in '<%= @location.name %>' (<%= @expert_total_count %>)</h1>
 <h3><%= link_to "View everything in '#{@location.name}'", expert_view_location_path(:id => @location.id) %></h3>
 
-<%= paginate @experts %>
-<% if @experts.size > 0 %>
-  <table>
-    <tr>
-      <th>Name</th>
-      <th>Most recent sign-in</th>  
-    </tr>
-  <% @experts.each do |expert| %>
-    <tr>
-      <td>
-        <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %></p>
-      </td>
-      <td>
-        <%= expert.try(:last_active_at) ? "#{time_ago_in_words(expert.last_active_at)} ago" : "no record of sign-in"%>
-      </td>
-    </tr>
-  <% end %>
-  </table>
-<% else %>
-  <p>There are no experts with this tag</p>
-<% end %>
-<%= paginate @experts %>
+<%= render partial: 'expert/home/expert_list' %>
