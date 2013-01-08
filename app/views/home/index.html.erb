@@ -21,6 +21,11 @@
     <%= link_to question_path(question.id) do %>
       <h3><%= format_text_for_display(question.title) -%></h3>
       <p class="question_body"><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
+      
+      <% if question.responses.size > 0 %>
+      <p><span class="response_count"><%= question.responses.size %> Response</span></p>
+      <% end %>
+      
     <%- end -%>
     
     <% question.images.each do |image| %>
@@ -51,7 +56,7 @@
             <span class="tag tag-geography"><%= "#{question.county.name}" %></span>
           <% end %>
           <% if question.location.present? %>
-            <span class="tag tag-geography"><%= question.location.abbreviation %></span>
+            <span class="tag tag-geography"><%= question.location.name %></span>
           <% end %>
         <% end %>
 
