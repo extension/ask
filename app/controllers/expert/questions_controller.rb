@@ -83,19 +83,19 @@ class Expert::QuestionsController < ApplicationController
   
   def assign
     if !params[:id]
-      flash[:failure] = "You must select a question to assign."
+      flash[:error] = "You must select a question to assign."
       return redirect_to expert_home_url
     end
     
     @question = Question.find_by_id(params[:id])
         
     if !@question
-      flash[:failure] = "Invalid question."
+      flash[:error] = "Invalid question."
       return redirect_to expert_home_url
     end
     
     if !params[:assignee_id]
-      flash[:failure] = "You must select a user or group to reassign."
+      flash[:error] = "You must select a user or group to reassign."
       redirect_to expert_question_url(@question)
       return
     end
@@ -104,12 +104,12 @@ class Expert::QuestionsController < ApplicationController
       
     if !user || user.retired?
       !user ? err_msg = "User does not exist." : err_msg = "User is retired from the system"
-      flash[:failure] = err_msg
+      flash[:error] = err_msg
       return redirect_to expert_question_url(@question)
     end
       
     if user.away && current_user.id != user.id
-      flash[:failure] = "This user has elected not to receive questions."
+      flash[:error] = "This user has elected not to receive questions."
       return redirect_to expert_question_url(@question)  
     end
       
@@ -132,19 +132,19 @@ class Expert::QuestionsController < ApplicationController
   
   def assign_to_group
     if !params[:id]
-      flash[:failure] = "You must select a question to assign."
+      flash[:error] = "You must select a question to assign."
       return redirect_to expert_home_url
     end
     
     @question = Question.find_by_id(params[:id])
         
     if !@question
-      flash[:failure] = "Invalid question."
+      flash[:error] = "Invalid question."
       return redirect_to expert_home_url
     end
     
     if !params[:group_id]
-      flash[:failure] = "You must select a user or group to reassign."
+      flash[:error] = "You must select a user or group to reassign."
       redirect_to expert_question_url(@question)
       return
     end
@@ -152,7 +152,7 @@ class Expert::QuestionsController < ApplicationController
     group = Group.find_by_id(params[:group_id])
       
     if !group
-      flash[:failure] = "Group does not exist."
+      flash[:error] = "Group does not exist."
       return redirect_to expert_question_url(@question)
     end
       
@@ -178,12 +178,7 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     
     if !@question
-      flash[:failure] = "Invalid question."
-      return redirect_to expert_question_url(@question)
-    end
-    
-    if @question.resolved?
-      flash[:failure] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />We appreciate your help in resolving these questions!"
+      flash[:error] = "Invalid question."
       return redirect_to expert_question_url(@question)
     end
     
@@ -199,19 +194,28 @@ class Expert::QuestionsController < ApplicationController
     current_user.signature.present? ? @signature = current_user.signature : @signature = "-#{current_user.public_name}"
     @image_count = 3
     
+    if @question.resolved?
+      if request.get?
+        flash[:error] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />We appreciate your help in resolving these questions!"
+        return redirect_to expert_question_url(@question)
+      elsif request.post?
+        flash[:error] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />Feel free to go back to the question detail page, reopen the question and follow back up with your answer after viewing the current answer."
+        @answer = params[:current_response]
+        return render nil
+      end
+    end
+    
     if request.post?
       answer = params[:current_response]
       (params[:signature] and params[:signature].strip != '') ? @signature = params[:signature] : @signature = ''
       
       if answer.blank? 
-        flash[:failure] = "You must not leave the answer blank."
+        flash[:error] = "You must not leave the answer blank."
         return
       end
       
-      if (@question.assignee.present?)
-        if (current_user != @question.assignee)
-          @question.assign_to(current_user, current_user, nil)
-        end
+      if (current_user != @question.assignee)
+        @question.assign_to(current_user, current_user, nil)
       end
       
       @related_question ? contributing_question = @related_question : contributing_question = nil
@@ -246,7 +250,7 @@ class Expert::QuestionsController < ApplicationController
   def reject
     if params[:id].present? && @question = Question.find_by_id(params[:id])
       if @question.resolved?
-        flash[:failure] = "This question has already been resolved."
+        flash[:error] = "This question has already been resolved."
         return redirect_to expert_question_url(@question)
       end
       
@@ -256,13 +260,13 @@ class Expert::QuestionsController < ApplicationController
           flash[:success] = "The question has been rejected."
           redirect_to expert_question_url(@question)    
         else
-          flash.now[:failure] = "Please document a reason for rejecting this question"
+          flash.now[:error] = "Please document a reason for rejecting this question"
           render nil
           return
         end
       end
     else
-      flash[:failure] = "Question specified does not exist."
+      flash[:error] = "Question specified does not exist."
       redirect_to expert_home_url
     end
   end
@@ -275,12 +279,12 @@ class Expert::QuestionsController < ApplicationController
       close_out_reason = params[:close_out_reason]
       
       if !@question
-        flash.now[:failure] = 'Question not found'
+        flash.now[:error] = 'Question not found'
         return render nil
       end
       
       if close_out_reason.blank?
-        flash.now[:failure] = 'Please document a reason for closing this question.'
+        flash.now[:error] = 'Please document a reason for closing this question.'
         return render nil
       end
           
@@ -414,8 +418,6 @@ class Expert::QuestionsController < ApplicationController
     @groups = @groups.first(3)
     
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
-    
-
   end
   
   def associate_with_group
