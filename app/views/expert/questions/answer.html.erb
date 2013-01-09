@@ -21,9 +21,7 @@
         <div class="bodyinfo">
             <p>There is a response to the question you asked via eXtension's 'Ask an Expert' tool!</p>
             
-            <p>View your question and response:<br />
-	            <!-- TODO: Replace this with privacy conditions -->
-                <%= link_to("https://www.extension.org/questions/#{@question.id}", "https://www.extension.org/questions/#{@question.id}") %></p>
+            <p><%= link_to("View your Question and Response", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
 
             <p>Please don't reply to this no-reply email. Instead, click the link above to send a reply. Thanks!</p>
             <br />
