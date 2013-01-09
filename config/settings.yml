@@ -31,3 +31,4 @@ recent_weeks: 4
 group_concat_max_len: 1048576
 akismet_key: 'notset'
 akismet_host: 'https://ask.extension.org'
+sitemap_dir: 'notset'

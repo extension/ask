@@ -43,7 +43,13 @@ class HomeController < ApplicationController
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
   end
-
+  
+  def questions_by_tag
+    @tag = Tag.find_by_name(params[:name])
+    return record_not_found if (!@tag)
+    @questions = Question.public_visible.tagged_with(@tag.id).not_rejected.page(params[:page]).order("questions.created_at DESC")
+  end
+  
   def county_options_list
     render partial: 'county_select'
   end
