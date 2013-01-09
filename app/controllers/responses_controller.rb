@@ -13,8 +13,6 @@ class ResponsesController < ApplicationController
       if !response.save
         flash[:notice] = "There was an error saving your response."
         return redirect_to submitter_view_url(:fingerprint => question.question_fingerprint)
-      else
-        flash[:notice] = "Your response has been saved, thanks!"
       end
       
       # handle reopening and reassigning of question if question has been closed/resolved and a response from the submitter is entered, otherwise, 
@@ -22,7 +20,7 @@ class ResponsesController < ApplicationController
       if question.status_state != Question::STATUS_SUBMITTED
         question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
         QuestionEvent.log_public_response(question, submitter.id)
-        QuestionEvent.log_reopen(question, question.assignee ? question.assignee : nil, User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT)
+        QuestionEvent.log_reopen(question, question.assignee, User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT)
         question.assign_to(question.assignee, User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT, true, response)                  
       else
         QuestionEvent.log_public_response(question, submitter.id)
@@ -31,6 +29,7 @@ class ResponsesController < ApplicationController
       return record_not_found
     end
     
+    flash[:notice] = "Your response has been saved, thanks!"
     redirect_to submitter_view_url(:fingerprint => question.question_fingerprint)
   end
   
