@@ -22,6 +22,7 @@
     <%= link_to 'edit', expert_settings_profile_path() %>
     <% end %>
     </p>
+    
   </div>
   
   
@@ -56,6 +57,22 @@
     <% else %>
        <p class="downplay">This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
+    
+    <p class="downplay">
+      <% if @user.auto_route %>
+      Accepts automatic assignments
+        <% if @user.routing_instructions == "anywhere" %>
+          and questions can come from anywhere.
+        <% elsif @user.routing_instructions == "locations_only" %>
+          but questions must match this expert's states.
+        <% else %>
+          but questions must match this expert's counties.
+        <% end %>
+      <% else %>
+      Doesn't accept automatic assignments. Questions must be directly assigned to this expert.
+      <% end %>
+    </p>
+    
     <p class="downplay"><%= link_to('Reports (under construction)',expert_report_path(@user.id)) %></p>
  </aside>
   
