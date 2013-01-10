@@ -196,10 +196,10 @@ class Expert::QuestionsController < ApplicationController
     
     if @question.resolved?
       if request.get?
-        flash[:error] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />We appreciate your help in resolving these questions!"
+        flash[:error] = "Someone has already resolved this question.<br />Please view the response before sending another."
         return redirect_to expert_question_url(@question)
       elsif request.post?
-        flash[:error] = "This question has already been resolved.<br />It could have been resolved while you were working on it.<br />Feel free to go back to the question detail page, reopen the question and follow back up with your answer after viewing the current answer."
+        flash[:error] = "Someone has already resolved this question.<br />Please view the response before sending another."
         @answer = params[:current_response]
         return render nil
       end
@@ -210,7 +210,7 @@ class Expert::QuestionsController < ApplicationController
       (params[:signature] and params[:signature].strip != '') ? @signature = params[:signature] : @signature = ''
       
       if answer.blank? 
-        flash[:error] = "You must not leave the answer blank."
+        flash[:error] = "The answer is blank. Please add an answer and submit again."
         return
       end
       

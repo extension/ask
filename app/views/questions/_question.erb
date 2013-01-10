@@ -57,7 +57,8 @@
           <%= format_text_for_display(response.body) %>
         </div>
         
-        <div id="response_images">
+        <% if response.images.size > 0 %>
+        <div class="response_images">
         <% response.images.each do |image| %>
           <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
             <%= button_to "Delete", remove_image_response_path(:id => response.id, :image_id => image.id) %>
@@ -82,6 +83,7 @@
         <% end %>
           <br class="clearing" />
         </div>
+        <% end %>
         
         <div class="author">
           <% if response.resolver_id %>
