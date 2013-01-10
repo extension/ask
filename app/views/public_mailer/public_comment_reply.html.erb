@@ -60,9 +60,9 @@
                 
                       
                       <% if !@question.is_private %>
-                        <p class="meta">Submitted<%= time_ago_in_words(@comment.created_at) %> ago</p>
+                        <p class="meta">Submitted <%= @comment.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
                       <% else %>
-                        <p class="meta">Submitted <%= time_ago_in_words(@comment.created_at) %> ago</p>
+                        <p class="meta">Submitted <%= @comment.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
                       <% end %>
                   </td>
                 </tr>

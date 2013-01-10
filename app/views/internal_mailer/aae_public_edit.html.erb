@@ -86,9 +86,9 @@
                       </p>
                       
                       <% if !@question.is_private %>
-                        <p class="meta">Submitted as a public question <%= time_ago_in_words(@question.created_at) %> ago</p>
+                        <p class="meta">Submitted as a public question <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
                       <% else %>
-                        <p class="meta">Submitted <%= time_ago_in_words(@question.created_at) %> ago</p>
+                        <p class="meta">Submitted <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
                       <% end %>
                   </td>
                 </tr>
