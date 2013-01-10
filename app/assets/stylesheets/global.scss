@@ -167,12 +167,14 @@ body {
   footer ul li a:hover {color:#000;}
   
   .search_section {clear:both;}
+/*  .search_section h2 {color:#888;}*/
   .search_section_anchor {padding-bottom:70px; display:block;}
   ul.navavatar.loggedin {margin:0;padding:0; /*outline:lime 1px solid;*/}
   ul.navavatar.loggedin > li {margin:0;padding:0; list-style:none; /*outline:red 1px solid;*/ float:left; height:44px; line-height:44px;}
   ul.navavatar.loggedin li.username {padding-left:1em;padding-right:1em;}
 /*  #user_actions {float:left;}*/
   .logout {margin-left:1em;}
+  .question_meta_data small {color:#777; font-size:.95em;}
   
   img {width: 100%;}
   .size50x50 {width:50px !important; height:50px !important;}
@@ -356,7 +358,7 @@ body#expert {
   .ask_form_location {background:#fff; padding:1em;}
   
   #fixed_fixer {height: 68px;}
-
+  #search_padding {height:300px;}
 	
 	
 	#history_comment_toggle {margin:1em 0;}
@@ -387,7 +389,7 @@ body#expert {
 	.navavatar img {border:#888 1px solid;}
 	.navavatar a:hover {color:#fff !important; text-decoration:none;}
   .incoming_question {@include wordwrap}
-    .incoming_question .expert {padding:1em;}
+/*    .incoming_question .expert {padding:1em;}*/
     .incoming_question .expert .avatar {float:left; margin-right:1em;}
     .incoming_question {border-bottom:2px solid #eee;  padding:0; border-top:2px solid #fff;}
 	.incoming_question a {color:#16426D;}

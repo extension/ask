@@ -1,4 +1,4 @@
-<p>
+<p class="question_meta_data">
   <% if !question.is_private %>
     <span class="label label-warning"><%= link_to "Public", question_path(question.id) %></span>
   <% end %>
@@ -24,10 +24,12 @@
     <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(question.id) %></span>
   <% end %>
   
+  <small>
   submitted <%= time_ago_in_words(question.created_at) %> ago.
   
   <% if (question.created_at != question.last_assigned_at) && !question.last_assigned_at.nil? %>
-  Reassigned <%= time_ago_in_words(question.last_assigned_at) %> ago
+  Reassigned <%= time_ago_in_words(question.last_assigned_at) %> ago.
   <% end %>
+  </small>
 </p>
 
