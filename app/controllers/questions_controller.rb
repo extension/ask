@@ -63,6 +63,7 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
+      flash.keep
       session[:question_id] = @question.id
       if(current_user and current_user.id == @question.submitter_id)
         redirect_to question_url(@question)
