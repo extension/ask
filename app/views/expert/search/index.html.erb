@@ -12,30 +12,42 @@
 <span class="search_section_anchor" id="question_results"></span>
 <div class="search_section">
   <h2>Questions <small> (with '<%= params[:q] %>' in the <%= @number_passed ? "id" :  "title, question or responses" %>)</small></h2>
-  <% if !@number_passed %>
-    <p><%= link_to 'view all', expert_search_questions_path(:q => params[:q]) %></p>
+  <% if @questions.size > 0 %>
+    <% if !@number_passed %>
+      <p><%= link_to 'view all', expert_search_questions_path(:q => params[:q]) %></p>
+    <% end %>
+    <%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
+  <% else %>
+    <h3>No results</h3>
   <% end %>
-  <%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
   <br class="clearing" />
 </div>
 
 <span class="search_section_anchor" id="expert_results"></span>
 <div class="search_section">
   <h2>Experts <small>(with '<%= params[:q] %>' in the <%= @number_passed ? "id" : "name or bio" %>)</small></h2>
-  <% if !@number_passed %>
-    <p><%= link_to 'View all', expert_search_experts_path(:q => params[:q]) %></p>
+  <% if @experts.size > 0 %>
+    <% if !@number_passed %>
+      <p><%= link_to 'View all', expert_search_experts_path(:q => params[:q]) %></p>
+    <% end %>
+    <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
+  <% else %>
+    <h3>No results</h3>
   <% end %>
-  <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
   <br class="clearing" />
 </div>
 
 <span class="search_section_anchor" id="group_results"></span>
 <div class="search_section">
   <h2>Groups <small>(with '<%= params[:q] %>' in the <%= @number_passed ? "id" : "name or description" %>)</small></h2>
-  <% if !@number_passed %>
-    <p><%= link_to 'View all', expert_search_groups_path(:q => params[:q]) %></p>
-  <% end %>
-  <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
+  <% if @groups.size > 0 %>
+    <% if !@number_passed %>
+      <p><%= link_to 'View all', expert_search_groups_path(:q => params[:q]) %></p>
+    <% end %>
+    <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
+    <% else %>
+      <h3>No results</h3>
+    <% end %>
   <br class="clearing" />
 </div>
 

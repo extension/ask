@@ -17,7 +17,7 @@ class Expert::SearchController < ApplicationController
       return redirect_to expert_home_url
     end
     
-    @list_title = "Search for '#{params[:q]}'"
+    @list_title = "Search Results for '#{params[:q]}'"
     @number_passed = false
     
     # special "id of question, expert or group check"
