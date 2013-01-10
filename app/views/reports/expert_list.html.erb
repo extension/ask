@@ -8,8 +8,6 @@
   <h1><%= @display_title %> <small><%= @subtext_display %></small></h1>
 </div>
 
-<%= render(partial: 'experimental_notice') %>
-
 
 <div class='row-fluid'>
   <div class="span12">
@@ -29,7 +27,7 @@
         <tbody>
         <%- @question_list.each do |question| -%>
           <tr>
-            <td><%= link_to(question.title, expert_question_path(id: question.id)) %></td>
+            <td><%= link_to(question.title.html_safe, expert_question_path(id: question.id)) %></td>
             <td><%= Question.convert_to_string(question.status_state) %></td>
             <td><%= humane_date(question.created_at) %></td>
             <td><%= question.resolved_at.blank? ? '' : humane_date(question.resolved_at) %></td>

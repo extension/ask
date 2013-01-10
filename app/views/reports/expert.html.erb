@@ -2,12 +2,8 @@
 
 
 <div class="page-header">
-  <h1>Report for <%= @expert.name %></h1>
+  <h1>Yearly Answered/Assigned Statistics for <%= @expert.name %></h1>
 </div>
-
-<%= render(partial: 'experimental_notice') %>
-
-<h2>Yearly Answered/Assigned Statistics</h2>
 
 <div class='row-fluid'>
 
@@ -41,9 +37,17 @@
                 <tbody>
                   <%- @counts_by_year_and_year_month[year].keys.sort.reverse.each do |year_month| -%>
                     <tr>
-                      <td><%= year_month %></td>
-                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['answered'], {id: @expert.id, filter: 'answered', year_month: year_month}) %></td>
-                      <td><%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %></td>
+                      <td><span class='mednumber'><%= year_month %><span></td>
+                      <td>
+                        <span class='bignumber'>
+                        <%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['answered'], {id: @expert.id, filter: 'answered', year_month: year_month}) %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class='bignumber'>
+                        <%= expert_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %>
+                        </span>
+                      </td>
                     </tr>
                   <%- end -%>
                 </tbody>
