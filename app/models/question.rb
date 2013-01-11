@@ -347,7 +347,6 @@ class Question < ActiveRecord::Base
 
     case q_status
       when STATUS_RESOLVED    
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         response_attributes = {:resolver => resolver, 
                                :question => self, 
                                :body => response,
@@ -355,11 +354,15 @@ class Question < ActiveRecord::Base
                                :contributing_question => contributing_question, 
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
-        @response = Response.new(response_attributes)
-        @response.save
-        QuestionEvent.log_resolution(self)    
+        @response = Response.new(response_attributes) 
+        if @response.valid?
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+          @response.save
+          QuestionEvent.log_resolution(self)    
+        else
+          raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
+        end
       when STATUS_NO_ANSWER
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         response_attributes = {:resolver => resolver, 
                                :question => self, 
                                :body => response,
@@ -368,8 +371,13 @@ class Question < ActiveRecord::Base
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
-        @response.save
-        QuestionEvent.log_no_answer(self)  
+        if @response.valid?
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+          @response.save
+          QuestionEvent.log_no_answer(self)  
+        else
+          raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
+        end
       when STATUS_REJECTED
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
         QuestionEvent.log_rejection(self)
@@ -452,7 +460,7 @@ class Question < ActiveRecord::Base
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
-    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
+    images.each {|i| self.errors[:base] << "Image is not correct file type (.jpg, .png, or .gif allowed)" if !allowable_types.include?(i.attachment_content_type)}
   end
    
   def index_me
