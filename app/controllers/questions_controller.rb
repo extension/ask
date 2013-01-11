@@ -180,7 +180,7 @@ class QuestionsController < ApplicationController
 
         # validate question
         if !@question.valid?
-          @argument_errors = ("Errors occured when saving:<br />" + @question.errors.full_messages.join('<br />'))
+          @argument_errors = ("Errors occured when saving: " + @question.errors.full_messages.join(' '))
           raise ArgumentError
         end
 

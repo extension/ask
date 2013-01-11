@@ -221,7 +221,13 @@ class Expert::QuestionsController < ApplicationController
       @related_question ? contributing_question = @related_question : contributing_question = nil
       (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
       
-      @question.add_resolution(q_status, current_user, answer, @signature, contributing_question, params[:response])
+      begin
+        @question.add_resolution(q_status, current_user, answer, @signature, contributing_question, params[:response])
+      rescue Exception => e
+        @answer = answer
+        flash[:error] = "Error: #{e}"
+        return render nil
+      end
       
       # TODO: Add new notification logic here.
       #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })  	    
