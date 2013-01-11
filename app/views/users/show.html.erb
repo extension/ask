@@ -1,3 +1,5 @@
+<% @page_title = @user.public_name %>
+
 <div id="main" class="span6">
   
   <h1>
@@ -41,18 +43,18 @@
   <%= link_public_user_avatar(@user) %>
   
   <% if @user.bio? %>
-    <p>
-      <strong>About me:</strong>
-      <%= @user.bio %>
-    </p>
+    <div class="public_bio">
+      <h3>About me:</h3>
+      <%= format_text_for_display(@user.bio) %>
+    </div>
   <% end %>
   
   <% if @user.tags.size > 0 %>
-    <h3>
+    <p>
     <% @user.tags.each do |tag| %>
-      <span class="label"><%= tag.name %></span>
+      <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
     <% end %>
-    </h3>
+    </p>
   <% end %>
 
   </div>
@@ -60,39 +62,38 @@
 
 <% if @user.has_exid? %>
 <div id="main" class="span6">
-  <h3>Assigned Questions</h3>
+  <% if @open_questions.size > 0 %>
+    <h3>Assigned Questions</h3>
 
-  <% @open_questions.each do |question| %>
-  <div class="answered_question">
+    <% @open_questions.each do |question| %>
+    <div class="answered_question">
 
-      <%= link_to question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
-      <p><%= time_ago_in_words(question.created_at) %> ago </p>
-  
-  </div>
+        <%= link_to question_path(question.id) do %>
+          <% if question.title.present? %>
+            <p><%= format_text_for_display(question.title) -%></p>
+          <% else %>
+            <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+          <% end %>
+        <%- end -%>
+    </div>
+    <% end %>
   <% end %>
   
   
-  <h3>Answered Questions</h3>
+  <% if @answered_questions.size > 0 %>
+      <h3>Answered Questions</h3>
 
-  <% @answered_questions.each do |question| %>
-  <div class="answered_question">
-
-      <%= link_to question_path(question.id) do %>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-      <%- end -%>
-      <p><%= time_ago_in_words(question.created_at) %> ago </p>
-  
-  </div>
+      <% @answered_questions.each do |question| %>
+        <div class="answered_question">
+            <%= link_to question_path(question.id) do %>
+              <% if question.title.present? %>
+                <p><%= format_text_for_display(question.title) -%></p>
+              <% else %>
+                <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+              <% end %>
+            <%- end -%>
+        </div>
+      <% end %>
   <% end %>
   <% end %>
   
