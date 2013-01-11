@@ -40,6 +40,7 @@
             
             <div id="add_images">
               <label>Images (optional)</label>
+                <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
 	            <% (1..@image_count).each do |counter| %>
 	              <p>
       	          <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
