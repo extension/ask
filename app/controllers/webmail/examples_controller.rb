@@ -28,7 +28,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_assignment
-    mail = InternalMailer.aae_assignment(user: User.first, question: Question.last, cache_email: false)
+    mail = InternalMailer.aae_assignment(user: User.first, question: Question.find(111523), cache_email: false)
     return render_mail(mail)
   end
   
@@ -38,7 +38,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_reassignment
-    mail = InternalMailer.aae_reassignment(user: User.first, question: Question.last, cache_email: false)
+    mail = InternalMailer.aae_reassignment(user: User.first, question: Question.find(111523), cache_email: false)
     return render_mail(mail)
   end
   
