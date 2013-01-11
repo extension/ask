@@ -190,7 +190,7 @@ class Question < ActiveRecord::Base
     if self[:title].present?
       return self[:title]
     else 
-      return self.html_to_text(self[:body]).truncate(80, separator: ' ')
+      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ')
     end
   end
 

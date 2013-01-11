@@ -59,7 +59,7 @@
                 </tr>
                 <tr>
                   <td></td>
-                  <td id="question_body"><p><%= link_to(@question.body, expert_question_url(@question)) -%></p></td>
+                  <td id="question_body"><p><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></p></td>
                 </tr>
                 <tr>
                   <td></td>
