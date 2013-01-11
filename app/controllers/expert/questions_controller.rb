@@ -262,12 +262,7 @@ class Expert::QuestionsController < ApplicationController
       
       if request.post?
         if (message = params[:reject_message]).present?
-          begin
-            @question.add_resolution(Question::STATUS_REJECTED, current_user, message)
-          rescue Exception => e
-            flash[:error] = "Error: #{e}"
-            return render nil
-          end
+          @question.add_resolution(Question::STATUS_REJECTED, current_user, message)
           flash[:success] = "The question has been rejected."
           redirect_to expert_question_url(@question)    
         else
