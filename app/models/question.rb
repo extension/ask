@@ -458,10 +458,9 @@ class Question < ActiveRecord::Base
   end
   
   def validate_attachments
-    self.errors[:base] = ""
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
-    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
+    images.each {|i| self.errors[:base] << "Image is not correct file type (.jpg, .png, or .gif allowed)" if !allowable_types.include?(i.attachment_content_type)}
   end
    
   def index_me
