@@ -10,7 +10,7 @@
     </h1>
     
     <% if  @group.description? %>
-      <p><%= format_text_for_display(@group.description).html_safe %></p>
+      <p><%= format_text_for_display(@group.description) %></p>
     <% end %>
     
     <% if @group.active %>

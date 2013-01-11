@@ -13,7 +13,7 @@
     <p>
       <strong>About me:</strong>
       <% if @user.bio %>
-        <%= @user.bio %>
+        <%= format_text_for_display(@user.bio) %>
       <% else %>
         This person hasn't added a description yet...
       <% end  %>
