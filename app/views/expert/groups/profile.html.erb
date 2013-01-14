@@ -25,6 +25,13 @@
     
     <p>
         <label>        
+          <%= check_box_tag 'group_active', '1', @group.group_active %>  Active Group Status
+			    <span>(Unchecking this box will inactivate the whole group including it's widget and removes it from reassignment possibilities. Groups with no members will have this option auto-checked until someone joins and reactivates it.)</span>
+        </label>
+    </p>
+
+    <p>
+        <label>        
           <%= check_box_tag 'is_test', '1', @group.is_test? %>  This is a test group
 			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
         </label>

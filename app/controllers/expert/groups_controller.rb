@@ -77,6 +77,12 @@ class Expert::GroupsController < ApplicationController
         @group.is_test = false
       end
       
+      if params[:group_active].present? && params[:group_active] == '1'
+        @group.group_active = true
+      else
+        @group.group_active = false
+      end
+      
       if @group.save
         GroupEvent.log_edited_attributes(@group, current_user, nil, change_hash)
         redirect_to(expert_group_profile_path, :notice => 'Profile was successfully updated.')
@@ -139,10 +145,10 @@ class Expert::GroupsController < ApplicationController
     @group = Group.find_by_id(params[:id])
     if request.post?
       change_hash = Hash.new
-      if params[:active].present? && params[:active] == '1'
-        @group.active = true
+      if params[:widget_active].present? && params[:widget_active] == '1'
+        @group.widget_active = true
       else
-        @group.active = false
+        @group.widget_active = false
       end
       
       if params[:widget_upload_capable].present? && params[:widget_upload_capable] == '1'
@@ -169,8 +175,8 @@ class Expert::GroupsController < ApplicationController
         @group.widget_show_title = false
       end
       
-      if @group.active_changed? 
-        change_hash[:active] = {:old => @group.active_was.to_s, :new => @group.active.to_s}
+      if @group.widget_active_changed? 
+        change_hash[:widget_active] = {:old => @group.widget_active_was.to_s, :new => @group.widget_active.to_s}
       end
       
       if @group.widget_public_option_changed? 
@@ -236,6 +242,9 @@ class Expert::GroupsController < ApplicationController
     @group = Group.find_by_id(params[:id])
     current_user.leave_group(@group, "member")
     @group_members = @group.group_members_with_self_first(current_user, 5)
+    if @group_members.count == 0
+      @group.update_attributes(group_active: false, widget_active: false)
+    end
   end
   
   def unlead

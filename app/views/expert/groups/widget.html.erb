@@ -22,7 +22,7 @@
       <h3>Ask Form and Widget Options</h3>
 		<p>
         <label>
-          <%= check_box_tag 'active', '1', @group.active? %>  Active
+          <%= check_box_tag 'widget_active', '1', @group.widget_active? %>  Active
 			    <span>(If this option is unchecked, the Group's widget and Ask form are disabled. The widget code should be removed from any web page.)</span>
         </label>
 		</p>

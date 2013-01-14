@@ -13,7 +13,7 @@
       <p><%= format_text_for_display(@group.description) %></p>
     <% end %>
     
-    <% if @group.active %>
+    <% if @group.widget_active %>
       <p><%= link_to "Ask a question to this group", ask_group_path(@group.id), :class => "btn large btn-primary" %></p>
     <% end %>
   </div>

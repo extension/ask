@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130104142105) do
+ActiveRecord::Schema.define(:version => 20130114145542) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -237,7 +237,7 @@ ActiveRecord::Schema.define(:version => 20130104142105) do
     t.string   "name",                                            :null => false
     t.text     "description"
     t.boolean  "widget_public_option",         :default => false
-    t.boolean  "active",                       :default => true
+    t.boolean  "widget_active",                :default => true
     t.boolean  "assignment_outside_locations", :default => true
     t.boolean  "individual_assignment",        :default => true
     t.integer  "created_by",                                      :null => false
@@ -259,6 +259,7 @@ ActiveRecord::Schema.define(:version => 20130104142105) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.boolean  "group_active",                 :default => true,  :null => false
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
