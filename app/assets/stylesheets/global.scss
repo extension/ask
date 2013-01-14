@@ -1,6 +1,14 @@
 @import "_variables";
 
 body {
+  
+  .extension_nav_public {margin:0;padding:0; background: #2f3b3e;}
+  .extension_nav_public ul {text-align: center;  padding: .35em 0; margin: 0; }
+  .extension_nav_public li {display:inline; padding:0 1em; border-right:1px solid #666;}
+  .extension_nav_public .last {border:0;}
+  .extension_nav_public a {padding: 0 .4em; color: #aaa;text-decoration: none;}
+  .extension_nav_public a:hover {color: #fff;}
+  
   .about p {line-height:1.6em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.5em;}
   /*reset bootstrap typography */
   font-size:13px; line-height: 18px;
@@ -14,7 +22,7 @@ body {
 	
 	.navbar {margin-bottom:0;}
 	
-	#fixed_fixer {height: 35px;}
+	#fixed_fixer {height: 36px;}
 	#flash_notification_wrapper {position:relative;}
 	
 	#flash_notification {
@@ -225,6 +233,9 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
+  
+  #collapsed_nav_options {background: #2f3b3e;}
+  #collapsed_nav_options .extension_nav_public {display:none;}
   .navbar .nav > li > a {color:#fff; text-shadow:none;}
   
   .public_bio {font-size:1.35em; line-height:1.4em; font-family: Georgia, serif;}
@@ -232,9 +243,8 @@ body#public {
   #ask_an_expert_logo img {width:200px; height:auto;}
   
   #publicbar h1 {float:left;}
-  #publicbar.navbar-inner {/*height:80px !important;*/ background: #f47B28;}
+  #publicbar.navbar-inner {background: #f47B28; border-radius:0; padding:0; }
   #searchform input, #searchform .btn  {margin:0;}
-/*  #publicbar .container {outline:1px solid lime;}*/
   
   #searchform span  {margin:0;
   display: inline-block;
@@ -308,12 +318,15 @@ body#public {
 	.tag-topic a {background:#C2E5EC; color:#1F5983;}
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
 	
+	#publicbar.navbar-inner form {border:0;}
+	#publicbar.navbar-inner a:hover {background:none;}
+	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
-		padding-top:0;
+		#search_field {width:20em}
 	}	
 	@media screen and (min-width: 979px) {
-	  #publicbar .brand { font-size:2.5em;}
+	  #publicbar .brand {font-size:2.5em;}
 		.navbar #publicbar .container {width: 940px; padding:2em;}
 		#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 	}
@@ -326,6 +339,12 @@ body#public {
     .navavatar .avatar_with_badge img {height:20px;width:20px;}
 	}
 	@media screen and (max-width: 480px) {
+	  #search_field {width:80%;}
+	  .extension_nav_public {display:none;}
+	  #collapsed_nav_options .extension_nav_public {display:block;}
+	  #collapsed_nav_options .extension_nav_public ul {text-align: left;}
+	  #publicbar.navbar-inner .extension_nav_public a {color:#fff; padding: 1em 0; margin:0;}
+	  .extension_nav_public li {display:block; padding:1em; border:0;}
 	  #extension_logo img {width:120px; height:auto;}
     #ask_an_expert_logo img {width:120px; height:auto;}
     #question_wrapper {padding:1em 0 !important;}
@@ -334,7 +353,6 @@ body#public {
     #publicbar {padding:0;}
     #expertbar {padding:0;}
     #expertbar .container {padding:0;}
-/*    #publicbar .container {outline:1px solid purple;}*/
     #publicbar .container h1 {margin:0;}
     .brand {padding-left:20px;}
 	}

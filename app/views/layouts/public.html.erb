@@ -53,6 +53,8 @@
     <%= flash_notifications -%>
   </div>
 
+<%= render :partial => 'partials/extension_nav_public' -%>
+
 <div class="navbar">
   <div id="publicbar" class="navbar-inner">
     <div class="container">
@@ -69,7 +71,7 @@
       </a>
       
       
-      <div class="nav-collapse collapse">
+      <div id="collapsed_nav_options" class="nav-collapse collapse">
         <ul class="nav pull-right">
           <li><%= link_to("Ask a Question", ask_path()) %></li>
           <li><%= link_to "About", home_about_path() %></li>
@@ -87,6 +89,9 @@
             <span id="icon-search"><i class="icon-search icon-white"></i></span>
   			  </p>
   			<% end %>
+  			
+  			<%= render :partial => 'partials/extension_nav_public' -%>
+  			
       </div>
       
       
