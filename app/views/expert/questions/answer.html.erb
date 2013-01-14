@@ -26,7 +26,7 @@
             <p>Please don't reply to this no-reply email. Instead, click the link above to send a reply. Thanks!</p>
             <br />
             
-            <p>Your question:<br /><%= @question.body %></p>
+            <p>Your question:<br /><%= format_text_for_display(@question.body) %></p>
 
             <p><label for="current_response">Response:</label>
             
@@ -79,8 +79,48 @@
     <h3>Your response will be sent via email and posted to the submitter's AaE question page</h3>
   </aside>
   
+  <h5>Question Details</h5>
+  
+  <p>Asked 
+    <% if @original_group.present? %>
+      to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+    <% end %>
+
+    <%= time_ago_in_words(@question.created_at) %> ago 
+
+    <% if @question.submitter %>
+      by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
+    <% end %>
+  </p>
+  
+  <p>
+    <% if @question.location.present? %>
+      <% if @question.county.present? %>
+        <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
+      <% end %>
+      <% if @question.location.present? %>
+        <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
+      <% end %>
+    <% else %>
+      <span class="label label-inverse"><%= link_to "No Location" %></span>
+    <% end %>
+  </p>
+  
+  <div id="tags">
+
+  <% if @question.tags.size > 0 %>
+    <% @question.tags.each do |tag| %>
+      <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+    <% end %>
+  <% else %>
+
+  <% end %>
+
+  </div>
+  <br />
+  <h5>No Answer?</h5>
   <p>If no one can answer this question, use the canned response to suggest their local office.</p>
-  <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-primary" %></p>
+  <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn" %></p>
 
 </div>
 
