@@ -70,17 +70,20 @@ class Expert::GroupsController < ApplicationController
       if @group.description_changed? 
         change_hash[:description] = {:old => @group.description_was, :new => @group.description}
       end
-      
-      if params[:is_test].present? && params[:is_test] == '1'
-        @group.is_test = true
-      else
-        @group.is_test = false
+    
+      if @group.is_test_changed?
+        change_hash[:test_group] = {:old => @group.is_test_was, :new => @group.is_test}
       end
       
-      if params[:group_active].present? && params[:group_active] == '1'
-        @group.group_active = true
-      else
-        @group.group_active = false
+      if @group.group_active_changed?
+        # we don't allow the group to be marked active if no one is signed up for it
+        if @group.group_active == true
+          if @group.assignees.count == 0 
+            flash[:error] = "There has to be at least one person not on vacation signed up as a member or leader for a group in order to activate it."
+            return render nil
+          end
+        end
+        change_hash[:group_active] = {:old => @group.group_active_was, :new => @group.group_active}
       end
       
       if @group.save
@@ -243,7 +246,17 @@ class Expert::GroupsController < ApplicationController
     current_user.leave_group(@group, "member")
     @group_members = @group.group_members_with_self_first(current_user, 5)
     if @group_members.count == 0
-      @group.update_attributes(group_active: false, widget_active: false)
+      change_hash = Hash.new
+      if @group.group_active == true
+        @group.update_attribute(:group_active, false)
+        change_hash[:group_active] = {:old => true, :new => false}
+      end
+      
+      if @group.widget_active == true
+        @group.update_attribute(:widget_active, false)
+        change_hash[:widget_active] = {:old => true, :new => false}
+      end
+      GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
     end
   end
   
