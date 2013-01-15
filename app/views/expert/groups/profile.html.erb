@@ -10,17 +10,17 @@
 
 <%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
 
-<%- if @errors and @errors.size > 0 -%>
-  <div id="error_feedback">
-    <h2>We weren't able to save your changes.</h2>
-    <h3>Please fix the items below and let's give it another try:</h3>
-    <ul>
-      <%- @errors.each do |field,reason| -%>
-        <li><span><%= reason %></span></li>
-      <%- end -%>
-    </ul>
-  </div>
-<%- end -%>
+  <%- if @group.errors.any? -%>
+    <div id="error_feedback">
+      <h2>We weren't able to save your changes.</h2>
+      <h3>Please fix the items below and let's give it another try:</h3>
+      <ul>
+        <%- @group.errors.each do |attribute, message| -%>
+          <li><span><%= message %></span></li>
+        <%- end -%>
+      </ul>
+    </div>
+  <%- end -%>
 
   <fieldset>
     <p>

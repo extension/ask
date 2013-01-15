@@ -55,7 +55,6 @@ class Expert::GroupsController < ApplicationController
   
   def profile
     @group = Group.find_by_id(params[:id])
-    @errors = {}
     if request.put?
       change_hash = Hash.new
       @group.attributes = params[:group]
@@ -65,13 +64,6 @@ class Expert::GroupsController < ApplicationController
       end
       
       if @group.name_changed? 
-        if(@group.name.blank?)
-          @errors['Group name'] = "The Group name can't be blank"
-        end
-        
-        if(!@group.name.blank? and group = Group.find_by_name(@group.name))
-          @errors['Group name'] = "The name \"#{@group.name}\" is being used by another group."
-        end
         change_hash[:name] = {:old => @group.name_was, :new => @group.name}
       end
       
@@ -83,10 +75,6 @@ class Expert::GroupsController < ApplicationController
         @group.is_test = true
       else
         @group.is_test = false
-      end
-      
-      if(@errors.size > 0)
-        return render
       end
       
       if @group.save
@@ -223,12 +211,12 @@ class Expert::GroupsController < ApplicationController
     @group = Group.new(params[:group])
     @group.created_by = current_user.id
     @group.set_fingerprint(current_user)
-    current_user.join_group(@group,"leader")
-    current_user.log_create_group(@group)
     if @group.save
+      current_user.join_group(@group,"leader")
+      current_user.log_create_group(@group)
       redirect_to(expert_group_path(@group.id), :notice => 'Group was successfully created.')
     else
-      render :action => 'profile'
+      render :action => 'new'
     end
   end
   
