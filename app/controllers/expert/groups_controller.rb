@@ -245,6 +245,7 @@ class Expert::GroupsController < ApplicationController
     @group = Group.find_by_id(params[:id])
     current_user.leave_group(@group, "member")
     @group_members = @group.group_members_with_self_first(current_user, 5)
+    # when the last person leaves the group, deactivate the group's widget and the group itself
     if @group_members.count == 0
       change_hash = Hash.new
       if @group.group_active == true
