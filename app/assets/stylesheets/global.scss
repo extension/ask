@@ -174,6 +174,12 @@ body {
   footer ul li a {color:#666;}
   footer ul li a:hover {color:#000;}
   
+  #error_feedback {background:#FDFFB5; padding:1em; margin-bottom:2em;}
+  #error_feedback h3 {color:#333;}
+  #error_feedback ul {margin-top:1em;}
+  #error_feedback li {font-size:1.3em;}
+  #error_feedback li span {background:yellow; padding:.1em .5em;}
+  
   .search_section {clear:both;}
 /*  .search_section h2 {color:#888;}*/
   .search_section_anchor {padding-bottom:70px; display:block;}
