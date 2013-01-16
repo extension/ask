@@ -2,6 +2,18 @@
 
 <div class="form_group">
 
+  <%- if @group.errors.any? -%>
+    <div id="error_feedback">
+      <h2>We weren't able to save your changes.</h2>
+      <h3>Please fix the items below and let's give it another try:</h3>
+      <ul>
+        <%- @group.errors.each do |attribute, message| -%>
+          <li><span><%= message %></span></li>
+        <%- end -%>
+      </ul>
+    </div>
+  <%- end -%>
+
 <%= form_for @group, :url => expert_groups_create_path, :html => { :class => "form-stacked no_m_t well"} do |f| %>
 
   <fieldset>
