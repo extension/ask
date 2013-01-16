@@ -26,9 +26,9 @@
   <table class="table table-bordered">
     <% @my_groups.each do |group| %>
       <tr>
-        <td class="large_groups">
+        <td class="large_groups <%= !group.group_active? ? "inactive_group" : "active" %>">
           <%= link_expert_group_avatar(group, :medium) %> 
-          <h3><%= link_to group.name, expert_group_path(group.id) %></h3>
+          <h3><%= link_to group.name, expert_group_path(group.id) %> <%= !group.group_active? ? "(Inactive)" : "" %></h3>
           <% if @user.leader_of_group(group)%>
             <h4><strong>Leader <i class="icon-user"></i></strong></h4>
           <% end %>

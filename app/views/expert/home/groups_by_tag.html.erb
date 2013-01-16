@@ -4,7 +4,7 @@
 <%= paginate @groups %>
 <% if @groups.size > 0 %>
     <% @groups.each do |group| %>
-      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+      <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
     <% end %>
   
 <% else %>

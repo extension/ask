@@ -3,8 +3,8 @@
   <% if @my_groups.size == 0 %>
     <p>You currently are not a member any groups.</p>
   <% else %>
-    <% @my_groups.each do |group| %>  
-      <div><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></div>
+    <% @my_groups.each do |group| %>
+      <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
     <% end %>
   <% end %>
   
@@ -14,7 +14,7 @@
   <h4>All Groups</h4>
 
   <% @groups.each do |group| %>
-    <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
   <% end %>
 
   <%= paginate @groups %>
