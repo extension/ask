@@ -1,5 +1,9 @@
 <% @page_title = @group.name %>
 
+<% if !@group.group_active? %>
+  <h3 class="inactive_notice">This group is currently inactive. It cannot be assigned questions and the group's Ask form and widgets are disabled. You can change the group's status to active on the <%= link_to 'General Settings', expert_group_profile_path() %> page.</h3>
+<% end %>
+
 <div id="main" class="span8">
   <%= link_expert_group_avatar(@group) %>
   <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span> <%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></h1>
