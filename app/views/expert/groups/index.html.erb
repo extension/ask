@@ -1,24 +1,36 @@
-<div id="main" class="span8">
+<div class="span4">
   <h1>My Groups</h1>
+  <p><%= link_to 'Manage your group notifications', expert_user_groups_path(current_user) %></p>
   <% if @my_groups.size == 0 %>
     <p>You currently are not a member any groups.</p>
   <% else %>
-    <% @my_groups.each do |group| %>  
-      <div><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></div>
+    <% @my_groups.each do |group| %>
+      <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
     <% end %>
   <% end %>
-  
-  
-  
-  <h1>Groups</h1>
-  <h4>All Groups</h4>
+</div>  
 
-  <% @groups.each do |group| %>
-    <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+<div class="span4">
+  <h2>Groups near you...</h2>
+  
+  <h3>In <%= current_county.name %></h3>
+  <% if @groups_near_my_county.size > 0 %>
+    <% @groups_near_my_county.each do |group| %>
+      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <% end %>
+  <% else %>
+    <p>We don't have any groups for this county. You could create a new group or edit the location of an existing group.</p>
   <% end %>
-
-  <%= paginate @groups %>
-
+  
+  
+  <h3>In <%= current_location.name %></h3>
+  <% if @groups_near_my_state.size > 0 %>
+    <% @groups_near_my_state.each do |group| %>
+      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+    <% end %>
+    <% else %>
+      <p>We don't have any groups for this state. You could create a new group or edit the location of an existing group.</p>
+    <% end %>
 </div>
 
 <div id="secondary" class="span4">

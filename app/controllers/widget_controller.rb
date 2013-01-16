@@ -15,7 +15,7 @@ class WidgetController < ApplicationController
     @group = Group.find_by_widget_fingerprint(params[:fingerprint])
 
     if !@group.blank?
-      if !@group.active?
+      if !@group.widget_active?
         @status_message = "This widget has been disabled."
         return render(:template => '/widget/status', :layout => false)
       end

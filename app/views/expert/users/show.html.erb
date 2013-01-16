@@ -118,7 +118,7 @@
         <li>Not currently a member or leader of a group.</li>
       <% else %>
         <% @my_groups.each do |group| %>  
-          <li><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
+          <li><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></li>
         <% end %>
       <% end %>
       <%= link_to "View groups", expert_user_groups_path() %>

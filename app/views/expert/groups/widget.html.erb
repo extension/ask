@@ -14,7 +14,7 @@
   <h5>The link to this Group's Ask form is: <%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h5>
 </div>
 
-<%= form_tag(expert_group_widget_path, :class => "form-stacked no_m_t well") do -%>
+<%= form_for @group, :url => expert_group_widget_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <div class="form_subgroup">
 
@@ -22,34 +22,34 @@
       <h3>Ask Form and Widget Options</h3>
 		<p>
         <label>
-          <%= check_box_tag 'active', '1', @group.active? %>  Active
+          <%= f.check_box :widget_active %>  Active
 			    <span>(If this option is unchecked, the Group's widget and Ask form are disabled. The widget code should be removed from any web page.)</span>
         </label>
 		</p>
 
 		<p>
         <label>        
-          <%= check_box_tag 'widget_public_option', '1', @group.widget_public_option %>  Enable "public display" option
+          <%= f.check_box 'widget_public_option' %>  Enable "public display" option
 			    <span>(Allows submitter to choose to make their question is public. If this option is unchecked, all questions submitted will be private.)</span>
         </label>
     </p>
 
 	<p>
         <label>        
-          <%= check_box_tag 'widget_upload_capable', '1', @group.widget_upload_capable? %>  Enable photo upload option
+          <%= f.check_box 'widget_upload_capable' %>  Enable photo upload option
         </label>
     </p>
 
 	<p>
         <label>        
-          <%= check_box_tag 'widget_show_location', '1', @group.widget_show_location? %>  Enable location option for widgets
+          <%= f.check_box 'widget_show_location' %>  Enable location option for widgets
           <span>(Location option is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>.)</span>
         </label>
 	</p>
 	
 	<p>
       <label>
-        <%= check_box_tag 'widget_show_title', '1', @group.widget_show_title? %>  Display Title Field for widgets
+        <%= f.check_box 'widget_show_title' %>  Display Title Field for widgets
 		    <span>(Title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>. If no title field is provided, a title is created from the first 80 characters of the question.)</span>
       </label>
 	</p>	

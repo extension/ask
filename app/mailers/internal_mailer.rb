@@ -15,7 +15,7 @@ class InternalMailer < ActionMailer::Base
   def aae_assignment(options = {})
     @user = options[:user]
     @question = options[:question]
-    @subject = "You have a new Ask an Expert question (Question:#{@question.id})"
+    @subject = "You have a new Ask an Expert question (Question ##{@question.id})"
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
@@ -200,7 +200,7 @@ class InternalMailer < ActionMailer::Base
   def aae_assignment_group(options = {})
     @user = options[:user]
     @question = options[:question]
-    @subject = "New Ask an Expert question for #{@question.assigned_group.name} (Question:#{@question.id})"
+    @subject = "#{@question.assigned_group.name} has a new Ask an Expert question (Question ##{@question.id})"
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]

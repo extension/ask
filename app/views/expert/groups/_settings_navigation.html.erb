@@ -1,5 +1,9 @@
 <% @page_title = @group.name + " Profile Settings"%>
 
+<% if !@group.group_active? %>
+  <h3 class="inactive_notice">This group is currently inactive. It cannot be assigned questions and the group's Ask form and widgets are disabled. You can change the group's status to active on the <%= link_to 'General Settings', expert_group_profile_path() %> page.</h3>
+<% end %>
+
 <ul class="nav nav-tabs">
   <li><%= link_to 'General', expert_group_profile_path() %></li>
   <li><%= link_to 'Locations', expert_group_locations_path() %></li>

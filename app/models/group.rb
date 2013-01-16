@@ -32,14 +32,15 @@ class Group < ActiveRecord::Base
   has_many :expertise_counties, :through => :group_counties, :source => :county
   
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED}"
-  
+
   validates :name, :presence => {:message => "Group name can't be blank"}
   validates :name, 
     :uniqueness => {:message => "The name \"%{value}\" is being used by another group."}, 
     :unless => Proc.new { |a| a.name.blank? }
   
-  scope :public_visible, where(is_test: false).where(active: true)
-  scope :assignable, conditions: {is_test: false}
+  scope :public_visible, where(is_test: false, widget_active: true, group_active: true)
+  scope :assignable, conditions: {is_test: false, group_active: true}
+
   scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_counties.county_id = #{county_id}")}
   scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("group_locations.location_id = #{location_id}")}
   scope :tagged_with_any, lambda { |tag_array|
