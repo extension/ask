@@ -153,39 +153,16 @@ class Expert::GroupsController < ApplicationController
   
   def widget
     @group = Group.find_by_id(params[:id])
-    if request.post?
+    if request.put?
+      @group.attributes = params[:group]
       change_hash = Hash.new
-      if params[:widget_active].present? && params[:widget_active] == '1'
-        @group.widget_active = true
-      else
-        @group.widget_active = false
-      end
-      
-      if params[:widget_upload_capable].present? && params[:widget_upload_capable] == '1'
-        @group.widget_upload_capable = true
-      else
-        @group.widget_upload_capable = false
-      end
-      
-      if params[:widget_public_option].present? && params[:widget_public_option] == '1'
-        @group.widget_public_option = true
-      else
-        @group.widget_public_option = false
-      end
-      
-      if params[:widget_show_location].present? && params[:widget_show_location] == '1'
-        @group.widget_show_location = true
-      else
-        @group.widget_show_location = false
-      end
-      
-      if params[:widget_show_title].present? && params[:widget_show_title] == '1'
-        @group.widget_show_title = true
-      else
-        @group.widget_show_title = false
-      end
       
       if @group.widget_active_changed? 
+        if @group.widget_active == true && @group.group_active == false
+          @group.widget_active = false
+          flash[:error] = "This group is not active. You will need to activate the group on the group edit page before the widget can be activated."
+          return render nil
+        end
         change_hash[:widget_active] = {:old => @group.widget_active_was.to_s, :new => @group.widget_active.to_s}
       end
       
