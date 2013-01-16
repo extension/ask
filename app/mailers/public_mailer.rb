@@ -15,7 +15,7 @@ class PublicMailer < ActionMailer::Base
     @user = options[:user]
     @expert = options[:expert]
     @question = options[:question]
-    @subject = "[eXtension Question:#{@question.id}] Your question has been responded to by one of our experts."
+    @subject = "Your Ask an Expert question has an answer (Question:#{@question.id})"
     @response = @question.responses.last
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
@@ -49,7 +49,7 @@ class PublicMailer < ActionMailer::Base
   def public_submission_acknowledgement(options = {})
       @user = options[:user]
       @question = options[:question]
-      @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
+      @subject = "Thank you for your Ask an Expert question (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       
       if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
@@ -83,7 +83,7 @@ class PublicMailer < ActionMailer::Base
     @question = options[:question]
     @example_survey = options[:example_survey]
 
-    @subject = "[eXtension Question:#{@question.id}] Tell us about your experience."
+    @subject = "Tell us about your Ask an Expert experience (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
 
     if(!@user.email.blank?)
@@ -110,7 +110,7 @@ class PublicMailer < ActionMailer::Base
     @comment = options[:comment]
     @question = @comment.question
     
-    @subject = "[eXtension Question:#{@question.id}] Someone has replied to your comment."
+    @subject = "Someone has replied to your Ask an Expert comment (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
 
     if(!@user.email.blank?)

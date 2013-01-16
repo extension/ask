@@ -55,7 +55,9 @@
                 </tr>
                 <tr>
                   <td></td>
-                  <td id="question_title"><p><%= link_to(@question.title, expert_question_url(@question)) -%></p></td>
+                  <td id="question_title">
+                    <%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%>
+                  </td>
                 </tr>
                 <tr>
                   <td></td>
