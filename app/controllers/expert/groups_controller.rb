@@ -79,8 +79,15 @@ class Expert::GroupsController < ApplicationController
         # we don't allow the group to be marked active if no one is signed up for it
         if @group.group_active == true
           if @group.assignees.count == 0 
+            @group.group_active = false
             flash[:error] = "There has to be at least one person not on vacation signed up as a member or leader for a group in order to activate it."
             return render nil
+          end
+        # if the group is marked inactive, then the group's widget gets marked as inactive
+        else
+          if @group.widget_active == true 
+            @group.widget_active = false
+            change_hash[:widget_active] = {:old => true, :new => false}
           end
         end
         change_hash[:group_active] = {:old => @group.group_active_was, :new => @group.group_active}
