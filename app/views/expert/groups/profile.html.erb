@@ -9,7 +9,23 @@
 <div class="form_group">
 
 <%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
-
+  
+  <fieldset>
+    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p class="clearing">
+      <%= get_avatar_for_group(@group) %>
+      <% if @group.avatar.present? %>
+        <p class="clearing">
+          <label>
+            <%= check_box_tag 'delete_avatar' %>
+            Remove avatar
+          </label> 
+        </p>
+      <% end %>
+      <%= f.file_field :avatar %>
+    </p>
+  </fieldset>
+  
   <fieldset>
     <p>
       <%= f.label :name, 'Group Name' %>
@@ -25,8 +41,8 @@
     
     <p>
         <label>        
-          <%= f.check_box 'group_active' %>  Active Group Status
-			    <span>(Unchecking this box will inactivate the whole group including it's widget and removes it from reassignment possibilities. Groups with no members will have this option auto-checked until someone joins and reactivates it.)</span>
+          <%= f.check_box 'group_active' %>  This group is active
+			    <span>(Inactivate groups cannot be assigned questions. The group's Ask form and widgets are disabled. Groups with no members will set to inactive.)</span>
         </label>
     </p>
 
@@ -35,22 +51,6 @@
           <%= f.check_box 'is_test' %>  This is a test group
 			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
         </label>
-    </p>
-  </fieldset>
-  
-  <fieldset>
-    <p><%= f.label :avatar, 'Profile Avatar' %></p>
-    <p class="clearing">
-      <%= get_avatar_for_group(@group) %>
-      <% if @group.avatar.present? %>
-        <p class="clearing">
-          <label>
-            <%= check_box_tag 'delete_avatar' %>
-            Remove avatar
-          </label> 
-        </p>
-      <% end %>
-      <%= f.file_field :avatar %>
     </p>
   </fieldset>
       
