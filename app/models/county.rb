@@ -27,7 +27,11 @@ class County < ActiveRecord::Base
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
     Rails.cache.fetch(cache_key,cache_options) do
       if(geoname = GeoName.find_by_geoip(ipaddress))
-        self.find_by_name(geoname.county)
+        if(location = Location.find_by_abbreviation(geoname.state_abbreviation))
+          location.counties.where(name: geoname.county).first 
+        else
+          nil
+        end
       else
         nil
       end
