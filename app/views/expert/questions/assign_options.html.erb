@@ -21,7 +21,46 @@
 
   <div id="reassign_question">
     <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
-    <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+    <div class="question_body"><%= format_text_for_display(@question.body) %></div>
+  
+
+    <p>Asked 
+      <% if @original_group.present? %>
+        to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+      <% end %>
+
+      <%= time_ago_in_words(@question.created_at) %> ago 
+
+      <% if @question.submitter %>
+        by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
+      <% end %>
+    </p>
+
+    <p>
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
+        <% end %>
+        <% if @question.location.present? %>
+          <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse"><%= link_to "No Location" %></span>
+      <% end %>
+    </p>
+
+    <div id="tags">
+
+    <% if @question.tags.size > 0 %>
+      <% @question.tags.each do |tag| %>
+        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+      <% end %>
+    <% else %>
+
+    <% end %>
+
+    </div>
+    
   </div>
 
 </div>
