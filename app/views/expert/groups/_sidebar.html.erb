@@ -31,16 +31,17 @@
 </aside>
 
 <aside>
-  <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3> 
-
   <% if @group_tags.size > 0 %>
+    <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3> 
     <% @group_tags.each do |tag| %>
       <p><span class='tag tag-topic'><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span></p>
     <% end %>
+    <p><%= link_to 'View all / Add more', expert_group_tags_path() %></p>
   <% else %>
-    <p>There are no tags at this time.</p>
+    <h3>This Group needs tags</h3>
+    <p><%= link_to 'Add some tags', expert_group_tags_path() %></p>
   <% end %>
-  <p><%= link_to 'View all', expert_group_tags_path() %></p>
+  
 </aside>
 
 
