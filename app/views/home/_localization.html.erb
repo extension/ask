@@ -1,3 +1,29 @@
+<% if @recent_unanswered.size > 0 %>
+  <h3>Unanswered with photos</h3>
+
+  <% @recent_unanswered.each do |question| %>
+  <div class="answered_question_images">
+
+      <%= link_to question_path(question.id) do %>
+      <div class="answered_question_images_wrapper">
+      <% if File.exists?(Rails.root.join("public#{question.images.first.url(:original,false)}")) %>
+        <%= image_tag question.images.first.url(:medium), :class => "size300w" %>
+      <% else %>
+        <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+      <% end %>
+      </div>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+        
+      <%- end -%>
+      <br class="clearing" />
+  </div>
+  <% end %>
+<% end %>
+
 
 <% if current_location.present? %>
   <h3><span id="display_location"><%= display_location_and_county %></span></h3>
@@ -15,19 +41,6 @@
   </p>
 </div>
 
-<% if current_location.present? %>
-<div>
-  <h3>Groups near you</h3>
-<% if @groups.size > 0 %>
-  <% @groups.each do |group| %>
-    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
-  <% end %>
-<% else %>
-  <p>There are no groups in this location</p>
-<% end %>
-</div>
-
-<% end %>
 
 
 <script type="text/javascript">

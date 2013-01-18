@@ -109,10 +109,14 @@ class Question < ActiveRecord::Base
   DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
   
   scope :public_visible, conditions: { is_private: false }
+  scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
+  scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
+  scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_SUBMITTED}"
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
+  
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"

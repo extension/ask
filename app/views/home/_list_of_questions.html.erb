@@ -1,0 +1,12 @@
+<% questions.each do |question| %>
+  <%= render :partial => 'full_public_question', :locals => {:question => question} %>
+<% end %>
+
+<% if listview.present? && listview == 'answered' %>
+  <%= page_entries_info questions %>
+  <%= paginate questions, :params => {:controller => 'home', :action => 'index'} %>
+<% elsif listview.present? && listview == 'unanswered' %>
+  <%= page_entries_info questions %>
+  <%= paginate questions, :params => {:controller => 'home', :action => 'unanswered'} %>
+<% end %>
+
