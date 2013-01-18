@@ -8,6 +8,7 @@ class QuestionsController < ApplicationController
   before_filter :set_submitter, only: [:show]
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
+  before_filter :set_format, :only => [:show]
 
   def show
     @question = Question.find_by_id(params[:id])

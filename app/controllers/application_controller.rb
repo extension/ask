@@ -10,9 +10,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_location
   helper_method :current_county
-  before_filter :set_time_zone_from_user
-  before_filter :set_last_active_at_for_user
-
+  before_filter :set_time_zone_from_user, :set_last_active_at_for_user
 
   protect_from_forgery
   layout "public"
@@ -45,7 +43,7 @@ class ApplicationController < ActionController::Base
   def record_not_found
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
   end
-
+  
   def set_yolo
     if(current_user)
       if(@yolo = current_user.yo_lo)
@@ -148,5 +146,11 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
+  
+  private
+  
+  def set_format
+    request.format = 'html'
+  end
+  
 end

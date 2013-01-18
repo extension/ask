@@ -6,13 +6,13 @@ Aae::Application.routes.draw do
   devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
-
+  
   resources :questions do
     collection do
       post 'account_review_request'
     end
   end
-
+  
   resources :responses, :only => [:create] do
     member do
       post 'remove_image'
