@@ -7,6 +7,8 @@
 class UsersController < ApplicationController
   layout 'public'
   
+  before_filter :set_format, :only => [:show]
+  
   def show
     @user = User.valid_users.find_by_id(params[:id])
     if @user.blank?
