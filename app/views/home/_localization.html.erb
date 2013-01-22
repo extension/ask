@@ -1,33 +1,8 @@
-<% if @recent_unanswered.size > 0 %>
-  <h3>Unanswered with photos</h3>
-
-  <% @recent_unanswered.each do |question| %>
-  <div class="answered_question_images">
-
-      <%= link_to question_path(question.id) do %>
-      <div class="answered_question_images_wrapper">
-      <% if File.exists?(Rails.root.join("public#{question.images.first.url(:original,false)}")) %>
-        <%= image_tag question.images.first.url(:medium), :class => "size300w" %>
-      <% else %>
-        <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
-      <% end %>
-      </div>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-        
-      <%- end -%>
-      <br class="clearing" />
-  </div>
-  <% end %>
-<% end %>
-
-
 <% if current_location.present? %>
-  <h3><span id="display_location"><%= display_location_and_county %></span></h3>
+  <p>You can set a location to use for asking questions.</p>
+  <h4><span id="display_location"><%= display_location_and_county %></span></h4>
 <% else %>
+<p>You can set a location to use for asking questions.</p>
   <h3><span id="display_location">Customize your location</span></h3>
 <% end %>
 <span id="change_location" class="btn">change</span>

@@ -15,8 +15,27 @@ class Question < ActiveRecord::Base
 
   class Question::Image < Asset
     has_attached_file :attachment, 
-                      :styles => { :medium => "300x300>", :thumb => "100x100>" }, 
-                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :styles => Proc.new { |attachment| attachment.instance.styles }
+                        attr_accessible :attachment
+    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
+    def dynamic_style_format_symbol
+        URI.escape(@dynamic_style_format).to_sym
+      end
+
+      def styles
+        unless @dynamic_style_format.blank?
+          { dynamic_style_format_symbol => @dynamic_style_format }
+        else
+          { :medium => "300x300>", :thumb => "100x100>" }
+        end
+      end
+
+      def dynamic_attachment_url(format)
+        @dynamic_style_format = format
+        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+        attachment.url(dynamic_style_format_symbol)
+      end
   end
 
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
@@ -111,7 +130,8 @@ class Question < ActiveRecord::Base
   scope :public_visible, conditions: { is_private: false }
   scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
   scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
-  scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_SUBMITTED}"
+  scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_RESOLVED}"
+  scope :public_visible_with_images_unanswered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_SUBMITTED}"
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
