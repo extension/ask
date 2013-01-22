@@ -12,6 +12,7 @@
     <p>Experts can manually assign questions to any group or individual.</p>
   </div>
   
+  
   <fieldset>
     <div>
       <h3>Vacation Status</h3>
@@ -62,16 +63,13 @@
     </div>
     
     <h3>Email Signature</h3>
-    <p class="bio">
+    <div class="bio">
       <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
       <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg' %>
-    </p>
-    
+    </div>
+    <p><%= f.submit "Save Answering Settings", :class => "btn btn-large btn-primary" %></p>
   </fieldset>
   
-  <fieldset>
-    <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
-  </fieldset>
     
 <% end %>
 
@@ -79,4 +77,17 @@
     $('.wysiwyg').each(function(i, elem) {
       $(elem).wysihtml5({image: false});
     });
+    
+    var promptSave = true;
+    
+    $('input:not(:button,:submit),textarea,select').change(function () {  
+      window.onbeforeunload = function () {
+        if (promptSave != null) return "You have unsaved changes on this page!";
+      }
+    });
+    $('input:submit').click(function(e) {
+      promptSave = null;
+    });
+
+    
 </script>
