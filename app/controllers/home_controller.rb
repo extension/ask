@@ -6,6 +6,7 @@
 
 class HomeController < ApplicationController
   layout 'public'
+  before_filter :set_format, :only => [:about]
 
   def index
     @recent_questions = Question.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')

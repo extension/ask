@@ -13,24 +13,31 @@
 <div class="span4">
   <h2>Groups near you...</h2>
   
-  <h3>In <%= current_county.name %></h3>
-  <% if @groups_near_my_county.size > 0 %>
-    <% @groups_near_my_county.each do |group| %>
-      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+  <% if current_county.present? %>
+    <h3>In <%= current_county.name %></h3>
+    <% if @groups_near_my_county.size > 0 %>
+      <% @groups_near_my_county.each do |group| %>
+        <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+      <% end %>
+    <% else %>
+      <p>We don't have any groups for this county. You could create a new group or edit the location of an existing group.</p>
     <% end %>
   <% else %>
-    <p>We don't have any groups for this county. You could create a new group or edit the location of an existing group.</p>
+   <h3>We currently cannot detect your county for group recommendations.</h3>
   <% end %>
   
-  
-  <h3>In <%= current_location.name %></h3>
-  <% if @groups_near_my_state.size > 0 %>
-    <% @groups_near_my_state.each do |group| %>
-      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
-    <% end %>
+  <% if current_location.present? %>
+    <h3>In <%= current_location.name %></h3>
+    <% if @groups_near_my_state.size > 0 %>
+      <% @groups_near_my_state.each do |group| %>
+        <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+      <% end %>
     <% else %>
       <p>We don't have any groups for this state. You could create a new group or edit the location of an existing group.</p>
     <% end %>
+  <% else %>
+    <h3>We currently cannot detect your location for group recommendations.</h3>
+  <% end %>
 </div>
 
 <div id="secondary" class="span4">
