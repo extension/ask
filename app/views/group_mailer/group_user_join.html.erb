@@ -56,11 +56,11 @@
                   </tr>
                   <tr>
                     <td></td>
-                    <td class="group"><p><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_path(@group.id) %></p></td>
+                    <td class="group"><p><%= link_expert_group_avatar(@group, :thumb) %> <%= link_to @group.name, expert_group_url(@group.id) %></p></td>
                   </tr>
                   <tr>
                     <td></td>
-                    <td class="group"><p><%= link_expert_user_avatar(@new_member, :thumb) %> <%= link_to @new_member.name, expert_user_path(@new_member.id) %></p></td>
+                    <td class="group"><p><%= link_expert_user_avatar(@new_member, :thumb) %> <%= link_to @new_member.name, expert_user_url(@new_member.id) %></p></td>
                   </tr>
                 </table>
               </td>
