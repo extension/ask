@@ -9,7 +9,17 @@ class HomeController < ApplicationController
   before_filter :set_format, :only => [:about]
 
   def index
-    @recent_questions = Question.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
+    @answered_questions = Question.public_visible_answered.page(params[:page]).order('created_at DESC')
+    @recent_photo_questions = Question.public_visible_with_images_answered.order('questions.created_at DESC').limit(6)
+    if current_location
+      # @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
+      # @questions_in_location = Question.public_visible_answered.where("location_id = ?", current_location.id).limit(6)
+    end
+  end
+  
+  def unanswered
+    @unanswered_questions = Question.public_visible_unanswered.page(params[:page]).order('created_at DESC')
+    @recent_photo_questions = Question.public_visible_with_images_unanswered.order('questions.created_at DESC').limit(6)
     if current_location
       @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
     end

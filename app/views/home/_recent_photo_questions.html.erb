@@ -1,0 +1,25 @@
+<% if @recent_photo_questions.size > 0 %>
+  <h3>Latest Questions with Photos</h3>
+
+  <% @recent_photo_questions.each do |question| %>
+  <div class="answered_question_images">
+
+      <%= link_to question_path(question.id) do %>
+      <div class="answered_question_images_wrapper">
+      <% if File.exists?(Rails.root.join("public#{question.images.first.url(:original,false)}")) %>
+        <%= image_tag question.images.first.dynamic_attachment_url("300x300#"), :class => "size300w" %>
+      <% else %>
+        <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+      <% end %>
+      </div>
+        <% if question.title.present? %>
+          <p><%= format_text_for_display(question.title) -%></p>
+        <% else %>
+          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
+        <% end %>
+
+      <%- end -%>
+      <br class="clearing" />
+  </div>
+  <% end %>
+<% end %>

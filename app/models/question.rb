@@ -15,8 +15,27 @@ class Question < ActiveRecord::Base
 
   class Question::Image < Asset
     has_attached_file :attachment, 
-                      :styles => { :medium => "300x300>", :thumb => "100x100>" }, 
-                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :styles => Proc.new { |attachment| attachment.instance.styles }
+                        attr_accessible :attachment
+    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
+    def dynamic_style_format_symbol
+        URI.escape(@dynamic_style_format).to_sym
+      end
+
+      def styles
+        unless @dynamic_style_format.blank?
+          { dynamic_style_format_symbol => @dynamic_style_format }
+        else
+          { :medium => "300x300>", :thumb => "100x100>" }
+        end
+      end
+
+      def dynamic_attachment_url(format)
+        @dynamic_style_format = format
+        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+        attachment.url(dynamic_style_format_symbol)
+      end
   end
 
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
@@ -109,10 +128,15 @@ class Question < ActiveRecord::Base
   DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
   
   scope :public_visible, conditions: { is_private: false }
+  scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
+  scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
+  scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_RESOLVED}"
+  scope :public_visible_with_images_unanswered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_SUBMITTED}"
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
+  
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"

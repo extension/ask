@@ -1,7 +1,8 @@
-
 <% if current_location.present? %>
-  <h3><span id="display_location"><%= display_location_and_county %></span></h3>
+  <p>You can set a location to use for asking questions.</p>
+  <h4><span id="display_location"><%= display_location_and_county %></span></h4>
 <% else %>
+<p>You can set a location to use for asking questions.</p>
   <h3><span id="display_location">Customize your location</span></h3>
 <% end %>
 <span id="change_location" class="btn">change</span>
@@ -15,19 +16,6 @@
   </p>
 </div>
 
-<% if current_location.present? %>
-<div>
-  <h3>Groups near you</h3>
-<% if @groups.size > 0 %>
-  <% @groups.each do |group| %>
-    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
-  <% end %>
-<% else %>
-  <p>There are no groups in this location</p>
-<% end %>
-</div>
-
-<% end %>
 
 
 <script type="text/javascript">

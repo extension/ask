@@ -194,10 +194,11 @@ body {
   .size50x50 {width:50px !important; height:50px !important;}
   .size80x80 {width:80px !important; height:80px !important;}
   .size100w {width:100px !important;}
+  
   .medium {width:100px !important; height:100px !important;}
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
-  
+  .size300w {width:300px !important;}
   
   
   @media screen and (max-width: 1200px) {
@@ -239,7 +240,12 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
-  
+  .answered_question_images img {float:left; margin-right:1em;}
+  .answered_question_images {margin-bottom:2.5em;}
+  .answered_question_images_wrapper {width:120px; height:120px; overflow:hidden; border:1px solid #bbb; float:left; margin-right:1em; background:#D4D4D4;}
+  .answered_question_images p {font-size:1.3em; line-height:1.4em}
+  #localization {background:#eee; padding:2em;}
+  #recent_photo_questions {background:#eee; padding:2em; margin-bottom:2em;}
   #collapsed_nav_options {background: #2f3b3e;}
   #collapsed_nav_options .extension_nav_public {display:none;}
   .navbar .nav > li > a {color:#fff; text-shadow:none;}
@@ -249,7 +255,7 @@ body#public {
   #ask_an_expert_logo img {width:200px; height:auto;}
   
   #publicbar h1 {float:left;}
-  #publicbar.navbar-inner {background: #f47B28; border-radius:0; padding:0; }
+  #publicbar.navbar-inner {background: #f47B28; border-radius:0; padding:0; border:0;}
   #searchform input, #searchform .btn  {margin:0;}
   
   #searchform span  {margin:0;
