@@ -18,6 +18,7 @@ class HomeController < ApplicationController
   
   def unanswered
     @unanswered_questions = Question.public_visible_unanswered.page(params[:page]).order('created_at DESC')
+    @recent_unanswered = Question.public_visible_with_images_answered.order('questions.created_at DESC').limit(6)
     if current_location
       @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
     end
