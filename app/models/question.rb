@@ -141,7 +141,6 @@ class Question < ActiveRecord::Base
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
 
-
   # reporting scopes
   YEARWEEK_RESOLVED = 'YEARWEEK(questions.resolved_at,3)'
   # eXtension National launch
