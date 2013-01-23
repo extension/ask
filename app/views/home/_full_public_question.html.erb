@@ -4,9 +4,12 @@
     <p class="question_body"><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
     
     <% if question.responses.size > 0 %>
-    <p><span class="response_count"><%= question.responses.size %> Answer</span></p>
+    <p><span class="response_count">Answered</span></p>
     <% end %>
     
+    <% if question.comments.size > 0 %>
+      <p><span class="response_count"><%= question.comments.size %> <%= question.comments.size > 1 ? "Comments" : "Comment" %> </span></p>
+    <% end %>
   <%- end -%>
   
   <% question.images.each do |image| %>
