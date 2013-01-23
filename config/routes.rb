@@ -67,6 +67,7 @@ Aae::Application.routes.draw do
       collection do
         get 'questions_by_tag'
         post 'new'
+        get 'all'
       end
     end
     
