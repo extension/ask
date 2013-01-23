@@ -32,7 +32,13 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
   end
   
   def people
-    @user = Authmap.find_for_people_openid(env["omniauth.auth"], current_user)
+    begin
+      @user = Authmap.find_for_people_openid(env["omniauth.auth"], current_user)
+    rescue Exception => e
+      flash[:error] = "Error Authenticating: #{e}"  
+      return redirect_to new_user_session_url
+    end
+    
     if @user.persisted?
       if @user.retired == false
         flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
