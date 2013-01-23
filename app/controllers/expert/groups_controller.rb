@@ -11,9 +11,13 @@ class Expert::GroupsController < ApplicationController
   
   def index
     @my_groups = current_user.group_memberships
-    @groups = Group.page(params[:page]).order(:name)
     current_location.present? ? @groups_near_my_state = Group.with_expertise_location(current_location.id).limit(6) : @groups_near_my_state = []
     current_county.present? ? @groups_near_my_county = Group.with_expertise_county(current_county.id).limit(6) : @groups_near_my_county = []
+  end
+  
+  def all
+    @group_count = Group.all.length
+    @groups = Group.page(params[:page]).order(:name)
   end
   
   def show
