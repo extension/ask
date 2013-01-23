@@ -42,19 +42,7 @@ class Authmap < ActiveRecord::Base
     end
     
     if omniauth_auth_hash['info']['email'].present?
-      # what we're doing here is if someone say logs in with facebook and has a public account, then goes back and gets 
-      # an eXtension ID (using the same email address), then we do not want to use the same public user record that was associated with the facebook account, 
-      # we want to use their eXtension user record that was auto-populated from the sync script. 
-      # we will look for the user record of kind 'User' and a matching email address to make sure we have the correct account if they are logging in w/ People.
-      # right now, there is no way to merge the two accounts into one.
-      # The other way around, if someone has an eXtension account first, and then logs in with say facebook (w/ same email address), then the eXtension ID 
-      # user record will be used and the facebook authmap will get associated with that account (user record) so the same user record will be used for both.
-      if user_provider == 'people'
-        user = User.find_by_email_and_kind(omniauth_auth_hash['info']['email'], 'User')
-      else
-        user = User.find_by_email(omniauth_auth_hash['info']['email'])
-      end
-      
+      user = User.find_by_email(omniauth_auth_hash['info']['email'])
       if user.present?
         user.authmaps << self.new(:authname => user_screen_name, :source => user_provider)
         user.save
