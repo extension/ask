@@ -131,26 +131,32 @@ jQuery(function($) {
       }
     });
     
+    $("#reassignment_results_feedback h3").hide();
+    
     $("#location_id").change(function() {
       var location_id = $('select#location_id :selected').val();
       if(location == "") location="0";
       jQuery.get('/widget/get_counties/' + location_id, function(data){
           $("#county_list").html(data);
       })
-      $.ajax({
-        type: "POST",
-        url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
-        cache: false,
-        data: {location_id: location_id}
-      })
-      .done(function() {
-        // alert("location done");
-				return false;
-      })
-      .fail(function() {
-        // alert("location error");
-  			return false;
-      })
+      $("#reassignment_results").html('<div id="reassignment_results_feedback"><h3>Finding matches...</h3></div>').fadeIn('slow', function() {
+         $.ajax({
+           type: "POST",
+           url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
+           cache: false,
+           data: {location_id: location_id}
+         })
+         .done(function() {
+           // alert("location done");
+           $("#reassignment_results").fadeIn();
+   				return false;
+         })
+         .fail(function() {
+           // alert("location error");
+     			return false;
+         })
+       });
+      
       // return false;
     });
     
@@ -158,6 +164,7 @@ jQuery(function($) {
   $("#county_list").on("change", "#question_county_id", function(){
     var county_id = $('select#question_county_id :selected').val();
     var location_id = $('select#location_id :selected').val();
+    $("#reassignment_results").html('<div id="reassignment_results_feedback"><h3>Finding matches...</h3></div>').fadeIn('slow', function() {
       $.ajax({
         type: "POST",
         url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
@@ -166,12 +173,14 @@ jQuery(function($) {
       })
       .done(function() {
         // alert("county done");
+        $("#reassignment_results").fadeIn();
 				return false;
       })
       .fail(function() {
         // alert("county error");
   			return false;
       })
+    });
   });
 </script>
 
