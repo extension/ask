@@ -641,7 +641,10 @@ body#expert {
 	.assignment_match_header .matching_term {display:block; @include wordwrap;}
 	.assignment_match_header .location_match {background: #DAEAC9; color:#1F5983; text-align:center;}
 	.assignment_match_header .tag_match {background: #C2E5EC; color:#1F5983; text-align:center;}
-
+  .location_match select {width:100%;}
+  .no_reassign_matches {padding:3em; color:#999; background:#eee; margin-bottom:3em; text-align:center; line-height:2.2em}
+  .no_reassign_matches h3 {font-size:2em; font-weight:normal; }
+  .no_reassign_matches p {font-size:1.4em; font-weight:normal; line-height:1.2em}
   
   @media screen and (max-width: 1200px) {
     .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
