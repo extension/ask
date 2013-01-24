@@ -445,7 +445,7 @@ class Expert::QuestionsController < ApplicationController
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
   
-  def reassignbeta
+  def reassign
     @question = Question.find_by_id(params[:id])
     @experts = Array.new
     @groups = Array.new
@@ -516,78 +516,6 @@ class Expert::QuestionsController < ApplicationController
     
     @filter_terms_count = @filter_terms.count + 2 #for location and county
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
-  end
-  
-  
-  def reassign
-    @question = Question.find_by_id(params[:id])
-    @experts = Array.new
-    @groups = Array.new
-    
-    if @question.location_id.present? 
-      location_experts = User.active.with_expertise_location(@question.location_id)
-      location_groups = Group.assignable.with_expertise_location(@question.location_id)
-    else
-      location_experts = []
-      location_groups = []
-    end
-      
-    if @question.county_id.present?
-      county_experts = User.active.with_expertise_county(@question.county_id) 
-      county_groups = Group.assignable.with_expertise_county(@question.county_id) 
-    else
-      county_experts = []
-      county_groups = []
-    end
-    
-    question_tags_array = @question.tags.all
-      
-    if question_tags_array.present?
-      if @question.county_id?
-        expert_ids = county_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
-        
-        group_ids = county_groups.map(&:id)
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
-      end      
-    
-      if @question.location_id?
-        expert_ids = location_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
-        
-        group_ids = location_groups.map(&:id)
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
-      end
-    
-      @experts.concat(User.active.tagged_with_any(question_tags_array))
-      @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
-    end
-    
-    if county_experts.length > 0
-       @experts.concat(county_experts)
-       @groups.concat(county_groups)
-    end  
-      
-    if location_experts.length > 0
-      @experts.concat(location_experts)  
-      @groups.concat(location_groups)  
-    end
-    
-    @experts.uniq!
-    @groups.uniq!
-    
-    @experts = @experts.first(8)
-    @groups = @groups.first(3)
-    
-    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
-  end
-  
-  def associate_with_group
-    @question = Question.find_by_id(params[:id])
-    @group = Group.find_by_id(params[:group_id])
-    if(@question and @group)
-      @question.change_group(@group,current_user)
-    end
   end
   
   def activity_notificationprefs

@@ -47,8 +47,6 @@ Aae::Application.routes.draw do
         post 'reject'
         get  'reassign'
         post 'reassign'
-        get  'reassignbeta'
-        post 'reassignbeta'
         post 'reactivate'
         get  'close_out'
         post 'close_out'
