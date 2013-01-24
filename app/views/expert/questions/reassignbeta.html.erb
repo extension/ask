@@ -1,0 +1,178 @@
+<% @page_title = "Reassign"%>
+
+<div class="span12">
+  
+  <div id="reassign_header">
+    <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+    <h1>Reassign this question <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
+    <p><%= link_to "Switch back to old reassignment interface", reassign_expert_question_path(@question.id), :class => "btn" %> </p>
+  </div>
+  
+  <div id="reassign_actions">
+    <% if (@question.assignee != current_user) || 
+      (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
+      <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
+    <% end %>
+    <p><%= button_to "Assign to a Question Wrangler", assign_to_wrangler_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+
+    <input id="expert_name" placeholder="Search by name for Experts or Groups" />
+  </div>
+
+
+<% if (!@question.location.present?) && (@question.tags.size == 0) %>
+  <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. <%= link_to "Please add at least one tag", expert_question_path(@question.id) %> on the Question page.</h3>
+  
+<% else %>
+
+<div id="reassign_wrapper">
+  
+  <div id="reassign_tag_list_wrapper">
+  <div class="row-fluid">
+    <div class="span4">
+      <h2>Best Matches</h2>
+    </div>
+    
+    <div class="span8">
+        <ul id="reassign_tag_list">
+        
+        <% if @question.location.present? %>
+          <li><span class="tag tag-geography"><em class="reassign_tag_list_item"><%= @filter_terms.count %></em> <%= @question.location.name %> <span class="matching_code">(<%= @question.location.abbreviation %>)</span></span></li>
+        <% end %>
+  
+        <% if @question.county.present? %>
+          <li><span class="tag tag-geography"><em class="reassign_tag_list_item"><%= @filter_terms.count %></em> <%= "#{@question.county.name}" %> <span class="matching_code">(Co.)</span></span></li>
+        <% end %>
+  
+        <% if @question.tags.size > 0 %>
+          <% @question.tags.each do |tag| %>
+            <li><span class="tag tag-topic"><em class="reassign_tag_list_item"><%= @filter_terms.count %></em> <%= tag.name %></span></li>
+          <% end %>
+        <% end %>
+        
+        </ul>
+    </div>
+  </div>
+  </div>
+  
+  <div class="assignment_match_header <% @filter_terms.count %>">
+    <div class="row-fluid">
+    
+      <div class="span4"><h2>Best Matches</h2></div>
+        
+      <div class="span8">
+      <table class="table table-bordered">
+      <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
+        
+        <td class="match location_match">
+          <%= select_tag(:location_id, options_for_select(get_location_options, @question.location.present? ? @question.location.id : nil)) %>
+        </td>
+        
+        <td class="match location_match" id="county_list">
+          <% if @question.location.present? %>
+            <%= select_tag(:question_county_id, options_for_select(get_county_options(@question.location), @question.county.present? ? @question.county.id : nil)) %>
+          <% end %>
+        </td>
+        
+      <% @filter_terms.to_enum.with_index(1).each do |term, index| %>
+        <% if @question.county.present? && term == @question.county.name %>
+        <% elsif @question.location.present? && term == @question.location.name %>
+        <% else %>
+          <td class="match tag_match"><em class="matching_term"><%= term %></em></td>
+        <% end %>
+      <% end %>
+      </tr>
+      </table>
+      </div>
+  </div>
+  </div>
+  
+  <div id="reassignment_results">
+    <%= render :partial => 'reassignment_results' %>
+  </div>
+
+</div>
+
+
+<% end %>
+
+</div>
+
+<!-- <div class="span3"> -->
+<!-- </div> -->
+
+<script class="code" type="text/javascript">
+/* Append the function to the "document ready" chain */
+jQuery(function($) {
+  /* when the #expert search form submits */
+  $("#expert_search_by_name").submit(function() {
+	/* stop form from submitting normally */
+	event.preventDefault();
+    /* make a call to search experts and replace expert result contents */
+    $.post('<%= expert_search_by_name_path %>', { expert_search: $("#expert_name").val(), question_id: <%= @question.id %>}, function(data) {
+      $("#expert_search_results").html(data);
+    });
+  });
+})
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#expert_name").autocomplete({
+      source: "/ajax/experts",
+			minLength: 2,
+			select: function(e, ui) {
+			  if(ui.item.class_type == "User") {
+			    window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + ui.item.id
+			  }
+			  else if (ui.item.class_type == "Group") {
+		        window.location = '<%= group_assign_options_expert_question_url(:id => @question.id) %>?group_id=' + ui.item.id
+		      }
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + this.value
+      }
+    });
+    
+    $("#location_id").change(function() {
+      var location_id = $('select#location_id :selected').val();
+      if(location == "") location="0";
+      jQuery.get('/widget/get_counties/' + location_id, function(data){
+          $("#county_list").html(data);
+      })
+      $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
+        cache: false,
+        data: {location_id: location_id}
+      })
+      .done(function() {
+        // alert("location done");
+				return false;
+      })
+      .fail(function() {
+        // alert("location error");
+  			return false;
+      })
+      // return false;
+    });
+    
+
+  $("#county_list").on("change", "#question_county_id", function(){
+    var county_id = $('select#question_county_id :selected').val();
+    var location_id = $('select#location_id :selected').val();
+      $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
+        cache: false,
+        data: {county_id: county_id, location_id: location_id}
+      })
+      .done(function() {
+        // alert("county done");
+				return false;
+      })
+      .fail(function() {
+        // alert("county error");
+  			return false;
+      })
+  });
+</script>
+

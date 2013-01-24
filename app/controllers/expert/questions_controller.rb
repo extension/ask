@@ -363,6 +363,162 @@ class Expert::QuestionsController < ApplicationController
     QuestionEvent.log_tag_change(@question, current_user, @current_tags, @previous_tags) if @previous_tags != @current_tags
   end
   
+  
+  def update_reassign_results
+    @question = Question.find_by_id(params[:id])
+    @experts = Array.new
+    @groups = Array.new
+    @filter_terms = Array.new
+    
+    if params[:location_id].present? 
+      @question.location_id = params[:location_id]
+    end
+    
+    if params[:county_id].present? 
+      @question.county_id = params[:county_id]
+    else
+      @question.county_id = ""
+    end
+    
+    if @question.location_id.present? 
+      # @filter_terms <<  @question.location.name
+      location_experts = User.active.with_expertise_location(@question.location_id)
+      location_groups = Group.assignable.with_expertise_location(@question.location_id)
+    else
+      location_experts = []
+      location_groups = []
+    end
+      
+    if @question.county_id.present?
+      # @filter_terms <<  @question.county.name
+      county_experts = User.active.with_expertise_county(@question.county_id) 
+      county_groups = Group.assignable.with_expertise_county(@question.county_id) 
+    else
+      county_experts = []
+      county_groups = []
+    end
+    
+    question_tags_array = @question.tags.all
+    
+    @question.tags.each do |tag|
+      @filter_terms <<  tag.name
+    end
+      
+    if question_tags_array.present?
+      if @question.county_id?
+        expert_ids = county_experts.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = county_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+      end      
+    
+      if @question.location_id?
+        expert_ids = location_experts.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = location_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+      end
+    
+      @experts.concat(User.active.tagged_with_any(question_tags_array))
+      @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
+    end
+    
+    if county_experts.length > 0
+       @experts.concat(county_experts)
+       @groups.concat(county_groups)
+    end  
+      
+    if location_experts.length > 0
+      @experts.concat(location_experts)  
+      @groups.concat(location_groups)  
+    end
+    
+    @experts.uniq!
+    @groups.uniq!
+    
+    @experts = @experts.first(8)
+    @groups = @groups.first(3)
+    
+    @filter_terms_count = @filter_terms.count + 2 #for location and county
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
+  end
+  
+  def reassignbeta
+    @question = Question.find_by_id(params[:id])
+    @experts = Array.new
+    @groups = Array.new
+    @filter_terms = Array.new
+    
+    if @question.location_id.present? 
+      # @filter_terms <<  @question.location.name
+      location_experts = User.active.with_expertise_location(@question.location_id)
+      location_groups = Group.assignable.with_expertise_location(@question.location_id)
+    else
+      # @filter_terms <<  ""
+      location_experts = []
+      location_groups = []
+    end
+      
+    if @question.county_id.present?
+      # @filter_terms <<  @question.county.name
+      county_experts = User.active.with_expertise_county(@question.county_id) 
+      county_groups = Group.assignable.with_expertise_county(@question.county_id) 
+    else
+      # @filter_terms <<  ""
+      county_experts = []
+      county_groups = []
+    end
+    
+    question_tags_array = @question.tags.all
+    
+    @question.tags.each do |tag|
+      @filter_terms <<  tag.name
+    end
+      
+    if question_tags_array.present?
+      if @question.county_id?
+        expert_ids = county_experts.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = county_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+      end      
+    
+      if @question.location_id?
+        expert_ids = location_experts.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        
+        group_ids = location_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+      end
+    
+      @experts.concat(User.active.tagged_with_any(question_tags_array))
+      @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
+    end
+    
+    if county_experts.length > 0
+       @experts.concat(county_experts)
+       @groups.concat(county_groups)
+    end  
+      
+    if location_experts.length > 0
+      @experts.concat(location_experts)  
+      @groups.concat(location_groups)  
+    end
+    
+    @experts.uniq!
+    @groups.uniq!
+    
+    @experts = @experts.first(20)
+    @groups = @groups.first(3)
+    
+    @filter_terms_count = @filter_terms.count + 2 #for location and county
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
+  end
+  
+  
   def reassign
     @question = Question.find_by_id(params[:id])
     @experts = Array.new

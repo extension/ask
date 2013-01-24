@@ -1,0 +1,99 @@
+<% if @groups.size > 0 %>
+  	<% @groups.each do |group| %>
+      <% group_expertise_counties = group.expertise_counties %>
+      <% group_expertise_locations = group.expertise_locations %>
+      <% group_tags = group.tags %>
+
+       <div class="assignment_match <% @filter_terms.count %>">
+        <div class="row-fluid">
+        
+          <div class="span4">
+          <%= link_to link_expert_group_avatar_group_label(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
+          </div>
+          
+          <div class="span8">
+          <table class="table table-bordered">
+          <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
+            <% if @question.location.present? && group_expertise_locations.include?(@question.location) %>
+	            <td class="match location_match"><em class="matching_term"><%= @question.location.abbreviation %> <i>yes</i></td>
+	          <% else %>
+	            <td class="nomatch"><i>no</i></td>
+	          <% end %>
+	          
+	          <% if @question.county.present? && group_expertise_counties.include?(@question.county) %>
+	            <td class="match location_match"><em class="matching_term">Co.</em> <i>yes</i></td>
+	          <% else %>
+	            <td class="nomatch"><i>no</i></td>
+	          <% end %>
+            
+            <% @filter_terms.to_enum.with_index(1).each do |term, index| %>
+  	          <% if group_tags.map(&:name).include?(term) %>
+  	            <td class="match tag_match"><em class="matching_term"><%= term %></em> <i>yes</i></td>
+  	          <% else %>
+  	            <td class="nomatch"><em class="matching_term"><%= index %></em> <i>no</i></td>
+  	          <% end %>
+            <% end %>
+          </tr>
+          </table>
+          </div>
+      </div>
+      </div>
+
+    <% end %>
+
+<% end %>
+
+<% if @experts.size > 0 %>
+      <% @experts.each do |expert| %>
+        <% expert_expertise_counties = expert.expertise_counties %>
+        <% expert_expertise_locations = expert.expertise_locations %>
+        <% expert_tags = expert.tags %>
+        
+        <div class="assignment_match <% @filter_terms.count %>">
+        <div class="row-fluid">
+        
+            <div class="span4">
+            <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to raw(expert_user(expert)), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
+            <br>
+            <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
+            <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[expert.id]) %></p>
+            <span class="downplay">last active <%= time_ago_in_words(expert.last_active_at) %> ago</span>
+            </div>
+            
+            <div class="span8">
+            <table class="table table-bordered">
+            <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
+              
+              <% if @question.location.present? && expert_expertise_locations.include?(@question.location) %>
+  	            <td class="match location_match"><em class="matching_term"><%= @question.location.abbreviation %> <i>yes</i></td>
+  	          <% else %>
+  	            <td class="nomatch"><i>no</i></td>
+  	          <% end %>
+
+  	          <% if @question.county.present? && expert_expertise_counties.include?(@question.county) %>
+  	            <td class="match location_match"><em class="matching_term">Co.</em> <i>yes</i></td>
+  	          <% else %>
+  	            <td class="nomatch"><i>no</i></td>
+  	          <% end %>
+
+              <% @filter_terms.to_enum.with_index(1).each do |term, index| %>
+    	          <% if expert_tags.map(&:name).include?(term) %>
+    	            <td class="match tag_match"><em class="matching_term"><%= term %></em> <i>yes</i></td>
+    	          <% else %>
+    	            <td class="nomatch"><em class="matching_term"><%= index %></em> <i>no</i></td>
+    	          <% end %>
+              <% end %>
+
+            </tr>
+            </table>
+            </div>
+        </div>
+        </div>
+      <% end %>
+
+<% else %>
+  <div class="no_reassign_matches">
+    <h3>No County and Tag Matches</h3>
+    <p>Please add some tags or change the location above to find some matches</p>
+  </div>
+<% end %>
