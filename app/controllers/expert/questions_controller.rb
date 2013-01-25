@@ -69,14 +69,42 @@ class Expert::QuestionsController < ApplicationController
   
   def change_location
     @question = Question.find_by_id(params[:id])
+    change_hash = Hash.new
+    
     if params[:location_id].present? 
-      @question.location_id = params[:location_id]
-      @question.county_id = ""
+      location = Location.find_by_id(params[:location_id])
+      # do nothing here if the location did not change
+      if location != @question.location
+        change_hash[:changed_location] = { :old => @question.location.present? ? @question.location.name : '', :new => location.name }
+        @question.location = location
+        @question.county = nil 
+      end
+    # location id cleared out
+    else
+      if @question.location.present?
+        change_hash[:changed_location] = { :old => @question.location.name, :new => '' }
+        @question.location = nil  
+        @question.county = nil
+      end
     end
+    
     if params[:county_id].present? 
-      @question.county_id = params[:county_id]
+      county = County.find_by_id(params[:county_id])
+      # do nothing here if county did not change (probably shouldn't happen but going to cover this case anyways)
+      if county != @question.county
+        change_hash[:changed_county] = { :old => @question.county.present? ? @question.county.name : '', :new => county.name }
+        @question.county = county
+      end
+    # county_id cleared out
+    else
+      if @question.county.present?
+        change_hash[:changed_county] = { :old => @question.county.name, :new => '' }
+        @question.county = nil
+      end
     end
+    
     @question.save
+    QuestionEvent.log_location_change(@question, current_user, change_hash)
   end
   
   def make_private
