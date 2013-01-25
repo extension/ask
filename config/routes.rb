@@ -43,6 +43,7 @@ Aae::Application.routes.draw do
         post 'assign_to_wrangler'
         post 'make_private'
         post 'make_public'
+        post 'change_location'
         get  'reject'
         post 'reject'
         get  'reassign'

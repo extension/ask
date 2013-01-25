@@ -67,6 +67,18 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])  
   end
   
+  def change_location
+    @question = Question.find_by_id(params[:id])
+    if params[:location_id].present? 
+      @question.location_id = params[:location_id]
+      @question.county_id = ""
+    end
+    if params[:county_id].present? 
+      @question.county_id = params[:county_id]
+    end
+    @question.save
+  end
+  
   def make_private
     @question = Question.find_by_id(params[:id])
     @question.is_private = true

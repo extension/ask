@@ -36,18 +36,10 @@
   <% end %>
 </p>
 
-  <p>
-    <% if @question.location.present? %>
-      <% if @question.county.present? %>
-        <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
-      <% end %>
-      <% if @question.location.present? %>
-        <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
-      <% end %>
-    <% else %>
-      <span class="label label-inverse"><%= link_to "No Location" %></span>
-    <% end %>
-  </p>
+  <div id="question_location">
+    <%= render :partial => 'question_location' %>
+  </div>
+  
   
 
     <div id="tag_picker_wrapper">
@@ -126,8 +118,8 @@
 
 
 
-<script class="code" type="text/javascript">  
-  
+<script class="code" type="text/javascript">
+
 		function add_tag(tag) {
 		  $.ajax({
         type: "POST",
