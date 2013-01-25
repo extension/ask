@@ -518,6 +518,15 @@ class Expert::QuestionsController < ApplicationController
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
   
+  
+  def associate_with_group
+    @question = Question.find_by_id(params[:id])
+    @group = Group.find_by_id(params[:group_id])
+    if(@question and @group)
+      @question.change_group(@group,current_user)
+    end
+  end
+  
   def activity_notificationprefs
     user = current_user
     if params[:question].present? and params[:value].present?

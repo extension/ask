@@ -149,7 +149,7 @@ class QuestionsController < ApplicationController
           if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
             @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
             if !@submitter.valid?
-              @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
+              @argument_errors = ("Errors occured when saving: " + @submitter.errors.full_messages.join(' '))
               raise ArgumentError
             end
           end
