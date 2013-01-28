@@ -381,7 +381,7 @@ body#public {
 
 
 body#expert {
-  #cant_assign {font-size:1.2em; padding:2em; line-height:1.4em; background:#FFFFE6; margin-bottom:2em;}
+  #cant_assign {font-size:1.2em; padding:2em; line-height:1.4em; background:#FFFFE6; margin-bottom:2em; border:1px solid #E3E3E3;}
   .location_warning {font-size:1.1em; padding:.2em;}
   .location_warning span {background:yellow; padding:.2em 1em;}
   #reassign_actions #expert_name {width:20em; font-size:1.2em; padding:.3em;}
