@@ -1,0 +1,67 @@
+<p>
+  <% if @question.location.present? %>
+    <% if @question.county.present? %>
+      <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
+    <% end %>
+    <% if @question.location.present? %>
+      <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
+    <% end %>
+  <% else %>
+    <span class="label label-inverse"><%= link_to "No Location" %></span>
+  <% end %>
+  
+  <span class="question_location_edit_toggle cursor btn btn-small">edit</span>
+</p>
+
+
+<div id="question_location_edit" style="display:none;">
+  <% if @question.location.present? %>
+    <h4 class="location_warning"><span>This question already has a location set. Are you sure it should be changed?</span></h4>
+  <% end %>
+  <p><%= select_tag(:location_id, options_for_select(get_location_options, @question.location.present? ? @question.location.id : nil)) %></p>  
+  <p id="county_list">
+    <% if @question.location.present? %>
+      <%= select_tag(:question_county_id, options_for_select(get_county_options(@question.location), @question.county.present? ? @question.county.id : nil)) %>
+    <% end %>
+  </p>
+  <p><span id="save_location_changes" class="btn btn-primary cursor">Save Location</span></p>
+</div>
+
+
+<script class="code" type="text/javascript">  
+  
+  $(".question_location_edit_toggle").click(function () {
+    $("#question_location_edit").toggle();
+  });
+  
+  $("#save_location_changes").click(function () {
+    var county_id = $('select#question_county_id :selected').val();
+    var location_id = $('select#location_id :selected').val();
+    $.ajax({
+      type: "POST",
+      url: "<%= change_location_expert_question_path(:id => @question.id) %>",
+      cache: false,
+      data: {county_id: county_id, location_id: location_id}
+    })
+    .done(function() {
+      // $("#reassignment_results_feedback").fadeOut('slow');
+  		return false;
+    })
+    .fail(function() {
+  		return false;
+    })
+  });
+  
+  $("#location_id").change(function() {
+    var location_id = $('select#location_id :selected').val();
+    if(location_id == "") {
+      $("#county_list").html("");
+    } else {
+      jQuery.get('/widget/get_counties/' + location_id, function(data){
+          $("#county_list").html(data);
+      })
+    }
+    
+  });
+
+</script>

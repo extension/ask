@@ -43,6 +43,8 @@ class Question < ActiveRecord::Base
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
   belongs_to :location
   belongs_to :county
+  belongs_to :original_location, :class_name => "Location", :foreign_key => "original_location_id"
+  belongs_to :original_county, :class_name => "County", :foreign_key => "original_county_id"
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"

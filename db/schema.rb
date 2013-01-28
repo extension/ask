@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130114145542) do
+ActiveRecord::Schema.define(:version => 20130128154350) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -356,6 +356,7 @@ ActiveRecord::Schema.define(:version => 20130114145542) do
     t.integer  "changed_group_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
+    t.text     "updated_question_values"
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
@@ -412,6 +413,8 @@ ActiveRecord::Schema.define(:version => 20130114145542) do
     t.boolean  "evaluation_sent",          :default => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.integer  "original_location_id"
+    t.integer  "original_county_id"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"

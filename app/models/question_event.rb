@@ -22,6 +22,8 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :changed_group, class_name: 'Group'
 
   after_create :create_question_event_notification
+  
+  serialize :updated_question_values
 
   # #'s 3 and 4 were the old marked spam and marked non spam question events from darmok, these were 
   # just pulled instead of renumbering all these so to not disturb the other status numbers being pulled over from the other sytem
@@ -39,6 +41,7 @@ class QuestionEvent < ActiveRecord::Base
   INTERNAL_COMMENT = 14
   ASSIGNED_TO_GROUP = 15
   CHANGED_GROUP = 16
+  CHANGED_LOCATION = 17
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -53,7 +56,8 @@ class QuestionEvent < ActiveRecord::Base
                             CLOSED => 'closed',
                             INTERNAL_COMMENT => 'commented',
                             ASSIGNED_TO_GROUP => 'assigned to group',
-                            CHANGED_GROUP => 'group changed' }
+                            CHANGED_GROUP => 'group changed',
+                            CHANGED_LOCATION => 'location changed' }
 
   scope :latest, {:order => "created_at desc", :limit => 1}
   scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
@@ -113,6 +117,14 @@ class QuestionEvent < ActiveRecord::Base
                            :previous_tags => previous_tags,
                            :event_state => TAG_CHANGE
                            })
+  end
+  
+  def self.log_location_change(question, initiated_by, event_hash)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :updated_question_values => event_hash,
+                           :event_state => CHANGED_LOCATION
+                           })  
   end
   
   def self.log_reopen(question, recipient, initiated_by, assignment_comment)

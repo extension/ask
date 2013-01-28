@@ -163,6 +163,10 @@ class QuestionsController < ApplicationController
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
+        
+        # record the original location and county
+        @question.original_location = @question.location
+        @question.original_county = @question.county
 
         if !@group.widget_public_option
           @question.is_private = true
