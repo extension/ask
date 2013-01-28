@@ -58,6 +58,10 @@ class GroupsController < ApplicationController
       @question.status = Question::SUBMITTED_TEXT
       @question.status_state = Question::STATUS_SUBMITTED
       
+      # record the original location and county
+      @question.original_location = @question.location
+      @question.original_county = @question.county
+      
       if !@group.widget_public_option
         @question.is_private = true
         # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
