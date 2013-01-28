@@ -88,7 +88,7 @@ class Expert::QuestionsController < ApplicationController
       end
     end
     
-    if params[:county_id].present? 
+    if params[:county_id].present? && params[:location_id].present?
       county = County.find_by_id(params[:county_id])
       # do nothing here if county did not change (probably shouldn't happen but going to cover this case anyways)
       if county != @question.county
