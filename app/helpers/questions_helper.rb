@@ -55,13 +55,26 @@ module QuestionsHelper
       message += "</span>"
       return message.html_safe
     when QuestionEvent::CHANGED_LOCATION
+      old_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:old].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:old]}</span>"
+      old_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:old].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:old]}</span>"
+      new_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:new].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:new]}</span>"
+      new_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:new].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:new]}</span>"
+      
       message = "Location edited by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
-      if q_event.updated_question_values[:changed_location]
-        message += "<br />Location changed from <strong>#{q_event.updated_question_values[:changed_location][:old].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:old]}</strong> to <strong>#{q_event.updated_question_values[:changed_location][:new].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:new]}</strong>"
+      message += "<span class=\"history_of_tags\">Changed from "
+            
+      if q_event.updated_question_values[:changed_location][:old] == ''
+        old_location = "<span class=\"tag tag-geography\">No Location</span>"
+        old_county = ""
       end
-      if q_event.updated_question_values[:changed_county]
-        message += "<br />County changed from <strong>#{q_event.updated_question_values[:changed_county][:old].strip == '' ? 'No County' : q_event.updated_question_values[:changed_county][:old]}</strong> to <strong>#{q_event.updated_question_values[:changed_county][:new].strip == '' ? 'No County' : q_event.updated_question_values[:changed_county][:new]}</strong>"
+      
+      if q_event.updated_question_values[:changed_location][:new] == ''
+        new_location = "<span class=\"tag tag-geography\">No Location</span>"
+        new_county = ""
       end
+      
+      message += "#{old_county} #{old_location} to #{new_county} #{new_location}"
+      message += "</span>"
       return message.html_safe
     when QuestionEvent::WORKING_ON
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe

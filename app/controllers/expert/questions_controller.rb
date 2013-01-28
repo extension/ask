@@ -71,18 +71,20 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     change_hash = Hash.new
     
+    change_hash[:changed_county] = { :old => @question.county.present? ? @question.county.name : '', :new => ''}
+    change_hash[:changed_location] = { :old => @question.location.present? ? @question.location.name : '', :new => ''}
+    
     if params[:location_id].present? 
       location = Location.find_by_id(params[:location_id])
+      change_hash[:changed_location] = { :old => @question.location.present? ? @question.location.name : '', :new => location.name }
       # do nothing here if the location did not change
       if location != @question.location
-        change_hash[:changed_location] = { :old => @question.location.present? ? @question.location.name : '', :new => location.name }
         @question.location = location
         @question.county = nil 
       end
     # location id cleared out
     else
       if @question.location.present?
-        change_hash[:changed_location] = { :old => @question.location.name, :new => '' }
         @question.location = nil  
         @question.county = nil
       end
@@ -90,15 +92,14 @@ class Expert::QuestionsController < ApplicationController
     
     if params[:county_id].present? && params[:location_id].present?
       county = County.find_by_id(params[:county_id])
+      change_hash[:changed_county] = { :old => @question.county.present? ? @question.county.name : '', :new => county.name }
       # do nothing here if county did not change (probably shouldn't happen but going to cover this case anyways)
       if county != @question.county
-        change_hash[:changed_county] = { :old => @question.county.present? ? @question.county.name : '', :new => county.name }
         @question.county = county
       end
     # county_id cleared out
     else
       if @question.county.present?
-        change_hash[:changed_county] = { :old => @question.county.name, :new => '' }
         @question.county = nil
       end
     end
