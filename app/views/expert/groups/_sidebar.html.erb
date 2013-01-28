@@ -16,6 +16,15 @@
 <% else  %>
 	<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
 <% end %>
+
+<p class="downplay">
+  <% if @group.assignment_outside_locations == true %>
+    This group accepts questions from anywhere.
+  <% else %>
+    Questions must match this group's locations
+  <% end %>
+</p>
+
 </aside>
 
 

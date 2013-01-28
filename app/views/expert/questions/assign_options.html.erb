@@ -50,17 +50,12 @@
     </p>
 
     <div id="tags">
-
-    <% if @question.tags.size > 0 %>
-      <% @question.tags.each do |tag| %>
-        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+      <% if @question.tags.size > 0 %>
+        <% @question.tags.each do |tag| %>
+          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+        <% end %>
       <% end %>
-    <% else %>
-
-    <% end %>
-
     </div>
-    
   </div>
 
 </div>
@@ -73,7 +68,7 @@
     <h5>Tags</h5>
     <p class="tags">  
       <% @user.tags.each do |tag| %>
-      <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
       <% end %>
     </p>
   <% else %>
