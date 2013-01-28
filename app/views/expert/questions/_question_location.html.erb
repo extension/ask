@@ -50,10 +50,14 @@
   
   $("#location_id").change(function() {
     var location_id = $('select#location_id :selected').val();
-    if(location == "") location="0";
-    jQuery.get('/widget/get_counties/' + location_id, function(data){
-        $("#county_list").html(data);
-    })
+    if(location_id == "") {
+      $("#county_list").html("");
+    } else {
+      jQuery.get('/widget/get_counties/' + location_id, function(data){
+          $("#county_list").html(data);
+      })
+    }
+    
   });
 
 </script>
