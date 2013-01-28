@@ -9,11 +9,15 @@
   <% else %>
     <span class="label label-inverse"><%= link_to "No Location" %></span>
   <% end %>
+  
   <span class="question_location_edit_toggle cursor btn btn-small">edit</span>
 </p>
 
 
 <div id="question_location_edit" style="display:none;">
+  <% if @question.location.present? %>
+    <h4 class="location_warning"><span>This question already has a location set. Are you sure it should be changed?</span></h4>
+  <% end %>
   <p><%= select_tag(:location_id, options_for_select(get_location_options, @question.location.present? ? @question.location.id : nil)) %></p>  
   <p id="county_list">
     <% if @question.location.present? %>
