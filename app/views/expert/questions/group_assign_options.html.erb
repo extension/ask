@@ -21,7 +21,9 @@
     <div id="cant_assign">
       <p><strong><%= @group.name %></strong> only accepts questions that match their defined locations.</p>
       <p>You can't assign this question to them, but you can <%= link_to "assign it directly to an individual expert", reassign_expert_question_path(@question.id) %> or <%= link_to "find another group", reassign_expert_question_path(@question.id) %>.</p>
-      <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>. This question is currently set to <strong><%= @question.location.name %></strong>.</p>
+      <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>. This question is currently set to <strong><%= @question.location.present? ? @question.location.name : "No Location" %></strong>.</p>
+      
+      <p><%= link_to "See other reassignment matches", reassign_expert_question_path(@question.id), :class => "btn" %></p>
     </div>
   <% end %>
 
