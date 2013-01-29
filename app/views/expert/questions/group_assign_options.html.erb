@@ -19,8 +19,9 @@
     <% end %>
   <% else %>
     <div id="cant_assign">
-      <p><strong><%= @group.name %></strong> does not accept questions from <strong><%= @question.location.name %></strong>. You can <%= link_to "assign it directly to an individual expert", reassign_expert_question_path(@question.id) %> or <%= link_to "find another group", reassign_expert_question_path(@question.id) %>.</p>
-      <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>.</p>
+      <p><strong><%= @group.name %></strong> only accepts questions that match their defined locations.</p>
+      <p>You can't assign this question to them, but you can <%= link_to "assign it directly to an individual expert", reassign_expert_question_path(@question.id) %> or <%= link_to "find another group", reassign_expert_question_path(@question.id) %>.</p>
+      <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>. This question is currently set to <strong><%= @question.location.name %></strong>.</p>
     </div>
   <% end %>
 
