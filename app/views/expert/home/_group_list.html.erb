@@ -1,7 +1,20 @@
 <%= paginate @groups %>
+
 <% if @groups.size > 0 %>
     <% @groups.each do |group| %>
-      <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+      <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+        <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+        <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+        <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+        <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+        <p class="downplay">
+        <% if group.assignment_outside_locations == true %>
+          Accepts questions from anywhere.
+        <% else %>
+          Questions must match this group's locations
+        <% end %>
+        </p>
+      </div>
     <% end %>
   
 <% else %>

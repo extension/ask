@@ -381,6 +381,10 @@ body#public {
 
 
 body#expert {
+  .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5;}
+  .group_in_group_list.inactive_group {padding:1em 1em .5em;}
+  .group_in_group_list h4 {margin:0;};
+  .group_list_avatar {float:left; margin-right:1em;}
   #cant_assign {font-size:1.2em; padding:2em; line-height:1.4em; background:#FFFFE6; margin-bottom:2em; border:1px solid #E3E3E3;}
   .location_warning {font-size:1.1em; padding:.2em;}
   .location_warning span {background:yellow; padding:.2em 1em;}
