@@ -42,8 +42,12 @@
 
 	<p>
         <label>        
-          <%= f.check_box 'widget_show_location' %>  Enable location option for widgets
+          <%= f.check_box 'widget_show_location', @group.assignment_outside_locations == false ? {disabled: true} : {disabled: false} %>  Enable location option for widgets
+          <% if @group.assignment_outside_locations == false %>
+            <span>You cannot disable this option as the widget is set to only accept questions in it's location.<br />You can change this option <%= link_to 'here', expert_group_assignment_options_path %>.</span>
+          <% end %>
           <span>(Location option is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>.)</span>
+          
         </label>
 	</p>
 	
