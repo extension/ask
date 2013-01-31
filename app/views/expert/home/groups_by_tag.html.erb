@@ -1,13 +1,4 @@
 <h1>Groups tagged with '<%= @tag.name %>' (<%= @group_total_count %>)</h1>
 <h3><%= link_to "View everything tagged '#{@tag.name}'", expert_home_tags_path(:name => @tag.name) %></h3>
 
-<%= paginate @groups %>
-<% if @groups.size > 0 %>
-    <% @groups.each do |group| %>
-      <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
-    <% end %>
-  
-<% else %>
-  <p>There are no groups with this tag</p>
-<% end %>
-<%= paginate @groups %>
+<%= render partial: 'expert/home/group_list' %>

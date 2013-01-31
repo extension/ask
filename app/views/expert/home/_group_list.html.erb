@@ -14,6 +14,46 @@
           Questions must match this group's locations
         <% end %>
         </p>
+        
+        <% if group.tags.size > 0 %>
+          <p>
+          <% group.tags.each do |tag| %>
+            <span class='tag tag-topic'><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => group.id, :tag_id => tag.id) %></span>
+          <% end %>
+          </p>
+        <% end %>
+        
+        <% if group.expertise_locations.size > 0 %>
+            <% group.expertise_locations.each do |l| %>
+              <div class="location">
+
+                <h5><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h5>
+
+                <% if group.expertise_locations.where("location_id = ?", l.id).size > 0 %>
+                  <% if group.expertise_counties.where("location_id = ?", l.id).size > 0 %>
+                    <ul>
+                      <% group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+                        <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                      <ul>
+                        <li class="all_counties">All counties</li>
+                      </ul>
+                    <% end %>
+                  <% end %>
+
+              </div>
+            <% end %>
+
+        <% else %>
+          <p>No locations defined.  </p>
+          <!-- TODO: either need to prompt to add locations or assume absence of location == National -->
+
+        <% end %>
+        
+        
+        
       </div>
     <% end %>
   
@@ -21,3 +61,4 @@
   <p>There are no groups with this tag</p>
 <% end %>
 <%= paginate @groups %>
+

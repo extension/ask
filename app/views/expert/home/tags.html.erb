@@ -28,19 +28,33 @@
       </div>
     </div>
   
-    <div class="span5">
+  
+    <div class="span6">
       <div class="location_section">
         <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
       <% if @groups.size > 0 %>
-        <% @groups.each do |group| %>
-          <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
+        <% @groups.each do |group| %>      
+          <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+            <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+            <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+            <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+            <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+            <p class="downplay">
+            <% if group.assignment_outside_locations == true %>
+              Accepts questions from anywhere.
+            <% else %>
+              Questions must match this group's locations
+            <% end %>
+            </p>
+          </div>
         <% end %>
         <p><%= link_to "view all", expert_groups_by_tag_path() %></p>
       <% else %>
-        <p>There are no groups in this location</p>
+        <p>There are no groups with this tag</p>
       <% end %>
       </div>
     </div>
+
 
     <div class="location_section">
       <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
