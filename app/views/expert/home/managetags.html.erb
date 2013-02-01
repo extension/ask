@@ -1,0 +1,9 @@
+<h1>All Tags (<%= number_with_delimiter(@tags_total_count, :delimiter => ',') %>)</h1>
+<h2>These tags are used at least once on a Question, Group or Expert</h2>
+<%= paginate @tags %>
+
+<div id="tag_list">
+<% @tags.each do |tag| %>
+  <p><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span> <%= number_with_delimiter(tag.tag_count, :delimiter => ',') %></p>
+<% end %>
+</div>

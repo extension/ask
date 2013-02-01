@@ -106,6 +106,7 @@ Aae::Application.routes.draw do
     match "home/questions/counties/:id" => "home#questions_by_county", :as => 'questions_by_county'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
+    match "home/managetags" => "home#managetags"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
     match 'home/get_counties/:location_id' => 'home#get_counties', :via => :get

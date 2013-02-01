@@ -133,4 +133,9 @@ class Expert::HomeController < ApplicationController
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
   end
+  
+  def managetags
+    @tags_total_count = Tag.used_at_least_once.length
+    @tags = Tag.used_at_least_once.order('tags.name ASC').page(params[:page]).per(50)
+  end
 end
