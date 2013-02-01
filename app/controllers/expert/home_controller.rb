@@ -97,7 +97,7 @@ class Expert::HomeController < ApplicationController
   def questions_by_location
     @location = Location.find_by_id(params[:id])
     return record_not_found if @location.blank?
-    @questions = Question.where("location_id = ?", @location.id).not_rejected.page(params[:page]).order("questions.status_state DESC")
+    @questions = Question.where("location_id = ?", @location.id).not_rejected.page(params[:page]).order("questions.status_state ASC")
     @question_total_count = Question.where("location_id = ?", @location.id).not_rejected.count
   end
   
@@ -113,6 +113,8 @@ class Expert::HomeController < ApplicationController
     @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
     
     @questions = Question.where("location_id = ?", @location.id).not_rejected.order("questions.status_state DESC").limit(8)
+    @unanswered_questions = Question.where("location_id = ?", @location.id).submitted.not_rejected.order("questions.status_state DESC").limit(8)
+    @unanswered_questions_count = Question.where("location_id = ?", @location.id).submitted.not_rejected.count
     @question_total_count = Question.where("location_id = ?", @location.id).not_rejected.count
     @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.order("users.last_active_at DESC").limit(5)
     @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count

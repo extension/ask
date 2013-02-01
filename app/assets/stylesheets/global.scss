@@ -381,6 +381,7 @@ body#public {
 
 
 body#expert {
+  .needs_an_answer {background:yellow; padding:.1em .5em;}
   #tag_list p {margin-bottom:.5em; font-size:1.1em;}
   .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5;}
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}

@@ -4,6 +4,14 @@
   
   <div class="map"></div>
   <h1><%= @location.name %></h1>
+  <h2>
+    <% if @unanswered_questions_count %>
+      <p><%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions" , expert_questions_by_location_path() %></p>
+       
+    <% else %>
+      
+    <% end %>
+  </h2>
   
   <br class="clearing" />
   <div class="span5">
@@ -49,7 +57,6 @@
 
   <div class="location_section">
     <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
-
     <% if @questions.size > 0 %>
       <% @questions.each do |question| %>
         <%= render :partial => 'expert/shared/title_question', :locals => {:question => question, :show_assignments => false} %>
