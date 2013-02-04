@@ -36,7 +36,7 @@ class Expert::GroupsController < ApplicationController
   def answered
     @group = Group.find(params[:id])
     @question_list = "answered"
-    @questions = @group.answered_questions.page(params[:page]).order('created_at DESC')
+    @questions = @group.answered_questions.page(params[:page]).order('resolved_at DESC')
     @question_count = @group.answered_questions.length
     @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
