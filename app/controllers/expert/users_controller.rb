@@ -22,6 +22,16 @@ class Expert::UsersController < ApplicationController
     @handling_event_count = @user.aae_handling_event_count 
   end
   
+  def status
+    @user = User.find_by_id(params[:id])
+    
+    if request.put?
+      @user.update_attributes(params[:user])
+      flash[:notice] = "Preferences updated successfully!"
+      render nil
+    end
+  end
+  
   def answered
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?

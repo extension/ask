@@ -1,0 +1,35 @@
+<h1><%= link_to @user.name, expert_user_path(@user) %></h1>
+
+<%= form_for @user, :url => expert_user_status_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+      <h3>Vacation Status</h3>
+      <div class="radio_options">
+      <p>
+        <label>
+          <%= f.check_box :away %>
+          Mark <%= @user.name %> as away
+          <span>(When "vacation status" is turned on, AaE questions can not be assigned to the person.)</span>
+        </label>
+      </p>
+      </div>
+
+    <p><%= f.submit "Save Answering Settings", :class => "btn btn-primary" %></p>
+  </fieldset>
+  
+  
+    
+<% end %>
+
+<script class="code" type="text/javascript">    
+    var promptSave = true;
+    
+    $('input:not(:button,:submit),textarea,select').change(function () {  
+      window.onbeforeunload = function () {
+        if (promptSave != null) return "You have unsaved changes on this page!";
+      }
+    });
+    $('input:submit').click(function(e) {
+      promptSave = null;
+    });
+</script>
