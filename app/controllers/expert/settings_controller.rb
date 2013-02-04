@@ -31,7 +31,7 @@ class Expert::SettingsController < ApplicationController
   end
   
   def add_tag
-    @user = current_user
+    @user = (params[:id] ? User.find_by_id(params[:id]) : current_user)
     @tag = @user.set_tag(params[:tag])
     if @tag == false
       render :nothing => true
@@ -39,7 +39,7 @@ class Expert::SettingsController < ApplicationController
   end
   
   def remove_tag
-    @user = current_user
+    @user = (params[:id] ? User.find_by_id(params[:id]) : current_user)
     tag = Tag.find(params[:tag_id])
     @user.tags.delete(tag)
   end
