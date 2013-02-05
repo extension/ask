@@ -195,7 +195,7 @@ body {
   .size80x80 {width:80px !important; height:80px !important;}
   .size100w {width:100px !important;}
   
-  .medium {width:100px !important; height:100px !important;}
+  .medium {width:100px !important; height:100px !important; max-width: 100px !important;}
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
   .size300w {width:300px !important;}
@@ -381,6 +381,8 @@ body#public {
 
 
 body#expert {
+  .needs_an_answer {background:yellow; padding:.1em .5em;}
+  #tag_list p {margin-bottom:.5em; font-size:1.1em;}
   .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5;}
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}
   .group_in_group_list h4 {margin:0;};
@@ -418,7 +420,7 @@ body#expert {
 	#widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
 	label strong {font-size:1.2em; display:block}
     span.label a {color:#fff;}
-	.tags {float:left;}
+/*  .tags {float:left;}*/
 	.tags .label {display:block; float:left; margin:.25em; padding:.35em}
 	.tags .label:hover {background:#000;}
 	.tags .label a:hover {text-decoration:none !important;}
@@ -587,7 +589,11 @@ body#expert {
 	.county_list li {padding:.2em;}
 	.map {width:80px; height:80px; border:1px solid #bbb; background:#D2E7BC url(/assets/map_marker.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
 	.bigtag {width:80px; height:80px; border:1px solid #bbb; background:#bbb url(/assets/tag_80px.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
-	#user_masthead {margin:0 0 4em;}
+	#user_masthead {margin:0 0 .75em; border-bottom:1px solid #e5e5e5; padding-bottom:1em;}
+	#user_masthead a.medium {float:left; margin: 0 1.5em 2.5em 0;}
+	#user_masthead .aboutme {clear:both; line-height:1.5em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.3em;}
+	#add_tags_callout {padding:1em; border:1px solid #eee; background:#fff;}
+	.unlinked {padding: .1em .35em;}
 	.cursor {cursor:pointer;}
 	#searchform {margin:0;padding:0; float:left;}
 	#search input {margin:0 .5em 0 0; }

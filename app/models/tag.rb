@@ -1,6 +1,7 @@
 class Tag < ActiveRecord::Base
   has_many :taggings
-  
+  scope :used_at_least_once, joins(:taggings).group("tags.id").having("COUNT(taggings.id) > 0").select("tags.name, COUNT(taggings.id) AS tag_count")
+  scope :not_used, includes(:taggings).group("tags.id").having("COUNT(taggings.id) = 0")
   
   # normalize tag names 
   # convert whitespace to single space, underscores to space, yank everything that's not alphanumeric : - or whitespace (which is now single spaces)   

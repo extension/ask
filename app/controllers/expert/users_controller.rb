@@ -29,7 +29,7 @@ class Expert::UsersController < ApplicationController
       return redirect_to expert_home_url 
     end
     @question_list = "answered"
-    @questions = @user.answered_questions.page(params[:page]).order('created_at DESC')
+    @questions = @user.answered_questions.page(params[:page]).order('resolved_at DESC')
     @question_count = @user.answered_questions.length
     @my_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count

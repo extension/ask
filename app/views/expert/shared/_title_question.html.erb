@@ -1,5 +1,6 @@
 <% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
 <% show_assignments = local_assigns[:show_assignments].nil? ? false : show_assignments %>
+<% highlight_unanswered = local_assigns[:highlight_unanswered].nil? ? false : highlight_unanswered %>
 
 <div class="incoming_question title_only">
   
@@ -9,6 +10,10 @@
       <%= link_to expert_question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
       <%- end -%>
+      
+      <% if highlight_unanswered && (question.responses.size == 0) %>
+        <h4><span class="needs_an_answer">Needs an answer</span></h4>
+      <% end %>
 
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
