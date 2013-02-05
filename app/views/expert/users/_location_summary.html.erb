@@ -1,8 +1,21 @@
 <div id="location_list">
-
-<% if @user.expertise_locations.size > 0 %>
   
-  <h3>Locations</h3>
+  <% if @user.location %>
+    <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_settings_profile_path(), :class => "downplay" %><% end %>
+    <p><% if @user.county %>
+      <span class="tag tag-geography"><%= link_to @user.county.name, expert_view_county_path(@user.county.id) %></span>
+      <% end %>
+      <span class="tag tag-geography"><%= link_to @user.location.name, expert_view_location_path(@user.location.id) %></span></p>
+  <% end %>
+  
+  
+  <% if @user.expertise_locations.size > 0 %>
+  
+  <h3>Expertise Locations 
+  <% if current_user.id == @user.id %>
+    <small><%= link_to 'edit', expert_settings_location_path(), :class => "downplay left" %></small>
+  <% end %>
+  </h3>
     <% @user.expertise_locations.each do |l| %>
       <div class="location">
         
@@ -23,10 +36,6 @@
           <% end %>
 
       </div>
-    <% end %>
-    
-    <% if current_user.id == @user.id %>
-      <%= link_to 'edit', expert_settings_location_path() %>
     <% end %>
   
 <% else %>

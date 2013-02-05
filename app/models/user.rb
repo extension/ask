@@ -35,6 +35,8 @@ class User < ActiveRecord::Base
   has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
+  belongs_to :location
+  belongs_to :county
 
   # sunspot/solr search
   searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do

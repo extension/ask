@@ -7,8 +7,15 @@
 
   <% if @user.has_exid? %>
     <div id="extension_people_data">
-      <h3><%= @user.name %> <small id="people_edit"><%= link_to("Your name, email and timezone can be edited in people.extension.org", "http://www.extension.org/people/profile/edit") %></small></h3>
+      <h3><%= @user.name %> <small id="people_edit"><%= link_to("Your name, email, primary location and timezone can be edited in people.extension.org", "http://www.extension.org/people/profile/edit") %></small></h3>
       <p><%= @user.email %></p>
+      <% if @user.location %>
+        <p><% if @user.county %>
+          <%= @user.county.name %>
+          <% end %>
+          <%= @user.location.name %></p>
+      <% end %>
+      
       <%- if @user.has_time_zone? -%>
         <p><%= @user.time_zone %></p>
       <%- else -%>

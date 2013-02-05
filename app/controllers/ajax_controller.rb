@@ -38,7 +38,7 @@ class AjaxController < ApplicationController
 
     combined_array = groups + experts
 
-    list = combined_array.map {|e| Hash[ id: e.id, label: e.name, name: e.name, class_type: e.class.name]}
+    list = combined_array.map {|e| Hash[ id: e.id, label: e.class.name == "User" ? ("#{view_context.get_avatar_for_user(e, :thumb).html_safe}" + " #{e.name} #{e.title.present? ? '<br />' + e.title : ''}<br />" + (e.county.present? ? "#{e.county.name}, " : "") + (e.location.present? ? "#{e.location.name}" : "")) : ("#{view_context.get_avatar_for_group(e, :thumb, true).html_safe}" + " #{e.name}"), name: e.name, value: e.name, class_type: e.class.name]}
     render json: list
   end
 

@@ -102,7 +102,12 @@ jQuery(function($) {
       if (e.keyCode === 13) {
         window.location = '<%= assign_options_expert_question_url(:id => @question.id) %>?expert_id=' + this.value
       }
-    });
+    }).data( "autocomplete" )._renderItem = function( ul, item ) {
+	            return $( "<li></li>" )
+	                .data( "item.autocomplete", item )
+	                .append( "<a>"+ item.label + "</a>" )
+	                .appendTo( ul );
+	        };
     
     $("#location_id").change(function() {
       var location_id = $('select#location_id :selected').val();

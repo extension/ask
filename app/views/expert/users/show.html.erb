@@ -4,24 +4,47 @@
   
   <div id="user_masthead">
     <%= link_expert_user_avatar(@user) %>
-    <h1><span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <% if @user.retired %>(Retired Account)<% end %> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
+    
+    <h1>
+      <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>
+    </h1>
+    
+    <p><%= link_to "Public Profile", user_path(@user.id), :class => "btn btn-small" %></p>
     
     <% if @user.away %>
       <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
     <% end %>
     
-    <p>
-      <strong>About me:</strong>
+    <div class="aboutme">
       <% if @user.bio %>
         <%= format_text_for_display(@user.bio) %>
       <% else %>
-        This person hasn't added a description yet...
-      <% end  %>
-
-    <% if current_user.id == @user.id %>
-    <%= link_to 'edit', expert_settings_profile_path() %>
+        <% if current_user.id == @user.id %>
+          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_settings_profile_path() %></p>
+        <% else %>
+          <p>This person hasn't added a description yet...</p>
+        <% end %>
+      <% end  %>    
+    </div>
+    
+    <% if @user.tags.size > 0 %>
+      <p class="tags">  
+        <% @user.tags.each do |tag| %>
+          <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <% end %>
+        <% if current_user.id == @user.id %><%= link_to 'edit tags', expert_settings_tags_path(), :class => "downplay" %><% end %>
+      </p>
+    <% else %>
+      <% if current_user.id == @user.id %>
+      <div id="add_tags_callout">
+        <h4>Improve your question assignments<h4>
+          <%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => 'btn-primary btn' %>
+      </div>
+      <% else %>
+        <p><span class="unlinked tag tag-topic">No tags selected</span></p>
+      <% end %>
+        
     <% end %>
-    </p>
     
   </div>
   
@@ -90,31 +113,6 @@
   
   <aside>
     <%= render :partial => 'location_summary' %>
-  </aside>
-
-
-  <aside>
-    <% if @user.tags.size > 0 %>
-      <p class="tags">  
-        <% @user.tags.each do |tag| %>
-        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
-        <% end %>
-      </p>
-      <% if current_user.id == @user.id %>
-        <p><%= link_to 'edit', expert_settings_tags_path() %></p>
-      <% end %>
-      <br class="clearing" />
-      
-    <% else %>
-    
-      <% if current_user.id == @user.id %>
-        <h4>Help improve your question assignments<h4>
-          <%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => 'btn-primary btn' %>
-      <% else %>
-        <p>No tags selected</p>
-      <% end %>
-        
-    <% end %>
   </aside>
 
   <aside>
