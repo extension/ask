@@ -24,6 +24,7 @@ class Expert::UsersController < ApplicationController
   
   def status
     @user = User.find_by_id(params[:id])
+    return record_not_found if @user.blank?
     
     if request.put?
       @user.update_attributes(params[:user])
