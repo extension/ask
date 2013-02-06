@@ -502,13 +502,13 @@ class Expert::QuestionsController < ApplicationController
     if @question.location_id.present? 
       # @filter_terms <<  @question.location.name
       location_experts = User.active.with_expertise_location(@question.location_id)
-      if location_experts.count == 0
-        location_experts = User.active.route_from_anywhere
-      end
+      #if location_experts.count == 0
+      #  location_experts = User.active.route_from_anywhere
+      #end
       location_groups = Group.assignable.with_expertise_location(@question.location_id)
-      if location_groups.count == 0
-        location_groups = Group.assignable.route_outside_locations
-      end
+      #if location_groups.count == 0
+      #  location_groups = Group.assignable.route_outside_locations
+      #end
     else
       # @filter_terms <<  ""
       location_experts = []
