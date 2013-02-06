@@ -1,24 +1,25 @@
 
 
 <% if @question.is_private %>
-  <aside id="private_question">
+  <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
+    <aside id="private_question">
   
-  <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
-    <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h5>
-    <div id="privacy_edit">
-      <p><small>It was marked private by the submitter. It can't be made public.</small></p>
-    </div>
+    <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+      <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h5>
+      <div id="privacy_edit">
+        <p><small>It was marked private by the submitter. It can't be made public.</small></p>
+      </div>
+    <% end %>
+  
+    <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+      <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %> <span class="btn make_public_link">edit</span></h5>
+      <div id="make_public_edit" style="display:none;">
+        <p>The submitter choose to make this question public, but an expert switched it to a private.</p>
+        <p class="btn btn-primary make_public">Make this question public again</p>
+      </div>
+    <% end %>
+    </aside>
   <% end %>
-  
-  <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-    <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %> <span class="btn make_public_link">edit</span></h5>
-    <div id="make_public_edit" style="display:none;">
-      <p>The submitter choose to make this question public, but an expert switched it to a private.</p>
-      <p class="btn btn-primary make_public">Make this question public again</p>
-    </div>
-  <% end %>
-  </aside>
-  
 <% else %>
 
   <aside id="public_question">
