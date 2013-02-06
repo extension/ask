@@ -74,7 +74,9 @@ class Expert::GroupsController < ApplicationController
       end
       
       if @group.description_changed? 
-        change_hash[:description] = {:old => @group.description_was, :new => @group.description}
+        if !(@group.description_was.nil? && @group.description == '')
+          change_hash[:description] = {:old => @group.description_was, :new => @group.description}
+        end
       end
     
       if @group.is_test_changed?
