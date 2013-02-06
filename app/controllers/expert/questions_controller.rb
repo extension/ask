@@ -502,7 +502,13 @@ class Expert::QuestionsController < ApplicationController
     if @question.location_id.present? 
       # @filter_terms <<  @question.location.name
       location_experts = User.active.with_expertise_location(@question.location_id)
+      if location_experts.count == 0
+        location_experts = User.active.route_from_anywhere
+      end
       location_groups = Group.assignable.with_expertise_location(@question.location_id)
+      if location_groups.count == 0
+        location_groups = Group.assignable.route_outside_locations
+      end
     else
       # @filter_terms <<  ""
       location_experts = []
@@ -510,11 +516,9 @@ class Expert::QuestionsController < ApplicationController
     end
       
     if @question.county_id.present?
-      # @filter_terms <<  @question.county.name
       county_experts = User.active.with_expertise_county(@question.county_id) 
       county_groups = Group.assignable.with_expertise_county(@question.county_id) 
     else
-      # @filter_terms <<  ""
       county_experts = []
       county_groups = []
     end
@@ -546,6 +550,7 @@ class Expert::QuestionsController < ApplicationController
       @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
     end
     
+    # we have the tag and location best matches above, now further down the list, we'll list just the best locational matches
     if county_experts.length > 0
        @experts.concat(county_experts)
        @groups.concat(county_groups)
