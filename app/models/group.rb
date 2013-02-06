@@ -49,6 +49,8 @@ class Group < ActiveRecord::Base
   }
   scope :tagged_with, lambda {|tag_id| includes(:taggings => :tag).where("tags.id = '#{tag_id}'").where("taggings.taggable_type = 'Group'")}
   
+  scope :route_outside_locations, where(assignment_outside_locations: true)
+  
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
