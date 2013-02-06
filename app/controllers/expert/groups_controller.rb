@@ -86,7 +86,7 @@ class Expert::GroupsController < ApplicationController
         if @group.group_active == true
           if @group.assignees.count == 0 
             @group.group_active = false
-            flash[:error] = "There has to be at least one person not on vacation signed up as a member or leader for a group in order to activate it."
+            flash[:error] = "There must be at least one active member to activate a Group."
             return render nil
           end
         # if the group is marked inactive, then the group's widget gets marked as inactive
