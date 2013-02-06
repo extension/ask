@@ -2,7 +2,12 @@
 
 <div id="main" class="span8">
   <div id="question_wrapper">
-    <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
+    <p id="aaeid">
+      <% if !@question.is_private %>
+        <span class="tag tag-public">Public</span>
+      <% end %> 
+      Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %>
+    </p>
 
     <%= render :partial => 'question_main' %>
 

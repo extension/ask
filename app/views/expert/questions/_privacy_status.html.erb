@@ -24,7 +24,7 @@
 
   <aside id="public_question">
   
-    <h3 class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="btn make_private_link">edit</span></h3>
+    <p class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="cursor make_private_link">edit</span></p>
   
     <div id="make_private_edit" style="display:none;">
       <p>The submitter choose to make this question public, but it can be converted to a private question.</p>
