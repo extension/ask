@@ -56,8 +56,8 @@ module ApplicationHelper
     return link_to(get_avatar_for_user(user, image_size, false), user_path(user.id), {:title => user.public_name}).html_safe
   end
 
-  def link_expert_user_avatar(user, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+  def link_expert_user_avatar(user, image_size = :medium, highlight_badge = false)
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "#{image_size} " + (highlight_badge ? "highlight" : "")}).html_safe
   end
 
   def link_public_group_avatar(group, image_size = :medium)
@@ -65,7 +65,7 @@ module ApplicationHelper
   end
 
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress" : "suppress")}).html_safe
   end
   
   def link_expert_group_avatar_group_label(group, image_size = :medium, suppress_single = false)
