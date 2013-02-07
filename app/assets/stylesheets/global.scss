@@ -625,9 +625,12 @@ body#expert {
   footer ul li a:hover {color:#fff;}
 
 /*  .public {background: transparent url(/assets/world.png) left 50% no-repeat; padding-left:24px; clear:left; line-height:2em; margin-bottom:0;}*/
-	.public {line-height:2em; margin-bottom:0;}
-	.public {font-size:1.3em;}
-  #public_question {background:#fff !important; padding: .5em .5em .5em 1em !important; border:2px solid #CCECA0;  }
+	.public, .private {line-height:2em; margin-bottom:0; color:#888;}
+	.public span, .private span {color:#333;}
+	.public, .private {font-size:1.3em;}
+  #private_question {padding: .5em .25em .75em .75em !important;}
+  #privacy_edit p {margin-bottom:0; color:#888; padding-left:40px;}
+  #public_question {background:#fff !important; padding: .5em .5em .5em 1em !important; border:2px solid #77CF76;}
   #public_question a {}
   #make_public_edit, #make_private_edit {padding:1.5em;}
   .nomatches {padding:2em;}
