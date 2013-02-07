@@ -17,7 +17,7 @@
           <div class="container">
             <% if current_user %>
               <ul class="navavatar loggedin">
-                <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
+                <li><%= link_expert_user_avatar(current_user, :thumb, highlight_badge = true) %></li>
                 <li class="username hidecompact420">
                   <%= link_to expert_user_path(current_user.id) do %>
                     <span><%= current_user.name %></span>

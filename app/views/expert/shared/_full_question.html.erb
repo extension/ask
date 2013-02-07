@@ -42,7 +42,7 @@
       <div class="expert">
         <% if !hide_assignee %>
           <% if question.assignee_id.present? %>
-            <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
+            <%= link_expert_user_avatar(question.assignee, :thumb, current_user.id == question.assignee.id ? true : false) %> <%= link_expert_user(question.assignee) %> 
   	      <% else %>
   	        <p><strong>This question does not have an assignee.</strong></p>
           <% end %>

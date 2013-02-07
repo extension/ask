@@ -2,7 +2,7 @@ class Group < ActiveRecord::Base
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :question_events
-  has_many :questions
+  has_many :questions, :class_name => "Question", :foreign_key => "assigned_group_id"
   has_many :group_locations
   has_many :group_counties
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
@@ -48,6 +48,8 @@ class Group < ActiveRecord::Base
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
   scope :tagged_with, lambda {|tag_id| includes(:taggings => :tag).where("tags.id = '#{tag_id}'").where("taggings.taggable_type = 'Group'")}
+  
+  scope :route_outside_locations, where(assignment_outside_locations: true)
   
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
