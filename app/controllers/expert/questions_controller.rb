@@ -502,6 +502,11 @@ class Expert::QuestionsController < ApplicationController
     location_groups = Array.new
     county_experts = Array.new
     county_groups = Array.new
+    location_experts_backup = Array.new
+    location_groups_backup = Array.new
+    route_from_anywhere_experts = Array.new
+    route_from_anywhere_groups = Array.new
+    
     
     if @question.county_id.present?
       county_experts = User.active.with_expertise_county(@question.county_id) 
@@ -509,23 +514,21 @@ class Expert::QuestionsController < ApplicationController
     end
     
     if @question.location_id.present? 
-      #location_experts = User.active.with_expertise_location(@question.location_id)
-      #location_groups = Group.assignable.with_expertise_location(@question.location_id)
-      if county_experts.count == 0
-        location_experts = User.active.with_expertise_location_all_counties(@question.location_id)
-      end
-      if county_groups.count == 0
-        location_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)
-      end
+      location_experts = User.active.with_expertise_location_all_counties(@question.location_id)
+      location_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)
+      
+      # we'll also go ahead and add on the experts and groups from the state that say they'll take questions from anywhere as a backup
+      location_experts_backup = User.active.route_from_anywhere.with_expertise_location(@question.location_id)
+      location_groups_backup = Group.assignable.route_outside_locations.with_expertise_location(@question.location_id)
     end
     
     # if the experts for a location are empty or no location listed, then pull those experts who will receive questions from anywhere, 
     # if the groups for a location are empty or no location listed, then pull groups who will receive questions outside their locations
-    if location_experts.count == 0 
-      location_experts = User.active.route_from_anywhere
+    if location_experts.count == 0 && location_experts_backup.count == 0
+      route_from_anywhere_experts = User.active.route_from_anywhere
     end
-    if location_groups.count == 0 
-      location_groups = Group.assignable.route_outside_locations
+    if location_groups.count == 0 && location_groups_backup.count == 0
+      route_from_anywhere_groups = Group.assignable.route_outside_locations
     end
     
     question_tags_array = @question.tags.all
@@ -537,41 +540,53 @@ class Expert::QuestionsController < ApplicationController
     if question_tags_array.present?
       if county_experts.count > 0
         expert_ids = county_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) 
       end
       
       if county_groups.count > 0  
         group_ids = county_groups.map(&:id)
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) 
       end      
     
-      # location experts and groups will be set whether a location id was passed in or not, either we have experts and groups from a location or we have experts 
-      # and groups that will take questions from anywhere
       if location_experts.count > 0
         expert_ids = location_experts.map(&:id)
-        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) 
+      end
+      
+      if location_experts_backup.count > 0
+        expert_ids = location_experts_backup.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})"))
       end
       
       if location_groups.count > 0
         group_ids = location_groups.map(&:id)
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) 
+      end
+      
+      if location_groups_backup.count > 0
+        group_ids = location_groups_backup.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})"))
       end
     
-      # after the list of groups and experts are populated with those matching tag and location, just list those that match the tags.
-      @experts.concat(User.active.tagged_with_any(question_tags_array))
-      @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
+      # after the list of groups and experts are populated with those matching tag and location, just list those experts and groups that match the tags that take questions from anywhere.
+      if route_from_anywhere_experts.count > 0
+        expert_ids = route_from_anywhere_experts.map(&:id)
+        @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})"))
+      end
+      
+      if route_from_anywhere_groups.count > 0
+        group_ids = route_from_anywhere_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})"))
+      end
     end
     
     # we have the tag and location best matches above, now further down the list, we'll list just the best locational matches
-    if county_experts.length > 0
-       @experts.concat(county_experts)
-       @groups.concat(county_groups)
-    end  
-      
-    if location_experts.length > 0
-      @experts.concat(location_experts)  
-      @groups.concat(location_groups)  
-    end
+    @experts.concat(county_experts) if county_experts.length > 0
+    @groups.concat(county_groups) if county_groups.length > 0  
+    @experts.concat(location_experts) if location_experts.length > 0   
+    @groups.concat(location_groups)  if location_groups.length > 0
+    @experts.concat(location_experts_backup) if location_experts_backup.length > 0
+    @groups.concat(location_groups_backup) if location_groups_backup.length > 0
     
     @experts.uniq!
     @groups.uniq!
