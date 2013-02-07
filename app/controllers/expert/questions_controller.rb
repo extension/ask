@@ -498,29 +498,34 @@ class Expert::QuestionsController < ApplicationController
     @experts = Array.new
     @groups = Array.new
     @filter_terms = Array.new
+    location_experts = Array.new
+    location_groups = Array.new
+    county_experts = Array.new
+    county_groups = Array.new
     
-    if @question.location_id.present? 
-      # @filter_terms <<  @question.location.name
-      location_experts = User.active.with_expertise_location(@question.location_id)
-      if location_experts.count == 0
-        location_experts = User.active.route_from_anywhere
-      end
-      location_groups = Group.assignable.with_expertise_location(@question.location_id)
-      if location_groups.count == 0
-        location_groups = Group.assignable.route_outside_locations
-      end
-    else
-      # @filter_terms <<  ""
-      location_experts = []
-      location_groups = []
-    end
-      
     if @question.county_id.present?
       county_experts = User.active.with_expertise_county(@question.county_id) 
       county_groups = Group.assignable.with_expertise_county(@question.county_id) 
-    else
-      county_experts = []
-      county_groups = []
+    end
+    
+    if @question.location_id.present? 
+      #location_experts = User.active.with_expertise_location(@question.location_id)
+      #location_groups = Group.assignable.with_expertise_location(@question.location_id)
+      if county_experts.count == 0
+        location_experts = User.active.with_expertise_location_all_counties(@question.location_id)
+      end
+      if county_groups.count == 0
+        location_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)
+      end
+    end
+    
+    # if the experts for a location are empty or no location listed, then pull those experts who will receive questions from anywhere, 
+    # if the groups for a location are empty or no location listed, then pull groups who will receive questions outside their locations
+    if location_experts.count == 0 
+      location_experts = User.active.route_from_anywhere
+    end
+    if location_groups.count == 0 
+      location_groups = Group.assignable.route_outside_locations
     end
     
     question_tags_array = @question.tags.all
@@ -530,22 +535,29 @@ class Expert::QuestionsController < ApplicationController
     end
       
     if question_tags_array.present?
-      if @question.county_id?
+      if county_experts.count > 0
         expert_ids = county_experts.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
-        
+      end
+      
+      if county_groups.count > 0  
         group_ids = county_groups.map(&:id)
         @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end      
     
-      if @question.location_id?
+      # location experts and groups will be set whether a location id was passed in or not, either we have experts and groups from a location or we have experts 
+      # and groups that will take questions from anywhere
+      if location_experts.count > 0
         expert_ids = location_experts.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) if expert_ids.length > 0
-        
+      end
+      
+      if location_groups.count > 0
         group_ids = location_groups.map(&:id)
         @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) if group_ids.length > 0
       end
     
+      # after the list of groups and experts are populated with those matching tag and location, just list those that match the tags.
       @experts.concat(User.active.tagged_with_any(question_tags_array))
       @groups.concat(Group.assignable.tagged_with_any(question_tags_array))
     end
