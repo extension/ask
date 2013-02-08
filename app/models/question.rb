@@ -413,9 +413,7 @@ class Question < ActiveRecord::Base
   def assign_to_question_wrangler(assigned_by)
     assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
     comment = WRANGLER_REASSIGN_COMMENT
-
     assign_to(assignee, assigned_by, comment)
-    self.assigned_group = Group.question_wrangler_group
     self.save
     return assignee
   end
