@@ -35,7 +35,7 @@ class Group < ActiveRecord::Base
 
   validates :name, :presence => {:message => "Group name can't be blank"}
   validates :name, 
-    :uniqueness => {:message => "The name \"%{value}\" is being used by another group."}, 
+    :uniqueness => {:message => "The name \"%{value}\" is being used by another group.", :case_sensitive => false}, 
     :unless => Proc.new { |a| a.name.blank? }
   
   scope :public_visible, where(is_test: false, widget_active: true, group_active: true)
