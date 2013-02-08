@@ -118,7 +118,7 @@ jQuery(function($) {
       $("#reassignment_results_feedback").show();
       $.ajax({
          type: "POST",
-         url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
+         url: "<%= reassign_expert_question_path(:id => @question.id) %>",
          cache: false,
          data: {location_id: location_id}
        })
@@ -138,7 +138,7 @@ jQuery(function($) {
     $("#reassignment_results_feedback").show();
     $.ajax({
       type: "POST",
-      url: "<%= expert_questions_update_reassign_results_path(:id => @question.id) %>",
+      url: "<%= reassign_expert_question_path(:id => @question.id) %>",
       cache: false,
       data: {county_id: county_id, location_id: location_id}
     })

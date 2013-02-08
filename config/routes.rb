@@ -29,8 +29,6 @@ Aae::Application.routes.draw do
     end
   end
 
-
-
   namespace :expert do
     resources :questions, :only => [:show] do
       member do
@@ -116,7 +114,6 @@ Aae::Application.routes.draw do
     match "questions/:id/submitted" => "questions#submitted", :via => [:get], :as => 'user_submitted'
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
-    match "questions/update_reassign_results" => "questions#update_reassign_results", :via => [:post]
     match "questions/add_history_comment" => "questions#add_history_comment", :via => [:post]
     match "questions/associate_with_group" => "questions#associate_with_group", :via => [:post]
     match "questions/activity_notificationprefs" => "questions#activity_notificationprefs", :via => [:post]

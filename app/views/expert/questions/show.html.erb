@@ -29,12 +29,12 @@
 </div>
   
   
-  <div id="privacy_status">
+  <div id="privacy_status" class="dontprintme">
     <%= render :partial => 'privacy_status' %>
   </div>
   
 
-  <aside class="<%= (@question.status_state == Question::STATUS_REJECTED) ? "rejected" : "" %>">
+  <aside class="dontprintme <%= (@question.status_state == Question::STATUS_REJECTED) ? "rejected" : "" %>">
     <% if @question.status_state == Question::STATUS_REJECTED %>
       <h3 class="rejected">This Question Has Been Rejected</h3>
       <h3><strong>Reason:</strong> <%= wrap_text(@question.current_response) %></h3>
@@ -123,7 +123,7 @@
   
   
   
-  <aside class="nobg">
+  <aside class="nobg dontprintme">
     <h4>Related Questions</h4>
     <% @question.similar_questions.each do |question,score| %>
       <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
