@@ -96,6 +96,14 @@ body {
     -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.8), inset 0 2px rgba(255, 255, 255, 0.5);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08), inset 0 1px rgba(255, 255, 255, 0.3);
     background-color: #000;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ccc), color-stop(100%, #999));
+    background-image: -webkit-linear-gradient(top, #aaa, #777);
+    background-image: -moz-linear-gradient(top, #aaa, #777);
+    background-image: -ms-linear-gradient(top, #aaa, #777);
+    background-image: -o-linear-gradient(top, #aaa, #777);
+    background-image: linear-gradient(top, #aaa, #777);
+  }
+  .highlight .badge {
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #FF0000), color-stop(100%, #A1000F));
     background-image: -webkit-linear-gradient(top, #FF0000, #A1000F);
     background-image: -moz-linear-gradient(top, #FF0000, #A1000F);
@@ -103,15 +111,6 @@ body {
     background-image: -o-linear-gradient(top, #FF0000, #A1000F);
     background-image: linear-gradient(top, #FF0000, #A1000F);
   }
-  .suppress_single .badge.count_1 {
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ccc), color-stop(100%, #999));
-    background-image: -webkit-linear-gradient(top, #ccc, #999);
-    background-image: -moz-linear-gradient(top, #ccc, #999);
-    background-image: -ms-linear-gradient(top, #ccc, #999);
-    background-image: -o-linear-gradient(top, #ccc, #999);
-    background-image: linear-gradient(top, #ccc, #999);
-  }
-  
   
   .navavatar .avatar_with_badge {
     border: 0;
@@ -381,6 +380,8 @@ body#public {
 
 
 body#expert {
+  h3.rejected {color:#EC0012; font-size:1.5em;}
+  aside.rejected {background:#F5E6E8 !important; border:3px solid red;}
   .needs_an_answer {background:yellow; padding:.1em .5em;}
   #tag_list p {margin-bottom:.5em; font-size:1.1em;}
   .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5;}
@@ -562,7 +563,8 @@ body#expert {
 	.tag-topic,
 	.tag-topic a {background:#C2E5EC; color:#1F5983;}
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
-	
+	.tag-public,
+	.tag-public a {background:#468847; color:#fff; padding:.1em .5em;}
 	
 	
 /*	#tags {border:1px solid lime;}*/
@@ -601,7 +603,7 @@ body#expert {
 	#associated_group_picker {margin:0 0 3em;}
 	#privacy_status a {color:#999;}
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
-	.public {background: transparent url(/assets/icon_checkmark_32.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
+	
 	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; padding:4px;}
 	.match i, .nomatch i {display:none;}
 	.nomatch {color:#999;}
@@ -621,12 +623,16 @@ body#expert {
 	footer {background:#222;}
   footer ul li a {color:#bbb;}
   footer ul li a:hover {color:#fff;}
-	
-/*	.testh1 {outline:1px solid red; margin:1em 1em 3em;}*/
-	.testh1 {}
-	#private_question {}
-  #public_question {background:#CCECA0 !important; color:green;}
-  #public_question a {color:green;}
+
+/*  .public {background: transparent url(/assets/world.png) left 50% no-repeat; padding-left:24px; clear:left; line-height:2em; margin-bottom:0;}*/
+	.public, .private {line-height:2em; margin-bottom:0; color:#888;}
+	.public span, .private span {color:#333;}
+	.public, .private {font-size:1.3em;}
+  #private_question {padding: .5em .25em .75em .75em !important;}
+  #privacy_edit p {margin-bottom:0; color:#888; padding-left:40px;}
+  #public_question {background:#fff !important; padding: .5em .5em .5em 1em !important; border:2px solid #77CF76;}
+  #public_question a {}
+  #make_public_edit, #make_private_edit {padding:1.5em;}
   .nomatches {padding:2em;}
   
   .listview {padding-top:3em;}

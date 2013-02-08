@@ -7,7 +7,7 @@
     <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
   <% end %>
 
-  <h2><%= link_expert_user_avatar(@user) %></h2>
+  <h2><%= link_expert_user_avatar(@user, :medium, highlight_badge = true) %></h2>
 
   <%= form_tag(assign_expert_question_path(:id => @question.id, :assignee_id => @user.id)) do %>
     <p>

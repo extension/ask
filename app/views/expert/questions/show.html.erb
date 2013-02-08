@@ -2,8 +2,13 @@
 
 <div id="main" class="span8">
   <div id="question_wrapper">
-    <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
-  
+    <p id="aaeid">
+      <% if !@question.is_private %>
+        <span class="tag tag-public">Public</span>
+      <% end %> 
+      Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %>
+    </p>
+
     <%= render :partial => 'question_main' %>
 
     <h3>Comments</h3>
@@ -29,9 +34,10 @@
   </div>
   
 
-  <aside>
+  <aside class="<%= (@question.status_state == Question::STATUS_REJECTED) ? "rejected" : "" %>">
     <% if @question.status_state == Question::STATUS_REJECTED %>
-      <h3>This question has been rejected</h3>
+      <h3 class="rejected">This Question Has Been Rejected</h3>
+      <h3><strong>Reason:</strong> <%= wrap_text(@question.current_response) %></h3>
       <p>
     	  <% if @question.current_resolver_id == User.system_user_id %>
     	    System
@@ -42,8 +48,8 @@
     	    
     	  <% end %>
     	</p>
-      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+      
+      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
         
 	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
 	   <h3>A canned response was used to answer this question</h3>

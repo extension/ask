@@ -3,7 +3,7 @@
 <div id="main" class="span8">
   
   <div id="user_masthead">
-    <%= link_expert_user_avatar(@user) %>
+    <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
     
     <h1>
       <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>

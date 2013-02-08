@@ -7,7 +7,6 @@
 <%= form_for @user, :url => expert_settings_assignment_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <div class="info right">
-    <h3>More info...</h3>
     <h4>How else are questions assigned?</h4>
     <p>Experts can manually assign questions to any group or individual.</p>
   </div>
@@ -15,13 +14,13 @@
   
   <fieldset>
     <div>
-      <h3>Vacation Status</h3>
+      <h3>Away Status</h3>
       <div class="radio_options">
       <p>
         <label>
           <%= f.check_box :away %>
-          Mark me as away
-          <span>(When your "vacation status" is turned on, AaE questions can not be assigned to you.)</span>
+          Mark me as away (on vacation, unavailable, inactive, etc.)
+          <span>(When your "away status" is turned on, AaE questions can not be assigned to you.)</span>
         </label>
       </p>
       </div>
