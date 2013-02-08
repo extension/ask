@@ -16,6 +16,27 @@ class Expert::HomeController < ApplicationController
     @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
   end
   
+  def dashboard
+    @user = current_user
+    @unanswered_questions_count = Question.submitted.not_rejected.count
+    @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
+    @questions_assigned_to_expert_count = @user.open_questions.length
+    
+    if(params[:year_month])
+      @date = Date.strptime(params[:year_month] + "-01")
+      @year_month = params[:year_month]
+      @previous_year_month = (@date - 1.month).strftime('%Y-%m')
+    else
+      @date = DateTime.now
+      @year_month = User.year_month_string(Date.today.year,Date.today.month)
+      @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
+    end
+    
+    @questions_asked = Question.asked_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_answered = Question.answered_list_for_year_month(@year_month).order('created_at DESC')
+  
+  end
+  
   def search
   end
   

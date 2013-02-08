@@ -677,5 +677,18 @@ class Question < ActiveRecord::Base
   def question_activity_preference_list
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )
   end
+  
+  def self.answered_list_for_year_month(year_month)
+    self.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
+  
+  def self.asked_list_for_year_month(year_month)
+    self.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+  end
     
 end
