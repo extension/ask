@@ -424,36 +424,41 @@ class Expert::QuestionsController < ApplicationController
     location_groups_backup = Array.new
     route_from_anywhere_experts = Array.new
     route_from_anywhere_groups = Array.new
-
-    if params[:location_id].present? 
+    
+    
+    if params[:location_id].present?
       @question.location_id = params[:location_id]
-    end    
-    if params[:county_id].present? 
+    elsif params[:location_id] == ''
+      @question.location_id = nil
+    end  
+    
+    if params[:county_id].present?
       @question.county_id = params[:county_id]
-    else
-      @question.county_id = ""
-    end
-
+    end    
+    
+    # we first want to get all experts from the county, then check experts with state from all counties, then check experts from a state that 
+    # say they'll answer from anywhere, then check experts who will just take questions from anywhere.  
     if @question.county_id.present?
       county_experts = User.active.with_expertise_county(@question.county_id) 
       county_groups = Group.assignable.with_expertise_county(@question.county_id) 
     end
-
+    
     if @question.location_id.present? 
-      location_experts = User.active.with_expertise_location_all_counties(@question.location_id)
-      location_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)
-
+      # get experts next who have the all county option checked for the state
+      location_all_county_experts = User.active.with_expertise_location_all_counties(@question.location_id)
+      location_all_county_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)
+      
       # we'll also go ahead and add on the experts and groups from the state that say they'll take questions from anywhere as a backup
       location_experts_backup = User.active.route_from_anywhere.with_expertise_location(@question.location_id)
       location_groups_backup = Group.assignable.route_outside_locations.with_expertise_location(@question.location_id)
     end
-
+  
     # if the experts for a location are empty or no location listed, then pull those experts who will receive questions from anywhere, 
     # if the groups for a location are empty or no location listed, then pull groups who will receive questions outside their locations
-    if location_experts.count == 0 && location_experts_backup.count == 0
+    if county_experts.count == 0 && location_experts_backup.count == 0
       route_from_anywhere_experts = User.active.route_from_anywhere
     end
-    if location_groups.count == 0 && location_groups_backup.count == 0
+    if county_experts.count == 0 && location_groups_backup.count == 0
       route_from_anywhere_groups = Group.assignable.route_outside_locations
     end
 
@@ -463,19 +468,16 @@ class Expert::QuestionsController < ApplicationController
       @filter_terms <<  tag.name
     end
 
+    # if we have tags associated with this question
     if question_tags_array.present?
+      # populate experts
       if county_experts.count > 0
         expert_ids = county_experts.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) 
       end
 
-      if county_groups.count > 0  
-        group_ids = county_groups.map(&:id)
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) 
-      end      
-
-      if location_experts.count > 0
-        expert_ids = location_experts.map(&:id)
+      if location_all_county_experts.count > 0
+        expert_ids = location_all_county_experts.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})")) 
       end
 
@@ -483,9 +485,15 @@ class Expert::QuestionsController < ApplicationController
         expert_ids = location_experts_backup.map(&:id)
         @experts.concat(User.active.tagged_with_any(question_tags_array).where("users.id IN (#{expert_ids.join(',')})"))
       end
+      
+      # populate groups
+      if county_groups.count > 0  
+        group_ids = county_groups.map(&:id)
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) 
+      end
 
-      if location_groups.count > 0
-        group_ids = location_groups.map(&:id)
+      if location_all_county_groups.count > 0
+        group_ids = location_all_county_groups.map(&:id)
         @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})")) 
       end
 
@@ -493,7 +501,7 @@ class Expert::QuestionsController < ApplicationController
         group_ids = location_groups_backup.map(&:id)
         @groups.concat(Group.assignable.tagged_with_any(question_tags_array).where("groups.id IN (#{group_ids.join(',')})"))
       end
-
+      
       # after the list of groups and experts are populated with those matching tag and location, just list those experts and groups that match the tags that take questions from anywhere.
       if route_from_anywhere_experts.count > 0
         expert_ids = route_from_anywhere_experts.map(&:id)
@@ -509,26 +517,25 @@ class Expert::QuestionsController < ApplicationController
     # we have the tag and location best matches above, now further down the list, we'll list just the best locational matches
     @experts.concat(county_experts) if county_experts.length > 0
     @groups.concat(county_groups) if county_groups.length > 0  
-    @experts.concat(location_experts) if location_experts.length > 0   
-    @groups.concat(location_groups)  if location_groups.length > 0
+    @experts.concat(location_all_county_experts) if location_all_county_experts.length > 0 
+    @groups.concat(location_all_county_groups)  if location_all_county_groups.length > 0
     @experts.concat(location_experts_backup) if location_experts_backup.length > 0
     @groups.concat(location_groups_backup) if location_groups_backup.length > 0
-
+    
     @experts.uniq!
     @groups.uniq!
 
     @experts = @experts.first(20)
     @groups = @groups.first(3)
-
+    
     @filter_terms_count = @filter_terms.count + 2 #for location and county
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
-
+    
     respond_to do |format|
       format.html
-      format.js 
+      format.js
     end
   end
-  
   
   def associate_with_group
     @question = Question.find_by_id(params[:id])
