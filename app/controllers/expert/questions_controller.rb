@@ -416,34 +416,35 @@ class Expert::QuestionsController < ApplicationController
     @experts = Array.new
     @groups = Array.new
     @filter_terms = Array.new
-    location_experts = Array.new
-    location_groups = Array.new
     county_experts = Array.new
     county_groups = Array.new
+    location_all_county_experts = Array.new
+    location_all_county_groups = Array.new
     location_experts_backup = Array.new
     location_groups_backup = Array.new
     route_from_anywhere_experts = Array.new
     route_from_anywhere_groups = Array.new
     
-    
+    # if this is an ajax request, we'll have location and county id parameters
     if params[:location_id].present?
       @question.location_id = params[:location_id]
+      if params[:county_id].present?
+        @question.county_id = params[:county_id]
+      else
+        @question.county_id = @question.location.get_all_county.id
+      end
     elsif params[:location_id] == ''
       @question.location_id = nil
     end  
     
-    if params[:county_id].present?
-      @question.county_id = params[:county_id]
-    end    
-    
     # we first want to get all experts from the county, then check experts with state from all counties, then check experts from a state that 
     # say they'll answer from anywhere, then check experts who will just take questions from anywhere.  
-    if @question.county_id.present?
+    if @question.county.present? && !@question.county.is_all_county?
       county_experts = User.active.with_expertise_county(@question.county_id) 
       county_groups = Group.assignable.with_expertise_county(@question.county_id) 
     end
     
-    if @question.location_id.present? 
+    if @question.location.present? 
       # get experts next who have the all county option checked for the state
       location_all_county_experts = User.active.with_expertise_location_all_counties(@question.location_id)
       location_all_county_groups = Group.assignable.with_expertise_location_all_counties(@question.location_id)

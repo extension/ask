@@ -37,5 +37,9 @@ class County < ActiveRecord::Base
       end
     end
   end
+  
+  def is_all_county?
+    return self.name == 'All' && self.countycode == 0
+  end
 
 end
