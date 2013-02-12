@@ -49,6 +49,10 @@ class Location < ActiveRecord::Base
       return nil
     end
   end
+  
+  def get_all_county
+    return County.find_by_location_id_and_name(self.id, 'All')
+  end
 
 
 end

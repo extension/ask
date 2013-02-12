@@ -19,7 +19,7 @@
 
 
 <% if (!@question.location.present?) && (@question.tags.size == 0) %>
-  <h3 class="nomatches">We can't recommendation any experts or groups because this question does not have any tags or a location. <%= link_to "Please add at least one tag", expert_question_path(@question.id) %> on the Question page.</h3>
+  <h3 class="nomatches">We can't make a recommendation any experts or groups because this question does not have any tags or a location. <%= link_to "Please add at least one tag", expert_question_path(@question.id) %> on the Question page.</h3>
   
 <% else %>
 
@@ -119,6 +119,7 @@ jQuery(function($) {
       $.ajax({
          type: "POST",
          url: "<%= reassign_expert_question_path(:id => @question.id) %>",
+         dataType: "script",
          cache: false,
          data: {location_id: location_id}
        })
@@ -139,6 +140,7 @@ jQuery(function($) {
     $.ajax({
       type: "POST",
       url: "<%= reassign_expert_question_path(:id => @question.id) %>",
+      dataType: "script",
       cache: false,
       data: {county_id: county_id, location_id: location_id}
     })
