@@ -383,10 +383,11 @@ body#expert {
   #oldest_question {margin:3em 0 3em; background:#eee;}
   .coffeetime {font-size:1.1em; color:#888; padding-left:30px; line-height:1.5em;}
   i.coffee {background: transparent url(/assets/34-coffee.png) 50% 50% no-repeat; width:30px; height:30px; display:block; float:left; margin-right:.5em;}
-  #expert_dashboard_tags {border: 1px solid #eee; padding:1em;}
+  .expert_dashboard_tags {border: 1px solid #eee; padding:1em;}
   #dashboard h1 a {color:#333;}
   #dashboard {padding-bottom:4em;}
   #dashboard #user_masthead {border:0;}
+  #dashboard .group_in_group_list h4 {font-weight:normal; font-size:1.2em;}
   #last_30_days {margin:3em 0 3em; background:#eee;}
   #last_30_days h2 {margin-bottom:.75em;}
   h3 span {font-size:1.3em;}
@@ -396,7 +397,7 @@ body#expert {
   .needs_an_answer {background:yellow; padding:.1em .5em;}
   p .needs_an_answer {background:#A5AFB5; padding:.25em .75em; color:#fff;}
   #tag_list p {margin-bottom:.5em; font-size:1.1em;}
-  .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5;}
+  .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5; clear:left;}
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}
   .group_in_group_list h4 {margin:0;};
   .group_list_avatar {float:left; margin-right:1em;}

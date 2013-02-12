@@ -36,10 +36,11 @@
     </div>
   </div>
   
-  <div id="expert_dashboard_tags">
+  <div class="expert_dashboard_tags">
+    
   <% if current_user.expertise_locations.size > 0 %>
   
-  <h3>Your Locations</h3>
+  <h3>My Locations</h3>
     <% current_user.expertise_locations.each do |l| %>
       <% @unanswered_questions_count = Question.where("location_id = ?", l.id).submitted.not_rejected.count %>
       <div class="location">
@@ -70,7 +71,7 @@
   
   
   <% if current_user.tags.size > 0 %>
-    <h4>Your Tags</h4>
+    <h4>My Tags</h4>
     <div>
       <% current_user.tags.used_at_least_once.each do |tag| %>
       <% @unanswered_questions_count = Question.submitted.tagged_with(tag.id).count %>
@@ -104,6 +105,28 @@
     <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
     
     <p><%= link_to "Monthly summaries by locations, counties...", expert_reports_home_path() %></p>
+  </div>
+  
+  <div class="expert_dashboard_tags">
+  <h3>My Groups</h3>
+  <% if @my_groups.size == 0 %>
+    <p>You currently are not a member any groups.</p>
+  <% else %>
+    <% @my_groups.each do |group| %>
+      <% if group.group_active %>
+        <div class="group_in_group_list active">
+          <p class="group_list_avatar"><%= link_expert_group_avatar(group, :mini) %></p>
+          <h4>
+            <%= link_to group.name, expert_group_path(group.id) %> 
+            <% if group.open_questions.length > 0 %>
+              <strong><%= link_to "#{group.open_questions.length} unanswered", expert_home_unanswered_path(:override => true, :group_id => group.id)%></strong>
+            <% end %>
+          </h4>
+          <br class="clearning" />
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
   </div>
 </div>
 
