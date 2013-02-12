@@ -1,20 +1,31 @@
-<% if listview.present? && listview == 'incoming' %>
-  <%= page_entries_info questions %>
-  <%= paginate questions, :params => {:controller => 'expert/home', :action => 'index'} %>
-<% elsif listview.present? && listview == 'resolved' %>
-  <%= page_entries_info questions %>
-  <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
-<% end %>
+<% if questions.count > 0 %>
+  
+  <h2><%= @filter_description.present? ? @filter_description : "No filters" %></h2>
+  <% if listview.present? && listview == 'incoming' %>
+    <%= page_entries_info questions %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'unanswered'} %>
+  <% elsif listview.present? && listview == 'resolved' %>
+    <%= page_entries_info questions %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
+  <% end %>
 
-<% questions.each do |question| %>
-  <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>  
-<% end %>
+  <% questions.each do |question| %>
+    <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true, :highlight_unanswered => true} %>  
+  <% end %>
 
-<% if listview.present? && listview == 'incoming' %>
-  <%= page_entries_info questions %>
-  <%= paginate questions, :params => {:controller => 'expert/home', :action => 'index'} %>
-<% elsif listview.present? && listview == 'resolved' %>
-  <%= page_entries_info questions %>
-  <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
-<% end %>
+  <% if listview.present? && listview == 'incoming' %>
+    <%= page_entries_info questions %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'unanswered'} %>
+  <% elsif listview.present? && listview == 'resolved' %>
+    <%= page_entries_info questions %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
+  <% end %>
 
+<% else %>
+  
+  <h2><%= @filter_description.present? ? @filter_description : "No filters" %></h2>
+  <div class="no_reassign_matches">
+    <h3>There are no questions that match that filter</h3>
+  </div>
+  
+<% end %>

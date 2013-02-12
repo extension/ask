@@ -10,10 +10,42 @@ class Expert::HomeController < ApplicationController
   before_filter :require_exid
   
   def index
+    @user = current_user
+    if(params[:user_id])
+      @user = User.find_by_id(params[:user_id])
+      if !@user.present?
+        flash[:error] = "There's no expert with the ID \"#{params[:user_id]}\"."
+        return redirect_to expert_home_url
+      end
+    end
+    @my_groups = @user.group_memberships
+    @unanswered_questions_count = Question.submitted.not_rejected.count
+    @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
+    @questions_assigned_to_expert_count = @user.open_questions.length
+    
+    if(params[:year_month])
+      @date = Date.strptime(params[:year_month] + "-01")
+      @year_month = params[:year_month]
+      @previous_year_month = (@date - 1.month).strftime('%Y-%m')
+    else
+      @date = DateTime.now
+      @year_month = User.year_month_string(Date.today.year,Date.today.month)
+      @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
+    end
+    
+    @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+  end
+  
+  def unanswered
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
     @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
+  end
+  
+  def dashboard
+    redirect_to expert_home_path()
   end
   
   def search
@@ -33,6 +65,8 @@ class Expert::HomeController < ApplicationController
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag
+      @unanswered_questions_count = Question.tagged_with(@tag.id).submitted.not_rejected.count
+      
       @questions = Question.tagged_with(@tag.id).not_rejected.order("questions.created_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     
@@ -127,6 +161,8 @@ class Expert::HomeController < ApplicationController
     return record_not_found if @county.blank?
     @location = Location.find_by_id(@county.location_id)
     @locations = Location.order('fipsid ASC')
+    
+    @unanswered_questions_count = Question.where("county_id = ?", @county.id).submitted.not_rejected.count
     
     @questions = Question.where("county_id = ?", @county.id).not_rejected.order("questions.status_state DESC").limit(5)
     @question_total_count = Question.where("county_id = ?", @county.id).not_rejected.count

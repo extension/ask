@@ -6,13 +6,12 @@
   <h1><%= @location.name %></h1>
   <h2>
     <% if @unanswered_questions_count %>
-      <p><%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions" , expert_questions_by_location_path() %></p>
-       
+      <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => @location.id)%>
     <% else %>
       
     <% end %>
   </h2>
-  
+  <p><%= link_to "Monthly Summary", expert_reports_home_path(:location_id => @location.id) %></p>
   <br class="clearing" />
   <div class="span5">
     <div class="location_section">

@@ -1,3 +1,4 @@
+<% highlight_unanswered = local_assigns[:highlight_unanswered].nil? ? false : highlight_unanswered %>
 <% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
 <% hide_groups = local_assigns[:hide_groups].nil? ? false : hide_groups %>
 <% hide_assignee = local_assigns[:hide_assignee].nil? ? false : hide_assignee %>
@@ -14,7 +15,9 @@
       <%- end -%>
       
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
-      
+      <% if highlight_unanswered && (question.responses.size == 0) %>
+        <p><span class="needs_an_answer">Needs an answer</span></p>
+      <% end %>
       <% question.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 

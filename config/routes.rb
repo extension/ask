@@ -70,6 +70,7 @@ Aae::Application.routes.draw do
       end
     end
     
+    match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
     match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
     match "users/:id/watched" => "users#watched", :via => [:get], :as => 'user_watched'
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
@@ -105,6 +106,8 @@ Aae::Application.routes.draw do
     match "home/questions/counties/:id" => "home#questions_by_county", :as => 'questions_by_county'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
+    match "home/unanswered" => "home#unanswered"
+    match "home/dashboard" => "home#dashboard"
     match "home/managetags" => "home#managetags"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
