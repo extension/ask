@@ -57,6 +57,8 @@ class Expert::HomeController < ApplicationController
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag
+      @unanswered_questions_count = Question.tagged_with(@tag.id).submitted.not_rejected.count
+      
       @questions = Question.tagged_with(@tag.id).not_rejected.order("questions.created_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
     

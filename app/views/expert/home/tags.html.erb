@@ -12,6 +12,14 @@
   <% else %>
     <div class="bigtag"></div>
     <h1>Everything tagged '<%= @tag.name %>'</h1>
+    
+    <h2>
+      <% if @unanswered_questions_count %>
+        <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :tag_id => @tag.id)%>
+      <% else %>
+
+      <% end %>
+    </h2>
   
     <br class="clearing" />
     <div class="span5">
