@@ -11,7 +11,14 @@ class Expert::HomeController < ApplicationController
   
   def index
     @user = current_user
-    @my_groups = current_user.group_memberships
+    if(params[:user_id])
+      @user = User.find_by_id(params[:user_id])
+      if !@user.present?
+        flash[:error] = "There's no expert with the ID \"#{params[:user_id]}\"."
+        return redirect_to expert_home_url
+      end
+    end
+    @my_groups = @user.group_memberships
     @unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
     @questions_assigned_to_expert_count = @user.open_questions.length

@@ -38,10 +38,10 @@
   
   <div class="expert_dashboard_tags">
     
-  <% if current_user.expertise_locations.size > 0 %>
+  <% if @user.expertise_locations.size > 0 %>
   
   <h3>My Locations</h3>
-    <% current_user.expertise_locations.each do |l| %>
+    <% @user.expertise_locations.each do |l| %>
       <% @unanswered_questions_count = Question.where("location_id = ?", l.id).submitted.not_rejected.count %>
       <div class="location">
         <p>
@@ -49,10 +49,10 @@
           <%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id)%>
         </p>
 
-        <% if current_user.expertise_locations.where("location_id = ?", l.id).size > 0 %>
-          <% if current_user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
+        <% if @user.expertise_locations.where("location_id = ?", l.id).size > 0 %>
+          <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
             <ul>
-              <% current_user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+              <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
                 <% @unanswered_questions_count = Question.where("county_id = ?", c.id).submitted.not_rejected.count %>
                 <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span>
                 <% if @unanswered_questions_count > 0 %>
@@ -70,10 +70,10 @@
 <% end %>
   
   
-  <% if current_user.tags.size > 0 %>
+  <% if @user.tags.size > 0 %>
     <h4>My Tags</h4>
     <div>
-      <% current_user.tags.used_at_least_once.each do |tag| %>
+      <% @user.tags.used_at_least_once.each do |tag| %>
       <% @unanswered_questions_count = Question.submitted.tagged_with(tag.id).count %>
         <p id="tag_<%= tag.id %>">
           <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> 
