@@ -381,7 +381,8 @@ body#public {
 
 body#expert {
   #oldest_question {margin:3em 0 3em; background:#eee;}
-  .coffeetime {font-size:1.1em; color:#888; background: transparent url(/assets/34-coffee.png) left 50% no-repeat; padding-left:30px; line-height:2em;}
+  .coffeetime {font-size:1.1em; color:#888; padding-left:30px; line-height:1.5em;}
+  i.coffee {background: transparent url(/assets/34-coffee.png) 50% 50% no-repeat; width:30px; height:30px; display:block; float:left; margin-right:.5em;}
   #expert_dashboard_tags {border: 1px solid #eee; padding:1em;}
   #dashboard h1 a {color:#333;}
   #dashboard {padding-bottom:4em;}
