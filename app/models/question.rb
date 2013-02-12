@@ -685,8 +685,7 @@ class Question < ActiveRecord::Base
   
   def self.asked_list_for_year_month(year_month)
     self.select("DISTINCT(questions.id), questions.*")
-    .joins(:question_events)
-    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+    .where("DATE_FORMAT(questions.created_at,'%Y-%m') = ?",year_month)
   end
     
 end

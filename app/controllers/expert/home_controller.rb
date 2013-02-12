@@ -32,8 +32,8 @@ class Expert::HomeController < ApplicationController
       @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
     end
     
-    @questions_asked = Question.asked_list_for_year_month(@year_month).order('created_at DESC')
-    @questions_answered = Question.answered_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
   
   end
   
@@ -148,6 +148,8 @@ class Expert::HomeController < ApplicationController
     return record_not_found if @county.blank?
     @location = Location.find_by_id(@county.location_id)
     @locations = Location.order('fipsid ASC')
+    
+    @unanswered_questions_count = Question.where("county_id = ?", @county.id).submitted.not_rejected.count
     
     @questions = Question.where("county_id = ?", @county.id).not_rejected.order("questions.status_state DESC").limit(5)
     @question_total_count = Question.where("county_id = ?", @county.id).not_rejected.count

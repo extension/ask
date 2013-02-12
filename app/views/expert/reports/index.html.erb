@@ -1,0 +1,89 @@
+<div id="dashboard">
+  <div class="span12">
+
+    <div id="location_filter">
+      <div id="location_picker">
+    	<%= select_tag "location_option", options_from_collection_for_select(@locations, "id", "name", params[:location_id]), {:prompt => "All locations", :name => "location_option"} %>
+      </div>
+
+      <div id="county_list">
+        <% if params[:location_id].present? %>
+          <%= select_tag("county_option", options_for_select(get_county_options(params[:location_id]), params[:county_id])) %>
+        <% end %>
+      </div>
+
+      <%= select_tag "group_option", options_from_collection_for_select(@my_groups, "id", "name", params[:group_id]), {:prompt => "All groups", :name => "group_option"} %>
+      <% select_tag "tag_option", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_option"} %>
+      <br class="clearing" />
+    </div>
+  
+  
+    <h3><%= link_to "Monthly Summaries", expert_reports_home_path() %></h3>
+    <h2><%= @condition_array.present? ? @condition_array : "No filters" %></h2>
+    <h3>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</h3>
+  
+    <div id="last_30_days" class="formy">
+      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id])%> 
+      <% if @following_year_month %>
+        - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id])%>
+      <% end %></p>
+      <h2><%= @date.strftime("%B, %Y") %> at a Glance:</h2>
+      <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
+      <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
+  </div>
+</div>
+
+<script class="code" type="text/javascript">
+  
+  function set_params(param, id) {
+    var pathname = window.location.pathname;
+    var params = new Array();
+    
+    if (param == "location_id") {
+      var location_id = id;
+      var county_id = "";
+    } else {
+      var location_id = (param == "location_id" ? id : "<%= params[:location_id] %>");
+      var county_id = (param == "county_id" ? id : "<%= params[:county_id] %>");
+    }
+    var group_id = (param == "group_id" ? id : "<%= params[:group_id] %>");
+    var year_month = "<%= params[:year_month] %>"
+    
+    if (year_month) {
+      params.push("year_month=" + year_month);
+    }
+    if (location_id) {
+      params.push("location_id=" + location_id);
+    }      
+    if (county_id) {
+      params.push("county_id=" + county_id);
+    }
+    if (group_id) {
+      params.push("group_id=" + group_id);
+    }
+    return pathname + "?" + params.join("&");
+	}
+
+
+  $("#location_option").change(function() {
+    var location_id = $('select#location_option :selected').val();
+    new_url = set_params("location_id", location_id);
+    window.location.href = new_url;
+    return false;
+  });
+
+  $("#county_option").change(function() {
+    var county_id = $('select#county_option :selected').val();
+    new_url = set_params("county_id", county_id);
+    window.location.href = new_url;
+    return false;
+  });
+
+  $("#group_option").change(function() {
+    var group_id = $('select#group_option :selected').val();
+    new_url = set_params("group_id", group_id);
+    window.location.href = new_url;
+    return false;
+  });
+
+</script>

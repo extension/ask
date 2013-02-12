@@ -2,7 +2,8 @@
   
   <%= render :partial => 'filter', :locals => {:listview => 'incoming'} %>  
   
-  <h1>Incoming Questions</h1>
+  <h1>Unanswered Questions</h1>
+  
   <div id="filtered_question_list">  
     <%= render :partial => 'list_of_questions', :locals => {:questions => @recent_questions, :listview => 'incoming'} %>
   </div>

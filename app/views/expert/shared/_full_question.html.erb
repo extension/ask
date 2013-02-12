@@ -14,7 +14,9 @@
       <%- end -%>
       
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
-      
+      <% if highlight_unanswered && (question.responses.size == 0) %>
+        <p><span class="needs_an_answer">Needs an answer</span></p>
+      <% end %>
       <% question.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
 

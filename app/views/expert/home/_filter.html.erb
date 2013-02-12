@@ -5,7 +5,7 @@
   
   <div id="county_list">
     <% if @location_pref.present? %>
-      <%= render :partial => 'counties', :locals => {:location_obj => Location.find_by_id(@location_pref), :listview => 'incoming'} %>  
+      <%= render :partial => 'expert/home/counties', :locals => {:location_obj => Location.find_by_id(@location_pref), :listview => 'incoming'} %>  
     <% end %>
   </div>
 

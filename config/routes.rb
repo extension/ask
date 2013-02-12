@@ -70,6 +70,7 @@ Aae::Application.routes.draw do
       end
     end
     
+    match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
     match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
     match "users/:id/watched" => "users#watched", :via => [:get], :as => 'user_watched'
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
