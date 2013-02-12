@@ -3,7 +3,7 @@
   <h2><%= @filter_description.present? ? @filter_description : "No filters" %></h2>
   <% if listview.present? && listview == 'incoming' %>
     <%= page_entries_info questions %>
-    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'index'} %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'unanswered'} %>
   <% elsif listview.present? && listview == 'resolved' %>
     <%= page_entries_info questions %>
     <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
@@ -15,7 +15,7 @@
 
   <% if listview.present? && listview == 'incoming' %>
     <%= page_entries_info questions %>
-    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'index'} %>
+    <%= paginate questions, :params => {:controller => 'expert/home', :action => 'unanswered'} %>
   <% elsif listview.present? && listview == 'resolved' %>
     <%= page_entries_info questions %>
     <%= paginate questions, :params => {:controller => 'expert/home', :action => 'answered'} %>
