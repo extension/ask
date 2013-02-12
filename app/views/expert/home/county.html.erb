@@ -9,7 +9,7 @@
   <h1><%= @county.name %>, <%= link_to @location.name, expert_view_location_path(@location.id) %></h1>
   <h2>
     <% if @unanswered_questions_count %>
-      <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_home_path(:override => true, :location_id => @location.id, :county_id => @county.id, :group_id => params[:group_id])%>
+      <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => @location.id, :county_id => @county.id, :group_id => params[:group_id])%>
     <% else %>
       
     <% end %>

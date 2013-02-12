@@ -10,13 +10,6 @@ class Expert::HomeController < ApplicationController
   before_filter :require_exid
   
   def index
-    @locations = Location.order('fipsid ASC')
-    @my_groups = current_user.group_memberships
-    @my_tags = current_user.tags
-    @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
-  end
-  
-  def dashboard
     @user = current_user
     @unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
@@ -34,7 +27,17 @@ class Expert::HomeController < ApplicationController
     
     @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
     @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+  end
   
+  def unanswered
+    @locations = Location.order('fipsid ASC')
+    @my_groups = current_user.group_memberships
+    @my_tags = current_user.tags
+    @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
+  end
+  
+  def dashboard
+    redirect_to expert_home_path()
   end
   
   def search
