@@ -94,6 +94,12 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     @county = County.find(params[:requested_county])
+    all_county = @county.location.get_all_county
+    
+    # if they're selecting a specific county, then take away the 'all county' selection
+    if @object.expertise_counties.include?(all_county)
+      @object.expertise_counties.delete(all_county)
+    end
 
     if !@object.expertise_counties.include?(@county)
       @object.expertise_counties << @county
@@ -114,9 +120,12 @@ class AjaxController < ApplicationController
     @object.expertise_counties.where("location_id = ?", params[:requested_location]).each do |c|
       @object.expertise_counties.delete(c)
     end
+    
+    # when adding location, start out with the all county selection
+    @object.expertise_counties << location.get_all_county
+    
     if !@object.expertise_locations.include?(location)
       @object.expertise_locations << location
-      @object.save
     end
   end
 
@@ -140,7 +149,12 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     county = County.find(params[:county_id])
+    location = county.location
     @object.expertise_counties.delete(county)
+    # if they just removed the last county from this location, add the all county county to it
+    if @object.expertise_counties.where("counties.location_id = ?", location.id).count == 0
+      @object.expertise_counties << location.get_all_county
+    end
   end
 
 end
