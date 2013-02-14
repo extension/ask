@@ -481,7 +481,7 @@ body#expert {
   .block {display:block;}
   .reasssign .handling_rate_graph {width:100px;}
   .missing_image {border:1px solid #888; padding:1px;}
-    
+    .handling_rate.none {color:#000;}
 
     .location_block {margin-bottom:3em; padding:1em; width: 30%; margin-bottom:1em; border:2px solid #aaa;}
 	.new_location {border: 2px solid #444; margin:1em 0 2em;}
@@ -661,6 +661,8 @@ body#expert {
   
   #reassign_wrapper {}
 	.assignment_match {border-bottom:1px solid #ccc; margin-bottom:1.25em; padding-bottom:.75em;}
+	.assignment_match .expert_meta {padding:0; margin-bottom:.35em;}
+	.assignment_match .expert_meta p { padding:0; margin:0;}
 	.matching_wrapper {border:1px solid blue;}
 	.matching_wrapper td {line-height:1.1em; vertical-align:middle;}
 	.assignment_match_header .matching_term {display:block; @include wordwrap;}
