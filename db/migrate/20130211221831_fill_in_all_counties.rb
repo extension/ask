@@ -2,7 +2,7 @@ class FillInAllCounties < ActiveRecord::Migration
   # this is to cover the case of experts and groups who have added a state and no counties, but the 'all county' county was not added.
   def up
     # fill in all counties for experts
-    experts = User.where(kind: 'User').each do |u|
+    experts = User.includes(:expertise_locations).where(kind: 'User').each do |u|
       expertise_locations = u.expertise_locations
       if expertise_locations.length > 0
         expertise_locations.each do |l|
@@ -14,7 +14,7 @@ class FillInAllCounties < ActiveRecord::Migration
       end
     end
     
-    groups = Group.all.each do |g|
+    groups = Group.includes(:expertise_locations).all.each do |g|
       expertise_locations = g.expertise_locations
       if expertise_locations.length > 0
         expertise_locations.each do |l|
