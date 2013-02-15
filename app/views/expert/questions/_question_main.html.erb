@@ -32,7 +32,7 @@
   <%= time_ago_in_words(@question.created_at) %> ago 
   
   <% if @question.submitter %>
-    by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
+    by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %> (This person has <%= link_to "submitted  #{@question.submitter.submitted_questions.length} questions", expert_user_submitted_path(@question.submitter) %>.)
   <% end %>
 </p>
 
