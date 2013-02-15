@@ -26,12 +26,10 @@
   <h3>Questions asked to this group</h3>
     <% @open_questions.each do |q| %> 
       <%= link_to question_path(q.id) do %>
-        <% if q.title.present? %>
+                  
           <h3><%= format_text_for_display(q.title) -%></h3>
-        <% else %>
-          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
-        <% end %>
-        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
+          <p><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
+
       <% end %>
       
       <p>
