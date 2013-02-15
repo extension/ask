@@ -422,12 +422,16 @@ class Expert::QuestionsController < ApplicationController
       @question.location_id = params[:location_id]
       if params[:county_id].present?
         @question.county_id = params[:county_id]
+      else
+        @question.county_id = @question.location.get_all_county.id
       end
     elsif params[:location_id] == ''
       @question.location_id = nil
     end  
     
-    @question.county_id = @question.location.get_all_county.id if @question.location.present? && !@question.county.present?
+    if params[:location_id].blank? && params[:county_id].blank?
+      @question.county_id = @question.location.get_all_county.id if @question.location.present? && !@question.county.present?
+    end
     
     # we first want to get all experts from the county, then check experts with state from all counties, then check experts from a state that 
     # say they'll answer from anywhere, then check experts who will just take questions from anywhere.  
