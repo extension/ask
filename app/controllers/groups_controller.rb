@@ -12,7 +12,7 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find(params[:id])
     @group_tags = @group.tags
-    @open_questions = @group.open_questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
+    @open_questions = @group.questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
   end
   
   def ask

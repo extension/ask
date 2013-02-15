@@ -239,6 +239,7 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
+  .aboutme {clear:both; line-height:1.5em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.3em;}
   .answered_question_images img {float:left; margin-right:1em;}
   .answered_question_images {margin-bottom:2.5em;}
   .answered_question_images_wrapper {width:120px; height:120px; overflow:hidden; border:1px solid #bbb; float:left; margin-right:1em; background:#D4D4D4;}
