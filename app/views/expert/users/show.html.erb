@@ -8,7 +8,9 @@
     <h1>
       <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>
     </h1>
-    
+    <% if @user.title.present? %>
+      <h3 class="expert_title"><%= @user.title %></h3>
+    <% end %>
     <p><%= link_to "Public Profile", user_path(@user.id), :class => "btn btn-small" %></p>
     
     <% if @user.away %>
