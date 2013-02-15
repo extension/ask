@@ -1,7 +1,6 @@
 @import "_variables";
 
 body {
-  
   .extension_nav_public {margin:0;padding:0; background: #2f3b3e;}
   .extension_nav_public ul {text-align: center;  padding: .35em 0; margin: 0; }
   .extension_nav_public li {display:inline; padding:0 1em; border-right:1px solid #666;}
@@ -239,6 +238,13 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
+  .clearing {clear:both;}
+  .county_list {list-style:none;}
+	.county_list li {padding:.2em;}
+  .group_list_avatar {float:left; margin-right:1em;}
+  .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5; clear:left;}
+  .group_in_group_list.inactive_group {padding:1em 1em .5em;}
+  .group_in_group_list h4 {margin:0;};
     #location_list {padding:0; margin:3em 0;}
   #user_masthead {margin:0 0 .75em; border-bottom:1px solid #e5e5e5; padding-bottom:1em;}
 	#user_masthead a.medium {float:left; margin: 0 1.5em 2.5em 0;}
