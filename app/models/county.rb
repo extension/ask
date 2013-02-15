@@ -20,7 +20,7 @@ class County < ActiveRecord::Base
       return self[:name]
     else
       if self[:name] == 'All'
-        return self[:name] + " Counties"
+        return "Entire state"
       else
         return self[:name] + " County"
       end
