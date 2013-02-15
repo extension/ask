@@ -27,14 +27,6 @@
 
 </aside>
 
-
-<% if  @group.description? %>
-  <aside>
-    <p><%= format_text_for_display(@group.description) %></p>
-  </aside>
-<% end %>
-
-
 <aside>
   <%= render :partial => 'location_summary' %>
 </aside>

@@ -63,7 +63,11 @@
 
 
 <div id="secondary" class="span6">
-  <h4>About <%= @user.name %></h4>
+  <h3>About <%= @user.name %></h3>
+  <% if @user.title.present? %>
+    <p class="expert_title"><%= @user.title %></p>
+    <p><%= (@user.county.present? ? "#{@user.county.name}, " : "") + (@user.location.present? ? "#{@user.location.abbreviation}" : "") %></p>
+  <% end %>
   <% if @user.tags.size > 0 %>
     <h5>Tags</h5>
     <p class="tags">  

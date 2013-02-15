@@ -247,7 +247,7 @@ class Question < ActiveRecord::Base
         assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
       end
       if !assignee && self.location.present?
-        assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
+        assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
       end
       if !assignee 
         group_assignee_ids = group.assignees.collect{|ga| ga.id}

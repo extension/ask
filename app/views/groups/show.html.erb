@@ -10,7 +10,9 @@
     </h1>
     
     <% if  @group.description? %>
-      <p><%= format_text_for_display(@group.description) %></p>
+      <div class="aboutme">
+        <%= format_text_for_display(@group.description) %>
+      </div>
     <% end %>
     
     <% if @group.widget_active %>
@@ -21,15 +23,13 @@
   <% if @open_questions.size == 0 %>
     <h3>This group does not currently have any public questions.</h3>
   <% else %>
-  <h3>Open Questions</h3>
+  <h3>Questions asked to this group</h3>
     <% @open_questions.each do |q| %> 
       <%= link_to question_path(q.id) do %>
-        <% if q.title.present? %>
+                  
           <h3><%= format_text_for_display(q.title) -%></h3>
-        <% else %>
-          <h3><%= format_text_for_display(q.body.truncate(80, separator: ' ')) %></h3>
-        <% end %>
-        <p><%= format_text_for_display(q.body.truncate(320, separator: ' ')) %></p>
+          <p><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
+
       <% end %>
       
       <p>
@@ -44,7 +44,7 @@
 
       <% if q.tags.size > 0 %>
         <% q.tags.each do |tag| %>
-          <span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
+          <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
         <% end %>
       <% end %>
        Posted <%= time_ago_in_words(q.created_at) %> ago

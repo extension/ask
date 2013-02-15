@@ -54,9 +54,18 @@
         
             <div class="span4">
             <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to raw(expert_user(expert)), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
-            <br>
-            <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
-            <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[expert.id]) %></p>
+            <div class="expert_meta">
+              <% if expert.title.present? %>
+                <p><%= expert.title %></p>
+              <% end %>
+              <p><%= (expert.county.present? ? "#{expert.county.name}, " : "") + (expert.location.present? ? "#{expert.location.abbreviation}" : "") %></p>
+            </div>
+            <% if display_handling_rate(@handling_rates[expert.id]).to_i > 0 %>
+              <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
+              <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[expert.id]) %></p>
+            <% else %>
+              <p><span class="handling_rate none">No current handling rate</span></p>
+            <% end %>
             <span class="downplay">last active <%= time_ago_in_words(expert.last_active_at) %> ago</span>
             </div>
             

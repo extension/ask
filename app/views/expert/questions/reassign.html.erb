@@ -19,8 +19,8 @@
 
 
 <% if (!@question.location.present?) && (@question.tags.size == 0) %>
-  <h3 class="nomatches">We can't make a recommendation any experts or groups because this question does not have any tags or a location. <%= link_to "Please add at least one tag", expert_question_path(@question.id) %> on the Question page.</h3>
-  
+  <h3 class="nomatches">We can't recommend any experts or groups because this question does not have any tags or a location. <%= link_to "Please add at least one tag or set the location", expert_question_path(@question.id) %>, and we can give you a match grid like the one below.</h3>
+  <p style="max-width:670px;"><%= image_tag("grid_example2.png", :size => "670x554") %></p>
 <% else %>
 
 <div id="reassign_wrapper">

@@ -19,7 +19,11 @@ class County < ActiveRecord::Base
       # return self.name + " (Non-county incorporation)"
       return self[:name]
     else
-      return self[:name] + " County"
+      if self[:name] == 'All'
+        return "Entire state"
+      else
+        return self[:name] + " County"
+      end
     end
   end
 

@@ -7,6 +7,14 @@
 <div id="main" class="span8">
   <%= link_expert_group_avatar(@group) %>
   <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span> <%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></h1>
+
+  <div class="aboutme">
+    <% if @group.description? %>
+      <%= format_text_for_display(@group.description) %>
+    <% else %>
+      <p>This group hasn't added a description yet...</p>
+    <% end  %>    
+  </div>
   
   
   <ul class="nav nav-tabs">

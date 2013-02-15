@@ -1,3 +1,10 @@
-<h1>Questions received from <%= @user.public_name %></h1>
+<h1><%= @question_count > 1 ? "#{@question_count} Questions" : "#{@question_count} Question" %> received from <%= @user.public_name %></h1>
+
+<% if @user.has_exid? %>
+  <h3>This person has an eXtension account:</h3>
+  <%= link_to expert_user_path(@user) do %>
+    <%= link_expert_user_avatar(@user, :thumb) %> <%= link_expert_user(@user) %>
+  <% end %>
+<% end %>
 
 <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
