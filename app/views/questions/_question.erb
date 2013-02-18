@@ -167,8 +167,8 @@
         <% elsif @question.assigned_group.present? %>
           <%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
         <% end %>
-      
-        <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
+        
+        <% if @question_responses.size > 0 and @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
     	      <a href="#submitter_followup"><p class="additional_comment_toggle btn">Reply to the expert</p></a>
     	  <% end %>
       
