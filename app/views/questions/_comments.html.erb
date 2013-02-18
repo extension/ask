@@ -1,8 +1,12 @@
 <% if !@question.is_private %>
   
-  <h3 class="comment_header">Comment on this Question</h3>
+  <% if @question.comments.present? %>
+    <h3><%= @question.comments.size > 1 ? "#{@question.comments.size} Comments" : "1 Comment"%> <span class="comments_form_toggle cursor link">Add a Comment</span></h3>
+  <% else %>
+    <h3>No Comments <span class="comments_form_toggle cursor link">Add a Comment</span></h3>
+  <% end %>
 
-<div id="comments_form" class="commentfield_container">
+  <div id="comments_form" class="commentfield_container">
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
       <div class="commentfield">
@@ -31,7 +35,7 @@
   <% end %>
   
   <br class="clearing" />
-</div>
+  </div>
 <% end %>
 
 <br class="clearing" />
@@ -42,6 +46,8 @@
 
 
 <script class="code" type="text/javascript">
+  
+  
     // sitv = sign in to vote
     $('.nojs_display').hide();
     
@@ -64,6 +70,12 @@
       .mouseleave(function() {
         $(this)
           .fadeOut('fast');
+    });
+    
+    $("#comments_form").hide();
+
+    $(".comments_form_toggle").click(function () {
+      $("#comments_form").toggle();
     });
 
 </script>
