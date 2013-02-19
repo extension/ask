@@ -9,7 +9,7 @@ module ApplicationHelper
   # TODO: Need to fix this
   def format_text_for_display(content)
     #return word_wrap(simple_format(auto_link(content, :all, :target => "_blank")))
-    return simple_format(content)
+    return simple_format(content.gsub(/[[:space:]]/, ' '))
   end
 
   def humane_date(time)

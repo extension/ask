@@ -1,4 +1,4 @@
-<% @page_title = raw("\"#{@question.title}\"") %>
+<% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
 
 <div id="main" class="span8">
   
