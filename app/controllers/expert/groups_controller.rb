@@ -262,6 +262,13 @@ class Expert::GroupsController < ApplicationController
       end
       GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
     end
+    
+    # remove this person's listview prefs for this group if it exists
+    pref = current_user.filter_preference
+    if pref.present? && pref.setting[:question_filter][:groups].present? && pref.setting[:question_filter][:groups][0].to_i == @group.id
+      pref.setting[:question_filter].merge!({:groups => nil})
+      pref.save
+    end
   end
   
   def unlead
