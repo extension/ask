@@ -17,6 +17,7 @@ class GroupMailer < ActionMailer::Base
     @new_member = options[:new_member]
     @subject = "Someone joined your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Someone has joined #{@group.name}"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -43,6 +44,7 @@ class GroupMailer < ActionMailer::Base
     @former_member = options[:former_member]
     @subject = "Someone left your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Someone has left #{@group.name}"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -69,6 +71,7 @@ class GroupMailer < ActionMailer::Base
     @new_leader = options[:new_leader]
     @subject = "New Leader for Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "New Leader for #{@group.name}"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -95,6 +98,7 @@ class GroupMailer < ActionMailer::Base
     @former_leader = options[:former_leader]
     @subject = "A leader left your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "A Leader Has Left #{@group.name}"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
