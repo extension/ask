@@ -1,112 +1,26 @@
-<!DOCTYPE html>
+<%= render :partial => 'partials/public_email_header' %>
 
-<html style="margin: 0; padding: 0;">
+<tr>
+  <td class="content padding">
+    <p>Hello,</p>
+    <p>A week ago, you received an answer to a question you asked using our eXtension Ask an Expert system.</p>
+    <p>We’re working to improve the question and answer experience, and your feedback is very important.  Your responses are confidential, and will only be viewed when grouped with other responses. Any information that might identify you personally will be removed before the results are shared. We hope you will take a few minutes and complete our short evaluation survey.</p>
+    
+    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_the_evaluation_survey.png" : "#{ssl_webmail_logo}" -%>
+    
+    <%- if @example_survey %>
+      <p class="button"><%= link_to(image_tag(button_url, alt: "View the evaluation survey", width: "245"), example_evaluation_url) -%></p>
+    <%- else -%>
+      <p class="button"><%= link_to(image_tag(button_url, alt: "View the evaluation survey", width: "245"), view_evaluation_url(:fingerprint => @question.question_fingerprint)) -%></p>
+    <%- end -%>
+    
+    <p>Thank you for using eXtension Ask an Expert!</p>
 
-<head>
-  <title>Ask an Expert Evaluation</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <%= render(partial: 'partials/mail_styles') %>
-  <%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
-</head>
-<body>
+    <p>Sincerely,<br />
+    Kevin Gamble, Ph.D.<br />
+    National eXtension Initiative<br />
+    kevin.gamble@extension.org</p>
+  </td>
+</tr>
 
-<div id="wrapper">
-  <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
-  <%- if Settings.app_location != 'production' -%>
-    <tr class="demotagline">
-      <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
-    </tr>
-  <%- end -%>
-  <tr>
-    <th align="left" class="bgcolor">
-      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
-      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
-    </th>
-  </tr>
-  
-  <tr class="tagline">
-    <td>Ask an Expert Evaulation</td>
-  </tr>
-  <tr class="options">
-    <td>
-      <%- if @mailer_cache -%>
-        <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-      <%- else -%>
-        <a href="">View in a browser</a> 
-      <%- end -%>
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
-          <tr>
-            <td id="email_body">
-              <p>Hello,</p>
-              <p>A week ago, you received an answer to a question you asked using our eXtension Ask an Expert system.</p>
-              <p>We’re working to improve the question and answer experience, and your feedback is very important.  Your responses are confidential, and will only be viewed when grouped with other responses. Any information that might identify you personally will be removed before the results are shared. We hope you will take a few minutes and complete our short evaluation survey.</p>
-            </td>
-          </tr>
-              <tr>
-                <td id="callout">
-                  <table cellpadding="0" cellspacing="0" border="0" align="left">
-                    <tr>
-                      <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                      <%- if @example_survey %>
-                        <td class="callout"><%= link_to("View the evaluation survey", example_evaluation_url) -%></td>
-                      <%- else -%>
-                        <td class="callout"><%= link_to("View the evaluation survey", view_evaluation_url(:fingerprint => @question.question_fingerprint)) -%></td>
-                      <%- end -%>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td>
-              
-              <p>Thank you for using eXtension Ask an Expert!</p>
-
-              <p>
-              Sincerely,<br/><br/>
-              Kevin Gamble, Ph.D.<br/>
-              National eXtension Initiative<br/>
-              kevin.gamble@extension.org</p>
-
-            </td>
-          </tr>
-
-          <tr>
-            <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
-          </tr>
-        </table>
-
-      
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="footer">
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-        <tr>
-          <td class="bgcolor">
-            <p><p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals.eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to  the terms of use http://www.extension.org/main/termsofuse which may be revised at any time.</p></p>
-          </td>
-        </tr>
-        <tr class="options">
-          <td>
-            <%- if @mailer_cache -%>
-              <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-            <%- else -%>
-              <a href="">View in a browser</a> 
-            <%- end -%>
-          </td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-      </table>
-    </td>
-  </tr>
-</table>
-</div>  
-</body>
-</html>
+<%= render :partial => 'partials/public_email_footer' %>
