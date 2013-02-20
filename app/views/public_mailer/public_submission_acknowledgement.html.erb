@@ -19,7 +19,7 @@
 </tr>
 
 <tr>
-  <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Send a reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("If you need to send more information, edit your question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
 </tr>
 
 <%= render :partial => 'partials/public_email_footer' %>
