@@ -19,6 +19,7 @@ class InternalMailer < ActionMailer::Base
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "You have a new Ask an Expert question (##{@question.id})"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -44,6 +45,7 @@ class InternalMailer < ActionMailer::Base
     @question = options[:question]
     @subject = "Your Ask an Expert question has been reassigned (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -69,6 +71,7 @@ class InternalMailer < ActionMailer::Base
     @groups = options[:groups]
     @subject = "Ask an Expert Daily Summary"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -96,6 +99,7 @@ class InternalMailer < ActionMailer::Base
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -124,6 +128,7 @@ class InternalMailer < ActionMailer::Base
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -150,6 +155,7 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -177,6 +183,7 @@ class InternalMailer < ActionMailer::Base
     @internal_comment = @internal_comment_event.response
     @subject = "Another expert has posted a comment to your Ask an Expert question (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -204,6 +211,7 @@ class InternalMailer < ActionMailer::Base
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -231,6 +239,7 @@ class InternalMailer < ActionMailer::Base
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Your Question Has a Response"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
