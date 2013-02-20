@@ -3,7 +3,7 @@
 <html style="margin: 0; padding: 0;">
 
 <head>
-  <title>Ask an Expert Question Submitted</title>
+  <title><%= @title %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <%= render(partial: 'partials/mail_styles') %>
 	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
@@ -18,14 +18,14 @@
     </tr>
   <%- end -%>
   <tr>
-    <th align="left" class="bgcolor">
-      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
-      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
+    <th align="left" class="eXorange">
+      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_extension_logo.png" : "#{ssl_webmail_logo}" -%>
+      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask an Expert") %></h1>
     </th>
   </tr>
   
   <tr class="tagline">
-    <td>Ask an Expert Question Submitted</td>
+    <td><%= @title %></td>
   </tr>
   <tr class="options">
     <td>
@@ -42,75 +42,73 @@
       
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
-            <td id="email_body">
+            <td class="content padding">
               <p>Hello,</p>
 
-              <p>Thank you for submitting your question.</p>
+              <p>Thank you for your question. It has been assigned to one of our experts and we will try to answer it within 48 hours.</p>
 
-              <p>Your question has been assigned to one of our experts and they will try to answer it within 48 hours.</p>
-
-              <p>We will notify you with an email when our experts have responded and you can view your question and any answers at our website:</p>
+              <p>Your answer will be sent to this email address. In the meantime, you can <%= link_to("view or edit your question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</p>
             </td>
           </tr>
               <tr>
-                <td id="callout">
+                <td id="question_block">
                   <table cellpadding="0" cellspacing="0" border="0" align="left">
                     <tr>
-                      <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                      <td class="callout"><%= link_to("View your Question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></td>
-                    </tr>
-                    <tr>
-                      <td></td>
                       <td>
-                        <h4><%= @question.title %></h4>
-                        <%= @question.body %>
+                        <div class="question_title"><%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
+                        <div class="question_body"><%= format_text_for_display(@question.body) %></div>
                       </td>
                     </tr>
                   </table>
                 </td>
               </tr>
               <tr>
-                <td>
+                <td class="content padding">
 
-              <p>You can also edit your question if you need to clarify or correct any information. A better question usually gets a better answer. Thanks! (Your question is editable until one of our experts responds.)</p>
+              <p>You can edit your question to clarify or correct any information. A better question usually gets a better answer! (Your question is editable until one of our experts responds.)</p>
               
-              <p>Thank you for using Ask an Expert.</p>
+              <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_or_edit_your_question.png" : "#{ssl_webmail_logo}" -%>
+              <p id="button"><%= link_to(image_tag(button_url, alt: "View or Edit Your Question"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
 
             </td>
           </tr>
 
           <tr>
-            <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
+            <td class="meta_details1">Thank you for using Ask an Expert.</td>
+          </tr>
+
+          <tr>
+            <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Send a reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
+          </tr>
+          
+          <tr>
+            <td class="footer">
+              <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
+                <tr>
+                  <td class="bgcolor">
+                    <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the terms of use at http://www.extension.org/main/termsofuse which may be revised at any time.</p>
+                  </td>
+                </tr>
+                <tr class="options">
+                  <td>
+                    <%- if @mailer_cache -%>
+                      <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+                    <%- else -%>
+                      <a href="">View in a browser</a> 
+                    <%- end -%>
+                  </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+              </table>
+            </td>
           </tr>
         </table>
       
       
     </td>
   </tr>
-  
-  <tr>
-    <td class="footer">
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-        <tr>
-          <td class="bgcolor">
-            <p><p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals.eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to  the terms of use http://www.extension.org/main/termsofuse which may be revised at any time.</p></p>
-          </td>
-        </tr>
-        <tr class="options">
-          <td>
-            <%- if @mailer_cache -%>
-              <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-            <%- else -%>
-              <a href="">View in a browser</a> 
-            <%- end -%>
-          </td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-      </table>
-    </td>
-  </tr>
+
 </table>
 </div>  
 </body>
 </html>
-

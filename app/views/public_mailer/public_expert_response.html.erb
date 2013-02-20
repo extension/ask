@@ -3,7 +3,7 @@
 <html style="margin: 0; padding: 0;">
 
 <head>
-  <title>Ask an Expert Answer</title>
+  <title><%= @title %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <%= render(partial: 'partials/mail_styles') %>
 	<%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
@@ -25,7 +25,7 @@
   </tr>
   
   <tr class="tagline">
-    <td>Ask an Expert Answer</td>
+    <td><%= @title %></td>
   </tr>
   <tr class="options">
     <td>
@@ -43,18 +43,16 @@
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
             <td id="reminder_title">
-              There's a response to your 'Ask an Expert' Question 
+              Here's the response to your question:
             </td>
           </tr>
-          
-          
           <tr>
-            <td id="callout">
+            <td class="content padding">
               <table cellpadding="0" cellspacing="0" border="0" align="left">
                 
                 <tr>
                   <td>
-                    <div class="response"><strong>Response:</strong> <%= format_text_for_display(@response.body) %></div>
+                    <div class="response"><%= format_text_for_display(@response.body) %></div>
                     <div class="signature"><%= format_text_for_display(@response.signature) %></div>
                   </td>
                 </tr>
