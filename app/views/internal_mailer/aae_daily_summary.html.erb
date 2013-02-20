@@ -1,102 +1,25 @@
-<!DOCTYPE html>
+<%= render :partial => 'partials/public_email_header' %>
 
-<html style="margin: 0; padding: 0;">
-
-<head>
-  <title>Ask an Expert Daily Summary</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <%= render(partial: 'partials/mail_styles') %>
-  <%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
-</head>
-<body>
-  
-  
-  <div id="wrapper">
-    <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
-    <%- if Settings.app_location != 'production' -%>
-      <tr class="demotagline">
-        <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
+<tr>
+  <td class="content padding">
+    <h3>Your Groups Have Questions Older Than 24 Hours</h3>
+    <p class="meta">You can change your <%= link_to 'notification settings', expert_user_groups_path(@user.id) %> on your Group page</p>
+    
+    <h3>The Oldest Question in Each Group</h3>
+    <table>
+    <% @groups.each do |group| %>
+      <tr>
+        <td class="group_question">
+          <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_url(group.id) %></p>
+          <% @question = group.open_questions.order('created_at DESC').first %>
+          <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
+          <p>Submitted <strong><%= time_ago_in_words(@question.created_at) %></strong> ago</p>
+          <p class="meta"><%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
+        </td>
       </tr>
-    <%- end -%>
-    <tr>
-      <th align="left" class="bgcolor">
-        <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
-        <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
-      </th>
-    </tr>
+    <% end %>
+    </table>
+  </td>
+</tr>
 
-    <tr class="tagline">
-      <td>Ask an Expert Daily Summary</td>
-    </tr>
-    <tr class="options">
-      <td>
-        <%- if @mailer_cache -%>
-          <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-        <%- else -%>
-          <a href="">View in a browser</a> 
-        <%- end -%>
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-
-        <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
-            <tr>
-              <td id="reminder_title">
-                There are questions in the following Groups that are more than 24 hours old that you've chosen to be notified about
-              </td>
-            </tr>
-            <tr>
-              <td id="callout">
-                <table cellpadding="0" cellspacing="0" border="0" align="left">
-                  <tr>
-                    <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>                    
-                    <td class="callout">View Unanswered Questions</td>
-                  </tr>
-                  <% @groups.each do |group| %>
-                  <tr>
-                    <td></td>
-                    <td class="group"><p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_url(group.id) %></p></td>
-                  </tr>
-                  <% end %>
-                </table>
-              </td>
-            </tr>
-
-            <tr>
-              <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
-            </tr>
-
-          </table>
-
-
-      </td>
-    </tr>
-
-    <tr>
-      <td class="footer">
-        <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-          <tr>
-            <td class="bgcolor">
-              <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. You can change your notification settings in <%= link_to "your preferences", expert_settings_assignment_url() %>.</p>
-            </td>
-          </tr>
-          <tr class="options">
-            <td>
-              <%- if @mailer_cache -%>
-                <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-              <%- else -%>
-                <a href="">View in a browser</a> 
-              <%- end -%>
-                <%= link_to "Change your email settings", expert_settings_assignment_url() %>
-            </td>
-          </tr>
-          <tr><td>&nbsp;</td></tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-  </div>  
-  </body>
-  </html>  
+<%= render :partial => 'partials/internal_email_footer' %>
