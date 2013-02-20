@@ -42,46 +42,31 @@
       
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
           <tr>
-            <td id="reminder_title">
-              Here's the response to your question:
-            </td>
-          </tr>
-          <tr>
             <td class="content padding">
-              <table cellpadding="0" cellspacing="0" border="0" align="left">
-                
-                <tr>
-                  <td>
-                    <div class="response"><%= format_text_for_display(@response.body) %></div>
-                    <div class="signature"><%= format_text_for_display(@response.signature) %></div>
-                  </td>
-                </tr>
-                
-                <tr>
-                  <td class="callout_alt">
-                    <h2>Need to reply to the expert?</h2>
-                    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/reply_to_the_expert_button.png" : "#{ssl_webmail_logo}" -%>
-                    <p id="reply_button"><%= link_to(image_tag(button_url, alt: "Ask an Expert"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
-                  </td>
-                </tr>
-              </table>
+              <h3>Here's the response to your question:</h3>
+              <div class="response"><%= format_text_for_display(@response.body) %></div>
+              <div class="signature"><%= format_text_for_display(@response.signature) %></div>
+
+              <h2>Need to reply to the expert?</h2>
+              <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/reply_to_the_expert_button.png" : "#{ssl_webmail_logo}" -%>
+              <p id="reply_button"><%= link_to(image_tag(button_url, alt: "Ask an Expert"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
             </td>
           </tr>
-          
+
           <tr>
-            <td class="meta_details1">Thank you for using Ask an Expert.</td>
+            <td class="thank_you">Thank you for using Ask an Expert.</td>
           </tr>
 
           <tr>
             <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Send a reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
           </tr>
-          
+
           <tr>
             <td class="footer">
               <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
                 <tr>
                   <td class="bgcolor">
-                    <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the terms of use at http://www.extension.org/main/termsofuse which may be revised at any time.</p>
+                    <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the <%= link_to("Terms of Use", "http://www.extension.org/main/termsofuse") %> which may be revised at any time.</p>
                   </td>
                 </tr>
                 <tr class="options">
@@ -98,8 +83,8 @@
             </td>
           </tr>
         </table>
-      
-      
+
+
     </td>
   </tr>
 

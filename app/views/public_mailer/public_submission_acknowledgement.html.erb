@@ -46,35 +46,21 @@
               <p>Hello,</p>
 
               <p>Thank you for your question. It has been assigned to one of our experts and we will try to answer it within 48 hours.</p>
-
-              <p>Your answer will be sent to this email address. In the meantime, you can <%= link_to("view or edit your question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</p>
-            </td>
-          </tr>
-              <tr>
-                <td id="question_block">
-                  <table cellpadding="0" cellspacing="0" border="0" align="left">
-                    <tr>
-                      <td>
-                        <div class="question_title"><%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
-                        <div class="question_body"><%= format_text_for_display(@question.body) %></div>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td class="content padding">
-
-              <p>You can edit your question to clarify or correct any information. A better question usually gets a better answer! (Your question is editable until one of our experts responds.)</p>
+              <p>In the meantime, you can <%= link_to("view or edit your question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%> to clarify or correct any information. A better question usually gets a better answer! (Your question is editable until one of our experts responds.)</p>
               
               <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_or_edit_your_question.png" : "#{ssl_webmail_logo}" -%>
               <p id="button"><%= link_to(image_tag(button_url, alt: "View or Edit Your Question"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
-
+            </td>
+          </tr>
+          <tr>
+            <td class="content padding question_block">
+              <div class="question_title"><%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
+              <div class="question_body"><%= format_text_for_display(@question.body) %></div>
             </td>
           </tr>
 
           <tr>
-            <td class="meta_details1">Thank you for using Ask an Expert.</td>
+            <td class="thank_you">Thank you for using Ask an Expert.</td>
           </tr>
 
           <tr>
@@ -86,7 +72,7 @@
               <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
                 <tr>
                   <td class="bgcolor">
-                    <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the terms of use at http://www.extension.org/main/termsofuse which may be revised at any time.</p>
+                    <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the <%= link_to("Terms of Use", "http://www.extension.org/main/termsofuse") %> which may be revised at any time.</p>
                   </td>
                 </tr>
                 <tr class="options">
