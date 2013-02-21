@@ -19,8 +19,7 @@
   <%- end -%>
   <tr>
     <th align="left" class="eXorange">
-      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_extension_logo.png" : "#{ssl_webmail_logo}" -%>
-      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask an Expert") %></h1>
+      <h1 id="ask_logo"><%= image_tag("#{ssl_root_url}assets/email_extension_logo.png", alt: "Ask an Expert") %></h1>
     </th>
   </tr>
   
