@@ -2,10 +2,10 @@
 
 <tr>
   <td class="content padding">
-    <h3>There is an Expert Comment on a Question Assigned to You</h3>
+    <h3>An Expert Added a Note to Your Question</h3>
     
-    <p class="comment"><strong>Comment:</strong> <%= @internal_comment %></p>
-    <p class="meta">This comment can be viewed in the <%= link_to("question's history", expert_question_url(@question, :anchor => "history")) -%>.</p>
+    <p class="comment"><strong>Note:</strong> <%= @internal_comment %></p>
+    <p class="meta">This note can be viewed in the <%= link_to("question's history", expert_question_url(@question, :anchor => "history")) -%>.</p>
     
     <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question.id), :class => "action" %> as soon as possible. Thanks for your help!</p>
     

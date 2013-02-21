@@ -87,7 +87,7 @@ module QuestionsHelper
     when QuestionEvent::PUBLIC_RESPONSE
       return "Comment posted by <strong>Submitter</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::INTERNAL_COMMENT 
-      comment_msg = "Comment posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      comment_msg = "Note posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       comment_msg = comment_msg + " <span class=\"comment\">#{format_text_for_display(q_event.response)}</span>" if q_event.response
       return comment_msg.html_safe
     else

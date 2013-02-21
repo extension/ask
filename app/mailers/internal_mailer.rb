@@ -184,7 +184,7 @@ class InternalMailer < ActionMailer::Base
     @subject = "Another expert has posted a comment to your Ask an Expert question (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
-    @title = "New Comment on a Question Assigned To You"
+    @title = "New Note on a Question Assigned To You"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
