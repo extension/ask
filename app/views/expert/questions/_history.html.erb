@@ -1,11 +1,15 @@
 <h3>History <small>(only seen by AaE experts)</small></h3>
 
-<p id="history_comment_toggle"><span class="btn">Add a comment to the history</span></p>
+<p id="history_comment_toggle"><span class="btn">Add a Note</span></p>
 
-<div id="history_comment" style="display:none;">
-  <%= form_tag(expert_questions_add_history_comment_path(:id => @question.id)) do %>  
+<div id="history_comment" class="formy" style="display:none;">
+  <%= form_tag(expert_questions_add_history_comment_path(:id => @question.id)) do %>
+    <h3>Notes are only seen by Experts. The submitter cannot see them.</h3>
+    <p>Notes are added to the Question history. Additionally, the current assigned expert is sent an email notification when a new note is added.</p>
+    
     <p><%= text_area_tag "history_comment", nil, {:cols => 40, :rows => 2, :class => "l"} %></p>
-    <p><%= submit_tag "Post", :class => "btn" %></p>
+    <p><%= submit_tag "Add Note to the Question History", :class => "btn btn-primary" %></p>
+    
   <% end %>
 </div>
 
