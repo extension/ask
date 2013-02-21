@@ -10,10 +10,13 @@
     <% @groups.each do |group| %>
       <tr>
         <td class="group_question">
-          <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_url(group.id) %></p>
+          <p><%= get_avatar_for_group(group, :thumb, false, false) %> <%= link_to group.name, expert_group_url(group.id) %></p>
           <% @question = group.open_questions.order('created_at DESC').first %>
             <% if @question %>
             <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
+            <% if @question.assignee_id.present? %>
+              <p><%= link_expert_user(@question.assignee) %> is the assigned expert.</p>
+            <% end %>
             <p>Submitted <strong><%= time_ago_in_words(@question.created_at) %></strong> ago</p>
             <p class="meta"><%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
             <% else %>
