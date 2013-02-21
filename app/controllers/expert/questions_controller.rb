@@ -436,11 +436,9 @@ class Expert::QuestionsController < ApplicationController
     end
     
     question_tags_array = @question.tags.all
-
-    @question.tags.each do |tag|
-      @filter_terms <<  tag.name
-    end
-
+    
+    @filter_terms = question_tags_array.map(&:name)
+    
     # if we have tags associated with this question
     if question_tags_array.present?
       # populate experts
