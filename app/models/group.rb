@@ -41,9 +41,9 @@ class Group < ActiveRecord::Base
   scope :public_visible, where(is_test: false, widget_active: true, group_active: true)
   scope :assignable, conditions: {is_test: false, group_active: true}
 
-  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_counties.county_id = #{county_id}")}
-  scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("group_locations.location_id = #{location_id}")}
-  scope :with_expertise_location_all_counties, lambda {|location_id| includes(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
+  scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
+  scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("group_locations.location_id = #{location_id}")}
+  scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
