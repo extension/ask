@@ -144,6 +144,11 @@ class ApplicationController < ActionController::Base
     
     @filter_description = ""
 
+    if @county_pref.present?
+      condition_array << "questions.county_id = #{@county_pref.to_i}"
+      @county = County.find_by_id(@county_pref)
+      @filter_description += " #{@county.name},"
+    end
     
     if @location_pref.present?
       condition_array << "questions.location_id = #{@location_pref.to_i}"
@@ -151,16 +156,11 @@ class ApplicationController < ActionController::Base
       @filter_description += " #{@location.name} "
     end
     
-    if @county_pref.present?
-      condition_array << "questions.county_id = #{@county_pref.to_i}"
-      @county = County.find_by_id(@county_pref)
-      @filter_description += " #{@county.name} "
-    end
-    
     if @group_pref.present?
       condition_array << "questions.assigned_group_id = #{@group_pref.to_i}"
       @group = Group.find_by_id(@group_pref)
-      @filter_description += " #{@group.name} "
+      @filter_description += "|" if @filter_description.present?
+      @filter_description += " Group: #{@group.name} "
     end
     
     condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
@@ -177,7 +177,8 @@ class ApplicationController < ActionController::Base
       
     if @tag_pref.present?
       @tag = Tag.find_by_id(@tag_pref)
-      @filter_description += " #{@tag.name} "
+      @filter_description += "|" if @filter_description.present?
+      @filter_description += " Tag: #{@tag.name} "
       if !list_view.present?
         return Question.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
       elsif list_view == 'resolved'

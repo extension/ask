@@ -1,14 +1,17 @@
 <% if @question.current_response.blank? %>
-    <p class="inc_descriptive editpitch">
-    <%= link_to_function 'Edit my question', "$('#edit_question').toggle();" %>. Need to clarify or correct any information? Your question is editable until one of our experts responds.</p>
+  <div class="editpitch">
+    <h3>Need to clarify or correct your question?</h3>
+    <p>Your question is editable until one of our experts responds.</p>
+    <span class="edit_question_toggle btn btn-primary">Edit my question</span> 
+  </div>
 
-    <div id="edit_question" style="display:none">
+  <div id="edit_question" class="formy">
+    <h2>Edit Your Question</h2>
 	  <%= form_for @question do |f| %>
 	      <%= f.text_field :title, {:type => "text"} %> <br />
 	      <%= f.text_area :body, :rows => "10", :cols => "60", class: 'wysiwyg' %>
 		  <div id="aae_image_div">
-			<h3>Images</h3>
-	        <p>You can include up to 3 images:</p>
+			<h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
 			<% @question.images.each do |image| %>
 			  <%= f.fields_for :images, image do |image_fields| %>
@@ -26,9 +29,18 @@
 			<% end %>
 		  </div>
 		  		
-	      <%= submit_tag "Save changes", :class => 'btn' %>    
+	      <%= submit_tag "Save changes", :class => 'btn btn-primary' %>    
 	      <%= link_to_function "Cancel", "$('#edit_question').hide()" %>
 	      </p>
 	  <% end %>
 	</div>
 <% end %>
+
+
+<script class="code" type="text/javascript">
+  $("#edit_question").hide();
+  
+  $(".edit_question_toggle").click(function () {
+    $("#edit_question").toggle();
+  });
+</script>

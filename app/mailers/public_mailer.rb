@@ -17,6 +17,7 @@ class PublicMailer < ActionMailer::Base
     @question = options[:question]
     @subject = "Your Ask an Expert question has an answer (Question:#{@question.id})"
     @response = @question.responses.last
+    @title = "Your Question Has a Response"
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
@@ -51,6 +52,7 @@ class PublicMailer < ActionMailer::Base
       @question = options[:question]
       @subject = "Thank you for your Ask an Expert question (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+      @title = "Your Question Has Been Submitted"
       
       if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
         @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
@@ -85,6 +87,7 @@ class PublicMailer < ActionMailer::Base
 
     @subject = "Tell us about your Ask an Expert experience (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Ask an Expert Evaulation"
 
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -112,6 +115,7 @@ class PublicMailer < ActionMailer::Base
     
     @subject = "Someone has replied to your Ask an Expert comment (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Someone Posted a Reply To Your Comment"
 
     if(!@user.email.blank?)
       if(@will_cache_email)

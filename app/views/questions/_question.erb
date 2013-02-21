@@ -1,10 +1,11 @@
-<% @page_title = raw("\"#{@question.title}\"") %>
+<% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
 
 <div id="main" class="span8">
   
   <h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
 
   <div id="question">
+    
   <div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
     <% @question.images.each do |image| %>
@@ -103,20 +104,22 @@
     <% end %>
 
     <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
-	    <h3><%= link_to_function 'Respond to the expert', "$('#additional_comment').toggle();" %> or <%= link_to 'Ask a new question', ask_group_path(@question.assigned_group) %></h3>
-	    <div id="additional_comment" style="display:none;">
+	    <div id="submitter_followup">
+	      <p class="additional_comment_toggle btn btn-primary btn-large">Post a response to the expert</p>
+	    </div>
+	    <div id="additional_comment" class="formy">
+	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response do |r_form| %>
           <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
-          <h3>Images</h3>
-	        <p>You can include up to 3 images:</p>
+          <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
 	        
 	        <%= r_form.fields_for :images do |image_form| %>
 			      <p><%= image_form.file_field :attachment %></p>
           <% end %>
           
-          <%= submit_tag "Post response", :class => 'btn' %>
+          <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
           <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
         <% end %>
 	    </div>
@@ -164,7 +167,11 @@
         <% elsif @question.assigned_group.present? %>
           <%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
         <% end %>
-    
+        
+        <% if @question_responses.size > 0 and @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
+    	      <a href="#submitter_followup"><p class="additional_comment_toggle btn">Reply to the expert</p></a>
+    	  <% end %>
+      
     <% if !@question.assignee.blank? %>
       <% if @question.assigned_group %>
         <h5>This question is grouped with</h5>
@@ -173,7 +180,7 @@
     <% end %>
     
     <p>Ask an Expert is made up of groups and individual experts.</p>
-    
+    <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn" %></p>
   </aside>
   <% end %>
     
@@ -189,6 +196,14 @@
 </div>
 
 <script class="code" type="text/javascript">
+  
+  $("#additional_comment").hide();
+  
+  $(".additional_comment_toggle").click(function () {
+    $("#additional_comment").toggle();
+  });
+
+
     $('.wysiwyg').each(function(i, elem) {
       $(elem).wysihtml5({image: false});
     });

@@ -122,7 +122,7 @@ body {
   #on_vacation {background:#FEFF8D; padding:1em; color:#444; font-weight:bold; font-size:1.1em;}
   .on_vacation {color: #888 !important;}
   
-  .link {cursor:pointer; color:blue;}
+  .link {cursor:pointer; color:#0088cc;}
   .notification_options {list-style:none;}
   
   .large_groups .medium span {float:left; margin-right:1em;}
@@ -238,6 +238,9 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
+  .formy {border:1px solid #E3E3E3; padding:1em; background:#fff; margin-bottom:2em;}
+  #submitter_followup {margin:2em 0; font-size:1.8em;}
+  #additional_comment h2 {margin-bottom:1em;}
   .clearing {clear:both;}
   .county_list {list-style:none;}
 	.county_list li {padding:.2em;}
@@ -403,6 +406,7 @@ body#expert {
   h3 span {font-size:1.3em;}
   
   h3.rejected {color:#EC0012; font-size:1.5em;}
+  p.rejected {color:#EC0012;}
   aside.rejected {background:#F5E6E8 !important; border:3px solid red;}
   .needs_an_answer {background:yellow; padding:.1em .5em;}
   p .needs_an_answer {background:#A5AFB5; padding:.25em .75em; color:#fff;}

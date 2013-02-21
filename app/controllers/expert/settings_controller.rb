@@ -42,6 +42,12 @@ class Expert::SettingsController < ApplicationController
     @user = (params[:id] ? User.find_by_id(params[:id]) : current_user)
     tag = Tag.find(params[:tag_id])
     @user.tags.delete(tag)
+    # remove their listview prefs for this tag if it exists
+    pref = @user.filter_preference
+    if pref.present? && pref.setting[:question_filter][:tags].present? && pref.setting[:question_filter][:tags][0].to_i == tag.id
+      pref.setting[:question_filter].merge!({:tags => nil})
+      pref.save
+    end
   end
   
   def location
