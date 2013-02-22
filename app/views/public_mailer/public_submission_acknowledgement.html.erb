@@ -5,9 +5,8 @@
     <p>Hello,</p>
     <p>Thank you for your question. It has been assigned to one of our experts and we will try to answer it within 48 hours.</p>
     <p>In the meantime, you can <%= link_to("view or edit your question", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%> to clarify or correct any information. A better question usually gets a better answer! (Your question is editable until one of our experts responds.)</p>
-            
-    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_or_edit_your_question.png" : "#{ssl_webmail_logo}" -%>
-    <p class="button"><%= link_to(image_tag(button_url, alt: "View or Edit Your Question", width: "245"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
+
+    <p class="button longtext"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_or_edit_your_question.png", alt: "View or Edit Question", width: "320"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
   </td>
 </tr>
 

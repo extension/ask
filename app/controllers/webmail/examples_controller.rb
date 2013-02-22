@@ -58,7 +58,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_internal_comment
-    mail = InternalMailer.aae_internal_comment(user: User.first, question: Question.find_by_id(114981), internal_comment_event: QuestionEvent.last, cache_email: false)
+    mail = InternalMailer.aae_internal_comment(user: User.first, question: Question.last, internal_comment_event: QuestionEvent.last, cache_email: false)
     return render_mail(mail)
   end
   

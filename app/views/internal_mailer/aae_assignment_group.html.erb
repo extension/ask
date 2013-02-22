@@ -5,9 +5,8 @@
     <% if @question.assigned_group %>
       <h3><%= get_avatar_for_group(@question.assigned_group, :thumb, false, false) %> <%= link_expert_group(@question.assigned_group) %> Has a New Question.</h3>
     <% end %>
-    
-    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_the_question.png" : "#{ssl_webmail_logo}" -%>
-    <p class="button"><%= link_to(image_tag(button_url, alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
     
     <% if @question.assignee_id.present? %>
       <h4><%= get_avatar_for_user(@question.assignee, :thumb, false) %> <%= link_expert_user(@question.assignee) %> is the assigned expert.</h4>

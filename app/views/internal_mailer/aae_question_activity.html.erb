@@ -3,9 +3,8 @@
 <tr>
   <td class="content padding">
     <h3>New Activity On a Question You Followed</h3>
-    
-    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_the_question.png" : "#{ssl_webmail_logo}" -%>
-    <p class="button"><%= link_to(image_tag(button_url, alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
   </td>
 </tr>
 

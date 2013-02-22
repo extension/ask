@@ -4,9 +4,8 @@
   <td class="content padding">
     <h3>Someone posted a reply to one of your comments:</h3>
     <%= format_text_for_display(@comment.content) %>
-    
-    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_the_question.png" : "#{ssl_webmail_logo}" -%>
-    <p class="button"><%= link_to(image_tag(button_url, alt: "View the Question", width: "245"), question_url(@question)) -%></p>
+
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), question_url(@question)) -%></p>
   </td>
 </tr>
 

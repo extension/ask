@@ -71,9 +71,9 @@ class User < ActiveRecord::Base
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'User'"}
   }
 
-  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("user_counties.county_id = #{county_id}") }
-  scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("user_locations.location_id = #{location_id}") }
-  scope :with_expertise_location_all_counties, lambda {|location_id| includes(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
+  scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("user_counties.county_id = #{county_id}") }
+  scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("user_locations.location_id = #{location_id}") }
+  scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :question_wranglers, conditions: { is_question_wrangler: true }
   scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }

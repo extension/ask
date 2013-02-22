@@ -9,9 +9,8 @@
     <% end %>
     
     <p>You don't need to do anything at this time, but you can <%= link_to("view the question", expert_question_url(@question), :class => "action") -%> if you are interested.</p>
-    
-    <%- button_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/email_view_the_question.png" : "#{ssl_webmail_logo}" -%>
-    <p class="button"><%= link_to(image_tag(button_url, alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
   </td>
 </tr>
 
