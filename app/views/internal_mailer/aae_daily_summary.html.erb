@@ -11,7 +11,7 @@
       <tr>
         <td class="group_question">
           <p><%= get_avatar_for_group(group, :thumb, false, false) %> <%= link_to group.name, expert_group_url(group.id) %></p>
-          <% @question = group.open_questions.order('created_at DESC').first %>
+          <% @question = group.open_questions.order('created_at ASC').first %>
             <% if @question %>
             <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
             <% if @question.assignee_id.present? %>
