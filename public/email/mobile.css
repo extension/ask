@@ -5,7 +5,6 @@
  body {margin:0 auto !important; padding:0 !important;}
   .mobilehide {display:none;}
   tr.tagline td  {background:#000; color:#fff; padding:10px; font: normal 15px Arial, Verdana, sans-serif; width:auto !important;}
-  td#reminder_title {padding:10px !important;}
   tr.options td a {font: normal 12px  Arial, Verdana, sans-serif;}
   tr.date { background: url(//learn.extension.org/assets/divider.png) middle middle repeat-x;}
   tr.date td { background: #fff url(//learn.extension.org/assets/divider.png) repeat-x 50% 50%;}
@@ -14,8 +13,10 @@
   .article {width:100% !important;}
   table {width:100% !important;}
   .article h3 {font: bold 18px  Georgia, serif !important;}
+  #ask_logo {min-height:50px !important;}
   #ask_logo img {width:100% !important; height:auto !important;}
   .demotagline td {font-size:10px !important;}
   .content p {font: normal 18px Georgia, serif !important; line-height: 26px !important;}
   .signature p {font: normal 15px Georgia, serif !important; line-height:21px !important;}
+  h1 {font: normal 24px Arial, Verdana, sans-serif !important;}
 }
