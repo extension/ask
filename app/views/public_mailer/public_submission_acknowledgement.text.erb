@@ -1,3 +1,4 @@
+
 <%- if Settings.app_location != 'production' -%>
 This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.
 <%- end -%>
@@ -6,7 +7,7 @@ eXtension: Ask an Expert
 <%= @title %>
 
 <%- if @mailer_cache -%>
-  View in a browser: <%= webmail_view_url(hashvalue: @mailer_cache.hashvalue) %>
+View in a browser: <%= webmail_view_url(hashvalue: @mailer_cache.hashvalue) %>
 <%- end -%>
 
 Hello,
@@ -18,13 +19,20 @@ In the meantime, you can view or edit your question to clarify or correct any in
 View or Edit Question:
 <%= submitter_view_url(:fingerprint => @question.question_fingerprint) -%>
 
+
+----------------------------------------
+
 <%= @question.title -%>
 <%= @question.body %>
 
+----------------------------------------
+
 Please don't reply to this email.
+
 
 If you need to send more information, edit your question:
 <%= submitter_view_url(:fingerprint => @question.question_fingerprint) -%>
+
 
 Thank you for using Ask an Expert.
 
