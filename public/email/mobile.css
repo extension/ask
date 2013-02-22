@@ -19,4 +19,5 @@
   .content p {font: normal 18px Georgia, serif !important; line-height: 26px !important;}
   .signature p {font: normal 15px Georgia, serif !important; line-height:21px !important;}
   h1 {font: normal 24px Arial, Verdana, sans-serif !important;}
+  .button.longtext img {width:280px !important;}
 }
