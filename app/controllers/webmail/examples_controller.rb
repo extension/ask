@@ -74,7 +74,19 @@ class Webmail::ExamplesController < ApplicationController
   
   def public_submission_acknowledgement
     mail = PublicMailer.public_submission_acknowledgement(user: User.first, question: Question.last, cache_email: false)
-    return render_mail(mail)
+    if(mail.multipart?)
+      if(params[:view] == 'text')
+        if(params[:wordwrap] == 'no')
+          return(render_text_mail(get_text_part(mail),false))          
+        else
+          return(render_text_mail(get_text_part(mail)))
+        end
+      else
+        return(render_mail(get_html_part(mail)))
+      end
+    else
+      return render_mail(mail)
+    end
   end
   
   def public_evaluation_request
@@ -97,10 +109,54 @@ class Webmail::ExamplesController < ApplicationController
   
   protected
   
-  def render_mail(mail)
+  def render_mail(mailpart)
     # send it through the inline style processing
-    inlined_content = InlineStyle.process(mail.body.to_s,ignore_linked_stylesheets: true)
+    inlined_content = InlineStyle.process(mailpart.body.to_s,ignore_linked_stylesheets: true)
     render(:text => inlined_content, :layout => false)
+  end
+
+  def render_text_mail(mailpart, wordwrap=true)
+    bodytext = wordwrap ? view_context.word_wrap(mailpart.body.to_s) : mailpart.body.to_s
+    # wrap the text in some basic html
+    email_text = <<-EMAILTEXT.strip_heredoc
+      <!DOCTYPE html>
+      <html>
+        <head></head>
+        <body>
+          <pre>
+            #{bodytext}
+          </pre>
+        </body>
+      </html>
+    EMAILTEXT
+    render(:text => email_text, :layout => false)
+  end
+
+
+  # PLEASE NOTE: - these are built around the assumption of two part emails, one part html and one part text
+  # these routines will need to be redesigned if images are ever attached, or there are additional parts
+  def get_html_part(mail)
+    if(!mail.multipart?)
+      return mail
+    else
+      mail.parts.each do |part|
+        if(part.mime_type == 'text/html')
+          return part
+        end
+      end
+    end
+  end
+
+  def get_text_part(mail)
+    if(!mail.multipart?)
+      return mail
+    else
+      mail.parts.each do |part|
+        if(part.mime_type == 'text/plain')
+          return part
+        end
+      end
+    end
   end
   
 end
