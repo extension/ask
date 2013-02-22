@@ -71,7 +71,8 @@
 </div>
 
 <% if @question_responses.size > 0 %>
-  <h3 class="h3">Responses</h3>
+  <h2>Answers &amp; Replies</h2>
+  <p>Answers from experts and replies from the submitter</p>
   <% @question_responses.each do |response| %>
     <div class="response_block">
       <div class="response"><%= format_text_for_display(response.body) %></div>
