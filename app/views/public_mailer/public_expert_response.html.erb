@@ -13,7 +13,7 @@
     <% end %>
 
     <h2>Need to reply to the expert?</h2>
-    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/reply_to_the_expert_button.png", alt: "Reply to the Expert", width: "245"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/reply_to_the_expert_button.png", alt: "Reply to Expert", width: "245"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
   </td>
 </tr>
 
