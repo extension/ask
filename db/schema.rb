@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130211221831) do
+ActiveRecord::Schema.define(:version => 20130222201802) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -484,6 +484,18 @@ ActiveRecord::Schema.define(:version => 20130211221831) do
   end
 
   add_index "user_counties", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
+
+  create_table "user_events", :force => true do |t|
+    t.integer  "user_id",                 :null => false
+    t.integer  "created_by",              :null => false
+    t.integer  "event_code",              :null => false
+    t.string   "description",             :null => false
+    t.text     "updated_user_attributes"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "user_events", ["user_id"], :name => "user_event_user_id"
 
   create_table "user_locations", :force => true do |t|
     t.integer "location_id", :default => 0, :null => false

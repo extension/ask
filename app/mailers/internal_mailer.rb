@@ -259,6 +259,17 @@ class InternalMailer < ActionMailer::Base
       # the email if we got it
       return_email
   end
+  
+  def aae_expert_tag_edit(options = {})
+    @user = options[:user]
+    @subject = "Your Ask an Expert profile tags have been edited"
+  end
+  
+  def aae_expert_vacation_edit(options = {})
+    @user = options[:user]
+    @subject = "Your Ask an Expert vacation status has been changed"
+  end
+  
   def ssl_root_url
     if(Settings.app_location != 'localdev')
       root_url(protocol: 'https')

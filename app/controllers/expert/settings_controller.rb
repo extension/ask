@@ -31,8 +31,15 @@ class Expert::SettingsController < ApplicationController
   end
   
   def add_tag
-    @user = (params[:id] ? User.find_by_id(params[:id]) : current_user)
+    params[:id].present? ? @user = User.find_by_id(params[:id]) : @user = current_user
+    # record tag and log changes
+    change_hash = Hash.new
+    previous_tags = @user.tags.map(&:name).join(', ')
     @tag = @user.set_tag(params[:tag])
+    current_tags = @user.tags.map(&:name).join(', ')
+    change_hash[:tags] = {:old => previous_tags, :new => current_tags}
+    UserEvent.log_updated_tags(@user, current_user, change_hash) if previous_tags != current_tags
+    
     if @tag == false
       render :nothing => true
     end
@@ -60,7 +67,17 @@ class Expert::SettingsController < ApplicationController
     @user = current_user
     
     if request.put?
-      @user.update_attributes(params[:user])
+      vacation_changed = false
+      @user.attributes = params[:user]
+      # log changes in expert history
+      change_hash = Hash.new
+      if @user.away_changed?
+        vacation_changed = true 
+        change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away}
+      end
+      
+      @user.save
+      UserEvent.log_updated_vacation_status(@user, @user, change_hash) if vacation_changed
       flash[:notice] = "Preferences updated successfully!"
       render nil
     end

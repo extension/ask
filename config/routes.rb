@@ -55,6 +55,9 @@ Aae::Application.routes.draw do
     end
 
     resources :users, :except => [:destroy] do
+      member do
+        get 'history'
+      end
       collection do
         get 'tags'
         post 'save_listview_filter'
@@ -75,7 +78,7 @@ Aae::Application.routes.draw do
     match "users/:id/watched" => "users#watched", :via => [:get], :as => 'user_watched'
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
-    match "users/:id/status" => "users#status", :via => [:get, :put], :as => 'user_status'
+    match "users/:id/edit_attributes" => "users#edit_attributes", :via => [:get, :put], :as => 'edit_attributes'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'

@@ -57,6 +57,7 @@
     <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
     <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_user_rejected_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+    <li><%= link_to 'History/Logs', history_expert_user_path(@user) %></li>
   </ul>
   
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
@@ -77,10 +78,8 @@
       <h4>This account has been retired</h4>
     <% end %>
     
-    <% if current_user.id == @user.id %>
-      <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %> <%= link_to 'edit status', expert_settings_assignment_path() %></p>
-    <% else %>
-      <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %> <%= link_to 'edit status', expert_user_status_path() %></p>
+    <% if current_user.id != @user.id %>
+      <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
     <% end %>
     
     <% if @handling_event_count[:handled] > 0 %>

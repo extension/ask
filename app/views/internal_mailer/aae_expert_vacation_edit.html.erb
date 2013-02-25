@@ -1,0 +1,15 @@
+<%= render :partial => 'partials/public_email_header' %>
+
+<tr>
+  <td class="content padding">
+    <h3>Someone Has Edited Your AaE Vacation Status </h3>
+
+    <p class="button"><%= link_to "View Your History to See Vacation Status Changes", history_expert_user_url(@user.id) %></p>
+  </td>
+</tr>
+
+<tr>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong></td>
+</tr>
+
+<%= render :partial => 'partials/internal_email_footer' %>

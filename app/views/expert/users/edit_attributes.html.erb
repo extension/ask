@@ -1,6 +1,6 @@
 <h1>Give <%= link_to @user.name, expert_user_path(@user) %> a Helping Hand</h1>
 
-<%= form_for @user, :url => expert_user_status_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+<%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <fieldset>
       <h3>Vacation Status</h3>
@@ -17,7 +17,7 @@
     <p><%= f.submit "Save Vacation Status", :class => "btn btn-primary" %></p>
   </fieldset>
   
-  
+<% end %>
   
   <div class="formy">
     <h2>Edit this expert's tags</h2>
@@ -36,7 +36,7 @@
   </div>
   
     
-<% end %>
+
 
 <script class="code" type="text/javascript">    
 
