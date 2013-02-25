@@ -17,6 +17,7 @@
   #ask_logo img {width:100% !important; height:auto !important;}
   .demotagline td {font-size:10px !important;}
   .content p {font: normal 18px Georgia, serif !important; line-height: 26px !important;}
+  .content .question_title p {font: bold 18px Georgia, serif !important; line-height: 26px !important;}
   .signature p {font: normal 15px Georgia, serif !important; line-height:21px !important;}
   h1 {font: normal 24px Arial, Verdana, sans-serif !important;}
   .button.longtext img {width:280px !important;}
