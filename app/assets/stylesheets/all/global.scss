@@ -1,6 +1,7 @@
 @import "_variables";
 
 body {
+  #branding {margin:0 0 .25em; float:left;}
   .extension_nav_public {margin:0;padding:0; background: #2f3b3e;}
   .extension_nav_public ul {text-align: center;  padding: .35em 0; margin: 0; }
   .extension_nav_public li {display:inline; padding:0 1em; border-right:1px solid #666;}
@@ -263,7 +264,7 @@ body#public {
   .navbar .nav > li > a {color:#fff; text-shadow:none;}
   
   .public_bio {font-size:1.35em; line-height:1.4em; font-family: Georgia, serif;}
-  #extension_logo img {width:200px; height:auto;}
+  #extension_logo img {width:200px; height:auto; margin-right:.25em;}
   #ask_an_expert_logo img {width:200px; height:auto;}
   
   #publicbar h1 {float:left;}
