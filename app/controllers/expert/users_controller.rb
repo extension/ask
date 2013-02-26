@@ -107,7 +107,7 @@ class Expert::UsersController < ApplicationController
       flash[:error] = "The user specified does not exist as an expert in AaE."
       return redirect_to expert_home_url 
     end
-    @expert_events = @user.user_events
+    @expert_events = @user.user_events.order("created_at DESC")
   end
   
   def save_listview_filter
