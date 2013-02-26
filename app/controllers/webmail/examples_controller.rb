@@ -73,7 +73,7 @@ class Webmail::ExamplesController < ApplicationController
   end
   
   def internal_aae_expert_vacation_edit
-    mail = InternalMailer.aae_expert_vacation_edit(user: User.first, cache_email: false)
+    mail = InternalMailer.aae_expert_vacation_edit(user: current_user, cache_email: false)
     return render_mail(mail)
   end
   
