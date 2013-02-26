@@ -1,4 +1,6 @@
-<% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
+<% @page_title = raw("#{@question.title.gsub(/[[:space:]]/, ' ')}") %>
+
+<% @page_meta_description = raw("#{@question.body.gsub(/[[:space:]]/, ' ').truncate(140, separator: ' ')}") %>
 
 <div id="main" class="span8">
   
