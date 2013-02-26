@@ -3,18 +3,18 @@
 <%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <fieldset>
-      <h3>Vacation Status</h3>
+      <h3>Away Status</h3>
       <div class="radio_options">
       <p>
         <label>
           <%= f.check_box :away %>
           Mark <%= @user.name %> as away
-          <span>(When "vacation status" is turned on, AaE questions can not be assigned to the person.)</span>
+          <span>(When "away status" is turned on, AaE questions can not be assigned to the person.)</span>
         </label>
       </p>
       </div>
 
-    <p><%= f.submit "Save Vacation Status", :class => "btn btn-primary" %></p>
+    <p><%= f.submit "Save Away Status", :class => "btn btn-primary" %></p>
   </fieldset>
   
 <% end %>

@@ -285,8 +285,8 @@ class InternalMailer < ActionMailer::Base
   
   def aae_expert_vacation_edit(options = {})
     @user = options[:user]
-    @subject = "Your Ask an Expert vacation status has been changed"
-    @title = "Your Ask an Expert vacation status has been changed"
+    @subject = "Your Ask an Expert away status was changed"
+    @title = "Your Ask an Expert away status was changed"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
