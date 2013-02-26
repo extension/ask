@@ -21,12 +21,12 @@
 }
 .commentfield_container .btn {float:right;}
 
-.comment p {font-family:"lucida grande",tahoma,verdana,arial,sans-serif;color:#444;text-align:left; margin-bottom:0; padding:0;}
+.comment {padding: 1em; position:relative; border-bottom:1px solid #ddd; background:#eee; margin-bottom:1em;}
+.comment.new {background:#ffa;}
+
+.comment .content p {line-height:1.6em; font-family: Georgia, serif; font-size:1.5em; color:#444;text-align:left; margin-bottom:0; padding:0;}
 .comment .content p {font-size:1.3em;}
 .comment .content {margin:0 0 .75em;}
-.comment {padding: 1em;margin-bottom:0;position:relative; border-bottom:1px solid #ddd;}
-.comment.new {background:#ffa;}
-.comment:hover {background:#eee;}
 
 .comment .avatar {width:40px;height:40px; border:1px solid #fff;}
 .comment_time, .comment_author {display:block; font-size:.9em; color:#000;}

@@ -1,0 +1,43 @@
+
+<%- if Settings.app_location != 'production' -%>
+This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.
+<%- end -%>
+
+eXtension: Ask an Expert
+<%= @title %>
+
+<%- if @mailer_cache -%>
+View in a browser: <%= webmail_view_url(hashvalue: @mailer_cache.hashvalue) %>
+<%- end -%>
+
+Hello,
+
+Thank you for your question. It has been assigned to one of our experts and we will try to answer it within 48 hours.
+
+In the meantime, you can view or edit your question to clarify or correct any information. A better question usually gets a better answer! (Your question is editable until one of our experts responds.)
+
+View or Edit Question:
+<%= submitter_view_url(:fingerprint => @question.question_fingerprint) -%>
+
+
+----------------------------------------
+
+<%= @question.title -%>
+<%= @question.body %>
+
+----------------------------------------
+
+Please don't reply to this email.
+
+
+If you need to send more information, edit your question:
+<%= submitter_view_url(:fingerprint => @question.question_fingerprint) -%>
+
+
+Thank you for using Ask an Expert.
+
+This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the Terms of Use (http://www.extension.org/main/termsofuse) which may be revised at any time.
+
+<%- if @mailer_cache -%>
+  View in a browser: <%= webmail_view_url(hashvalue: @mailer_cache.hashvalue) %>
+<%- end -%>

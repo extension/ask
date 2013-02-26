@@ -53,11 +53,7 @@
 
     <% if @question.tags.size > 0 %>
       <% @question.tags.each do |tag| %>
-        <% if @question.assigned_group %>
-          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
-        <% else %>
-          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span> <span class="btn removetag">x</span></p>
-        <% end %>
+        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
       <% end %>
     <% else %>
 
@@ -71,7 +67,8 @@
 </div>
 
 <% if @question_responses.size > 0 %>
-  <h3 class="h3">Responses</h3>
+  <h2>Answers &amp; Replies</h2>
+  <p>Answers from experts and replies from the submitter</p>
   <% @question_responses.each do |response| %>
     <div class="response_block">
       <div class="response"><%= format_text_for_display(response.body) %></div>

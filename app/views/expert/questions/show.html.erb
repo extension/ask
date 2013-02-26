@@ -11,7 +11,8 @@
 
     <%= render :partial => 'question_main' %>
 
-    <h3>Comments</h3>
+    <h2>Comments</h2>
+    <p>Comments can be posted on public questions</p>
     <div id="comment-list">
 	  <%= render :partial => '/comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
 	</div>

@@ -23,9 +23,9 @@
     <h3>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</h3>
   
     <div id="last_30_days" class="formy">
-      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id])%> 
+      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
       <% if @following_year_month %>
-        - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id])%>
+        - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%>
       <% end %></p>
       <h2><%= @date.strftime("%B, %Y") %> at a Glance:</h2>
       <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
