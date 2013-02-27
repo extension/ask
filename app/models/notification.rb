@@ -174,11 +174,11 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_expert_tag_edit
-    InternalMailer.aae_expert_tag_edit(user: self.notifiable.recipient).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_expert_tag_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
 
   def process_aae_expert_vacation_edit
-    InternalMailer.aae_expert_vacation_edit(user: self.notifiable.recipient).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
   
   def queue_delayed_notifications
