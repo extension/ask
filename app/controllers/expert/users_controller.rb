@@ -38,7 +38,7 @@ class Expert::UsersController < ApplicationController
       
       @user.save
       UserEvent.log_updated_vacation_status(@user, current_user, change_hash) if vacation_changed  
-      flash[:notice] = "Preferences updated successfully!"
+      flash.now[:notice] = "Preferences updated successfully!"
       render nil
     end
   end
