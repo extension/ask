@@ -33,7 +33,7 @@ class Expert::UsersController < ApplicationController
       change_hash = Hash.new
       if @user.away_changed?
         vacation_changed = true 
-        change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away}
+        change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away, :reason => params[:set_to_away_reason]}
       end
       
       @user.save
