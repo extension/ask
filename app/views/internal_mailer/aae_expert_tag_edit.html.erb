@@ -1,0 +1,16 @@
+<%= render :partial => 'partials/public_email_header' %>
+
+<tr>
+  <td class="content padding">
+    <h3>Your Ask an Expert Profile Got a Helping Hand</h3>
+    
+    <p>This is a friendly notification that an Expert edited your Profile tags using your <%= link_to 'Helping Hand', expert_edit_attributes_path(@user) %> page.</p>
+    
+    <p>Your current tags are listed on your <%= link_to "Profile", expert_user_path(@user) %>. You can find a list of tag changes in your <%= link_to "Profile History", history_expert_user_url(@user.id) %>.</p>
+  </td>
+</tr>
+
+<tr>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong> If you need help regarding this issue, please contact <%= link_to "eXtension Support", ask_group_path("1278") %>.</td>
+</tr>
+<%= render :partial => 'partials/internal_email_footer' %>

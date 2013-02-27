@@ -67,6 +67,16 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def internal_aae_expert_tag_edit
+    mail = InternalMailer.aae_expert_tag_edit(user: current_user, cache_email: false)
+    return render_mail(mail)
+  end
+  
+  def internal_aae_expert_vacation_edit
+    mail = InternalMailer.aae_expert_vacation_edit(user: current_user, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def public_expert_response
     mail = PublicMailer.public_expert_response(user: User.first, question: Question.answered.last, expert: User.offset(rand(User.count)).first, cache_email: false)
     return render_mail(mail)

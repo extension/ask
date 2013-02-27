@@ -1,0 +1,16 @@
+<h1><%= link_to @user.name, expert_user_path(@user) %></h1>
+
+<h2>History</h2>
+
+<% if current_user.id == @user.id %>
+  <%= render :partial => 'expert/settings/settings_navigation' %>
+<% end %>
+
+
+<% @expert_events.each do |event| %>
+    <% event.updated_user_attributes.each do |key, value| %>
+      <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Changed <strong>Expert <%= key.to_s.gsub('_', ' ').capitalize %></strong> from '<strong><%= value[:old] %></strong>' to '<strong><%= value[:new] %></strong>' <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small><p>
+    <% end %>
+<% end %>
+
+
