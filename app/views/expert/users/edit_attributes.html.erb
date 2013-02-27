@@ -12,8 +12,12 @@
           <span>(When "away status" is turned on, AaE questions can not be assigned to the person.)</span>
         </label>
       </p>
+      	<label>
+	      Reason:
+	      <%= text_field_tag :set_to_away_reason %>
+	    </label>
       </div>
-
+        
     <p><%= f.submit "Save Away Status", :class => "btn btn-primary" %></p>
   </fieldset>
   
