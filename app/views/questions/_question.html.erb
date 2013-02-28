@@ -1,6 +1,6 @@
 <% @page_title = raw("#{@question.title.gsub(/[[:space:]]/, ' ')}") %>
 <% @page_type = "article" %>
-<% @page_meta_description = strip_tags("#{@question.body.gsub(/[[:space:]]/, ' ').truncate(140, separator: ' ')}") %>
+<% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
 <div id="main" class="span8">
   <div itemscope itemtype="http://www.schema.org/Article">
