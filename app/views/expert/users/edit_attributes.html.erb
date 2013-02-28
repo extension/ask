@@ -1,0 +1,94 @@
+<h1>Give <%= link_to @user.name, expert_user_path(@user) %> a Helping Hand</h1>
+
+<%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+
+  <fieldset>
+      <h3>Away Status</h3>
+      <div class="radio_options">
+      <p>
+        <label>
+          <%= f.check_box :away %>
+          Mark <%= @user.name %> as away
+          <span>(When "away status" is turned on, AaE questions can not be assigned to the person.)</span>
+        </label>
+      </p>
+      	<label>
+	      Reason:
+	      <%= text_field_tag :set_to_away_reason %>
+	    </label>
+      </div>
+        
+    <p><%= f.submit "Save Away Status", :class => "btn btn-primary" %></p>
+  </fieldset>
+  
+<% end %>
+  
+  <div class="formy">
+    <h2>Edit this expert's tags</h2>
+    <h3>Please edit respectfully. Edits are logged and the expert will be notified of any changes made.</h3>
+    <div class="ui-widget">
+    	<input id="tag_picker" placeholder="Type and select a tag" />
+    </div>
+
+
+  <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
+  <% if @user.tags.size > 0 %>
+    <% @user.tags.each do |tag| %>
+      <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> <span class="removetag">[x]</span></p>
+    <% end %>
+  <% end %>
+  </div>
+  
+    
+
+
+<script class="code" type="text/javascript">    
+
+		function add_tag(tag) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_settings_add_tag_path(:id => @user.id) %>",
+        cache: false,
+        data: {tag: tag}
+      })
+      .done(function() {
+				$("#tag_picker").autocomplete("close");
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function() {
+        alert("error");
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+		$("#tag_picker").autocomplete({
+      source: "/ajax/tags",
+			minLength: 2,
+			select: function(e, ui) {
+			  add_tag(ui.item.name);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        add_tag(this.value);
+      }
+    });
+
+    // remove tags
+     $("#tag_list").on("click", ".removetag", function(){
+       var tag = $(this).closest("p");
+       $.ajax({
+         type: "POST",
+           url: "<%= expert_settings_remove_tag_path(:id => @user.id) %>",
+           cache: false,
+           data: {tag_id: tag.attr("id").replace('tag_', '')}
+       })
+       .done(function() {
+         tag.fadeOut(500);
+       })
+     });
+
+</script>

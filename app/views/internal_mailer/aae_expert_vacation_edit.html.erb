@@ -1,0 +1,21 @@
+<%= render :partial => 'partials/public_email_header' %>
+
+<tr>
+  <td class="content padding">
+    <h3>Your Ask an Expert Away Status Was Changed</h3>
+    
+    <p>This is a friendly notification that an Expert changed your "Away Status" using your <%= link_to 'Helping Hand', expert_edit_attributes_url(@user) %> page.</p>
+    
+    <p>This was probably done because we detected a vacation reply when a question was assigned to you.</p>
+    
+    <p>If this change does not reflect your current status, it's <%= link_to 'easy to change it back', expert_edit_attributes_url(@user) %>. Please accept our apologies for the inconvenience.</p>
+    
+    <p>You can find a list of changes to your Profile in your <%= link_to "Profile History", history_expert_user_url(@user.id) %>.</p>
+  </td>
+</tr>
+
+<tr>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong> If you need help regarding this issue, please contact <%= link_to "eXtension Support", ask_group_url("1278") %>.</td>
+</tr>
+
+<%= render :partial => 'partials/internal_email_footer' %>

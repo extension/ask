@@ -57,6 +57,7 @@
     <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
     <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_user_rejected_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+    <li><%= link_to 'History/Logs', history_expert_user_path(@user) %></li>
   </ul>
   
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
@@ -76,7 +77,11 @@
     <% if @user.retired %>
       <h4>This account has been retired</h4>
     <% end %>
-    <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %></p>
+    
+    <% if current_user.id != @user.id %>
+      <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
+    <% end %>
+    
     <% if @handling_event_count[:handled] > 0 %>
        <p class="downplay"><span id="handling_rate" rel="popover" data-content="How likely will this person handle an assigned question? A high handling rate means they are likely to handle it. A low rate means someone else usually has to step in. There's a 24-hour grace period after a question is assigned. No penalties are recorded during the grace period." data-original-title="Handling Rate">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
     <% else %>

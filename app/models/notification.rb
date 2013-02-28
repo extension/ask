@@ -37,6 +37,8 @@ class Notification < ActiveRecord::Base
   #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees
   AAE_ASSIGNMENT_GROUP = 1011 
   AAE_QUESTION_ACTIVITY = 1012
+  AAE_EXPERT_TAG_EDIT = 1013
+  AAE_EXPERT_VACATION_EDIT = 1014
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -92,6 +94,10 @@ class Notification < ActiveRecord::Base
       process_aae_public_comment_reply
     when AAE_QUESTION_ACTIVITY
       process_aae_question_activity
+    when AAE_EXPERT_TAG_EDIT
+      process_aae_expert_tag_edit
+    when AAE_EXPERT_VACATION_EDIT
+      process_aae_expert_vacation_edit
     else
       # nothing
     end
@@ -165,6 +171,14 @@ class Notification < ActiveRecord::Base
   
   def process_aae_question_activity
     self.notifiable.question_activity_preference_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
+  end
+  
+  def process_aae_expert_tag_edit
+    InternalMailer.aae_expert_tag_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+
+  def process_aae_expert_vacation_edit
+    InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
   
   def queue_delayed_notifications

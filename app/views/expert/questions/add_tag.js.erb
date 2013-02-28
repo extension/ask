@@ -1,4 +1,4 @@
-$( "<p id='tag_<%= escape_javascript(@tag.id.to_s) %>'><span class='tag tag-topic'><%= escape_javascript(link_to @tag.name) %></span> <span class='btn removetag'>x</span></p>" ).prependTo( "#tags" );
+$( "<p class='tagwrapper' id='tag_<%= escape_javascript(@tag.id.to_s) %>'><span class='tag tag-topic'><%= escape_javascript(link_to @tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => @tag.id)) %></span> <span class='btn removetag'>x</span></p>" ).prependTo( "#tags" );
 $("#needs_tags").remove();
 $( "#tag_list" ).scrollTop( 0 );
 <% if @previous_tags != @current_tags %>

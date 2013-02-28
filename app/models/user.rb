@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
+  has_many :user_events
   belongs_to :location
   belongs_to :county
 
