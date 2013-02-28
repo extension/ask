@@ -4,6 +4,16 @@
   <title><%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %></title>
   <meta name="description" content="<%= @page_meta_description %>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:url" content="<%= request.protocol + request.host_with_port + request.fullpath %>"/>
+  <meta property="og:type" content="<%= (@page_type == "article") ? "article" : "website" %>"/>
+  <meta property="og:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>"/>
+  <meta property="og:description" content="<%= @page_meta_description ? @page_meta_description : "Ask an Expert offers one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States." %>"/>
+  <meta property="og:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>"/>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>">
+  <meta name="twitter:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>">
+  <meta property="twitter:description" content="<%= @page_meta_description ? @page_meta_description : "One-to-one answers from experts from universities across America." %>"/>
+  
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
