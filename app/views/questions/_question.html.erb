@@ -96,7 +96,7 @@
         
         <div class="author">
           <% if response.resolver_id %>
-            <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.public_name, user_path(response.resolver.id) %>
+            <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to link_public_user(response.resolver) %>
           <% else %>
             <p>Anonymous Guest</p>
           <% end %>
@@ -163,9 +163,7 @@
         
         
         <% if @question.assignee.present? %>
-          <%= link_to user_path(@question.assignee_id) do %>
-            <%= link_public_user_avatar(@question.assignee, :thumb) %> <%= link_to @question.assignee.public_name, user_path(@question.assignee.id) %>
-          <% end %>
+          <%= link_public_user_avatar(@question.assignee, :thumb) %> <%= link_to link_public_user(@question.assignee) %>
         <% elsif @question.assigned_group.present? %>
           <%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
         <% end %>
