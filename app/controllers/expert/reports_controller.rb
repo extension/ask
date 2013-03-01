@@ -11,9 +11,13 @@ class Expert::ReportsController < ApplicationController
   
   def index
     @locations = Location.order('fipsid ASC')
-    @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
     @condition_array = ""
+    
+    @my_groups = Array.new
+      current_user.group_memberships.each do |membership|
+      @my_groups << membership
+    end
        
     if params[:county_id].present?
       @county = County.find_by_id(params[:county_id])
@@ -27,6 +31,8 @@ class Expert::ReportsController < ApplicationController
     
     if params[:group_id].present?
       @group = Group.find_by_id(params[:group_id])
+      @my_groups << @group
+      @my_groups = @my_groups.uniq
       @condition_array += " #{@group.name} "
     end
     
