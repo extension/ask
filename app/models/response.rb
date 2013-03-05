@@ -25,6 +25,7 @@ class Response < ActiveRecord::Base
 
   scope :latest, order('created_at DESC')
   scope :expert, where(is_expert: true)
+  scope :expert_after_public, where(is_expert: true).where(previous_expert: false)
   scope :non_expert, where(is_expert: false)
 
   # reporting scopes

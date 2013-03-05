@@ -576,6 +576,24 @@ class Question < ActiveRecord::Base
     end
   end
 
+  def response_time(initial_only = false)
+    response_count = self.responses.expert.count
+    followup_response_count = self.responses.expert_after_public.count
+    if(response_count == 1 or initial_only)
+      self.initial_response_time
+    elsif(response_count > 1)
+      if(followup_response_count >= 1)
+        response_times = self.responses.expert_after_public.map(&:time_since_last)
+        response_times << self.initial_response_time
+        response_times.mean.round
+      else
+        self.initial_response_time
+      end
+    else
+      nil
+    end
+  end
+
   def question_activity_preference_list
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )
   end
