@@ -16,13 +16,17 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
+  before_save :set_public_flag
+  after_create :set_timings
   after_save :check_first_response, :index_parent_question
   
   validates :body, :presence => true
   validate :validate_attachments
-  
-  # reporting scopes
-  YEARWEEK_RESOLVED = 'YEARWEEK(responses.created_at,3)'
+
+  scope :latest, order('created_at DESC')
+  scope :expert, where(is_expert: true)
+  scope :expert_after_public, where(is_expert: true).where(previous_expert: false)
+  scope :non_expert, where(is_expert: false)
 
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
@@ -38,8 +42,33 @@ class Response < ActiveRecord::Base
   class Response::Image < Asset
     has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
-  
+
+  def set_timings
+    question_submitted_at = self.question.created_at
+    update_attribs = {}
+    update_attribs[:time_since_submission] = (self.created_at - question_submitted_at)
+
+    if(last_response = self.question.responses.where('id != ?',self.id).where('created_at <= ?',self.created_at).latest.first)
+      update_attribs[:time_since_last] = (self.created_at - last_response.created_at)
+      update_attribs[:previous_expert] = last_response.is_expert?    
+    else
+      # first response - set time_since_last to time_since_submission and previous_expert false to ease calculations
+      update_attribs[:time_since_last] = (self.created_at - question_submitted_at)
+      update_attribs[:previous_expert] = false
+    end         
+    self.update_attributes(update_attribs)
+  end
+
   private
+
+  def set_public_flag
+    if(self.resolver_id.blank?)
+      self.is_expert = false
+    else
+      self.is_expert = true
+    end
+    true
+  end
 
   def check_first_response
     if(self.question.initial_response_id.blank?)

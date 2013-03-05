@@ -6,8 +6,6 @@
 #  see LICENSE file
 
 class ApplicationController < ActionController::Base
-  require_dependency 'year_week_stats'
-
   helper_method :current_location
   helper_method :current_county
   before_filter :set_time_zone_from_user, :set_last_active_at_for_user

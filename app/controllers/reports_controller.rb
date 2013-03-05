@@ -73,20 +73,6 @@ class ReportsController < ApplicationController
   end
 
 
-  def exploration
-    @question_stats = Question.answered.stats_by_yearweek('questions')
-    @expert_stats = Question.answered.stats_by_yearweek('experts')
-    @responsetime_stats = Question.answered.stats_by_yearweek('responsetime')
-  end
-
-  def widgetresponsetime
-    @stats = YearWeekStatsComparator.new
-    @stats['widgets'] = Question.where("external_app_id = 'widget'").answered.stats_by_yearweek('responsetime')
-    @stats['pubsite'] = Question.where("external_app_id != 'widget'").answered.stats_by_yearweek('responsetime')
-  end
-
-
-
   private
 
   def override_rows

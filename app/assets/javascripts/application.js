@@ -21,11 +21,6 @@
 //= require twitter/bootstrap/popover
 //= require twitter/bootstrap/modal
 //= require bootstrap-wysihtml5
-//= require jquery.jqplot
-//= require jqplot-plugins/jqplot.dateAxisRenderer
-//= require jqplot-plugins/jqplot.highlighter
-//= require jqplot-plugins/jqplot.enhancedLegendRenderer
-//= require jqplot-plugins/jqplot.cursor
 //= require rangeinput.js
 //= require alerts.js
 //= require jquery.validate

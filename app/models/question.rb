@@ -9,7 +9,6 @@ class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
   include CacheTools
-  extend YearWeek
   rakismet_attrs :author_email => :email, :content => :body
 
 
@@ -142,11 +141,6 @@ class Question < ActiveRecord::Base
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
-
-  # reporting scopes
-  YEARWEEK_RESOLVED = 'YEARWEEK(questions.resolved_at,3)'
-  # eXtension National launch
-  WWW_LAUNCH                    = Date.parse('2008-02-21')
 
   # check for spam - given the process flow, not sure
   # this is a candidate for delayed job
@@ -577,100 +571,21 @@ class Question < ActiveRecord::Base
     end
   end
 
-  ## Reporting
-
-  def self.increase_group_concat_length
-    set_group_concat_size_query = "SET SESSION group_concat_max_len = #{Settings.group_concat_max_len};"
-    self.connection.execute(set_group_concat_size_query)
-  end
- 
-  def self.earliest_resolved_at
-    with_scope do
-      era = self.minimum(:resolved_at)
-      (era < WWW_LAUNCH) ? WWW_LAUNCH : era
-    end
-  end
-
-  def self.latest_resolved_at
-    with_scope do
-      self.maximum(:resolved_at)
-    end
-  end
-
-  def self.stats_by_yearweek(metric,cache_options = {})
-    if(!cache_options[:nocache])
-      cache_key = self.get_cache_key(__method__,{metric: metric, scope_sql: current_scope ? current_scope.to_sql : ''})
-      Rails.cache.fetch(cache_key,cache_options) do
-        with_scope do
-          _stats_by_yearweek(metric,cache_options)
-        end
+  def response_time(initial_only = false)
+    response_count = self.responses.expert.count
+    followup_response_count = self.responses.expert_after_public.count
+    if(response_count == 1 or initial_only)
+      self.initial_response_time
+    elsif(response_count > 1)
+      if(followup_response_count >= 1)
+        self.responses.expert_after_public.average(:time_since_last).round
+      else
+        self.initial_response_time
       end
     else
-      with_scope do
-        _stats_by_yearweek(metric,cache_options)
-      end
+      nil
     end
   end
-
-  def self._stats_by_yearweek(metric,cache_options = {})
-    stats = YearWeekStats.new
-    # increase_group_concat_length
-    with_scope do
-      era = self.earliest_resolved_at
-      if(era.blank?)
-        return stats
-      end
-      lra = self.latest_resolved_at
-
-      case metric
-      when 'questions'
-        metric_by_yearweek = self.group(YEARWEEK_RESOLVED).count(:id)
-      when 'experts'
-        eligible_ids = self.pluck("#{self.table_name}.id")
-        metric_by_yearweek = Response.where("question_id IN (#{eligible_ids.join(',')})").group(Response::YEARWEEK_RESOLVED).count('DISTINCT(responses.resolver_id)')
-      when 'responsetime'
-        questions_by_yearweek = self.group(YEARWEEK_RESOLVED).count(:id)
-        responsetime_by_yearweek = self.group(YEARWEEK_RESOLVED).sum(:initial_response_time)
-        metric_by_yearweek = {}
-        responsetime_by_yearweek.each do |yearweek,total_response_time|
-          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / questions_by_yearweek[yearweek].to_f / 3600.to_f)
-        end
-      else
-        return stats
-      end
-
-      year_weeks = self.year_weeks_between_dates(era.to_date,lra.to_date)
-      year_weeks.each do |year,week|
-        yw = self.yearweek(year,week)
-        stats[yw] = {}
-        metric_value = metric_by_yearweek[yw] || 0
-        stats[yw][metric] = metric_value
-
-        previous_year_key = self.yearweek(year-1,week)
-        (previous_year,previous_week) = self.previous_year_week(year,week)
-        previous_week_key = self.yearweek(previous_year,previous_week)
-
-        previous_week = (metric_by_yearweek[previous_week_key]  ? metric_by_yearweek[previous_week_key] : 0)
-        stats[yw]["previous_week_#{metric}"] = previous_week
-        previous_year = (metric_by_yearweek[previous_year_key]  ? metric_by_yearweek[previous_year_key] : 0)
-        stats[yw]["previous_year_#{metric}"] = previous_year
-
-        # pct_change
-        if(previous_week == 0)
-          stats[yw]["pct_change_week_#{metric}"] = nil
-        else
-          stats[yw]["pct_change_week_#{metric}"] = (metric_value - previous_week) / previous_week.to_f
-        end
-
-        if(previous_year == 0)
-          stats[yw]["pct_change_year_#{metric}"] = nil
-        else
-          stats[yw]["pct_change_year_#{metric}"] = (metric_value - previous_year) / previous_year.to_f
-        end
-      end
-    end
-    stats
-  end  
 
   def question_activity_preference_list
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )

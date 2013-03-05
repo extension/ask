@@ -1,6 +1,0 @@
-<div class="row-fluid">
-  <div class="span12">
-    <h3>Average Initial Response Time (Hours) Widgets vs. Public</h3>
-    <%= render(:partial => 'reports/comparison_plot', :locals => {:data => @stats.to_graph_data('responsetime'), :datalabel => 'responsetime', :labels => @stats.to_graph_labels})%>
-  </div>
-</div>
