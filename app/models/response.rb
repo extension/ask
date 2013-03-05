@@ -16,11 +16,17 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
+  before_save :set_public_flag
+  after_create :set_timings
   after_save :check_first_response, :index_parent_question
   
   validates :body, :presence => true
   validate :validate_attachments
-  
+
+  scope :latest, order('created_at DESC')
+  scope :expert, where(is_expert: true)
+  scope :non_expert, where(is_expert: false)
+
   # reporting scopes
   YEARWEEK_RESOLVED = 'YEARWEEK(responses.created_at,3)'
 
@@ -38,8 +44,28 @@ class Response < ActiveRecord::Base
   class Response::Image < Asset
     has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
   end
-  
+
+  def set_timings
+    question_submitted_at = self.question.created_at
+    update_attribs = {}
+    update_attribs[:time_since_submission] = (self.created_at - question_submitted_at)
+
+    if(last_response = self.question.responses.where('id != ?',self.id).latest.first)
+      update_attribs[:time_since_last] = (self.created_at - last_response.created_at)
+      update_attribs[:previous_expert] = last_response.is_expert?    
+    end
+    self.update_attributes(update_attribs)
+  end
+
   private
+
+  def set_public_flag
+    if(self.resolver_id.blank?)
+      self.is_expert = false
+    else
+      self.is_expert = true
+    end
+  end
 
   def check_first_response
     if(self.question.initial_response_id.blank?)

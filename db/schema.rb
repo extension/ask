@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130222201802) do
+ActiveRecord::Schema.define(:version => 20130305162008) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -454,9 +454,14 @@ ActiveRecord::Schema.define(:version => 20130222201802) do
     t.string   "referrer"
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.boolean  "is_expert"
+    t.boolean  "previous_expert"
+    t.integer  "time_since_submission"
+    t.integer  "time_since_last"
   end
 
   add_index "responses", ["contributing_question_id"], :name => "idx_contributing_question"
+  add_index "responses", ["is_expert", "previous_expert"], :name => "resonse_type_ndx"
   add_index "responses", ["question_id"], :name => "idx_question_id"
   add_index "responses", ["resolver_id"], :name => "idx_resolver_id"
   add_index "responses", ["submitter_id"], :name => "idx_submitter_id"
