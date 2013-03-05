@@ -583,9 +583,7 @@ class Question < ActiveRecord::Base
       self.initial_response_time
     elsif(response_count > 1)
       if(followup_response_count >= 1)
-        response_times = self.responses.expert_after_public.map(&:time_since_last)
-        response_times << self.initial_response_time
-        response_times.mean.round
+        self.responses.expert_after_public.average(:time_since_last).round
       else
         self.initial_response_time
       end
