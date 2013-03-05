@@ -209,6 +209,9 @@ Aae::Application.routes.draw do
   match "evaluation/example" => "evaluation#example", via: [:get], :as => 'example_evaluation'
   match "evaluation/thanks" => "evaluation#thanks", via: [:get], :as => 'evaluation_thanks'
   
+  # feeds
+  match "feeds/answered_questions", :via => :get, :defaults => { :format => 'xml' }
+  
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
