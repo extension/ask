@@ -67,6 +67,7 @@ class Response < ActiveRecord::Base
     else
       self.is_expert = true
     end
+    true
   end
 
   def check_first_response
