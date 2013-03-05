@@ -50,7 +50,7 @@ class Response < ActiveRecord::Base
     update_attribs = {}
     update_attribs[:time_since_submission] = (self.created_at - question_submitted_at)
 
-    if(last_response = self.question.responses.where('id != ?',self.id).latest.first)
+    if(last_response = self.question.responses.where('id != ?',self.id).where('created_at <= ?',self.created_at).latest.first)
       update_attribs[:time_since_last] = (self.created_at - last_response.created_at)
       update_attribs[:previous_expert] = last_response.is_expert?    
     end
