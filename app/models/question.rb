@@ -142,11 +142,6 @@ class Question < ActiveRecord::Base
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
 
-  # reporting scopes
-  YEARWEEK_RESOLVED = 'YEARWEEK(questions.resolved_at,3)'
-  # eXtension National launch
-  WWW_LAUNCH                    = Date.parse('2008-02-21')
-
   # check for spam - given the process flow, not sure
   # this is a candidate for delayed job
   def check_spam

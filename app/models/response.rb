@@ -28,9 +28,6 @@ class Response < ActiveRecord::Base
   scope :expert_after_public, where(is_expert: true).where(previous_expert: false)
   scope :non_expert, where(is_expert: false)
 
-  # reporting scopes
-  YEARWEEK_RESOLVED = 'YEARWEEK(responses.created_at,3)'
-
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
