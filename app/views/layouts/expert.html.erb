@@ -11,7 +11,7 @@
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <script src="<%= request.protocol + request.host_with_port %>/javascripts/global_nav_internal.js" type="text/javascript"></script>
+  <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   
   <div class="navbar navbar-inverse app-navbar  <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
         <div class="navbar-inner">
@@ -71,7 +71,7 @@
               <p><%= link_to("AaE Public", root_path(), :class => "brand") %></p>
               <span class="help_link"><%= link_to "Help", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></span>
               
-              <script src="<%= request.protocol + request.host_with_port %>/javascripts/global_nav_internal.js" type="text/javascript"></script>
+              <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
             </div><!--/.nav-collapse -->
             
             
