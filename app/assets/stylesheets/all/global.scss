@@ -193,6 +193,7 @@ body {
   .size300w {width:300px !important;}
 
   #collapsed_nav_options .extension_global_nav {display:none !important;}
+  .app-navbar .container {max-width: 1180px;margin: 0 auto;}
   
   @media screen and (max-width: 1200px) {
 /*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
@@ -241,6 +242,8 @@ body {
 body#public {background:#f4f4f4;}
 
 body#public {
+  .extension_global_nav {background:#333;}
+  .navbar-inner {border-radius:0} 
   .formy {border:1px solid #E3E3E3; padding:1em; background:#fff; margin-bottom:2em;}
   #submitter_followup {margin:2em 0; font-size:1.8em;}
   #additional_comment h2 {margin-bottom:1em;}
@@ -300,11 +303,9 @@ body#public {
 	#expertbar a.brand {font-size:1.1em; }
 	#expertbar a:hover {color:#fff !important; text-decoration:none;}
 	#expertbar .navavatar.loggedin a {color:#999;}
-	#expertbar .navavatar {background:#000;}
 	#expertbar.navbar-inner {min-height:35px; height:35px;}
 	.logout {margin-left:1em;}
 	ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
-/*  #expertbar .container {outline: 1px solid lime !important;}*/
   
   #app_location.demo {margin-top:1em; background:#FFFF7E;}
   #content_wrapper {margin:3em 1.5em 1em;}
@@ -345,6 +346,9 @@ body#public {
 	
 	#publicbar.navbar-inner form {border:0;}
 	#publicbar.navbar-inner a:hover {background:none;}
+	
+/*  #publicbar{outline:1px solid yellow;}*/
+  #publicbar .container {border-top:1px solid #F47B28;}
 	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
@@ -690,7 +694,7 @@ body#expert {
 /*  .app-navbar {outline:1px solid blue;}*/
 /*  .app-navbar .navbar-inner {border:1px solid yellow;}*/
 /*  .app-navbar .container {outline:1px solid red;}*/
-  .app-navbar .container {max-width: 1180px;margin: 0 auto;}
+  
   
   @media screen and (max-width: 1200px) {
 /*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
