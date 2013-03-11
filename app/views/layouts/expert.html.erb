@@ -10,7 +10,7 @@
   <%= render(:partial => 'home/google_analytics') %>
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
-  
+
   <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   
   <div class="navbar navbar-inverse app-navbar  <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
@@ -58,18 +58,17 @@
             <% end %>
             <div id="collapsed_nav_options" class="nav-collapse collapse">
               <ul class="nav">
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_unanswered_path %></li>
+                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Needs an Answer", expert_home_unanswered_path %></li>
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
                 <li <%= "class='active'" if current_page?(:controller => 'groups', :action => "index") %>><%= link_to "Groups", expert_groups_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
                 <p id="search">
-                  <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
+                  <%= text_field_tag 'q', params[:q], :class => "input-xlarge", :placeholder => "Search experts, questions, groups", :id => "search_field" %>
                   <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
                 </p>
               <% end %>
-              <p><%= link_to("AaE Public", root_path(), :class => "brand") %></p>
-              <span class="help_link"><%= link_to "Help", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></span>
+              
               
               <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
             </div><!--/.nav-collapse -->
@@ -116,7 +115,7 @@
 
 <footer class="footer">
     <ul>
-        <li><%= link_to "Contact Us", home_about_path() %></li>
+        <li><%= link_to "Help / Contact Us", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></li>
         <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
         <li><%= link_to("Terms of Use","http://www.extension.org/main/termsofuse")%></li>
     </ul>

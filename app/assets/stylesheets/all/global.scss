@@ -225,6 +225,7 @@ body {
 	  #collapsed_nav_options .extension_global_nav ul {text-align: left !important;}
 	  #publicbar.navbar-inner .extension_global_nav a {color:#fff; padding: 1em 0; margin:0;}
 	  .extension_global_nav li {display:block !important; padding:1em !important; border:0 !important;}
+	  #collapsed_nav_options #searchform {float:none !important;}
 	}
 	
 	@media screen and (max-width: 420px) {
@@ -388,6 +389,10 @@ body#public {
 
 
 body#expert {
+/*  .app-navbar .navbar-inner {background:#2C2A2A;}*/
+  .app-navbar .navbar-inner {padding-top:.6em; border-radius:0}
+  #searchform input {width:230px;}
+  .navbar-inverse .brand, .navbar-inverse .nav > li > a {color:#ccc;}
   #oldest_question {margin:3em 0 3em; background:#eee;}
   .coffeetime {font-size:1.1em; color:#888; padding-left:30px; line-height:1.5em;}
   i.coffee {background: transparent url(/assets/34-coffee.png) 50% 50% no-repeat; width:30px; height:30px; display:block; float:left; margin-right:.5em;}
@@ -422,7 +427,6 @@ body#expert {
   .inactive_notice {background:yellow; padding:1em; margin-bottom:1em;}
   .explanation {padding:1em; background:#eee; margin-bottom:2em; font-size:1.2em; line-height:1.4em; color:#666;}
   #extension_people_data {background:#eee; padding:1em; color:#666; margin-bottom:3em;}
-  .help_link a {color:#FFFFBB;}
   #reassign_question {background:#fff; padding:1em; color:#555 !important; margin-bottom:3em;}
   #reassign_question .title {color:#555 !important; margin:0;}
   #reassign_question .question_body {font-size:1.3em; line-height:1.3em; font-family: Georgia, serif; border-bottom:1px solid #e5e5e5; margin-bottom:.75em;}
@@ -435,7 +439,7 @@ body#expert {
 	#history_comment_toggle {margin:1em 0;}
 	.history_of_tags {margin:0 1em .35em; display:block;}
 	.history_of_tags span { padding:.1em .35em;}
-	.brand.home {color:#fff; background:#000; margin-right:.5em; font-size:1.8em;}
+	.brand.home {color:#fff; font-size:1.8em;}
 	background:#504848;
 	padding-bottom:5em;
 	.row-fluid {background:#f9f9f9;}
@@ -454,8 +458,7 @@ body#expert {
     .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
     .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
-    .navavatar {float:right;}
-	.navavatar {background:#000; border:3px solid #000;}
+  .navavatar {float:right; padding-bottom:1.1em;}
 	.navavatar a {color:#999;}
 	.navavatar img {border:#888 1px solid;}
 	.navavatar a:hover {color:#fff !important; text-decoration:none;}
@@ -684,10 +687,16 @@ body#expert {
   #reassignment_results_feedback {display:none;position:absolute; left:0; right:0; height:1000px; padding:1em 3em 3em;  background:#F8F8F8; }
   #reassignment_results_feedback h3 {color:#999; font-size:2.8em; font-weight:normal; margin-bottom:1em; text-align:center; line-height:1.2em;}
   
+/*  .app-navbar {outline:1px solid blue;}*/
+/*  .app-navbar .navbar-inner {border:1px solid yellow;}*/
+/*  .app-navbar .container {outline:1px solid red;}*/
+  .app-navbar .container {max-width: 1180px;margin: 0 auto;}
+  
   @media screen and (max-width: 1200px) {
 /*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
-    .app-navbar .navbar-inner {width: auto; padding-left:0; padding-right:0; margin:0;}
     .app-navbar .container {width: auto; padding-left:0; padding-right:0; margin:0;}
+    .app-navbar .navbar-inner {width: auto; padding-left:0; padding-right:0; margin:0;}
+    .app-navbar .container {max-width: 1180px;padding: 0 20px;}
   }
   
   @media screen and (max-width: 979px) {
