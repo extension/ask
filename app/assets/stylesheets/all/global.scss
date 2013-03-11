@@ -2,13 +2,6 @@
 
 body {
   #branding {margin:0 0 .25em; float:left;}
-  .extension_nav_public {margin:0;padding:0; background: #2f3b3e;}
-  .extension_nav_public ul {text-align: center;  padding: .35em 0; margin: 0; }
-  .extension_nav_public li {display:inline; padding:0 1em; border-right:1px solid #666;}
-  .extension_nav_public .last {border:0;}
-  .extension_nav_public a {padding: 0 .4em; color: #aaa;text-decoration: none;}
-  .extension_nav_public a:hover {color: #fff;}
-  
   .about p {line-height:1.6em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.5em;}
   /*reset bootstrap typography */
   font-size:13px; line-height: 18px;
@@ -198,10 +191,12 @@ body {
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
   .size300w {width:300px !important;}
-  
+
+  #collapsed_nav_options .extension_global_nav {display:none !important;}
   
   @media screen and (max-width: 1200px) {
-    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
+/*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
+    .app-navbar .container {width: auto; padding-left:20px; padding-right:20px;}
   }
   
   @media screen and (max-width: 979px) {
@@ -216,7 +211,8 @@ body {
 	
 	@media screen and (max-width: 767px) {
     padding-left:0;padding-right:0;
-    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin-left: 0;margin-right: 0;}
+/*    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin-left: 0;margin-right: 0;}*/
+    .app-navbar {margin-left: 0;margin-right: 0;}
     .incoming_question .span8 {padding:1em 0 !important;}
     fieldset {width:100%;}
 	}
@@ -224,6 +220,11 @@ body {
 	@media screen and (max-width: 480px) {
     .hidecompact480 {display:none;}
     h1 {line-height:1.4em; margin:.5em 0 .85em; font-size:1.6em}
+    .extension_global_nav {display:none !important;}
+	  #collapsed_nav_options .extension_global_nav {display:block !important;}
+	  #collapsed_nav_options .extension_global_nav ul {text-align: left !important;}
+	  #publicbar.navbar-inner .extension_global_nav a {color:#fff; padding: 1em 0; margin:0;}
+	  .extension_global_nav li {display:block !important; padding:1em !important; border:0 !important;}
 	}
 	
 	@media screen and (max-width: 420px) {
@@ -259,8 +260,6 @@ body#public {
   .answered_question_images p {font-size:1.3em; line-height:1.4em}
   #localization {background:#eee; padding:2em;}
   #recent_photo_questions {background:#eee; padding:2em; margin-bottom:2em;}
-  #collapsed_nav_options {background: #2f3b3e;}
-  #collapsed_nav_options .extension_nav_public {display:none;}
   .navbar .nav > li > a {color:#fff; text-shadow:none;}
   
   .public_bio {font-size:1.35em; line-height:1.4em; font-family: Georgia, serif;}
@@ -365,11 +364,6 @@ body#public {
 	}
 	@media screen and (max-width: 480px) {
 	  #search_field {width:80%;}
-	  .extension_nav_public {display:none;}
-	  #collapsed_nav_options .extension_nav_public {display:block;}
-	  #collapsed_nav_options .extension_nav_public ul {text-align: left;}
-	  #publicbar.navbar-inner .extension_nav_public a {color:#fff; padding: 1em 0; margin:0;}
-	  .extension_nav_public li {display:block; padding:1em; border:0;}
 	  #extension_logo img {width:120px; height:auto;}
     #ask_an_expert_logo img {width:120px; height:auto;}
     #question_wrapper {padding:1em 0 !important;}
@@ -691,7 +685,9 @@ body#expert {
   #reassignment_results_feedback h3 {color:#999; font-size:2.8em; font-weight:normal; margin-bottom:1em; text-align:center; line-height:1.2em;}
   
   @media screen and (max-width: 1200px) {
-    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}
+/*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
+    .app-navbar .navbar-inner {width: auto; padding-left:0; padding-right:0; margin:0;}
+    .app-navbar .container {width: auto; padding-left:0; padding-right:0; margin:0;}
   }
   
   @media screen and (max-width: 979px) {
@@ -706,7 +702,8 @@ body#expert {
 	
 	@media screen and (max-width: 767px) {
     padding-left:0;padding-right:0;
-    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin-left: 0;margin-right: 0;}
+/*    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {margin-left: 0;margin-right: 0;}*/
+    .app-navbar {margin-left: 0;margin-right: 0;}
     .incoming_question .span8 {padding:1em 0 !important;}
 	}
 	
