@@ -246,7 +246,6 @@ class Question < ActiveRecord::Base
           assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
         end
         if !assignee 
-          group_assignee_ids = group.assignees.collect{|ga| ga.id}
           assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
         end
         # still aint got no one? assign to a group leader
