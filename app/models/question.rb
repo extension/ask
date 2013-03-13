@@ -229,7 +229,7 @@ class Question < ActiveRecord::Base
     system_user = User.system_user
     
     group = self.assigned_group
-    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location)) && group.assignees.length > 0
+    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location))
       # if group individual assignment is not turned on for a group, then we log that it was assigned to the group.
       # the group designation has already been taken care of with the saving of the question, and when we don't have an individual assignment, but a group designation,
       # it is considered assigned to the group and not an individual.
@@ -237,24 +237,30 @@ class Question < ActiveRecord::Base
         QuestionEvent.log_group_assignment(self, group, system_user, nil)    
         return
       end
-      if self.county.present?
-        assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
-      end
-      if !assignee && self.location.present?
-        assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
-      end
-      if !assignee 
-        group_assignee_ids = group.assignees.collect{|ga| ga.id}
-        assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
-      end
-      # still aint got no one? assign to a group leader
-      if !assignee
-        if group.leaders.active.length > 0
-          assignee = pick_user_from_list(group.leaders.active)
-        # still aint got no one? really?? Wrangle that bad boy.
-        else
-          assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+      
+      if group.assignees.length > 0
+        if self.county.present?
+          assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
         end
+        if !assignee && self.location.present?
+          assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
+        end
+        if !assignee 
+          group_assignee_ids = group.assignees.collect{|ga| ga.id}
+          assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
+        end
+        # still aint got no one? assign to a group leader
+        if !assignee
+          if group.leaders.active.length > 0
+            assignee = pick_user_from_list(group.leaders.active)
+          # still aint got no one? really?? Wrangle that bad boy.
+          else
+            assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+          end
+        end
+      # if individual assignment is turned on for the group and there are no active assignees, wrangle it
+      else
+        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
