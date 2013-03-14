@@ -9,6 +9,17 @@
   <meta property="og:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>"/>
   <meta property="og:description" content="<%= @page_meta_description ? @page_meta_description : "Ask an Expert offers one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States." %>"/>
   <meta property="og:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>"/>
+  
+  <% if @question %>
+    <% @question.images.each do |image| %>
+      <% if image.persisted? %>
+        <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+        <meta property="og:image" content="<%= request.protocol + request.host_with_port + image.url() %>"/>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  
   <meta name="twitter:card" content="summary">
   <meta name="twitter:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>">
   <meta name="twitter:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>">
