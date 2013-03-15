@@ -14,7 +14,7 @@
     <% @question.images.each do |image| %>
       <% if image.persisted? %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-        <meta property="og:image" content="<%= request.protocol + request.host_with_port + image.url() %>"/>
+        <meta property="og:image" content="<%= request.protocol + request.host_with_port + image.dynamic_attachment_url("1500x1500>") %>"/>
         <% end %>
       <% end %>
     <% end %>
