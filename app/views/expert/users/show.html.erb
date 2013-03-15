@@ -117,17 +117,34 @@
   </aside>
 
   <aside>
-    <h3>Group Membership <%= link_to "(#{@my_groups.count})", expert_user_groups_path() %></h3>
+      <h3>Group Membership (<%= @my_groups.count %>)</h3>
+    <% if current_user.id == @user.id %>
+      <p><%= link_to "Groups home", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>      
+    <% end %>
+    
     <ul class="groups">
       <% if @my_groups.size == 0 %>
-        <li>Not currently a member or leader of a group.</li>
+        <li class="group_list_item">Not currently a member or leader of a group.</li>
       <% else %>
         <% @my_groups.each do |group| %>  
-          <li><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %><%= !group.group_active? ? "- Inactive Group" : "" %></span></li>
+          <li class="group_list_item">
+            <span class="<%= !group.group_active? ? "inactive_group" : "active" %>">
+              <%= link_expert_group_avatar(group, :thumb) %> 
+              <span class="group_info">
+                <strong><%= link_to group.name, expert_group_path(group.id) %></strong> <%= !group.group_active? ? "- Inactive Group" : "" %>
+                <% if @user.send_incoming_notification?(group) %>
+                   <span>Notified on every question</span>
+                <% end %>
+                <% if @user.send_daily_summary?(group) %>
+                   <span>Receives daily summary</span>
+                <% end %>
+              </span>
+            </span>
+          </li>
         <% end %>
       <% end %>
-      <%= link_to "View groups", expert_user_groups_path() %>
     </ul>
+    <br class="clearing" />
   </aside>
   
 

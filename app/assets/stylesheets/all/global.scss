@@ -690,6 +690,11 @@ body#expert {
   #reassignment_results_feedback_wrapper {position:relative; z-index:500;}
   #reassignment_results_feedback {display:none;position:absolute; left:0; right:0; height:1000px; padding:1em 3em 3em;  background:#F8F8F8; }
   #reassignment_results_feedback h3 {color:#999; font-size:2.8em; font-weight:normal; margin-bottom:1em; text-align:center; line-height:1.2em;}
+  .brand.home img {height:30px; width:80px; margin-right:10px;}
+  .group_info {display:block; float:left; margin-left:12px;}
+  .group_list_item {float:left; display:block; clear:both; border-bottom:1px solid #fff; width:100%; padding-bottom:10px;}
+  .group_list_item .avatar_with_badge {float:left; display:block;}
+  .group_info span {display:block; color:#666;}
   
 /*  .app-navbar {outline:1px solid blue;}*/
 /*  .app-navbar .navbar-inner {border:1px solid yellow;}*/

@@ -3,7 +3,7 @@
 <div id="dashboard">
   <div class="span6">
     
-    <h1><%= link_to "Ask an Expert Dashboard", expert_home_path()%></h1>
+    <h1><%= link_to "Expert Dashboard", expert_home_path()%></h1>
 
     <h2><%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path %></h2>
 
@@ -109,6 +109,7 @@
   
   <div class="expert_dashboard_tags">
   <h3>My Groups</h3>
+  <p><%= link_to "Groups home", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>
   <% if @my_groups.size == 0 %>
     <p>You currently are not a member any groups.</p>
   <% else %>
