@@ -118,7 +118,7 @@ class Group < ActiveRecord::Base
   end
   
   def group_members_with_self_first(current_user, limit)
-    group_members = self.joined.where("user_id != ?", current_user.id).limit(limit)
+    group_members = self.joined.where("user_id != ?", current_user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit)
     if (current_user.leader_of_group(self) || current_user.member_of_group(self))
       group_members = group_members.unshift(current_user)
     end

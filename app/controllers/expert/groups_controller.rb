@@ -45,8 +45,7 @@ class Expert::GroupsController < ApplicationController
   
   def members
     @group = Group.find(params[:id])
-    @group_members = @group.joined.order('connection_type ASC')
-    
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @group_members.map(&:id)})
   end
   
