@@ -201,6 +201,12 @@ class QuestionsController < ApplicationController
       rescue ArgumentError => ae
         flash[:warning] = @argument_errors
         @host_name = request.host_with_port
+        
+        if @question.blank?
+          @question = Question.new
+          @question.images.build
+        end
+        
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
@@ -209,6 +215,12 @@ class QuestionsController < ApplicationController
       rescue Exception => e
         flash[:notice] = 'An internal error has occured. Please check back later.'
         @host_name = request.host_with_port
+        
+        if @question.blank?
+          @question = Question.new
+          @question.images.build
+        end
+        
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
