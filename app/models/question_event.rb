@@ -59,10 +59,11 @@ class QuestionEvent < ActiveRecord::Base
                             CHANGED_GROUP => 'group changed',
                             CHANGED_LOCATION => 'location changed' }
 
-  scope :latest, {:order => "created_at desc", :limit => 1}
-  scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
-  scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
+  HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
 
+
+  scope :latest, order("#{self.table_name}.created_at desc")
+  scope :handling_events, where("event_state IN (#{HANDLING_EVENTS.join(',')})")
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
@@ -198,7 +199,7 @@ class QuestionEvent < ActiveRecord::Base
     # if we want to keep track of this for a group context (user is being tracked here), we'll need to add more columns to the schema for groups
     
     # get last event
-    last_event = question.question_events.latest[0]
+    last_event = question.question_events.latest.first
     if last_event.present?
       create_attributes[:duration_since_last] = (time_of_this_event - last_event.created_at).to_i
       create_attributes[:previous_recipient_id] = last_event.recipient_id
@@ -206,8 +207,7 @@ class QuestionEvent < ActiveRecord::Base
       create_attributes[:previous_event_id] = last_event.id
       # if not a handling event, get the last handling event
       if(!last_event.is_handling_event?)
-        if(last_handling_events = question.question_events.latest_handling && !last_handling_events.blank?)
-          last_handling_event = last_handling_events[0]
+        if(last_handling_event = question.question_events.handling_events.latest.first)
           create_attributes[:previous_handling_event_id] = last_handling_event.id          
           create_attributes[:duration_since_last_handling_event] = (time_of_this_event - last_handling_event.created_at).to_i
           create_attributes[:previous_handling_event_state] = last_handling_event.event_state
@@ -228,7 +228,7 @@ class QuestionEvent < ActiveRecord::Base
   end
   
   def is_handling_event?
-    return ((self.event_state == ASSIGNED_TO) || (self.event_state == ASSIGNED_TO_GROUP) || (self.event_state == RESOLVED) || (self.event_state==REJECTED) || (self.event_state==NO_ANSWER))
+    HANDLING_EVENTS.include?(self.event_state)
   end
   
   # NOTE THAT THE RECIPIENT_ID (AND PREVIOUS_RECIPIENT_ID AND PREVIOUS_HANDLING_RECIPIENT_ID) CAN BE NULL HERE DUE TO ASSIGNMENT TO GROUPS IN WHICH THE RECIPIENT_GROUP_ID IS SET
