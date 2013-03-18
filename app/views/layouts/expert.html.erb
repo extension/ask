@@ -35,6 +35,7 @@
                         <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
                         <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
                         <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+                        <li><%= link_to "AaE How-Tos", "http://create.extension.org/node/95420" %></li>
                       </ul>
                     </li>
                   </ul>
@@ -118,6 +119,7 @@
 <footer class="footer">
     <ul>
         <li><%= link_to "Help / Contact Us", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></li>
+        <li><%= link_to "AaE How-Tos", "http://create.extension.org/node/95420" %></li>
         <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
         <li><%= link_to("Terms of Use","http://www.extension.org/main/termsofuse")%></li>
     </ul>
