@@ -69,10 +69,16 @@
 
 <script class="code" type="text/javascript">
   $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
 
-    $('.wysiwyg').each(function(i, elem) {
-      $(elem).wysihtml5({image: false});
-    });
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
 
     $("#question_location_id").change(function() {
       var location_id = $('select#question_location_id :selected').val();
