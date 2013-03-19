@@ -13,6 +13,7 @@ class Expert::ReportsController < ApplicationController
     @locations = Location.order('fipsid ASC')
     @my_tags = current_user.tags
     @condition_array = ""
+    @experts = ""
     
     @my_groups = Array.new
       current_user.group_memberships.each do |membership|
@@ -27,6 +28,8 @@ class Expert::ReportsController < ApplicationController
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
+      @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(20)
+      # @experts = User.exid_holder.not_retired.questions_answered.limit(20)
     end
     
     if params[:group_id].present?
@@ -52,5 +55,33 @@ class Expert::ReportsController < ApplicationController
     @unanswered_questions_count = questions_based_on_report_filter('unanswered').count
     @questions_asked = questions_based_on_report_filter('asked', @year_month)
     @questions_answered = questions_based_on_report_filter('answered', @year_month)
+  end
+  
+  def question_list
+    @expert = User.find(params[:id])
+    
+    if(params[:filter] and ['assigned','answered'].include?(params[:filter]))
+      filter = params[:filter]
+    else
+      filter = 'assigned'
+    end
+
+    if(params[:year_month])
+      @year_month = params[:year_month]
+    else
+      @year_month = User.year_month_string(Date.today.year,Date.today.month)
+    end
+
+    case filter
+    when 'assigned'
+      @question_list = @expert.assigned_list_for_year_month(@year_month).order('created_at DESC')
+    when 'answered'
+      @question_list = @expert.answered_list_for_year_month(@year_month).order('created_at DESC')
+    end
+
+    @page_title = "#{filter.capitalize} Questions for #{@expert.name} (ID##{@expert.id}) for #{@year_month}"
+    @display_title = "#{filter.capitalize} Questions for #{@expert.name}"
+    @subtext_display = "for #{@year_month}"
+    @breadcrumb_display = "#{filter.capitalize} Questions for #{@expert.name} for #{@year_month}"
   end
 end

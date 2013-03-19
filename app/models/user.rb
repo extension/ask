@@ -84,6 +84,13 @@ class User < ActiveRecord::Base
   scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
   
+  scope :questions_answered,
+    select("users.*, count(distinct(question_events.question_id)) AS question_count").
+    joins("INNER JOIN question_events ON question_events.initiated_by_id = users.id").
+    group("question_events.initiated_by_id").
+    order("count(distinct(question_events.question_id)) DESC")
+
+  
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   
   scope :tagged_with_any, lambda { |tag_array|

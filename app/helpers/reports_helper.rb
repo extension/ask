@@ -27,7 +27,13 @@ module ReportsHelper
     end
   end
 
-
+  def question_list_link(value,params = {})
+    if(value == 0)
+      value
+    else
+      link_to(value,expert_reports_question_list_path(params)).html_safe
+    end
+  end
 
 
 

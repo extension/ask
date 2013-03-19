@@ -30,6 +30,21 @@
       <h2><%= @date.strftime("%B, %Y") %> at a Glance:</h2>
       <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
       <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
+      
+      <% if @experts.size > 0 %>
+        <% @experts.each do |member| %>
+          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span>
+            Answered: 
+              <%= question_list_link(member.answered_count_by_year_month[@year_month], {id: member.id, filter: 'answered', year_month: @year_month}) %>
+            Assigned: 
+            <%= question_list_link(member.assigned_count_by_year_month[@year_month], {id: member.id, filter: 'assigned', year_month: @year_month}) %>
+            </p>
+
+        <% end %>
+      <% else %>
+        <p>There are no experts in this location</p>
+      <% end %>
+      
   </div>
 </div>
 
