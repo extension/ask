@@ -32,17 +32,34 @@
       <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
       
       <% if @experts.size > 0 %>
+      <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+          <th>Expert</th>
+          <th>Answered</th>
+          <th>Assigned</th>
+          <th>Last Active</th>
+          <th>Metrics</th>
+        <tr>
+        </thead>  
         <% @experts.each do |member| %>
-          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span>
-            Answered: 
-              <%= question_list_link(member.answered_count_by_year_month[@year_month], {id: member.id, filter: 'answered', year_month: @year_month}) %>
-            Assigned: 
-            <%= question_list_link(member.assigned_count_by_year_month[@year_month], {id: member.id, filter: 'assigned', year_month: @year_month}) %>
-            </p>
+          <tr>
+            <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></td>
+            <td>
+              <span class="bignumber"><%= member.answered_count_by_year_month[@year_month] ? expert_question_list_link(member.answered_count_by_year_month[@year_month], {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
+            </td>
+            <td>
+              <span class="bignumber">
+            <%= member.assigned_count_by_year_month[@year_month] ? expert_question_list_link(member.assigned_count_by_year_month[@year_month], {id: member.id, filter: 'assigned', year_month: @year_month}) : 0%></span>
+            </td>
+            <td><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
+            <td><%= link_to('Full report',expert_expert_report_path(member.id)) %></td>
+            </tr>
 
         <% end %>
+        </table>
       <% else %>
-        <p>There are no experts in this location</p>
+        <!-- <p>There are no experts in this location</p> -->
       <% end %>
       
   </div>

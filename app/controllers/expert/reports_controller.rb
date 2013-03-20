@@ -29,7 +29,7 @@ class Expert::ReportsController < ApplicationController
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
       @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(20)
-      # @experts = User.exid_holder.not_retired.questions_answered.limit(20)
+      # @experts = User.by_question_event_count(QuestionEvent::RESOLVED,{limit: 10,yearmonth:'2013-01'})
     end
     
     if params[:group_id].present?
@@ -57,7 +57,44 @@ class Expert::ReportsController < ApplicationController
     @questions_answered = questions_based_on_report_filter('answered', @year_month)
   end
   
+  def expert
+    @expert = User.find(params[:id])
+    
+    if(!@earliest_assigned_at = @expert.earliest_assigned_at)
+      return
+    end
+    year_months = User.year_months_between_dates(@earliest_assigned_at,Time.now)
+
+    assigned_count_by_year_month = @expert.assigned_count_by_year_month
+    answered_count_by_year_month = @expert.answered_count_by_year_month
+
+    assigned_count_by_year = @expert.assigned_count_by_year_month
+    answered_count_by_year = @expert.answered_count_by_year_month
+
+    @counts_by_year_and_year_month = {}
+    year_months.each do |year_month|
+      year = year_month.split('-')[0]
+      @counts_by_year_and_year_month[year] ||= {}
+      @counts_by_year_and_year_month[year][year_month] = {}
+      @counts_by_year_and_year_month[year][year_month]['assigned'] = (assigned_count_by_year_month[year_month] ? assigned_count_by_year_month[year_month] : 0)
+      @counts_by_year_and_year_month[year][year_month]['answered'] = (answered_count_by_year_month[year_month] ? answered_count_by_year_month[year_month] : 0)
+    end
+
+    @counts_by_year = {}
+    assigned_count_by_year = @expert.assigned_count_by_year
+    answered_count_by_year = @expert.answered_count_by_year
+    @counts_by_year_and_year_month.keys.each do |year|
+      year_int = year.to_i
+      @counts_by_year[year] = {} 
+      @counts_by_year[year]['assigned'] = (assigned_count_by_year[year_int] ? assigned_count_by_year[year_int] : 0)
+      @counts_by_year[year]['answered'] = (answered_count_by_year[year_int] ? answered_count_by_year[year_int] : 0)
+    end
+  end
+  
   def question_list
+  end
+  
+  def expert_list
     @expert = User.find(params[:id])
     
     if(params[:filter] and ['assigned','answered'].include?(params[:filter]))

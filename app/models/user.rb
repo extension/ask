@@ -83,14 +83,6 @@ class User < ActiveRecord::Base
   scope :not_blocked, conditions: { is_blocked: false }
   scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
-  
-  scope :questions_answered,
-    select("users.*, count(distinct(question_events.question_id)) AS question_count").
-    joins("INNER JOIN question_events ON question_events.initiated_by_id = users.id").
-    group("question_events.initiated_by_id").
-    order("count(distinct(question_events.question_id)) DESC")
-
-  
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   
   scope :tagged_with_any, lambda { |tag_array|
@@ -142,7 +134,21 @@ class User < ActiveRecord::Base
     twitter_authmap = self.authmaps.detect{|am| am.source == 'twitter'}
     twitter_authmap.present? && (self.authmaps.length == 1 || (self.authmaps.order(:created_at).first.id == twitter_authmap.id))
   end
-
+  
+  
+  def self.by_question_event_count(event_state,options = {})
+      with_scope do
+        id_list = self.exid_holder.not_retired.pluck("#{self.table_name}.id")
+        qe_scope = QuestionEvent.where(event_state: event_state).where("initiated_by_id IN (#{id_list.join(',')})").group(:initiator)
+        if(options[:yearmonth])
+          qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",options[:yearmonth])
+        end
+        if(options[:limit])
+          qe_scope = qe_scope.limit(options[:limit])
+        end
+        qe_scope.order("count_distinct_question_id DESC").count('distinct(question_id)')
+      end
+    end
 
   def name
     if (self.first_name.present? && self.last_name.present?)
