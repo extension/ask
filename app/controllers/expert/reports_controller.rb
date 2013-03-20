@@ -36,7 +36,7 @@ class Expert::ReportsController < ApplicationController
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
-      # @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(40)
+      # @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(100)
       @experts = @location.users.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40,yearmonth:@year_month})
     end
        

@@ -36,6 +36,7 @@
         <thead>
         <tr>
           <th>Expert</th>
+          <th>Primary location</th>
           <th>Answered</th>
           <th>Assigned</th>
           <th>Last Active</th>
@@ -45,6 +46,14 @@
         <% @experts.each do |member,answered_count| %>
           <tr>
             <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></td>
+            <td>
+              <% if member.location %>
+                <% if member.county %>
+                  <%= member.county.name %>, 
+                <% end %>
+                <%= member.location.abbreviation %>
+              <% end %>
+            </td>
             <td>
               <span class="bignumber"><%= member.answered_count_by_year_month[@year_month] ? expert_question_list_link(member.answered_count_by_year_month[@year_month], {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
             </td>
