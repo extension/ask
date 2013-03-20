@@ -42,7 +42,7 @@ class Expert::ReportsController < ApplicationController
        
     if params[:county_id].present?
       @county = County.find_by_id(params[:county_id])
-      @condition_array += " #{@county.name} "
+      @condition_array = " #{@county.name}, #{@location.name} "
       @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
     end  
     
@@ -50,7 +50,7 @@ class Expert::ReportsController < ApplicationController
       @group = Group.find_by_id(params[:group_id])
       @my_groups << @group
       @my_groups = @my_groups.uniq
-      @condition_array += " #{@group.name} "
+      @condition_array += " in #{@group.name} "
     end
     
     @unanswered_questions_count = questions_based_on_report_filter('unanswered').count

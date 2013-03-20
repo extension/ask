@@ -18,20 +18,28 @@
     </div>
   
   
-    <h3><%= link_to "Monthly Summaries", expert_reports_home_path() %></h3>
-    <h2><%= @condition_array.present? ? @condition_array : "No filters" %></h2>
-    <h5 class="highlight_unanswered"><span>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
+    
   
     <div id="last_30_days" class="formy">
-      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
+      <p><%= link_to "Reports Home", expert_reports_home_path() %> | <%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
       <% if @following_year_month %>
         - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%>
       <% end %></p>
-      <h2><%= @date.strftime("%B, %Y") %> at a Glance:</h2>
-      <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
-      <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
+      <h2>Summary Report for <%= @date.strftime("%B, %Y") %> for <%= @condition_array.present? ? @condition_array : "No filters" %></h2>
+      
+      <% if @unanswered_questions_count > 0 %>
+        <h5 class="highlight_unanswered"><span>Note: there are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
+      <% end %>
+      
+      <div id="data_summary">
+        <h2>At a Glance</h2>
+        <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
+        <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
+      </div>
       
       <% if @experts.size > 0 %>
+        
+      <h3>Activity for Experts located in <%= @condition_array.present? ? @condition_array : "No filters" %></h3>
       <table class="table table-striped table-bordered">
         <thead>
         <tr>
