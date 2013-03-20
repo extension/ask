@@ -42,7 +42,7 @@
           <th>Metrics</th>
         <tr>
         </thead>  
-        <% @experts.each do |member| %>
+        <% @experts.each do |member,answered_count| %>
           <tr>
             <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></td>
             <td>

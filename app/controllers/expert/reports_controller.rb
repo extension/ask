@@ -15,6 +15,19 @@ class Expert::ReportsController < ApplicationController
     @condition_array = ""
     @experts = ""
     
+    if(params[:year_month])
+      @date = Date.strptime(params[:year_month] + "-01")
+      @year_month = params[:year_month]
+      @previous_year_month = (@date - 1.month).strftime('%Y-%m')
+      if User.year_month_string(Date.today.year,Date.today.month) != @year_month
+        @following_year_month = (@date + 1.month).strftime('%Y-%m')
+      end
+    else
+      @date = DateTime.now
+      @year_month = User.year_month_string(Date.today.year,Date.today.month)
+      @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
+    end
+    
     @my_groups = Array.new
       current_user.group_memberships.each do |membership|
       @my_groups << membership
@@ -23,8 +36,8 @@ class Expert::ReportsController < ApplicationController
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
-      @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(20)
-      # @experts = User.by_question_event_count(QuestionEvent::RESOLVED,{limit: 10,yearmonth:'2013-01'})
+      # @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(40)
+      @experts = @location.users.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40,yearmonth:@year_month})
     end
        
     if params[:county_id].present?
@@ -38,19 +51,6 @@ class Expert::ReportsController < ApplicationController
       @my_groups << @group
       @my_groups = @my_groups.uniq
       @condition_array += " #{@group.name} "
-    end
-    
-    if(params[:year_month])
-      @date = Date.strptime(params[:year_month] + "-01")
-      @year_month = params[:year_month]
-      @previous_year_month = (@date - 1.month).strftime('%Y-%m')
-      if User.year_month_string(Date.today.year,Date.today.month) != @year_month
-        @following_year_month = (@date + 1.month).strftime('%Y-%m')
-      end
-    else
-      @date = DateTime.now
-      @year_month = User.year_month_string(Date.today.year,Date.today.month)
-      @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
     end
     
     @unanswered_questions_count = questions_based_on_report_filter('unanswered').count
