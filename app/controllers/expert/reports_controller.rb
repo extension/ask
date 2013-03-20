@@ -19,11 +19,6 @@ class Expert::ReportsController < ApplicationController
       current_user.group_memberships.each do |membership|
       @my_groups << membership
     end
-       
-    if params[:county_id].present?
-      @county = County.find_by_id(params[:county_id])
-      @condition_array += " #{@county.name} "
-    end
     
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
@@ -31,6 +26,12 @@ class Expert::ReportsController < ApplicationController
       @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(20)
       # @experts = User.by_question_event_count(QuestionEvent::RESOLVED,{limit: 10,yearmonth:'2013-01'})
     end
+       
+    if params[:county_id].present?
+      @county = County.find_by_id(params[:county_id])
+      @condition_array += " #{@county.name} "
+      @experts = User.exid_holder.not_retired.with_expertise_county(@county.id).order("users.last_active_at DESC").limit(20)
+    end  
     
     if params[:group_id].present?
       @group = Group.find_by_id(params[:group_id])
