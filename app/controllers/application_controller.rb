@@ -97,18 +97,15 @@ class ApplicationController < ActionController::Base
   def questions_based_on_report_filter(status="unanswered", year_month)
     condition_array = Array.new
     
-    if params[:location_id].present?
-      @location = Location.find_by_id(params[:location_id])
+    if defined?(@location) && @location.present?
       condition_array << "questions.location_id = #{@location.id}"
     end
     
-    if params[:county_id].present?
-      @county = County.find_by_id(params[:county_id])
+    if defined?(@county) && @county.present?
       condition_array << "questions.county_id = #{@county.id}"
     end
     
-    if params[:group_id].present?
-      @group = Group.find(params[:group_id])
+    if defined?(@group) && @group.present?
       condition_array << "questions.assigned_group_id = #{@group.id}"
     end
     

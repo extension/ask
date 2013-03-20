@@ -9,6 +9,7 @@ class Expert::ReportsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
+  # TODO: put a check in here to make sure the group, county, location id's actually exist -- ATH
   def index
     @locations = Location.order('fipsid ASC')
     @my_tags = current_user.tags
@@ -33,25 +34,33 @@ class Expert::ReportsController < ApplicationController
       @my_groups << membership
     end
     
+    if params[:group_id].present?
+      @group = Group.find_by_id(params[:group_id])
+      @my_groups << @group
+      @my_groups = @my_groups.uniq
+    end
+    
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
-      # @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(100)
-      @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+      if defined?(@group) && @group.present?
+        @experts = @location.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+      else
+        @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+      end
     end
        
     if params[:county_id].present?
       @county = County.find_by_id(params[:county_id])
       @condition_array = " #{@county.name}, #{@location.name} "
-      @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+      if defined?(@group) && @group.present?
+        @experts = @county.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+      else
+        @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+      end
     end  
     
-    if params[:group_id].present?
-      @group = Group.find_by_id(params[:group_id])
-      @my_groups << @group
-      @my_groups = @my_groups.uniq
-      @condition_array += " in #{@group.name} "
-    end
+    @condition_array += " in #{@group.name} " if defined?(@group) && @group.present?
     
     @unanswered_questions_count = questions_based_on_report_filter('unanswered').count
     @questions_asked = questions_based_on_report_filter('asked', @year_month)
