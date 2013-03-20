@@ -37,13 +37,13 @@ class Expert::ReportsController < ApplicationController
       @location = Location.find_by_id(params[:location_id])
       @condition_array += " #{@location.name} "
       # @experts = User.exid_holder.not_retired.with_expertise_location(@location.id).order("users.last_active_at DESC").limit(100)
-      @experts = @location.users.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40,yearmonth:@year_month})
+      @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
     end
        
     if params[:county_id].present?
       @county = County.find_by_id(params[:county_id])
       @condition_array += " #{@county.name} "
-      @experts = User.exid_holder.not_retired.with_expertise_county(@county.id).order("users.last_active_at DESC").limit(20)
+      @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
     end  
     
     if params[:group_id].present?
