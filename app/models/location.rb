@@ -12,6 +12,7 @@ class Location < ActiveRecord::Base
   has_many :group_locations
   has_many :groups, :through => :group_locations
   has_many :counties
+  has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
 
   def self.find_by_geoip(ipaddress = Settings.request_ip_address,cache_options = {})
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
