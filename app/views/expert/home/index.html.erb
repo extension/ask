@@ -46,7 +46,8 @@
       <div class="location">
         <p>
           <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span> 
-          <%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id)%>
+          <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id)%></strong>
+          
         </p>
 
         <% if @user.expertise_locations.where("location_id = ?", l.id).size > 0 %>
@@ -56,7 +57,7 @@
                 <% @unanswered_questions_count = Question.where("county_id = ?", c.id).submitted.not_rejected.count %>
                 <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span>
                 <% if @unanswered_questions_count > 0 %>
-                  <%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id, :county_id => c.id)%>
+                  <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id, :county_id => c.id)%></strong>
                 <% end %>
                 </li>
               <% end %>
@@ -97,14 +98,11 @@
 <div class="span6">
   
   <div id="last_30_days" class="formy">
-    <p><%= link_to "Previous month", expert_home_path(:year_month => @previous_year_month)%></p>
+    <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
     <h2><%= @date.strftime("%B, %Y") %> at a Glance</h2>
-  
     <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
     
     <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
-    
-    <p><%= link_to "Monthly summaries by locations, counties...", expert_reports_home_path() %></p>
   </div>
   
   <div class="expert_dashboard_tags">
