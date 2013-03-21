@@ -21,12 +21,13 @@
     
   
     <div id="last_30_days" class="formy">
-      <p><%= link_to "Reports Home", expert_reports_home_path() %> | <%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
+      <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
+      <h2><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h2>
+      <h3><%= @date.strftime("%B, %Y") %></h3>
+      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
       <% if @following_year_month %>
         - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%>
       <% end %></p>
-      <h2>Summary Report for <%= @date.strftime("%B, %Y") %> <br />
-      for <%= @condition_array.present? ? @condition_array : "No filters" %></h2>
       
       <% if @unanswered_questions_count > 0 %>
         <h5 class="highlight_unanswered"><span>Note: there are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>

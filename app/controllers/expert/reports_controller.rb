@@ -38,6 +38,7 @@ class Expert::ReportsController < ApplicationController
       @group = Group.find_by_id(params[:group_id])
       @my_groups << @group
       @my_groups = @my_groups.uniq
+      @experts = User.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
     end
     
     if params[:location_id].present?
@@ -60,7 +61,7 @@ class Expert::ReportsController < ApplicationController
       end
     end  
     
-    @condition_array += " in #{@group.name} " if defined?(@group) && @group.present?
+    @condition_array += " #{@group.name} " if defined?(@group) && @group.present?
     
     @unanswered_questions_count = questions_based_on_report_filter('unanswered').count
     @questions_asked = questions_based_on_report_filter('asked', @year_month)
