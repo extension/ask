@@ -103,6 +103,39 @@ class Expert::ReportsController < ApplicationController
   end
   
   def question_list
+    @condition_array = ""
+    if(params[:year_month])
+      @year_month = params[:year_month]
+    else
+      @year_month = User.year_month_string(Date.today.year,Date.today.month)
+    end
+    
+    if params[:location_id].present?
+      @location = Location.find_by_id(params[:location_id])
+      @condition_array += " #{@location.name} "
+    end
+       
+    if params[:county_id].present?
+      @county = County.find_by_id(params[:county_id])
+      @condition_array = " #{@county.name}, #{@location.name} "
+    end
+    
+    if params[:group_id].present?
+      @group = Group.find_by_id(params[:group_id])
+      @condition_array += " #{@group.name} "
+    end
+    
+    if(params[:filter] and ['answered','asked'].include?(params[:filter]))
+      filter = params[:filter]
+    else
+      filter = 'answered'
+    end
+    
+    @question_list = questions_based_on_report_filter(filter, @year_month)
+
+    @page_title = "#{filter.capitalize} Questions for #{@condition_array} for #{@year_month}"
+    @display_title = "#{filter.capitalize} Questions for #{@condition_array} "
+    @subtext_display = "for #{@year_month}"
   end
   
   def expert_list

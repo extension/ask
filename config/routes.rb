@@ -76,6 +76,7 @@ Aae::Application.routes.draw do
     match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
     match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
     match "reports/expert_list", to: "reports#expert_list", :via => [:get], :as => 'reports_expert_list'
+    match "reports/question_list", to: "reports#question_list", :via => [:get], :as => 'reports_question_list'
     # match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
     match "reports/:action", to: "reports", :via => [:get]
     

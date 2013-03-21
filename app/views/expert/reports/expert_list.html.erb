@@ -4,8 +4,11 @@
   <li class='active'><%= @breadcrumb_display %></li>
 </ul> -->
 
+<p><%= link_to "Reports Home", expert_reports_home_path() %></p>
+
 <div class="page-header">
-  <h1><%= @display_title %> <small><%= @subtext_display %></small></h1>
+  <h1><%= @display_title %></h1>
+  <h1><small><%= @question_list.count %> Questions <%= @subtext_display %></small></h1>
 </div>
 
 

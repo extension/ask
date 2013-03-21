@@ -22,21 +22,22 @@
   
     <div id="last_30_days" class="formy">
       <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
-      <h2><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h2>
-      <h3><%= @date.strftime("%B, %Y") %></h3>
-      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
-      <% if @following_year_month %>
-        - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%>
-      <% end %></p>
+      <h1><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h1>
       
       <% if @unanswered_questions_count > 0 %>
         <h5 class="highlight_unanswered"><span>Note: there are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
       <% end %>
       
+      <h2><%= @date.strftime("%B, %Y") %></h2>
+      <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
+      <% if @following_year_month %>
+        - <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%>
+      <% end %></p>
+      
       <div id="data_summary">
         <h2>Question Totals</h2>
-        <h3><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h3>
-        <h3><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h3>
+        <h3><span><%= @questions_asked.size > 0 ? link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) : "0" %></span> Questions Asked</h3>
+        <h3><span><%= @questions_answered.size > 0 ? link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) : "0" %></span> Questions Answered</h3>
       </div>
       
       <% if @experts.size > 0 %>
