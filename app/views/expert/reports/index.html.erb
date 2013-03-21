@@ -1,6 +1,8 @@
 <div id="dashboard">
   <div class="span12">
-
+    
+    <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
+    
     <div id="location_filter">
       <div id="location_picker">
     	<%= select_tag "location_option", options_from_collection_for_select(@locations, "id", "name", params[:location_id]), {:prompt => "All locations", :name => "location_option"} %>
@@ -14,19 +16,17 @@
 
       <%= select_tag "group_option", options_from_collection_for_select(@my_groups, "id", "name", params[:group_id]), {:prompt => "All groups", :name => "group_option"} %>
       <% select_tag "tag_option", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_option"} %>
-      <br class="clearing" />
+      <% if @unanswered_questions_count > 0 && @condition_array.present? %>
+        <h5 class="highlight_unanswered"><span>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
+      <% end %>
+
     </div>
   
-  
     
-  
-    <div id="last_30_days" class="formy">
-      <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
-      <h1><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h1>
+    
+    <div id="report_summary" class="">
       
-      <% if @unanswered_questions_count > 0 %>
-        <h5 class="highlight_unanswered"><span>Note: there are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
-      <% end %>
+      <h1><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h1>
       
       <h2><%= @date.strftime("%B, %Y") %></h2>
       <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> 
