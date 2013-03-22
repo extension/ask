@@ -38,6 +38,10 @@
         <h2>Question Totals</h2>
         <h3><span><%= @questions_asked.size > 0 ? link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) : "0" %></span> Questions Asked</h3>
         <h3><span><%= @questions_answered.size > 0 ? link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) : "0" %></span> Questions Answered</h3>
+        <% if defined?(@location) && @location.present? %>
+          <h3><span><%= @resolved_by_state_experts.size > 0 ? link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) : "0" %></span> Questions Answered by In-State Experts</h3>
+          <h3><span><%= @resolved_by_outside_state_experts.size > 0 ? link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) : "0" %></span> Questions Answered by Out of State Experts</h3>
+        <% end %>
       </div>
       
       <% if @experts.size > 0 %>

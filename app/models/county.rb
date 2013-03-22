@@ -14,6 +14,7 @@ class County < ActiveRecord::Base
   has_many :groups, :through => :group_counties
   belongs_to :location
   has_many :users_with_origin, :class_name => "User", :foreign_key => "county_id"
+  has_many :questions_with_origin, :class_name => "Question", :foreign_key => "county_id"
 
   def name
     if self.censusclass == "C7"

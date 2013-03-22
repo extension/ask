@@ -49,6 +49,12 @@ class Expert::ReportsController < ApplicationController
       else
         @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
       end
+      
+      # get number of questions resolved by experts in state
+      @resolved_by_state_experts = Question.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month).count
+      
+      # get number of questions resolved by experts out of state
+      @resolved_by_outside_state_experts = Question.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).count
     end
        
     if params[:county_id].present?
@@ -125,8 +131,20 @@ class Expert::ReportsController < ApplicationController
       @condition_array += " #{@group.name} "
     end
     
-    if(params[:filter] and ['answered','asked'].include?(params[:filter]))
+    if(params[:filter] && ['answered','asked'].include?(params[:filter]))
       filter = params[:filter]
+    elsif params[:filter] && params[:filter].strip == 'in_state_experts' && defined?(@location) && @location.present? && defined?(@year_month) && @year_month.present?
+      @question_list = Question.resolved_questions_by_in_state_responders(@location, @year_month)
+      @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by In State Experts"
+      @display_title = "Answered Questions for #{@condition_array} by In State Experts"
+      @subtext_display = "for #{@year_month}"
+      return
+    elsif params[:filter] && params[:filter].strip == 'out_of_state_experts' && defined?(@location) && @location.present? && defined?(@year_month) && @year_month.present?
+      @question_list = Question.resolved_questions_by_outside_state_responders(@location, @year_month)
+      @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by Out of State Experts"
+      @display_title = "Answered Questions for #{@condition_array} by Out of State Experts"
+      @subtext_display = "for #{@year_month}"
+      return
     else
       filter = 'answered'
     end

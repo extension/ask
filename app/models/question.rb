@@ -596,16 +596,42 @@ class Question < ActiveRecord::Base
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )
   end
   
+  # Reports Stuff
+  
   def self.answered_list_for_year_month(year_month)
-    self.select("DISTINCT(questions.id), questions.*")
+    question_id_records = self.select("DISTINCT(questions.id) AS unique_question_id")
     .joins(:question_events)
     .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
     .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+    
+    return Question.where("id IN (#{question_id_records.map{|q| q.unique_question_id}.join(',')})")
   end
   
   def self.asked_list_for_year_month(year_month)
     self.select("DISTINCT(questions.id), questions.*")
     .where("DATE_FORMAT(questions.created_at,'%Y-%m') = ?",year_month)
+  end
+  
+  def self.resolved_questions_by_in_state_responders(location, year_month)
+    question_id_records = self.select("DISTINCT(questions.id) AS unique_question_id")
+        .joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("questions.location_id = ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        
+    return Question.where("id IN (#{question_id_records.map{|q| q.unique_question_id}.join(',')})")
+  end
+  
+  def self.resolved_questions_by_outside_state_responders(location, year_month)
+    question_id_records = self.select("DISTINCT(questions.id) AS unique_question_id")
+        .joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("questions.location_id = ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        
+    return Question.where("id IN (#{question_id_records.map{|q| q.unique_question_id}.join(',')})")
   end
     
 end
