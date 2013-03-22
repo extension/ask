@@ -11,16 +11,11 @@
   <legend><%= evaluation_question.prompt %> <small><em>on a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
   <div class="control-group">
     <div class="controls">
-      <div class="slider_ranges">
-        <p><span class="range_start"><%= evaluation_question.responses[0].capitalize! %></span></p>
-      </div>
-      <div class="center_slider">
-      <%= number_field_tag('response', scale_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), 
-          {min: evaluation_question.range_start, max: evaluation_question.range_end, id: "range_#{evaluation_question.id}", class: 'range', type: 'range', step: '1'}) %>
-      </div>
-      <div class="slider_ranges">
-        <p><span class="range_end"><%= evaluation_question.responses[1].capitalize! %></span></p>
-      </div>  
+      <label class="radio"><%= radio_button_tag('response',1,"1",{class: 'submittable'}) %> 1 - <%= evaluation_question.responses[0].capitalize! %></label>
+      <label class="radio"><%= radio_button_tag('response',2,"2",{class: 'submittable'}) %> 2</label>
+      <label class="radio"><%= radio_button_tag('response',3,"3",{class: 'submittable'}) %> 3</label>
+      <label class="radio"><%= radio_button_tag('response',4,"4",{class: 'submittable'}) %> 4</label>
+      <label class="radio"><%= radio_button_tag('response',5,"1",{class: 'submittable'}) %> 5 - <%= evaluation_question.responses[1].capitalize! %></label>
     </div>
   </div>
 <%- end -%>
