@@ -21,16 +21,16 @@ class CronTasks < Thor
     end
 
     def create_evaluation_notifications
-      notification_count = 0
-      question_count = 0
+      # notification_count = 0
+      # question_count = 0
 
-      Question.evaluation_pool.each do |question|
-        question_count += 1
-        if(notification = question.create_evaluation_notification)
-          notification_count += 1
-        end
-      end
-      puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
+      # Question.evaluation_pool.each do |question|
+      #   question_count += 1
+      #   if(notification = question.create_evaluation_notification)
+      #     notification_count += 1
+      #   end
+      # end
+      # puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
     
     def create_daily_summary_notification
@@ -45,14 +45,14 @@ class CronTasks < Thor
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def evaluation_notifications
     load_rails(options[:environment])
-    create_evaluation_notifications
+    #create_evaluation_notifications
   end
 
   desc "daily", "All daily cron tasks"
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    create_evaluation_notifications
+    #create_evaluation_notifications
     create_daily_summary_notification
   end
   
