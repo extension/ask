@@ -56,6 +56,7 @@ class EvaluationController < ApplicationController
   end
 
   def example
+    @question = Question.last
     @page_title = 'Example Evaluation Questions'
     @question_testing = true
     return render(template: 'evaluation/question')
