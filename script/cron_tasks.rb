@@ -21,6 +21,7 @@ class CronTasks < Thor
     end
 
     def create_evaluation_notifications
+      puts "Evaluation notifications are currently suspended..."
       # notification_count = 0
       # question_count = 0
 
@@ -45,14 +46,14 @@ class CronTasks < Thor
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def evaluation_notifications
     load_rails(options[:environment])
-    #create_evaluation_notifications
+    create_evaluation_notifications
   end
 
   desc "daily", "All daily cron tasks"
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    #create_evaluation_notifications
+    create_evaluation_notifications
     create_daily_summary_notification
   end
   
