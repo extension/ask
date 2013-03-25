@@ -5,6 +5,8 @@
 # see LICENSE file
 
 class Demographic < ActiveRecord::Base
+  include MarkupScrubber
+
   belongs_to :demographic_question
   belongs_to :user
   has_many :demographic_logs
@@ -17,6 +19,10 @@ class Demographic < ActiveRecord::Base
     if(self.changed? and !self.changes[:response].blank? and !self.changes[:response][0].blank?)
       self.demographic_logs.create(changed_answers: {original: self.changes[:response][0], new: self.changes[:response][1]})
     end
+  end
+
+  def response=(response_text)
+    write_attribute(:response, self.html_to_text(response_text))
   end
 
 end
