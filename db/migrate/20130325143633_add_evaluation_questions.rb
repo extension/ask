@@ -26,7 +26,7 @@ class AddEvaluationQuestions < ActiveRecord::Migration
                                           '4 to 5 days',
                                           'no expectation'])
 
-    EvaluationQuestion.create(prompt: "To what extent have you changed a practice or behavior based on the answer you received from the answer you received?",
+    EvaluationQuestion.create(prompt: "To what extent have you changed a practice or behavior based on the answer you received?",
                               responsetype: EvaluationQuestion::MULTIPLE_CHOICE,
                               questionorder: 7,
                               responses: ['No extent, I have not changed a practice or behavior',
@@ -47,11 +47,11 @@ class AddEvaluationQuestions < ActiveRecord::Migration
                               questionorder: 9,
                               responses: ['Totally disappointed',
                                           'Disappointed',
-                                          'Neither disappointed or satisfied',
+                                          'Neither disappointed nor satisfied',
                                           'Satisfied',
                                           'Completely Satisfied'])
 
-    EvaluationQuestion.create(prompt: "Is there anything else about your Ask an Expert experience you would like to tell us?",
+    EvaluationQuestion.create(prompt: "Is there anything else about your experience in using Ask an Expert you would like to tell us?",
                               responsetype: EvaluationQuestion::TEXT,
                               questionorder: 10)
   end
