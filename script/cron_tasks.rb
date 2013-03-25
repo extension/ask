@@ -21,17 +21,16 @@ class CronTasks < Thor
     end
 
     def create_evaluation_notifications
-      puts "Evaluation notifications are currently suspended..."
-      # notification_count = 0
-      # question_count = 0
+      notification_count = 0
+      question_count = 0
 
-      # Question.evaluation_pool.each do |question|
-      #   question_count += 1
-      #   if(notification = question.create_evaluation_notification)
-      #     notification_count += 1
-      #   end
-      # end
-      # puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
+      Question.evaluation_pool.each do |question|
+        question_count += 1
+        if(notification = question.create_evaluation_notification)
+          notification_count += 1
+        end
+      end
+      puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
     
     def create_daily_summary_notification
