@@ -21,7 +21,6 @@
 //= require twitter/bootstrap/popover
 //= require twitter/bootstrap/modal
 //= require bootstrap-wysihtml5
-//= require rangeinput.js
 //= require alerts.js
 //= require jquery.validate
 //= require submittable
