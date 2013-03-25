@@ -16,7 +16,7 @@ class AddEvaluationQuestions < ActiveRecord::Migration
     current_days_question = EvaluationQuestion.find(6)
     current_days_question.update_column(:is_active,false)
 
-    EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a  response to my question was (in days):",
+    EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a response to my question was (in days):",
                               responsetype: EvaluationQuestion::MULTIPLE_CHOICE,
                               questionorder: 6,
                               responses: ['Less than 1 day',
@@ -50,7 +50,6 @@ class AddEvaluationQuestions < ActiveRecord::Migration
                                           'Neither disappointed nor satisfied',
                                           'Satisfied',
                                           'Completely Satisfied'])
-
     EvaluationQuestion.create(prompt: "Is there anything else about your experience in using Ask an Expert you would like to tell us?",
                               responsetype: EvaluationQuestion::TEXT,
                               questionorder: 10)
