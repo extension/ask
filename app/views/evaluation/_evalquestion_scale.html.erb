@@ -11,21 +11,22 @@
   <legend><%= evaluation_question.prompt %> <small><em>on a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
   <div class="control-group">
     <div class="controls">
-      <label class="radio"><%= radio_button_tag('response',1,"1",{class: 'submittable'}) %> 1 - <%= evaluation_question.responses[0].capitalize! %></label>
-      <label class="radio"><%= radio_button_tag('response',2,"2",{class: 'submittable'}) %> 2</label>
-      <label class="radio"><%= radio_button_tag('response',3,"3",{class: 'submittable'}) %> 3</label>
-      <label class="radio"><%= radio_button_tag('response',4,"4",{class: 'submittable'}) %> 4</label>
-      <label class="radio"><%= radio_button_tag('response',5,"1",{class: 'submittable'}) %> 5 - <%= evaluation_question.responses[1].capitalize! %></label>
+      <%- (evaluation_question.range_start..evaluation_question.range_end).each do |i| -%>
+        <label class="radio">
+          <%= radio_button_tag('response', i,
+                               (i == scale_value_for_evalquestion_question_user(evaluation_question,question,@evaluator)),
+                               {class: 'submittable'}) %> 
+          <%- if (i == evaluation_question.range_start) -%>
+            <%= "#{i.to_s} - #{evaluation_question.responses.first.capitalize}" %>
+          <%- elsif (i == evaluation_question.range_end) -%>
+            <%= "#{i.to_s} - #{evaluation_question.responses.last.capitalize}" %>
+          <%- else -%>
+            <%= i.to_s %>
+          <%- end -%>
+        </label>
+      <%- end -%>      
     </div>
   </div>
 <%- end -%>
 </div>
-
-<script class="code" type="text/javascript">
-  // jquery tools rangeinput
-  $("#range_<%= evaluation_question.id %>").rangeinput();
-  $("#range_<%= evaluation_question.id %>").change(function(event, value) {
-    $(this).parents('form:first').submit();
-  });
-</script>
 
