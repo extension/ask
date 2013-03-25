@@ -51,10 +51,19 @@ class Expert::ReportsController < ApplicationController
       end
       
       # get number of questions resolved by experts in state
-      @resolved_by_state_experts = Question.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
+      @resolved_by_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
+      
+      # get number of responses by experts in state
+      responses_by_state_experts = Question.not_rejected.by_location(@location).responses_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
       
       # get number of questions resolved by experts out of state
-      @resolved_by_outside_state_experts = Question.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
+      @resolved_by_outside_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
+    
+      # get number of responses by experts out of state for questions from this state
+      responses_by_outside_state_experts = Question.not_rejected.by_location(@location).responses_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
+      
+      # get number of responses for state questions
+      responses = Question.not_rejected.by_location(@location).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
     end
        
     if params[:county_id].present?
@@ -65,7 +74,19 @@ class Expert::ReportsController < ApplicationController
       else
         @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
       end
+      
+      # get number of responses for county
+      responses = Question.not_rejected.by_county(@county).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
     end  
+    
+    @response_count = responses.count
+    @responder_count = responses.map{|r| r.initiated_by_id}.uniq.count
+    
+    @responses_by_in_state_count = responses_by_state_experts.count
+    @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
+    
+    @responses_by_outside_state_count = responses_by_outside_state_experts.count
+    @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count
     
     @condition_array += " #{@group.name} " if defined?(@group) && @group.present?
     
