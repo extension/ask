@@ -20,7 +20,7 @@ class AddEvaluationQuestions < ActiveRecord::Migration
     fix_one = EvaluationQuestion.find(1)
     fix_one.update_attributes({responses: ['a personal curiosity that was not too important','critically important to me']})
 
-    fix_four = EvaluationQuestion.find(1)
+    fix_four = EvaluationQuestion.find(4)
     fix_four.update_attributes({responses: ['little economic consequence to me','significant economic concern to me']})
 
 
