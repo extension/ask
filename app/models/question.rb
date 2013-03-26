@@ -383,7 +383,7 @@ class Question < ActiveRecord::Base
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes) 
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :ever_answered => true)  
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
           @response.save
           QuestionEvent.log_resolution(self)    
         else
