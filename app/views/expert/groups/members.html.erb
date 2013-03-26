@@ -1,24 +1,30 @@
 <h1><%= link_to @group.name, expert_group_path() %> Members (<%= @group.joined.count %>)</h1>
 
-<table class="table table-bordered">  
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Handling Rate</th>
+      <th>Handling Rate</th>
+      <th>Last Active</th>
+      <th>Notified on every question</th>
+      <th>Receives daily summary</th>
+    </tr>
+  </thead>
+  <tbody>
+  
 <% @group_members.each do |member| %>
   <tr>
-    <% if member.leader_of_group(@group)%>
       <td>
-        <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <strong><i class="icon-user"></i> Leader</strong>
-        <p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p>
-        <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p>
-        <span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span>
+        <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> 
+        <% if member.leader_of_group(@group)%><strong><i class="icon-user"></i> Leader</strong><% end %>
       </td>
-      
-    <% else %>
-      <td>
-        <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %>
-        <p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p>
-        <p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p>
-        <span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span>
-      </td>
-    <% end %>
+      <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p></td>
+      <td><p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
+      <td><span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
+      <td><% if member.send_incoming_notification?(@group) %>Notified on every question<% end %></td>
+      <td><% if member.send_daily_summary?(@group) %>Receives daily summary<% end %></td>
   </tr>
 <% end %>
+  </tbody>
 </table>

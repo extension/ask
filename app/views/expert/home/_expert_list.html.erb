@@ -1,21 +1,32 @@
 <%= paginate @experts %>
 <% if @experts.size > 0 %>
-  <table>
+
+  
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Handling Rate</th>
+        <th>Handling Rate</th>
+        <th>Last Active</th>
+      </tr>
+    </thead>
+    <tbody>
+
+  <% @experts.each do |member| %>
     <tr>
-      <th>Name</th>
-      <th>Most recent sign-in</th>  
-    </tr>
-  <% @experts.each do |expert| %>
-    <tr>
-      <td>
-        <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %></p>
-      </td>
-      <td>
-        <%= expert.try(:last_active_at) ? "#{time_ago_in_words(expert.last_active_at)} ago" : "no record of sign-in"%>
-      </td>
+        <td>
+          <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> 
+        </td>
+        <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p></td>
+        <td><p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
+        <td><span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
     </tr>
   <% end %>
+    </tbody>
   </table>
+
+
 <% else %>
   <p>There are no experts with this tag</p>
 <% end %>

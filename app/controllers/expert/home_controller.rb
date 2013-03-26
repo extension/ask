@@ -85,6 +85,7 @@ class Expert::HomeController < ApplicationController
     return record_not_found if (!@tag)
     @experts = User.tagged_with(@tag.id).page(params[:page]).exid_holder.not_retired.order("users.last_active_at DESC")
     @expert_total_count = User.tagged_with(@tag.id).count
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
   
   def groups_by_tag
@@ -105,6 +106,7 @@ class Expert::HomeController < ApplicationController
     return record_not_found if @location.blank?
     @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
     @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
   
   def users_by_county
@@ -112,6 +114,7 @@ class Expert::HomeController < ApplicationController
     return record_not_found if @county.blank?
     @experts = User.with_expertise_county(@county.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
     @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_retired.count
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
   
   def groups_by_location
