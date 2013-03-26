@@ -16,6 +16,14 @@ class AddEvaluationQuestions < ActiveRecord::Migration
     current_days_question = EvaluationQuestion.find(6)
     current_days_question.update_column(:is_active,false)
 
+    # fixes
+    fix_one = EvaluationQuestion.find(1)
+    fix_one.update_attributes({responses: ['a personal curiosity that was not too important','critically important to me']})
+
+    fix_four = EvaluationQuestion.find(1)
+    fix_four.update_attributes({responses: ['little economic consequence to me','significant economic concern to me']})
+
+
     EvaluationQuestion.create(prompt: "My expectation for the time it would take for me to receive a response to my question was (in days):",
                               responsetype: EvaluationQuestion::MULTIPLE_CHOICE,
                               questionorder: 6,
