@@ -17,6 +17,8 @@
       <%= render(partial: 'evalquestion_scale', locals: {evaluation_question: evaluation_question, question: @question, question_testing: @question_testing})%>
     <%- when EvaluationQuestion::TEXT -%>
       <%= render(partial: 'evalquestion_text', locals: {evaluation_question: evaluation_question, question: @question, question_testing: @question_testing})%>
+    <%- when EvaluationQuestion::OPEN_DOLLAR_VALUE -%>
+      <%= render(partial: 'evalquestion_open_dollar', locals: {evaluation_question: evaluation_question, question: @question, question_testing: @question_testing})%>
     <%- else # assumes open -%>  
       <%= render(partial: 'evalquestion_open', locals: {evaluation_question: evaluation_question, question: @question, question_testing: @question_testing})%>
     <%- end -%>
