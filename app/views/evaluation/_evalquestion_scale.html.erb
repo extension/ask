@@ -4,11 +4,11 @@
       question_id = question.id
     end 
 -%>
-<div class="well">
+<div class="well eval_question">
 <%= form_tag(answer_evaluation_path, {remote: true, id: "answer_form_for_evaluation_question_#{evaluation_question.id}"}) do -%>
   <%= hidden_field_tag('question_id', question_id) %>
   <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
-  <legend><%= evaluation_question.prompt %> <small><em>on a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
+  <legend><%= evaluation_question.prompt %> <small><em>On a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
   <div class="control-group">
     <div class="controls">
       <%- (evaluation_question.range_start..evaluation_question.range_end).each do |i| -%>
