@@ -43,56 +43,79 @@ class Expert::ReportsController < ApplicationController
     
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
-      @condition_array += " #{@location.name} "
-      if defined?(@group) && @group.present?
-        @experts = @location.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+      @condition_array = " #{@location.name} "
+      if params[:county_id].present?
+        @county = County.find_by_id(params[:county_id])
+        @condition_array = " #{@county.name}, #{@location.name} "
+        if defined?(@group) && @group.present?
+          @experts = @county.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+          @unanswered_questions_count = Question.submitted.by_county(@county).from_group(@group.id).not_rejected.order('created_at DESC').count
+          @questions_asked = Question.not_rejected.by_county(@county).from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
+          @questions_answered = Question.not_rejected.by_county(@county).from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
+        else
+          @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+          @unanswered_questions_count = Question.submitted.by_county(@county).not_rejected.order('created_at DESC').count
+          @questions_asked = Question.not_rejected.by_county(@county).asked_list_for_year_month(@year_month).order('created_at DESC')
+          @questions_answered = Question.not_rejected.by_county(@county).answered_list_for_year_month(@year_month).order('created_at DESC')
+        end
+        # get number of responses for county
+        responses = Question.not_rejected.by_county(@county).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
+      # else location and no county
       else
-        @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
-      end
+        if defined?(@group) && @group.present?
+          @experts = @location.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+          @unanswered_questions_count = Question.submitted.by_location(@location).from_group(@group.id).not_rejected.order('created_at DESC').count
+          @questions_asked = Question.not_rejected.by_location(@location).from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
+          @questions_answered = Question.not_rejected.by_location(@location).from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
+        else
+          @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+          @unanswered_questions_count = Question.submitted.by_location(@location).not_rejected.order('created_at DESC').count
+          @questions_asked = Question.not_rejected.by_location(@location).asked_list_for_year_month(@year_month).order('created_at DESC')
+          @questions_answered = Question.not_rejected.by_location(@location).answered_list_for_year_month(@year_month).order('created_at DESC')
+        end
+            
+        # get number of responses for state questions
+        responses = Question.not_rejected.by_location(@location).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
+      end # end of location (but no county) block
+      
+      ### execute these things while we are in the location specified block (county existence doesn't matter)
       
       # get number of questions resolved by experts in state
       @resolved_by_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
-      
+    
       # get number of responses by experts in state
       responses_by_state_experts = Question.not_rejected.by_location(@location).responses_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
-      
+    
       # get number of questions resolved by experts out of state
       @resolved_by_outside_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
-    
+  
       # get number of responses by experts out of state for questions from this state
       responses_by_outside_state_experts = Question.not_rejected.by_location(@location).responses_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
       
-      # get number of responses for state questions
-      responses = Question.not_rejected.by_location(@location).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
-    end
-       
-    if params[:county_id].present?
-      @county = County.find_by_id(params[:county_id])
-      @condition_array = " #{@county.name}, #{@location.name} "
+      @responses_by_in_state_count = responses_by_state_experts.count
+      @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
+    
+      @responses_by_outside_state_count = responses_by_outside_state_experts.count
+      @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count    
+    # else no location specified
+    else
       if defined?(@group) && @group.present?
-        @experts = @county.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+        @unanswered_questions_count = Question.submitted.not_rejected.from_group(@group.id).order('created_at DESC').count
+        @questions_asked = Question.not_rejected.from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
+        @questions_answered = Question.not_rejected.from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
       else
-        @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
-      end
+        @unanswered_questions_count = Question.submitted.not_rejected.order('created_at DESC').count
+        @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+        @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+      end  
       
-      # get number of responses for county
-      responses = Question.not_rejected.by_county(@county).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
-    end  
+      responses = Question.not_rejected.resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
+    end
     
     @response_count = responses.count
     @responder_count = responses.map{|r| r.initiated_by_id}.uniq.count
-    
-    @responses_by_in_state_count = responses_by_state_experts.count
-    @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
-    
-    @responses_by_outside_state_count = responses_by_outside_state_experts.count
-    @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count
-    
+           
     @condition_array += " #{@group.name} " if defined?(@group) && @group.present?
-    
-    @unanswered_questions_count = questions_based_on_report_filter('unanswered').count
-    @questions_asked = questions_based_on_report_filter('asked', @year_month)
-    @questions_answered = questions_based_on_report_filter('answered', @year_month)
   end
   
   def expert
