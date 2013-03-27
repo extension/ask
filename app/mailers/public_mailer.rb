@@ -32,10 +32,7 @@ class PublicMailer < ActionMailer::Base
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
       
-      return_email = mail(to: @user.email, subject: @subject)
-      if !@bonnie_plants_from.blank?
-        return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-      end
+      return_email = @bonnie_plants_from.blank? ? mail(to: @user.email, subject: @subject) : mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
       
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
@@ -65,10 +62,7 @@ class PublicMailer < ActionMailer::Base
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        return_email = mail(to: @user.email, subject: @subject)
-        if !@bonnie_plants_from.blank?
-          return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-        end
+        return_email = @bonnie_plants_from.blank? ? mail(to: @user.email, subject: @subject) : mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
         
         if(@mailer_cache)
           # now that we have the rendered email - update the cached mail object
