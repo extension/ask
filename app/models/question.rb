@@ -548,13 +548,13 @@ class Question < ActiveRecord::Base
   end
   
   def notify_submitter
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
     end
   end
   
   def send_global_widget_notifications
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     end
   end
@@ -594,6 +594,10 @@ class Question < ActiveRecord::Base
 
   def question_activity_preference_list
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+  end
+  
+  def rejected?
+    return self.status_state == STATUS_REJECTED
   end
   
   def self.answered_list_for_year_month(year_month)
