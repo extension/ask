@@ -9,7 +9,6 @@ class Expert::ReportsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
-  # TODO: put a check in here to make sure the group, county, location id's actually exist -- ATH
   def index
     @locations = Location.order('fipsid ASC')
     @my_tags = current_user.tags
@@ -36,6 +35,7 @@ class Expert::ReportsController < ApplicationController
     
     if params[:group_id].present?
       @group = Group.find_by_id(params[:group_id])
+      return record_not_found if !@group.present?
       @my_groups << @group
       @my_groups = @my_groups.uniq
       @experts = User.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
@@ -43,9 +43,11 @@ class Expert::ReportsController < ApplicationController
     
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
+      return record_not_found if !@location.present?
       @condition_array = " #{@location.name} "
       if params[:county_id].present?
         @county = County.find_by_id(params[:county_id])
+        return record_not_found if !@county.present?
         @condition_array = " #{@county.name}, #{@location.name} "
         if defined?(@group) && @group.present?
           @experts = @county.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})

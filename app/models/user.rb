@@ -84,6 +84,8 @@ class User < ActiveRecord::Base
   scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
+  # special scope for returning an empty AR association
+  scope :none, where('1 = 0')
   
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
@@ -141,6 +143,7 @@ class User < ActiveRecord::Base
   def self.by_question_event_count(event_state,options = {})
       with_scope do
         id_list = self.exid_holder.not_retired.pluck("#{self.table_name}.id")
+        return self.none if id_list.length == 0
         qe_scope = QuestionEvent.where(event_state: event_state).where("initiated_by_id IN (#{id_list.join(',')})").group(:initiator)
         if(options[:yearmonth])
           qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",options[:yearmonth])
