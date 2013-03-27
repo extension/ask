@@ -39,7 +39,8 @@ module EvaluationHelper
   end
 
   def scale_value_for_evalquestion_question_user(evaluation_question,question,user)
-    evaluation_question.answer_value_for_user_and_question(user,question) || ''
+    default_value = [evaluation_question.range_start,evaluation_question.range_end].median.to_i
+    evaluation_question.answer_value_for_user_and_question(user,question) || default_value
   end
 
   def open_value_for_evalquestion_question_user(evaluation_question,question,user)
