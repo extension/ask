@@ -137,6 +137,7 @@
 		}
 
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
 		$("#tag_picker").autocomplete({
 			source: "/ajax/tags",
 			minLength: 2,
@@ -148,7 +149,7 @@
         add_tag(this.value);
       }
     });
-
+    });
     // remove tags
      $("#tags").on("click", ".removetag", function(){
        var tag = $(this).closest(".tagwrapper");

@@ -11,7 +11,12 @@
   <legend><%= evaluation_question.prompt %></legend>
   <div class="control-group">
     <div class="controls">
-      <%= text_field_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable span4'}) %>
+      <%- evaluation_question.responses.each_with_index do |response, index| -%>
+        <label class="radio">
+          <%= radio_button_tag('response',response,
+                               is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,index),
+                               {class: 'submittable'}) %> <%= response %></label>
+      <%- end -%>
     </div>
   </div>
 <%- end -%>

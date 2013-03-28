@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305162008) do
+ActiveRecord::Schema.define(:version => 20130326152538) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -126,7 +126,6 @@ ActiveRecord::Schema.define(:version => 20130305162008) do
     t.integer  "evaluation_question_id", :null => false
     t.integer  "user_id",                :null => false
     t.integer  "question_id",            :null => false
-    t.string   "responsetype"
     t.text     "response"
     t.integer  "value"
     t.datetime "created_at",             :null => false
@@ -151,7 +150,6 @@ ActiveRecord::Schema.define(:version => 20130305162008) do
     t.text     "responses"
     t.integer  "range_start"
     t.integer  "range_end"
-    t.integer  "creator_id"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
   end
@@ -314,6 +312,18 @@ ActiveRecord::Schema.define(:version => 20130305162008) do
     t.datetime "created_at",                                         :null => false
     t.datetime "updated_at",                                         :null => false
   end
+
+  create_table "old_evaluation_answers", :force => true do |t|
+    t.integer  "evaluation_question_id", :null => false
+    t.integer  "user_id",                :null => false
+    t.integer  "question_id",            :null => false
+    t.text     "response"
+    t.integer  "value"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  add_index "old_evaluation_answers", ["evaluation_question_id", "user_id", "question_id"], :name => "eq_u_q_ndx", :unique => true
 
   create_table "preferences", :force => true do |t|
     t.integer  "prefable_id"

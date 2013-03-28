@@ -5,16 +5,18 @@
 # see LICENSE file
 
 class EvaluationQuestion < ActiveRecord::Base
+  attr_accessible :prompt, :secondary_prompt, :responses, :responsetype, :range_start, :range_end, :questionorder
   serialize :responses
-  belongs_to :creator, :class_name => "User"
-  attr_accessible :creator, :creator_id, :prompt, :secondary_prompt, :responses, :responsetype, :range_start, :range_end, :questionorder
-  has_many :evaluation_answers
 
   # types, strings in case we ever want to inherit from this model
+  MULTIPLE_CHOICE = 'multiple_choice'
   SCALE = 'scale'
   OPEN = 'open'
   OPEN_DOLLAR_VALUE = 'open_dollar_value'
   OPEN_TIME_VALUE = 'open_time_value'
+  TEXT = 'text'
+
+  has_many :evaluation_answers
 
   scope :active, where(is_active: true)
 
@@ -27,6 +29,8 @@ class EvaluationQuestion < ActiveRecord::Base
     return nil if(question.nil? or user.nil?)
     if(answer = self.evaluation_answers.where(user_id: user.id).where(question_id: question.id).first)
       case self.responsetype
+      when MULTIPLE_CHOICE
+        answer.value
       when SCALE
         answer.value
       else
@@ -56,6 +60,8 @@ class EvaluationQuestion < ActiveRecord::Base
 
   def response_value(response)
     case self.responsetype
+    when MULTIPLE_CHOICE
+      self.responses.index(response)
     when SCALE
       response.to_i
     when OPEN_DOLLAR_VALUE

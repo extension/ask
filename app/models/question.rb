@@ -128,6 +128,9 @@ class Question < ActiveRecord::Base
   
   DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
   
+  AAE_V2_TRANSITION = '2012-12-03 12:00:00 UTC'
+  EVALUATION_ELIGIBLE = '2013-03-15 00:00:00 UTC' # beware the ides of March
+
   scope :public_visible, conditions: { is_private: false }
   scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
   scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
@@ -548,13 +551,13 @@ class Question < ActiveRecord::Base
   end
   
   def notify_submitter
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
     end
   end
   
   def send_global_widget_notifications
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     end
   end
@@ -571,9 +574,11 @@ class Question < ActiveRecord::Base
   end
 
   def self.evaluation_pool(days_closed = Settings.days_closed_for_evaluation)
-    with_scope do
-      self.answered.where(evaluation_sent: false).where('DATE(resolved_at) = ?',Date.today - days_closed)
-    end
+    # we need to count every non rejected question with at least one response
+    self.answered
+        .where("questions.created_at >= ?",Time.parse(EVALUATION_ELIGIBLE))
+        .where(evaluation_sent: false)
+        .where('DATE(resolved_at) <= ?',Date.today - days_closed)
   end
 
   def response_time(initial_only = false)
@@ -594,6 +599,10 @@ class Question < ActiveRecord::Base
 
   def question_activity_preference_list
     list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+  end
+  
+  def rejected?
+    return self.status_state == STATUS_REJECTED
   end
   
   def self.answered_list_for_year_month(year_month)

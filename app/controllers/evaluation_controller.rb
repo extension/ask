@@ -51,11 +51,8 @@ class EvaluationController < ApplicationController
     end
   end
 
-
-  def demographics_test
-  end
-
   def example
+    @question = Question.last
     @page_title = 'Example Evaluation Questions'
     @question_testing = true
     return render(template: 'evaluation/question')
