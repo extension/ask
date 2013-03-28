@@ -22,6 +22,10 @@ class Expert::ReportsController < ApplicationController
       if User.year_month_string(Date.today.year,Date.today.month) != @year_month
         @following_year_month = (@date + 1.month).strftime('%Y-%m')
       end
+    elsif(params[:year])
+      return record_not_found if params[:year].to_i == 0
+      @year_month = params[:year].to_i
+      @date = params[:year].strip
     else
       @date = DateTime.now
       @year_month = User.year_month_string(Date.today.year,Date.today.month)
@@ -38,82 +42,59 @@ class Expert::ReportsController < ApplicationController
       return record_not_found if !@group.present?
       @my_groups << @group
       @my_groups = @my_groups.uniq
-      @experts = User.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
+      
+      question_group_scope = Question.from_group(@group.id)
+      expert_group_scope = User.group_membership_for(@group.id)
+    else
+      question_group_scope = Question.where({})
+      expert_group_scope = User.where({})
     end
     
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       return record_not_found if !@location.present?
       @condition_array = " #{@location.name} "
-      if params[:county_id].present?
-        @county = County.find_by_id(params[:county_id])
-        return record_not_found if !@county.present?
-        @condition_array = " #{@county.name}, #{@location.name} "
-        if defined?(@group) && @group.present?
-          @experts = @county.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
-          @unanswered_questions_count = Question.submitted.by_county(@county).from_group(@group.id).not_rejected.order('created_at DESC').count
-          @questions_asked = Question.not_rejected.by_county(@county).from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
-          @questions_answered = Question.not_rejected.by_county(@county).from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
-        else
-          @experts = @county.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
-          @unanswered_questions_count = Question.submitted.by_county(@county).not_rejected.order('created_at DESC').count
-          @questions_asked = Question.not_rejected.by_county(@county).asked_list_for_year_month(@year_month).order('created_at DESC')
-          @questions_answered = Question.not_rejected.by_county(@county).answered_list_for_year_month(@year_month).order('created_at DESC')
-        end
-        # get number of responses for county
-        responses = Question.not_rejected.by_county(@county).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
-      # else location and no county
-      else
-        if defined?(@group) && @group.present?
-          @experts = @location.users_with_origin.group_membership_for(@group.id).by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
-          @unanswered_questions_count = Question.submitted.by_location(@location).from_group(@group.id).not_rejected.order('created_at DESC').count
-          @questions_asked = Question.not_rejected.by_location(@location).from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
-          @questions_answered = Question.not_rejected.by_location(@location).from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
-        else
-          @experts = @location.users_with_origin.by_question_event_count(QuestionEvent::RESOLVED,{limit: 40, yearmonth: @year_month})
-          @unanswered_questions_count = Question.submitted.by_location(@location).not_rejected.order('created_at DESC').count
-          @questions_asked = Question.not_rejected.by_location(@location).asked_list_for_year_month(@year_month).order('created_at DESC')
-          @questions_answered = Question.not_rejected.by_location(@location).answered_list_for_year_month(@year_month).order('created_at DESC')
-        end
-            
-        # get number of responses for state questions
-        responses = Question.not_rejected.by_location(@location).resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
-      end # end of location (but no county) block
+      question_location_scope = question_group_scope.by_location(@location)
+      expert_location_scope = expert_group_scope.from_location(@location)
       
       ### execute these things while we are in the location specified block (county existence doesn't matter)
       
       # get number of questions resolved by experts in state
-      @resolved_by_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
-    
+      @resolved_by_state_experts = question_location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month).count
       # get number of responses by experts in state
-      responses_by_state_experts = Question.not_rejected.by_location(@location).responses_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
-    
-      # get number of questions resolved by experts out of state
-      @resolved_by_outside_state_experts = Question.not_rejected.by_location(@location).resolved_questions_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil).count
-  
-      # get number of responses by experts out of state for questions from this state
-      responses_by_outside_state_experts = Question.not_rejected.by_location(@location).responses_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
-      
+      responses_by_state_experts = question_location_scope.not_rejected.responses_by_in_state_responders(@location, @year_month)    
       @responses_by_in_state_count = responses_by_state_experts.count
       @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
-    
+        
+      # get number of questions resolved by experts out of state
+      @resolved_by_outside_state_experts = question_location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).count
+      # get number of responses by experts out of state for questions from this state
+      responses_by_outside_state_experts = question_location_scope.not_rejected.responses_by_outside_state_responders(@location, @year_month)
       @responses_by_outside_state_count = responses_by_outside_state_experts.count
-      @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count    
+      @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count
+      
+      ###
+      
+      if params[:county_id].present?
+        @county = County.find_by_id(params[:county_id])
+        return record_not_found if !@county.present?
+        @condition_array = " #{@county.name}, #{@location.name} "
+        question_location_scope = question_group_scope.by_county(@county)
+        expert_location_scope = expert_group_scope.from_county(@county)  
+      end
     # else no location specified
     else
-      if defined?(@group) && @group.present?
-        @unanswered_questions_count = Question.submitted.not_rejected.from_group(@group.id).order('created_at DESC').count
-        @questions_asked = Question.not_rejected.from_group(@group.id).asked_list_for_year_month(@year_month).order('created_at DESC')
-        @questions_answered = Question.not_rejected.from_group(@group.id).answered_list_for_year_month(@year_month).order('created_at DESC')
-      else
-        @unanswered_questions_count = Question.submitted.not_rejected.order('created_at DESC').count
-        @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
-        @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
-      end  
-      
-      responses = Question.not_rejected.resolved_response_list_for_year_month(@year_month, defined?(@group) ? @group : nil)
+      question_location_scope = question_group_scope
+      expert_location_scope = expert_group_scope
     end
     
+    @experts = expert_location_scope.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+    @unanswered_questions_count = question_location_scope.submitted.not_rejected.order('created_at DESC').count
+    @questions_asked = question_location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_answered = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+      
+    # get number of responses for questions
+    responses = question_location_scope.not_rejected.resolved_response_list_for_year_month(@year_month)
     @response_count = responses.count
     @responder_count = responses.map{|r| r.initiated_by_id}.uniq.count
            
@@ -155,50 +136,72 @@ class Expert::ReportsController < ApplicationController
   end
   
   def question_list
-    @condition_array = ""
+    @condition_string = ""
+    filter = params[:filter] 
+    filter = 'answered' if filter.blank?
+    
     if(params[:year_month])
       @year_month = params[:year_month]
+    elsif(params[:year])
+      return record_not_found if params[:year].to_i == 0
+      @year_month = params[:year]
     else
       @year_month = User.year_month_string(Date.today.year,Date.today.month)
     end
     
-    if params[:location_id].present?
-      @location = Location.find_by_id(params[:location_id])
-      @condition_array += " #{@location.name} "
-    end
-       
-    if params[:county_id].present? && !["in_state_experts", "out_of_state_experts"].include?(params[:filter].strip)
-      @county = County.find_by_id(params[:county_id])
-      @condition_array = " #{@county.name}, #{@location.name} "
-    end
-    
     if params[:group_id].present?
       @group = Group.find_by_id(params[:group_id])
-      @condition_array += " #{@group.name} "
-    end
-    
-    if(params[:filter] && ['answered','asked'].include?(params[:filter]))
-      filter = params[:filter]
-    elsif params[:filter] && params[:filter].strip == 'in_state_experts' && defined?(@location) && @location.present? && defined?(@year_month) && @year_month.present?
-      @question_list = Question.resolved_questions_by_in_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
-      @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by In State Experts"
-      @display_title = "Answered Questions for #{@condition_array} by In State Experts"
-      @subtext_display = "for #{@year_month}"
-      return
-    elsif params[:filter] && params[:filter].strip == 'out_of_state_experts' && defined?(@location) && @location.present? && defined?(@year_month) && @year_month.present?
-      @question_list = Question.resolved_questions_by_outside_state_responders(@location, @year_month, defined?(@group) ? @group : nil)
-      @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by Out of State Experts"
-      @display_title = "Answered Questions for #{@condition_array} by Out of State Experts"
-      @subtext_display = "for #{@year_month}"
-      return
+      return record_not_found if !@group.present?
+      @condition_string += " #{@group.name} "
+      group_scope = Question.from_group(@group.id)
     else
-      filter = 'answered'
+      group_scope = Question.where({})
     end
     
-    @question_list = questions_based_on_report_filter(filter, @year_month)
-
-    @page_title = "#{filter.capitalize} Questions for #{@condition_array} for #{@year_month}"
-    @display_title = "#{filter.capitalize} Questions for #{@condition_array} "
+    if params[:location_id].present?
+      @location = Location.find_by_id(params[:location_id])
+      return record_not_found if !@location.present?
+      @condition_string += " #{@location.name} "
+      location_scope = group_scope.by_location(@location)
+      
+      # take care of state only metrics if that's requested
+      case filter.strip
+      when 'in_state_experts'
+        @question_list = location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month)
+        @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by In State Experts"
+        @display_title = "Answered Questions for #{@condition_array} by In State Experts"
+        @subtext_display = "for #{@year_month}"
+        return
+      when 'out_of_state_experts'
+        @question_list = location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month)
+        @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by Out of State Experts"
+        @display_title = "Answered Questions for #{@condition_array} by Out of State Experts"
+        @subtext_display = "for #{@year_month}"
+        return
+      end
+      
+      # county questions    
+      if params[:county_id].present?
+        @county = County.find_by_id(params[:county_id])
+        return record_not_found if !@county.present?
+        @condition_string += " #{@county.name}, #{@location.name} "
+        location_scope = group_scope.by_county(@county)
+      end
+    else
+      location_scope = group_scope
+    end
+    
+    case filter.strip
+    when 'answered'
+      @question_list = location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+    when 'asked'
+      @question_list = location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+    else
+      @question_list = location_scope.submitted.not_rejected.order('created_at DESC')
+    end
+    
+    @page_title = "#{filter.capitalize} Questions for #{@condition_string} for #{@year_month}"
+    @display_title = "#{filter.capitalize} Questions for #{@condition_string} "
     @subtext_display = "for #{@year_month}"
   end
   

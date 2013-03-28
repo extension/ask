@@ -602,10 +602,11 @@ class Question < ActiveRecord::Base
   # Reports Stuff
   
   def self.answered_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     with_scope do
       question_id_records = self.joins(:question_events)
       .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-      .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month).pluck(:question_id)
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month).pluck(:question_id)
     
       if question_id_records.length > 0
         return Question.where("id IN (#{question_id_records.join(',')})")
@@ -615,39 +616,29 @@ class Question < ActiveRecord::Base
     end
   end
   
-  def self.resolved_response_list_for_year_month(year_month, group = nil)
+  def self.resolved_response_list_for_year_month(year_month)
     with_scope do
-      if group.present?
-        self.from_group(group.id).select("question_events.*").joins(:question_events)
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events)
         .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      else
-        self.select("question_events.*").joins(:question_events)
-        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      end
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
     end
   end
   
   def self.asked_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    
     self.select("DISTINCT(questions.id), questions.*")
-    .where("DATE_FORMAT(questions.created_at,'%Y-%m') = ?",year_month)
+    .where("DATE_FORMAT(questions.created_at,'#{date_string}') = ?",year_month)
   end
   
-  def self.resolved_questions_by_in_state_responders(location, year_month, group = nil)
+  def self.resolved_questions_by_in_state_responders(location, year_month)
     with_scope do
-      if group.present?
-        question_id_records = self.joins(:question_events => :initiator)
-          .where("users.location_id = ?", location.id)
-          .where("questions.assigned_group_id = #{group.id}")
-          .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
-          .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
-      else  
-        question_id_records = self.joins(:question_events => :initiator)
-          .where("users.location_id = ?", location.id)
-          .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
-          .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
-      end
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = self.joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
       
       if question_id_records.count > 0    
         return Question.where("id IN (#{question_id_records.join(',')})")
@@ -657,36 +648,23 @@ class Question < ActiveRecord::Base
     end
   end
   
-  def self.responses_by_in_state_responders(location, year_month, group = nil)
+  def self.responses_by_in_state_responders(location, year_month)
     with_scope do
-      if group.present?
-        self.from_group(group.id).select("question_events.*").joins(:question_events => :initiator)
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
         .where("users.location_id = ?", location.id)
         .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      else
-        self.select("question_events.*").joins(:question_events => :initiator)
-        .where("users.location_id = ?", location.id)
-        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      end
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
     end
   end
   
-  def self.resolved_questions_by_outside_state_responders(location, year_month, group = nil)
+  def self.resolved_questions_by_outside_state_responders(location, year_month)
     with_scope do
-      if group.present?
-        question_id_records = Question.joins(:question_events => :initiator)
-            .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
-            .where("questions.assigned_group_id = #{group.id}")
-            .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
-            .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
-      else
-        question_id_records = Question.joins(:question_events => :initiator)
-            .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
-            .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?", year_month)
-            .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
-      end
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = Question.joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
       if question_id_records.count > 0  
         return Question.where("id IN (#{question_id_records.join(',')})")
       else
@@ -695,19 +673,13 @@ class Question < ActiveRecord::Base
     end
   end
   
-  def self.responses_by_outside_state_responders(location, year_month, group = nil)
+  def self.responses_by_outside_state_responders(location, year_month)
     with_scope do
-      if group.present?
-        self.from_group(group.id).select("question_events.*").joins(:question_events => :initiator)
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
         .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
         .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      else
-        self.select("question_events.*").joins(:question_events => :initiator)
-        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
-        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-        .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
-      end
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
     end
   end
     

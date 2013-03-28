@@ -93,6 +93,8 @@ class User < ActiveRecord::Base
   }
   
   scope :group_membership_for, lambda { |group_id| joins(:group_connections => :group).where("group_connections.group_id = #{group_id}")}
+  scope :from_location, lambda{ |location| joins(:location).where("locations.id = #{location.id}")}
+  scope :from_county, lambda{ |county| joins(:county).where("counties.id = #{county.id}")}
 
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
@@ -142,12 +144,12 @@ class User < ActiveRecord::Base
   
   def self.by_question_event_count(event_state,options = {})
       with_scope do
+        (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
         id_list = self.exid_holder.not_retired.pluck("#{self.table_name}.id")
         return self.none if id_list.length == 0
         qe_scope = QuestionEvent.where(event_state: event_state).where("initiated_by_id IN (#{id_list.join(',')})").group(:initiator)
-        if(options[:yearmonth])
-          qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",options[:yearmonth])
-        end
+        qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth])  
+  
         if(options[:limit])
           qe_scope = qe_scope.limit(options[:limit])
         end
@@ -445,11 +447,12 @@ class User < ActiveRecord::Base
   end
 
   def assigned_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     Question.select("DISTINCT(questions.id), questions.*")
     .joins(:question_events)
     .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
     .where("question_events.recipient_id = ?",self.id)
-    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
 
   def answered_count_by_year
@@ -461,11 +464,12 @@ class User < ActiveRecord::Base
   end
 
   def answered_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     Question.select("DISTINCT(questions.id), questions.*")
     .joins(:question_events)
     .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
     .where("question_events.initiated_by_id = ?",self.id)
-    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
 
 
