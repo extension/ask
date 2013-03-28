@@ -61,7 +61,7 @@ class EvaluationQuestion < ActiveRecord::Base
   def response_value(response)
     case self.responsetype
     when MULTIPLE_CHOICE
-      self.responses.index(response)+1
+      self.responses.index(response)
     when SCALE
       response.to_i
     when OPEN_DOLLAR_VALUE
