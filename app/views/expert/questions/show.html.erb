@@ -97,13 +97,9 @@
       <% end %>
   
       <% if @question.assignee.present? %>
-        <%= link_to expert_user_path(@question.assignee_id) do %>
-          <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_expert_user(@question.assignee) %>
-        <% end %>
+        <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_expert_user(@question.assignee) %>
       <% elsif @question.assigned_group.present? %>
-        <%= link_to expert_group_path(@question.assigned_group.id) do %>
-          <%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>
-        <% end %>
+        <%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>
       <% end %>
       
       
