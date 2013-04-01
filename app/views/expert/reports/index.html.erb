@@ -30,26 +30,44 @@
       
       <% if @date.class == DateTime || @date.class == Date %>
         <h2><%= @date.strftime("%B, %Y") %></h2>
-        <p><%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %></p>
-	      <% if @following_year_month %>
-	        <p><%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %></p>
-	      <% end %>
+        
+        <p>
+          <%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
+          <% if @following_year_month %>
+  	      |  <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+  	      <% end %>
+  	      
+  	      <span class="pull-right">
+  	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
+    	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+    	      <span>
+        </p>
+        
       <% elsif @date.class == String %>
         <h2><%= @date %></h2>
+        
+        <p>
+          <%= link_to "Current month", expert_reports_home_path(:year_month => (DateTime.now).strftime('%Y-%m'), :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
+  	      <span class="pull-right">
+  	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
+    	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+    	      <span>
+        </p>
       <% end %>
+      
+      
 
-      <p><%= link_to "Report for #{(Time.now.year - 1).to_s}", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %></p>
       
       <div id="data_summary">
-        <h2>Question Totals</h2>
-        <h3><span><%= @questions_asked.size > 0 ? link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) : "0" %></span> Questions Asked</h3>
-        <h3><span><%= @response_count %> Responses for <%= @questions_answered.size > 0 ? link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) : "0" %> Questions Answered by <%= @responder_count %> Experts </span></h3>
+        <h2>Question Activity</h2>
+        <h3><%= @questions_asked.size > 0 ? link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) : "0" %> Questions Asked</h3>
+        <h3><%= @response_count %> Answers to <%= @questions_answered.size > 0 ? link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) : "0" %> Questions by <%= @responder_count %> Experts</h3>
        
-        <% if defined?(@location) && @location.present? %>
+        <% if defined?(@location) && @location.present? && !defined?(@county) %>
           <br />
-          <h2>State-wide Totals for <%= @location.abbreviation %> (No County Filter Applied)</h2>
-          <h3><span><%= @responses_by_in_state_count %> Responses for <%= @resolved_by_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) : "0" %></span> Questions Answered by <%= @responders_in_state_count %> In-State Experts</h3>
-          <h3><span><%= @responses_by_outside_state_count %> Responses for <%= @resolved_by_outside_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) : "0" %></span> Questions Answered by <%= @responders_outside_state_count %> Out of State Experts</h3>
+          <h2>Distribution of Activity for <%= @location.abbreviation %> Questions</h2>
+          <h3><%= @responders_in_state_count %> In-State Experts gave  <%= @responses_by_in_state_count %> Answers to <%= @resolved_by_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) : "0" %> Questions</h3>
+          <h3><%= @responders_outside_state_count %> Out-of-State Experts gave <%= @responses_by_outside_state_count %> Answers to <%= @resolved_by_outside_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) : "0" %> Questions</h3>
         <% end %>
       </div>
       
@@ -126,6 +144,7 @@
     }
     var group_id = (param == "group_id" ? id : "<%= params[:group_id] %>");
     var year_month = "<%= params[:year_month] %>"
+    var year = "<%= params[:year] %>"
     
     if (year_month) {
       params.push("year_month=" + year_month);
@@ -138,6 +157,9 @@
     }
     if (group_id) {
       params.push("group_id=" + group_id);
+    }
+    if (year) {
+      params.push("year=" + year);
     }
     return pathname + "?" + params.join("&");
 	}
