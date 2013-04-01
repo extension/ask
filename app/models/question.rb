@@ -625,6 +625,15 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def self.resolved_response_initiators_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("DISTINCT(question_events.initiated_by_id)").joins(:question_events)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
   def self.asked_list_for_year_month(year_month)
     year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     

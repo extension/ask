@@ -99,9 +99,8 @@ class Expert::ReportsController < ApplicationController
     @questions_answered = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
       
     # get number of responses for questions
-    responses = question_location_scope.not_rejected.resolved_response_list_for_year_month(@year_month)
-    @response_count = responses.count
-    @responder_count = responses.map{|r| r.initiated_by_id}.uniq.count
+    @response_count = question_location_scope.not_rejected.resolved_response_list_for_year_month(@year_month).count
+    @responder_count = question_location_scope.not_rejected.resolved_response_initiators_for_year_month(@year_month).count
            
     @condition_array += " #{@group.name} " if defined?(@group) && @group.present?
   end
