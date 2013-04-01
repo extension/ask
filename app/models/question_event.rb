@@ -256,6 +256,5 @@ class QuestionEvent < ActiveRecord::Base
   def response=(response)
     write_attribute(:response, self.cleanup_html(response))
   end
-
     
 end

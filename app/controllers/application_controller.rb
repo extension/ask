@@ -92,37 +92,7 @@ class ApplicationController < ActionController::Base
     end
     return true
   end
-  
-  
-  def questions_based_on_report_filter(status="unanswered", year_month)
-    condition_array = Array.new
-    
-    if params[:location_id].present?
-      @location = Location.find_by_id(params[:location_id])
-      condition_array << "questions.location_id = #{@location.id}"
-    end
-    
-    if params[:county_id].present?
-      @county = County.find_by_id(params[:county_id])
-      condition_array << "questions.county_id = #{@county.id}"
-    end
-    
-    if params[:group_id].present?
-      @group = Group.find(params[:group_id])
-      condition_array << "questions.assigned_group_id = #{@group.id}"
-    end
-    
-    condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
-    
-    if status == "answered"
-      return Question.not_rejected.where(condition_string).answered_list_for_year_month(@year_month).order('created_at DESC')
-    elsif status == "asked"
-      return Question.not_rejected.where(condition_string).asked_list_for_year_month(@year_month).order('created_at DESC')
-    else
-      return Question.submitted.not_rejected.where(condition_string).order('created_at DESC')
-    end
-  end
-  
+
   def questions_based_on_pref_filter(list_view, filter_pref)
     condition_array = Array.new
     if filter_pref

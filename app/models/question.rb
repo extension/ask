@@ -140,10 +140,13 @@ class Question < ActiveRecord::Base
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
-  
+  scope :by_location, lambda {|location| {:conditions => {:location_id => location.id}}}
+  scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
+  # special scope for returning an empty AR association
+  scope :none, where('1 = 0')
 
   # check for spam - given the process flow, not sure
   # this is a candidate for delayed job
@@ -604,17 +607,96 @@ class Question < ActiveRecord::Base
   def rejected?
     return self.status_state == STATUS_REJECTED
   end
-  
+
+  # Reports Stuff
   def self.answered_list_for_year_month(year_month)
-    self.select("DISTINCT(questions.id), questions.*")
-    .joins(:question_events)
-    .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-    .where("DATE_FORMAT(question_events.created_at,'%Y-%m') = ?",year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    with_scope do
+      question_id_records = self.joins(:question_events)
+      .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month).pluck(:question_id)
+    
+      if question_id_records.length > 0
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.resolved_response_list_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.resolved_response_initiators_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("DISTINCT(question_events.initiated_by_id)").joins(:question_events)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
   end
   
   def self.asked_list_for_year_month(year_month)
-    self.select("DISTINCT(questions.id), questions.*")
-    .where("DATE_FORMAT(questions.created_at,'%Y-%m') = ?",year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    
+    self.where("DATE_FORMAT(questions.created_at,'#{date_string}') = ?",year_month)
+  end
+  
+  def self.resolved_questions_by_in_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = self.joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      
+      if question_id_records.count > 0    
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_in_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.resolved_questions_by_outside_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = Question.joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      if question_id_records.count > 0  
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_outside_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
   end
     
 end

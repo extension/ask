@@ -1,0 +1,48 @@
+<!-- <ul class="breadcrumb">
+  <li><%= link_to(@expert.name, expert_report_path(id: @expert.id)) %></li>
+  <span class="divider">/</span>
+  <li class='active'><%= @breadcrumb_display %></li>
+</ul> -->
+
+<p><%= link_to "Reports Home", expert_reports_home_path() %></p>
+
+<div class="page-header">
+  <h1><%= @display_title %></h1>
+  <h1><small><%= @question_list.total_count %> Questions <%= @subtext_display %></small></h1>
+</div>
+
+<%= paginate @question_list %>
+
+<div class='row-fluid'>
+  <div class="span12">
+    <%- if @question_list.blank? -%>
+    <p>No questions to display</p>
+    <%- else -%>
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Last Status</th>
+            <th>Submitted</th>
+            <th>Last Resolved</th>
+            <th>Last Resolved By</th>
+          </tr>
+        </thead>
+        <tbody>
+        <%- @question_list.each do |question| -%>
+          <tr>
+            <td><%= link_to(question.title.html_safe, expert_question_path(id: question.id)) %></td>
+            <td><%= Question.convert_to_string(question.status_state) %></td>
+            <td><%= humane_date(question.created_at) %></td>
+            <td><%= question.resolved_at.blank? ? '' : humane_date(question.resolved_at) %></td>
+            <td><%= question.current_resolver_id.blank? ? '' : link_to(question.current_resolver.name, expert_user_path(id: question.current_resolver_id)) %></td>
+          </tr>
+        <%- end -%>
+        </tbody>
+      </table>
+    <%- end # has a question_list -%>
+  </div>
+</div>
+
+<%= paginate @question_list %>
+

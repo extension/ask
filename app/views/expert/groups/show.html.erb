@@ -21,6 +21,7 @@
     <li><%= link_to "Unanswered (#{@group.open_questions.size})", expert_group_path(@group) %></li>
     <li><%= link_to "Answered (#{@group.answered_questions.size})", expert_group_answered_path(@group) %></li>
     <li><%= link_to 'Group History', expert_group_history_path() %></li>
+    <li><%= link_to 'Reports', expert_reports_home_path(:group_id => @group.id) %></li>
   </ul>
   
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>

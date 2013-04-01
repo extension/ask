@@ -425,6 +425,7 @@ ActiveRecord::Schema.define(:version => 20130326152538) do
     t.datetime "updated_at",                                  :null => false
     t.integer  "original_location_id"
     t.integer  "original_county_id"
+    t.boolean  "ever_answered",            :default => false, :null => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
