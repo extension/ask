@@ -167,13 +167,13 @@ class Expert::ReportsController < ApplicationController
       # take care of state only metrics if that's requested
       case filter.strip
       when 'in_state_experts'
-        @question_list = location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month)
+        @question_list = location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month).page((params[:page].present?) ? params[:page] : 1).per(30)
         @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by In State Experts"
         @display_title = "Answered Questions for #{@condition_array} by In State Experts"
         @subtext_display = "for #{@year_month}"
         return
       when 'out_of_state_experts'
-        @question_list = location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month)
+        @question_list = location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).page((params[:page].present?) ? params[:page] : 1).per(30)
         @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by Out of State Experts"
         @display_title = "Answered Questions for #{@condition_array} by Out of State Experts"
         @subtext_display = "for #{@year_month}"
@@ -193,11 +193,11 @@ class Expert::ReportsController < ApplicationController
     
     case filter.strip
     when 'answered'
-      @question_list = location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+      @question_list = location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     when 'asked'
-      @question_list = location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
+      @question_list = location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     else
-      @question_list = location_scope.submitted.not_rejected.order('created_at DESC')
+      @question_list = location_scope.submitted.not_rejected.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     end
     
     @page_title = "#{filter.capitalize} Questions for #{@condition_string} for #{@year_month}"
@@ -222,9 +222,9 @@ class Expert::ReportsController < ApplicationController
 
     case filter
     when 'assigned'
-      @question_list = @expert.assigned_list_for_year_month(@year_month).order('created_at DESC')
+      @question_list = @expert.assigned_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     when 'answered'
-      @question_list = @expert.answered_list_for_year_month(@year_month).order('created_at DESC')
+      @question_list = @expert.answered_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     end
 
     @page_title = "#{filter.capitalize} Questions for #{@expert.name} (ID##{@expert.id}) for #{@year_month}"
