@@ -95,8 +95,8 @@ class Expert::ReportsController < ApplicationController
     
     @experts = expert_location_scope.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
     @unanswered_questions_count = question_location_scope.submitted.not_rejected.order('created_at DESC').count
-    @questions_asked = question_location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
-    @questions_answered = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+    @questions_asked_count = question_location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC').count
+    @questions_answered_count = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').count
       
     # get number of responses for questions
     @response_count = question_location_scope.not_rejected.resolved_response_list_for_year_month(@year_month).count
