@@ -60,14 +60,61 @@
       
       <div id="data_summary">
         <h2>Question Activity</h2>
-        <h3><%= @questions_asked.size > 0 ? link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) : "0" %> Questions Asked</h3>
-        <h3><%= @response_count %> Answers to <%= @questions_answered.size > 0 ? link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) : "0" %> Questions by <%= @responder_count %> Experts</h3>
+        <h3>
+        <% if @questions_asked.size > 0 %> 
+          <% if @date.class == DateTime || @date.class == Date %>
+            <%= link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "asked")) %> 
+          <% else %>
+            <%= link_to(number_with_delimiter(@questions_asked.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "asked")) %> 
+          <% end %>
+        <% else %>
+           0
+        <% end %>
+ Questions Asked
+        </h3>
+
+        <h3>
+        <%= @response_count %> Answers to 
+        <% if @questions_answered.size > 0 %>
+          <% if @date.class == DateTime || @date.class == Date %>
+            <%= link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) %>
+          <% else %>
+            <%= link_to(number_with_delimiter(@questions_answered.size, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "answered")) %>
+          <% end %>
+        <% else %>
+            0
+        <% end %>
+        Questions by <%= @responder_count %> Experts
+        </h3>
        
         <% if defined?(@location) && @location.present? && !defined?(@county) %>
           <br />
           <h2>Distribution of Activity for <%= @location.abbreviation %> Questions</h2>
-          <h3><%= @responders_in_state_count %> In-State Experts gave  <%= @responses_by_in_state_count %> Answers to <%= @resolved_by_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) : "0" %> Questions</h3>
-          <h3><%= @responders_outside_state_count %> Out-of-State Experts gave <%= @responses_by_outside_state_count %> Answers to <%= @resolved_by_outside_state_experts > 0 ? link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) : "0" %> Questions</h3>
+          <h3>
+          <%= @responders_in_state_count %> In-State Experts gave  <%= @responses_by_in_state_count %> Answers to 
+          <% if @resolved_by_state_experts > 0 %>
+            <% if @date.class == DateTime || @date.class == Date %>
+              <%= link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) %>
+            <% else %>
+              <%= link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "in_state_experts")) %>
+            <% end %>
+          <% else %>
+            0
+          <% end %>
+          Questions</h3>
+
+          <h3>
+          <%= @responders_outside_state_count %> Out-of-State Experts gave <%= @responses_by_outside_state_count %> Answers to 
+          <% if @resolved_by_outside_state_experts > 0 %> 
+            <% if @date.class == DateTime || @date.class == Date %>
+              <%= link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) %>     
+            <% else %>
+              <%= link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "out_of_state_experts")) %>
+            <% end %>
+          <% else %>
+            0
+          <% end %>
+          Questions</h3>
         <% end %>
       </div>
       
@@ -97,23 +144,23 @@
               <% end %>
             </td>
             <td>
-	          <% if @year_month =~ /-/ %>
+	          <% if @date.class == DateTime || @date.class == Date %>
 	            <% member_answered_count = member.answered_count_by_year_month[@year_month] %>
                 <span class="bignumber"><%= member_answered_count ? expert_question_list_link(member_answered_count, {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
               <% else %>
                 <% member_answered_count = member.answered_count_by_year[@year_month] %>
-                <span class="bignumber"><%= member_answered_count ? expert_question_list_link(member_answered_count, {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
+                <span class="bignumber"><%= member_answered_count ? expert_question_list_link(member_answered_count, {id: member.id, filter: 'answered', year: @year_month}) : "0"%></span>
               <% end %>
             </td>
             <td>
-	          <% if @year_month =~ /-/ %>
+	          <% if @date.class == DateTime || @date.class == Date %>
                 <% member_assigned_count = member.assigned_count_by_year_month[@year_month] %>
                 <span class="bignumber">
                 <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year_month: @year_month}) : 0%></span>
               <% else %>
                 <% member_assigned_count = member.assigned_count_by_year[@year_month] %>
                 <span class="bignumber">
-                <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year_month: @year_month}) : 0%></span> 
+                <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year: @year_month}) : 0%></span> 
               <% end %>
             </td>
             <td><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></td>

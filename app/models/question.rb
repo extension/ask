@@ -637,8 +637,7 @@ class Question < ActiveRecord::Base
   def self.asked_list_for_year_month(year_month)
     year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     
-    self.select("DISTINCT(questions.id), questions.*")
-    .where("DATE_FORMAT(questions.created_at,'#{date_string}') = ?",year_month)
+    self.where("DATE_FORMAT(questions.created_at,'#{date_string}') = ?",year_month)
   end
   
   def self.resolved_questions_by_in_state_responders(location, year_month)

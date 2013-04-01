@@ -232,6 +232,9 @@ class Expert::ReportsController < ApplicationController
         flash[:error] = "Invalid date specified"
         return redirect_to expert_reports_home_url
       end
+    elsif(params[:year])
+      return record_not_found if params[:year].to_i == 0
+      @year_month = params[:year]
     else
       @year_month = User.year_month_string(Date.today.year,Date.today.month)
     end
