@@ -4,9 +4,11 @@
 
 @import "_variables";
 
-#data_summary {border:1px solid #ddd; margin-bottom:3em; padding:1.5em; background:#fff;}
+#data_summary, #expert_summary {border:1px solid #ddd; margin-bottom:3em; padding:1.5em; background:#fff;}
 #report_summary {border:0; padding:2em; background:#fff;}
 .highlight_unanswered span {background:#FFFFC1; color:#888; font-weight:normal; padding:.1em .5em;}
 .highlight_unanswered a {color:#777; font-weight:bold;}
 .highlight_unanswered span {background:none; color:#1C3763;}
 .highlight_unanswered a {color:#1C3763; font-weight:bold; background:#fff; padding:0 .3em;}
+
+#data_summary p, #expert_summary p {font-size:1.5em;}
