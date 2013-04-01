@@ -91,6 +91,7 @@
         <% if defined?(@location) && @location.present? && !defined?(@county) %>
           <br />
           <h2>Distribution of Activity for <%= @location.abbreviation %> Questions</h2>
+          <% if @responders_in_state_count > 0 %>  
           <p>
           <%= @responders_in_state_count %> In-State Experts gave  <%= @responses_by_in_state_count %> Answers to 
           <% if @resolved_by_state_experts > 0 %>
@@ -103,7 +104,10 @@
             0
           <% end %>
           Questions</p>
-
+          <% else %>
+            <p>No In-State Expert Activity</p>
+          <% end %>
+          <% if @responders_outside_state_count > 0 %>
           <p>
           <%= @responders_outside_state_count %> Out-of-State Experts gave <%= @responses_by_outside_state_count %> Answers to 
           <% if @resolved_by_outside_state_experts > 0 %> 
@@ -116,6 +120,9 @@
             0
           <% end %>
           Questions</p>
+          <% else %>
+            <p>No Out-of-State Expert Activity</p>
+          <% end %>
         <% end %>
       </div>
       
