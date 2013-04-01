@@ -16,7 +16,12 @@ class Expert::ReportsController < ApplicationController
     @experts = ""
     
     if(params[:year_month])
-      @date = Date.strptime(params[:year_month] + "-01")
+      begin
+        @date = Date.strptime(params[:year_month] + "-01")
+      rescue
+        flash[:error] = "Invalid date specified"
+        return redirect_to expert_reports_home_url
+      end
       @year_month = params[:year_month]
       @previous_year_month = (@date - 1.month).strftime('%Y-%m')
       if User.year_month_string(Date.today.year,Date.today.month) != @year_month
@@ -142,6 +147,12 @@ class Expert::ReportsController < ApplicationController
     
     if(params[:year_month])
       @year_month = params[:year_month]
+      begin
+        date = Date.strptime(params[:year_month] + "-01")
+      rescue
+        flash[:error] = "Invalid date specified"
+        return redirect_to expert_reports_home_url
+      end
     elsif(params[:year])
       return record_not_found if params[:year].to_i == 0
       @year_month = params[:year]
@@ -216,6 +227,12 @@ class Expert::ReportsController < ApplicationController
 
     if(params[:year_month])
       @year_month = params[:year_month]
+      begin
+        date = Date.strptime(params[:year_month] + "-01")
+      rescue
+        flash[:error] = "Invalid date specified"
+        return redirect_to expert_reports_home_url
+      end
     else
       @year_month = User.year_month_string(Date.today.year,Date.today.month)
     end
