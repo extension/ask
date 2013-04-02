@@ -178,7 +178,7 @@ class Group < ActiveRecord::Base
   
   def incoming_notification_list(users_to_exclude=[])
     list = []
-    self.members.each{|member| list.push(member) if member.send_incoming_notification?(self.id)}
+    self.assignees.each{|assignee| list.push(assignee) if assignee.send_incoming_notification?(self.id)}
     if !users_to_exclude.nil?
       list = list - users_to_exclude
     end
