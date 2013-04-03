@@ -148,6 +148,7 @@ class Expert::ReportsController < ApplicationController
       @year_month = params[:year_month]
       begin
         date = Date.strptime(params[:year_month] + "-01")
+        @date_description = date.strftime("%B, %Y")
       rescue
         flash[:error] = "Invalid date specified"
         return redirect_to expert_reports_home_url
@@ -155,6 +156,7 @@ class Expert::ReportsController < ApplicationController
     elsif(params[:year])
       return record_not_found if params[:year].to_i == 0
       @year_month = params[:year]
+      @date_description = @year_month
     else
       @year_month = User.year_month_string(Date.today.year,Date.today.month)
     end
@@ -162,7 +164,6 @@ class Expert::ReportsController < ApplicationController
     if params[:group_id].present?
       @group = Group.find_by_id(params[:group_id])
       return record_not_found if !@group.present?
-      @condition_string += " #{@group.name} "
       group_scope = Question.from_group(@group.id)
     else
       group_scope = Question.where({})
@@ -171,22 +172,27 @@ class Expert::ReportsController < ApplicationController
     if params[:location_id].present?
       @location = Location.find_by_id(params[:location_id])
       return record_not_found if !@location.present?
-      @condition_string += " #{@location.name} "
       location_scope = group_scope.by_location(@location)
       
       # take care of state only metrics if that's requested
       case filter.strip
       when 'in_state_experts'
         @question_list = location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month).page((params[:page].present?) ? params[:page] : 1).per(30)
-        @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by In State Experts"
-        @display_title = "Answered Questions for #{@condition_array} by In State Experts"
-        @subtext_display = "for #{@year_month}"
+        if params[:group_id].present?
+          @condition_string += "in #{@group.name} "
+        end
+        @page_title = "#{@location.abbreviation} Questions #{@condition_string} Answered by In-State Experts for #{@year_month}"
+        @display_title = " #{@location.abbreviation} Questions #{@condition_string} Answered by In-State Experts"
+        @subtext_display = "#{@year_month}"
         return
       when 'out_of_state_experts'
         @question_list = location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).page((params[:page].present?) ? params[:page] : 1).per(30)
-        @page_title = "Answered Questions for #{@condition_array} for #{@year_month} by Out of State Experts"
-        @display_title = "Answered Questions for #{@condition_array} by Out of State Experts"
-        @subtext_display = "for #{@year_month}"
+        if params[:group_id].present?
+          @condition_string += "in #{@group.name} "
+        end
+        @page_title = "#{@location.abbreviation} Questions #{@condition_string} Answered by Out-of-State Experts for #{@year_month}"
+        @display_title = " #{@location.abbreviation} Questions #{@condition_string} Answered by Out-of-State Experts"
+        @subtext_display = "#{@year_month}"
         return
       end
       
@@ -194,7 +200,6 @@ class Expert::ReportsController < ApplicationController
       if params[:county_id].present?
         @county = County.find_by_id(params[:county_id])
         return record_not_found if !@county.present?
-        @condition_string += " #{@county.name}, #{@location.name} "
         location_scope = group_scope.by_county(@county)
       end
     else
@@ -210,8 +215,19 @@ class Expert::ReportsController < ApplicationController
       @question_list = location_scope.submitted.not_rejected.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     end
     
-    @page_title = "#{filter.capitalize} Questions for #{@condition_string} for #{@year_month}"
-    @display_title = "#{filter.capitalize} Questions for #{@condition_string} "
+    if params[:county_id].present?
+      @condition_string += "from  #{@county.name}, #{@location.abbreviation} "
+    elsif params[:location_id].present?
+      @condition_string += "from  #{@location.name} "
+    end
+    
+    if params[:group_id].present?
+      @condition_string += "in #{@group.name} "
+    end
+    @condition_string = @condition_string != "" ? @condition_string : "All Locations and Groups"
+    
+    @page_title = "#{filter.capitalize} Questions - #{@condition_string} for #{@year_month}"
+    @display_title = "#{filter.capitalize} Questions - #{@condition_string} "
     @subtext_display = "for #{@year_month}"
   end
   
