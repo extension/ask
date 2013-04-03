@@ -77,6 +77,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def internal_aae_expert_handling_reminder
+    mail = InternalMailer.aae_expert_handling_reminder(user: current_user, question: Question.offset(rand(Question.count)).first, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def public_expert_response
     mail = PublicMailer.public_expert_response(user: User.first, question: Question.answered.last, expert: User.offset(rand(User.count)).first, cache_email: false)
     return render_mail(mail)

@@ -1,0 +1,55 @@
+<%= render :partial => 'partials/public_email_header' %>
+
+<tr>
+  <td class="content padding">
+    <h3>You were assigned this question <%= time_ago_in_words(@assigned_at) %> ago.</h3>
+    <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question.id), :class => "action" %> as soon as possible. Thanks for your help!</p>
+
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+  </td>
+</tr>
+
+<tr>
+  <td class="content padding question_block">
+    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
+    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
+    <p class="meta">Submitted <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
+    <% if !@question.is_private %>
+      <p class="tag">
+        <span class="tag tag-public">Public</span>
+      </p>
+    <% end %>
+    <p class="tag">
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= @question.county.name %></span>
+        <% end %>
+          <span class="tag tag-geography"><%= @question.location.name %></span>
+      <% else %>
+          <span class="tag tag-geography">No Location</span>
+      <% end %>
+    </p>
+        
+    <% if @question.tags.size > 0 %>
+      <p class="tag">
+        <% @question.tags.each do |tag| %>
+          <span class="tag tag-topic"><%= tag.name %></span>
+        <% end %>
+      </p>
+    <% else %>
+      <p class="actions">This question needs tags. <%= link_to("Can you help tag it?", expert_question_url(@question), :class => "action") -%></p>
+    <% end %>
+  </td>
+</tr>
+
+<tr>
+  <td class="content padding">
+    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>    
+  </td>
+</tr>
+
+<tr>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Send a reply from the question page", expert_question_url(@question)) -%>.</td>
+</tr>
+
+<%= render :partial => 'partials/internal_email_footer' %>

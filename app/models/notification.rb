@@ -39,6 +39,7 @@ class Notification < ActiveRecord::Base
   AAE_QUESTION_ACTIVITY = 1012
   AAE_EXPERT_TAG_EDIT = 1013
   AAE_EXPERT_VACATION_EDIT = 1014
+  AAE_EXPERT_HANDLING_REMINDER = 1015
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -98,6 +99,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_tag_edit
     when AAE_EXPERT_VACATION_EDIT
       process_aae_expert_vacation_edit
+    when AAE_EXPERT_HANDLING_REMINDER
+      process_aae_expert_handling_reminder
     else
       # nothing
     end
@@ -179,6 +182,10 @@ class Notification < ActiveRecord::Base
 
   def process_aae_expert_vacation_edit
     InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+  
+  def process_aae_expert_handling_reminder
+    Question.submitted.where("last_assigned_at < ?", 3.days.ago).each{|question| InternalMailer.aae_expert_handling_reminder(user: question.assignee, question: question).deliver unless (question.assignee.nil? || question.assignee.away?)}
   end
   
   def queue_delayed_notifications

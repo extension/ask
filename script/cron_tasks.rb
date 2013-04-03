@@ -37,6 +37,11 @@ class CronTasks < Thor
       Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
+    
+    def create_daily_handling_reminder_notification
+      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
+      puts "Created notification for daily handling reminder emails"
+    end
 
   end
 
@@ -54,6 +59,7 @@ class CronTasks < Thor
     load_rails(options[:environment])
     create_evaluation_notifications
     create_daily_summary_notification
+    create_daily_handling_reminder_notification
   end
   
   
