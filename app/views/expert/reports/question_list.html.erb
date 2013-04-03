@@ -2,7 +2,8 @@
 
 <div class="page-header">
   <h1><%= @display_title %></h1>
-  <h1><small><%= @question_list.total_count %> Questions <%= @subtext_display %></small></h1>
+  <h2><%= @date_description %></h2>
+  <h3><%= @question_list.total_count %> Questions</h3>
 </div>
 
 <%= paginate @question_list %>
