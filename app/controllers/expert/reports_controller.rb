@@ -181,8 +181,8 @@ class Expert::ReportsController < ApplicationController
         if params[:group_id].present?
           @condition_string += "in #{@group.name} "
         end
-        @page_title = "#{@location.abbreviation} Questions #{@condition_string} Answered by In-State Experts for #{@year_month}"
-        @display_title = " #{@location.abbreviation} Questions #{@condition_string} Answered by In-State Experts"
+        @page_title = "#{@location.name} Questions #{@condition_string} Answered by In-State Experts for #{@year_month}"
+        @display_title = " #{@location.name} Questions #{@condition_string} Answered by In-State Experts"
         @subtext_display = "#{@year_month}"
         return
       when 'out_of_state_experts'
@@ -190,8 +190,8 @@ class Expert::ReportsController < ApplicationController
         if params[:group_id].present?
           @condition_string += "in #{@group.name} "
         end
-        @page_title = "#{@location.abbreviation} Questions #{@condition_string} Answered by Out-of-State Experts for #{@year_month}"
-        @display_title = " #{@location.abbreviation} Questions #{@condition_string} Answered by Out-of-State Experts"
+        @page_title = "#{@location.name} Questions #{@condition_string} Answered by Out-of-State Experts for #{@year_month}"
+        @display_title = " #{@location.name} Questions #{@condition_string} Answered by Out-of-State Experts"
         @subtext_display = "#{@year_month}"
         return
       end
