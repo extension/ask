@@ -22,6 +22,7 @@
         <thead>
           <tr>
             <th>Title</th>
+            <th>Location</th>
             <th>Last Status</th>
             <th>Submitted</th>
             <th>Last Resolved</th>
@@ -32,6 +33,17 @@
         <%- @question_list.each do |question| -%>
           <tr>
             <td><%= link_to(question.title.html_safe, expert_question_path(id: question.id)) %></td>
+            <td>
+              <% if question.location.present? %>
+                <% if question.county.present? %>
+                  <%= "#{question.county.name}, #{question.location.abbreviation}" %>
+                <% else %>
+                  <%= question.location.name %>
+                <% end %>
+              <% else %>
+                No Location
+              <% end %>
+            </td>
             <td><%= Question.convert_to_string(question.status_state) %></td>
             <td><%= humane_date(question.created_at) %></td>
             <td><%= question.resolved_at.blank? ? '' : humane_date(question.resolved_at) %></td>
