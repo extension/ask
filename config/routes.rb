@@ -52,6 +52,7 @@ Aae::Application.routes.draw do
         post 'activity_notification_prefs'
         get  'history'
         post 'restore_revision'
+        get 'diff_with_previous'
       end
     end
 

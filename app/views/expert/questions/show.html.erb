@@ -6,7 +6,7 @@
       <% if !@question.is_private %>
         <span class="tag tag-public">Public</span>
       <% end %> 
-      Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %> | <%= link_to "Expert edit", edit_expert_question_path(@question.id) %> | <%= link_to "Edit History", history_expert_question_path(@question.id) %>
+      Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revision History", history_expert_question_path(@question.id) %>
     </p>
 
     <%= render :partial => 'question_main' %>

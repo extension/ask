@@ -24,7 +24,7 @@
     <% @question.versions.reverse.each do |version| %>	
 	<% user = User.find_by_id(version.whodunnit) %>
 	<tr>	
-	  <td><%= version.created_at %></td>	
+	  <td><%= humane_date(version.created_at) %></td>	
 	  <td>
 	  <% if user.has_exid? %>
 	    <%= link_to expert_user_path(user) do %>
@@ -38,6 +38,7 @@
 	  <td>
 	    <%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => version.id)) do %>
             <%= submit_tag "Restore Previous", {:class => 'btn'} %>              
+            <%= link_to "Compare to previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id) %>
         <% end %>
 	  </td>	
 	</tr>	

@@ -101,6 +101,30 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  def diff_with_previous
+    @version = Version.find_by_id(params[:version_id])
+    @question = Question.find_by_id(params[:id])
+    
+    return record_not_found if !@version.present? || !@question.present?
+    
+    @previous_version = @version.previous
+    
+    @version_submitter = User.find_by_id(@version.whodunnit)
+    if @version == @question.versions.first
+      @previous_submitter = @question.submitter 
+    else
+      @previous_submitter = User.find_by_id(@previous_version.whodunnit)
+    end
+    
+    if @version.changeset[:title].present?
+      @title_diff = Diffy::Diff.new(@version.changeset[:title][0], @version.changeset[:title][1]).to_s(:html).html_safe
+    end
+    
+    if @version.changeset[:body].present?
+      @body_diff = Diffy::Diff.new(@version.changeset[:body][0], @version.changeset[:body][1]).to_s(:html).html_safe
+    end
+  end
+  
   def group_assign_options
     @group = Group.find_by_id(params[:group_id])
     @question = Question.find_by_id(params[:id])  

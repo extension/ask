@@ -63,6 +63,9 @@ gem 'kaminari'
 # revision history
 gem 'paper_trail', '~> 2'
 
+# diffs 
+gem 'diffy'
+
 # server settings
 gem "rails_config"
 
