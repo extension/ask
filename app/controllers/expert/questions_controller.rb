@@ -74,6 +74,7 @@ class Expert::QuestionsController < ApplicationController
     return record_not_found if !@question.present?
     if @question.update_attributes(params[:question])
       flash[:notice] = "Your changes have been saved. Thanks for making the question better!"
+      QuestionEvent.log_question_edit_by_expert(@question, current_user)
       redirect_to expert_question_url(@question)
     else
       flash.now[:error] = "Error saving the question, make sure the question body is complete."
