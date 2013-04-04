@@ -1,0 +1,10 @@
+<div id="edit_question" class="formy">
+    <h2>Edit Question</h2>
+	<%= form_for @question, :url => expert_question_path(@question) do |f| %>
+	  <%= f.label(:title) %>
+	  <%= f.text_field :title, {:type => "text"} %> <br />
+	  <%= f.label(:body) %>
+	  <%= f.text_area :body, :rows => "10", :cols => "60", class: 'wysiwyg' %>		
+	  <%= submit_tag "Save changes", :class => 'btn btn-primary' %>    
+	<% end %>
+</div>

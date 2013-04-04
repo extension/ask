@@ -10,6 +10,7 @@ class Question < ActiveRecord::Base
   include Rakismet::Model
   include CacheTools
   rakismet_attrs :author_email => :email, :content => :body
+  has_paper_trail :on => [:update], :only => [:title, :body]
 
 
   class Question::Image < Asset

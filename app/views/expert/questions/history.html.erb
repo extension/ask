@@ -1,0 +1,46 @@
+<h2>History for Question #<%= link_to @question.id, expert_question_path(@question) %>: <%= @question.title %></h2>
+
+<table>
+	<tr>
+	  <th>Modified</th>
+	  <th>Who</th>
+	  <th>Items Modified</th>
+	  <th>Actions</th>
+	</tr>
+<% if @question.versions.blank? %>
+	 <tr>
+	   <td><%= @question.created_at %></td>
+	   <td>
+	   <% if @question.submitter %>
+	    <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
+	   <% else %>
+	    unknown
+	   <% end %>
+	   </td>
+	   <td>n/a</td>
+	   <td><em>current version</em></td>
+	 </tr>	
+<% else %>
+    <% @question.versions.reverse.each do |version| %>	
+	<% user = User.find_by_id(version.whodunnit) %>
+	<tr>	
+	  <td><%= version.created_at %></td>	
+	  <td>
+	  <% if user.has_exid? %>
+	    <%= link_to expert_user_path(user) do %>
+           <%= link_expert_user_avatar(user, :thumb) %> <%= link_to user.public_name, expert_user_path(user) %>
+        <% end %>
+      <% else %>
+           <%= link_to user.public_name, expert_user_submitted_path(user) %>
+      <% end %>
+	  </td>
+	  <td><%= version.changeset.keys.join(', ') %></td>	
+	  <td>
+	    <%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => version.id)) do %>
+            <%= submit_tag "Restore Previous", {:class => 'btn'} %>              
+        <% end %>
+	  </td>	
+	</tr>	
+	<% end %>
+<% end %>
+</table>

@@ -15,6 +15,21 @@ class ApplicationController < ActionController::Base
 
   before_filter :store_redirect_url
   before_filter :set_yolo
+  
+  # identify the culprit of the papertrail revisions, it's either someone logged in that creates or edits a question or someone from the public who has a user record created and associated with them
+  def user_for_paper_trail
+    current_user.present? ? current_user.id : session[:submitter_id]
+  end
+  
+  # additional tracking information for papertrail
+  def info_for_paper_trail
+    { :ip_address => request.remote_ip }
+  end
+  
+  # turn off paper trail on the create action. we have it configured for updates only, but somehow papertrail is detecting an update on body and title (thus generating a new revision) on create
+  def paper_trail_enabled_for_controller
+    params[:action] != 'create' && params[:action] != 'ask'
+  end
 
   def store_redirect_url
     session[:user_return_to] = request.url unless (params[:controller] == "authmaps/omniauth_callbacks" || params[:controller] == "users/sessions")

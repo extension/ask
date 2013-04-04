@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326152538) do
+ActiveRecord::Schema.define(:version => 20130404130550) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -425,7 +425,6 @@ ActiveRecord::Schema.define(:version => 20130326152538) do
     t.datetime "updated_at",                                  :null => false
     t.integer  "original_location_id"
     t.integer  "original_county_id"
-    t.boolean  "ever_answered",            :default => false, :null => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -567,6 +566,19 @@ ActiveRecord::Schema.define(:version => 20130326152538) do
   add_index "users", ["login"], :name => "login"
   add_index "users", ["retired"], :name => "retired"
   add_index "users", ["routing_instructions"], :name => "routing_instructions"
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",      :null => false
+    t.integer  "item_id",        :null => false
+    t.string   "event",          :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.string   "ip_address"
+    t.datetime "created_at"
+    t.text     "object_changes"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
 
   create_table "yo_los", :force => true do |t|
     t.integer  "user_id",              :default => 0

@@ -62,6 +62,45 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  # the expert edit of existing question (the SEO features to correct misspellings and such)
+  def edit
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@question.present?
+  end
+  
+  # the expert edit of existing question (the SEO features to correct misspellings and such)
+  def update
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@question.present?
+    if @question.update_attributes(params[:question])
+      flash[:notice] = "Your changes have been saved. Thanks for making the question better!"
+      redirect_to expert_question_url(@question)
+    else
+      flash.now[:error] = "Error saving the question, make sure the question body is complete."
+      render :action => :edit
+    end
+  end
+  
+  def history
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@question.present?
+  end
+  
+  def restore_revision
+    question = Question.find_by_id(params[:id])
+    return record_not_found if !question.present?
+    
+    version = Version.find(params[:version_id])
+    restored_revision = version.reify
+    
+    if restored_revision.save
+      redirect_to(expert_question_url(question), :notice => 'Previous question revision restored.')
+    else
+      flash[:error] = "Error restoring event."
+      return redirect_to(@restored_event)
+    end
+  end
+  
   def group_assign_options
     @group = Group.find_by_id(params[:group_id])
     @question = Question.find_by_id(params[:id])  

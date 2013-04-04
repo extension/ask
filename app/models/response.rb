@@ -7,6 +7,8 @@
 
 class Response < ActiveRecord::Base
   include MarkupScrubber
+  has_paper_trail :on => [:update], :only => [:body]
+  
   belongs_to :question
   belongs_to :resolver, :class_name => "User", :foreign_key => "resolver_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
