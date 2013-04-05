@@ -30,3 +30,21 @@
     
   </div>
 </div>
+
+
+<script class="code" type="text/javascript">
+  $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
+
+  });
+
+</script>
