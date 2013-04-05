@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   
   # turn off paper trail on the create action. we have it configured for updates only, but somehow papertrail is detecting an update on body and title (thus generating a new revision) on create
   def paper_trail_enabled_for_controller
-    params[:action] != 'create' && params[:action] != 'ask'
+    params[:action] != 'create' && params[:action] != 'ask' && params[:action] != 'answer'
   end
 
   def store_redirect_url

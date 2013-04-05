@@ -71,6 +71,7 @@
   <p>Answers from experts and replies from the submitter</p>
   <% @question_responses.each do |response| %>
     <div class="response_block">
+	  <p><%= link_to 'edit', edit_response_expert_question_path(:id => @question.id, :response_id => response.id) %> | <%= link_to 'revision history', response_history_expert_question_path(:id => @question.id, :response_id => response.id) %></p>
       <div class="response"><%= format_text_for_display(response.body) %></div>
       <div class="signature"><%= format_text_for_display(response.signature) %></div>
       

@@ -163,10 +163,11 @@ class QuestionEvent < ActiveRecord::Base
     })
   end
   
-  def self.log_response_edit_by_expert(question, initiated_by)
+  def self.log_response_edit_by_expert(question, initiated_by, response)
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
-      :event_state => EXPERT_EDIT_RESPONSE
+      :event_state => EXPERT_EDIT_RESPONSE,
+      :additional_data => response.id
     })
   end
   

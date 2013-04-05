@@ -62,6 +62,7 @@ class Expert::QuestionsController < ApplicationController
     end
   end
   
+  ###### START OF EDITING OF QUESTION ACTIONS #######
   # the expert edit of existing question (the SEO features to correct misspellings and such)
   def edit
     @question = Question.find_by_id(params[:id])
@@ -97,8 +98,8 @@ class Expert::QuestionsController < ApplicationController
     if restored_revision.save
       redirect_to(expert_question_url(question), :notice => 'Previous question revision restored.')
     else
-      flash[:error] = "Error restoring event."
-      return redirect_to(@restored_event)
+      flash[:error] = "Error restoring revision."
+      return redirect_to(history_expert_question_url(question))
     end
   end
   
@@ -125,6 +126,79 @@ class Expert::QuestionsController < ApplicationController
       @body_diff = Diffy::Diff.new(@version.changeset[:body][0], @version.changeset[:body][1]).to_s(:html).html_safe
     end
   end
+  
+  ###### END OF EDITING OF QUESTION ACTIONS #######
+  
+  ###### START OF EDITING OF RESPONSE ACTIONS #######
+  
+  def edit_response
+    @response = Response.find_by_id(params[:response_id])
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@response.present? || !@question.present?
+  end
+  
+  def update_response
+    @response = Response.find_by_id(params[:response_id])
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@response.present? || !@question.present?
+    
+    if @response.update_attributes(params[:response])
+      flash[:notice] = "Your changes have been saved. Thanks for making the response better!"
+      QuestionEvent.log_response_edit_by_expert(@question, current_user, @response)
+      redirect_to expert_question_url(@question)
+    else
+      flash.now[:error] = "Error saving the response, make sure the response body is complete."
+    end
+  end
+  
+  def response_history
+    @response = Response.find_by_id(params[:response_id])
+    @question = Question.find_by_id(params[:id])
+    return record_not_found if !@response.present? || !@question.present?
+  end
+  
+  def restore_response_revision
+    response = Response.find_by_id(params[:response_id])
+    question = Question.find_by_id(params[:id])
+    version = Version.find_by_id(params[:version_id])
+    return record_not_found if !response.present? || !question.present?|| !version.present?
+    
+    restored_revision = version.reify
+    
+    if restored_revision.save
+      redirect_to(expert_question_url(question), :notice => 'Previous response revision restored.')
+    else
+      flash[:error] = "Error restoring revision."
+      return redirect_to(response_history_expert_question_url(:id => question, :response_id => response.id))
+    end
+  end
+  
+  def diff_with_previous_response_revision
+    @response = Response.find_by_id(params[:response_id])
+    @version = Version.find_by_id(params[:version_id])
+    @question = Question.find_by_id(params[:id])
+      
+    return record_not_found if !@version.present? || !@question.present? || !@response.present?
+    
+    @previous_version = @version.previous
+    
+    @version_submitter = User.find_by_id(@version.whodunnit)
+    if @version == @response.versions.first
+      if @response.submitter.present?
+        @previous_submitter = @response.submitter
+      elsif @response.resolver.present?
+        @previous_submitter = @response.resolver
+      end
+    else
+      @previous_submitter = User.find_by_id(@previous_version.whodunnit)
+    end
+    
+    if @version.changeset[:body].present?
+      @body_diff = Diffy::Diff.new(@version.changeset[:body][0], @version.changeset[:body][1]).to_s(:html).html_safe
+    end
+  end
+  
+  ###### END OF EDITING OF RESPONSE ACTIONS #######
   
   def group_assign_options
     @group = Group.find_by_id(params[:group_id])
