@@ -60,7 +60,7 @@
   <p><% if @version == @question.versions.first %>
       <%= submit_tag "Restore Original Question", {:class => 'btn'} %>
     <% else %>
-      <%= submit_tag "Restore Revision ##{@previous_version.id}", {:class => 'btn btn-primary'} %>
+      <%= submit_tag "Restore Revision ##{@previous_version.index + 1}", {:class => 'btn btn-primary'} %>
     <% end %>
   </p>
 <% end %>
