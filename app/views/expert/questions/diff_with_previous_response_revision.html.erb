@@ -53,7 +53,7 @@
   <p><% if @version == @response.versions.first %>
     <%= submit_tag "Restore Original Response", {:class => 'btn'} %>
     <% else %>
-    <%= submit_tag "Restore Revision ##{@previous_version.id}", {:class => 'btn btn-primary'} %>
+    <%= submit_tag "Restore Revision ##{@previous_version.index + 1}", {:class => 'btn btn-primary'} %>
   <% end %>
   </p>
 <% end %>
