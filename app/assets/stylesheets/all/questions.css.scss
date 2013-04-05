@@ -41,3 +41,6 @@ input.error, select.error, textarea.error  {
 fieldset {margin-bottom:1.75em;}
 
 .editpitch {background:#eee; padding:1em;}
+
+#edit_question input.xl {width: 90%; max-width:100%; font-size:1.4em;}
+#edit_question textarea.xl {width: 90%; max-width:100%; font-size:1.2em;}
