@@ -1,0 +1,41 @@
+<% @page_title = "Revision History for Response ##{@response.id} for Question ##{@question.id}"%>
+
+<p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+
+<h1>Revision History for Response #<%= @response.id %> on <%= link_to @question.title, expert_question_path(@question) %></h1>
+
+<% if @response.versions.blank? %>
+  <div class="no_reassign_matches">
+    <h3>There is no Revision History</h3>
+    <p>This Response has not been Edited</p>
+  </div>
+<% else %>
+  <table class="table table-striped">
+    <thead>
+  	  <tr>
+    	  <th>Modified</th>
+    	  <th>Edited by</th>
+    	  <th>Actions</th>
+    	</tr>
+    </thead>
+
+    <% @response.versions.reverse.each do |version| %>	
+      <% user = User.find_by_id(version.whodunnit) %>
+	    <tr>	
+	      <td><%= humane_date(version.created_at) %> <br /><%= time_ago_in_words(version.created_at) %> ago</td>	
+	      <td>
+	      <% if user.has_exid? %>
+    	    <%= link_to expert_user_path(user) do %>
+               <%= link_expert_user_avatar(user, :thumb) %> <%= link_to user.public_name, expert_user_path(user) %>
+            <% end %>
+          <% else %>
+               <%= link_to user.public_name, expert_user_submitted_path(user) %>
+          <% end %>
+	      </td>
+	      <td>
+          <%= link_to "Compare to previous", diff_with_previous_response_revision_expert_question_path(:id => @question.id, :response_id => @response.id, :version_id => version.id), :class => 'btn' %>
+	      </td>	
+	    </tr>	
+    <% end %>
+<% end %>
+</table>

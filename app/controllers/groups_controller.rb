@@ -8,7 +8,7 @@ class GroupsController < ApplicationController
   layout 'public'
   
   before_filter :set_format, :only => [:ask]
-
+  
   def show
     @group = Group.find(params[:id])
     @group_tags = @group.tags

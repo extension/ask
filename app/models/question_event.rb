@@ -42,6 +42,8 @@ class QuestionEvent < ActiveRecord::Base
   ASSIGNED_TO_GROUP = 15
   CHANGED_GROUP = 16
   CHANGED_LOCATION = 17
+  EXPERT_EDIT_QUESTION = 18
+  EXPERT_EDIT_RESPONSE = 19
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -57,7 +59,10 @@ class QuestionEvent < ActiveRecord::Base
                             INTERNAL_COMMENT => 'commented',
                             ASSIGNED_TO_GROUP => 'assigned to group',
                             CHANGED_GROUP => 'group changed',
-                            CHANGED_LOCATION => 'location changed' }
+                            CHANGED_LOCATION => 'location changed',
+                            EXPERT_EDIT_QUESTION => 'expert edit of question',
+                            EXPERT_EDIT_RESPONSE => 'expert edit of response'
+                          }
 
   HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
 
@@ -149,6 +154,21 @@ class QuestionEvent < ActiveRecord::Base
       :initiated_by_id => User.system_user_id,
       :event_state => PUBLIC_RESPONSE,
       :submitter_id => submitter_id})  
+  end
+  
+  def self.log_question_edit_by_expert(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => EXPERT_EDIT_QUESTION
+    })
+  end
+  
+  def self.log_response_edit_by_expert(question, initiated_by, response)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => EXPERT_EDIT_RESPONSE,
+      :additional_data => response.id
+    })
   end
   
   def self.log_reopen_to_group(question, group, initiated_by, assignment_comment)

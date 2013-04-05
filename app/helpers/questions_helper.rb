@@ -80,6 +80,10 @@ module QuestionsHelper
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::EDIT_QUESTION
       return "Question edited by <strong>Submitter</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+    when QuestionEvent::EXPERT_EDIT_QUESTION
+      return "Question edited by expert <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> see #{link_to 'revision history', history_expert_question_path(q_event.question) } for more information".html_safe
+    when QuestionEvent::EXPERT_EDIT_RESPONSE
+      return "Question response edited by expert <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>. See #{link_to('response history', response_history_expert_question_path(:id => q_event.question.id, :response_id => q_event.additional_data.strip))} page".html_safe
     when QuestionEvent::REOPEN
       return "Question reopened by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CLOSED

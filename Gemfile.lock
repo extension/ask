@@ -79,6 +79,7 @@ GEM
       orm_adapter (~> 0.0.3)
       warden (~> 1.1)
     diff-lcs (1.1.3)
+    diffy (2.1.3)
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
@@ -175,6 +176,9 @@ GEM
       multi_json (~> 1.3)
       omniauth-oauth (~> 1.0)
     orm_adapter (0.0.7)
+    paper_trail (2.7.1)
+      activerecord (~> 3.0)
+      railties (~> 3.0)
     paperclip (3.4.0)
       activemodel (>= 3.0.0)
       activerecord (>= 3.0.0)
@@ -300,6 +304,7 @@ DEPENDENCIES
   delayed_job
   delayed_job_active_record
   devise (~> 1.5.1)
+  diffy
   factory_girl_rails
   feedzirra (= 0.1.2)
   geocoder
@@ -318,6 +323,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-openid
   omniauth-twitter
+  paper_trail (~> 2)
   paperclip (~> 3.0)
   passenger
   powder

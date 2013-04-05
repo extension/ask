@@ -1,0 +1,42 @@
+<% @page_title = "Edit Response ##{@response.id}"%>
+
+<div id="main" class="span8">
+  <div id="question_wrapper">
+    <p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+    
+    <h1>Edit Question</h1>
+    <h3>Editing guidelines</h3>
+    <p>Please correct grammatical and spelling errors or factual inaccuracies.</p>
+    <div id="edit_response" class="formy">
+      
+	  <%= form_for @response, :url => update_response_expert_question_path(:id => @question.id, :response_id => @response.id) do |f| %>
+	  
+	    <fieldset>  
+        <p>
+          <%= f.label :body, 'Response' %>
+          <%= f.text_area :body, :rows => 12, :class => "xl required wysiwyg" %>
+        </p>
+  	  </fieldset>
+
+	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
+	<% end %>
+</div>
+
+</div>
+
+<script class="code" type="text/javascript">
+  $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
+
+  });
+
+</script>

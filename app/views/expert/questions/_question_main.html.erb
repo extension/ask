@@ -106,6 +106,7 @@
           <p>Anonymous Guest</p>
         <% end %>
         <p><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
+        <p><%= link_to 'edit', edit_response_expert_question_path(:id => @question.id, :response_id => response.id) %> | <%= link_to 'revision history', response_history_expert_question_path(:id => @question.id, :response_id => response.id) %></p>
       </div>
     </div>
   <% end %>

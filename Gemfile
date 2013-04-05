@@ -60,6 +60,12 @@ gem "feedzirra", "0.1.2"
 # pagination
 gem 'kaminari'
 
+# revision history
+gem 'paper_trail', '~> 2'
+
+# diffs 
+gem 'diffy'
+
 # server settings
 gem "rails_config"
 

@@ -9,7 +9,7 @@ class QuestionsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
   before_filter :set_format, :only => [:show]
-
+  
   def show
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question

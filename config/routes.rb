@@ -30,7 +30,7 @@ Aae::Application.routes.draw do
   end
 
   namespace :expert do
-    resources :questions, :only => [:show] do
+    resources :questions, :only => [:show, :edit, :update] do
       member do
         post 'assign'
         post 'assign_to_group'
@@ -50,7 +50,14 @@ Aae::Application.routes.draw do
         get  'close_out'
         post 'close_out'
         post 'activity_notification_prefs'
-        
+        get  'history'
+        post 'restore_revision'
+        get 'diff_with_previous'
+        get 'edit_response'
+        put 'update_response'
+        get 'response_history'
+        get 'diff_with_previous_response_revision'
+        post 'restore_response_revision'
       end
     end
 
