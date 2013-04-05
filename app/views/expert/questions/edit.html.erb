@@ -1,10 +1,50 @@
-<div id="edit_question" class="formy">
-    <h2>Edit Question</h2>
-	<%= form_for @question, :url => expert_question_path(@question) do |f| %>
-	  <%= f.label(:title) %>
-	  <%= f.text_field :title, {:type => "text"} %> <br />
-	  <%= f.label(:body) %>
-	  <%= f.text_area :body, :rows => "10", :cols => "60", class: 'wysiwyg' %>		
-	  <%= submit_tag "Save changes", :class => 'btn btn-primary' %>    
-	<% end %>
+<% @page_title = "Edit Question ##{@question.id}"%>
+
+<div id="main" class="span8">
+  <div id="question_wrapper">
+    <p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+  
+    <h1>Edit Question</h1>
+    <h3>Editing guidelines</h3>
+    <p>Please correct grammatical and spelling errors. Question titles may be rewritten in order to optimize public questions for search results.</p>
+    <div id="edit_question" class="formy">
+  
+	    <%= form_for @question, :url => expert_question_path(@question) do |f| %>
+	  
+    	  <fieldset>
+          <p>
+            <%= f.label :title, 'Title' %>
+            <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "xl required"} %>
+          </p>
+      
+          <p>
+            <%= f.label :body, 'Question' %>
+            <%= f.text_area :body, :rows => 12, :class => "xl required wysiwyg" %>
+          </p>
+    	  </fieldset>
+
+    	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
+    	<% end %>
+    	
+    </div>
+    
+  </div>
 </div>
+
+
+<script class="code" type="text/javascript">
+  $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
+
+  });
+
+</script>

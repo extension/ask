@@ -1,47 +1,42 @@
-<h2>History for Question #<%= link_to @question.id, expert_question_path(@question) %>: <%= @question.title %></h2>
+<% @page_title = "Revision History for Question ##{@question.id}"%>
 
-<table>
-	<tr>
-	  <th>Modified</th>
-	  <th>Who</th>
-	  <th>Items Modified</th>
-	  <th>Actions</th>
-	</tr>
+<p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+
+<h1>Revision History for <%= link_to @question.title, expert_question_path(@question) %></h1>
+
 <% if @question.versions.blank? %>
-	 <tr>
-	   <td><%= @question.created_at %></td>
-	   <td>
-	   <% if @question.submitter %>
-	    <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
-	   <% else %>
-	    unknown
-	   <% end %>
-	   </td>
-	   <td>n/a</td>
-	   <td><em>current version</em></td>
-	 </tr>	
+  <div class="no_reassign_matches">
+    <h3>There is no Revision History</h3>
+    <p>This Question has not been Edited</p>
+  </div>
 <% else %>
+  <table class="table table-striped">
+    <thead>
+  	  <tr>
+    	  <th>Modified</th>
+    	  <th>Who</th>
+    	  <th>Items Modified</th>
+    	  <th>Actions</th>
+    	</tr>
+    </thead>
     <% @question.versions.reverse.each do |version| %>	
-	<% user = User.find_by_id(version.whodunnit) %>
-	<tr>	
-	  <td><%= humane_date(version.created_at) %></td>	
-	  <td>
-	  <% if user.has_exid? %>
-	    <%= link_to expert_user_path(user) do %>
-           <%= link_expert_user_avatar(user, :thumb) %> <%= link_to user.public_name, expert_user_path(user) %>
-        <% end %>
-      <% else %>
-           <%= link_to user.public_name, expert_user_submitted_path(user) %>
-      <% end %>
-	  </td>
-	  <td><%= version.changeset.keys.join(', ') %></td>	
-	  <td>
-	    <%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => version.id)) do %>
-            <%= submit_tag "Restore Previous", {:class => 'btn'} %>              
-            <%= link_to "Compare to previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id) %>
-        <% end %>
-	  </td>	
-	</tr>	
+	    <% user = User.find_by_id(version.whodunnit) %>
+	    <tr>	
+	      <td><%= humane_date(version.created_at) %> <br /><%= time_ago_in_words(version.created_at) %> ago</td>	
+	      <td>
+	      <% if user.has_exid? %>
+    	    <%= link_to expert_user_path(user) do %>
+               <%= link_expert_user_avatar(user, :thumb) %> <%= link_to user.public_name, expert_user_path(user) %>
+            <% end %>
+          <% else %>
+               <%= link_to user.public_name, expert_user_submitted_path(user) %>
+          <% end %>
+    	  </td>
+	      <td><%= version.changeset.keys.join(', ') %></td>	
+	      <td>
+	        <%= link_to "Compare to Previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id), :class => 'btn' %>
+    	  </td>	
+	    </tr>	
 	<% end %>
 <% end %>
 </table>
