@@ -44,3 +44,15 @@ fieldset {margin-bottom:1.75em;}
 
 #edit_question input.xl {width: 90%; max-width:100%; font-size:1.4em;}
 #edit_question textarea.xl {width: 90%; max-width:100%; font-size:1.2em;}
+.diff_box ul {margin:0; margin-bottom:2em; }
+.diff_box li { list-style:none; margin: 0 0 .5em;  font-family: Georgia, serif; font-size:1.4em; line-height:1.3em; padding:.5em 1em; background:#fff;border:1px solid #eee;}
+ins {text-decoration:none;}
+ins strong {background:lime;}
+del {color:#999;}
+del strong {background:#F598A1; color:#000;}
+.revision_description {margin:2em 0 4em; background:#E0E0E0; padding:.25em 1em;}
+.revision_description p {font-size:1.2em; margin:1em 0;}
+/*.revision_description p strong {background:#fff; color: #000; padding:.1em .5em; font-size:1.2em;}*/
+.revision_description p strong {font-size:1.2em;}
+.compared_to {font-size:1.6em !important; color:#888;}
+.diff_box h3 {font-size:1.5em !important;}

@@ -1,13 +1,19 @@
-<p><%= link_to '<< back to history', history_expert_question_path(@question.id) %></p>
-<h2>Diff With Previous Revision for Question #:<%= link_to @question.id, expert_question_path(@question) %></h2>
-<h3>
-	Comparing 
-	<% if @version == @question.versions.first %>
-      Original Created Question by
-    <% else %>
-    Revision #<%= @previous_version.id %> by
-    <% end %>
+<% @page_title = "Revision History for Question ##{@question.id}"%>
 
+<p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+
+<h1><%= link_to 'Revision History', history_expert_question_path(@question.id) %> > Revision Comparison</h1>
+
+<div>
+  <div class="revision_description">
+
+    <p><% if @version == @question.versions.first %>
+      <strong>Revision 0 (Original Question)</strong>
+    <% else %>
+      <strong>Revision <%= @previous_version.id %></strong>
+    <% end %>
+      by
+    
     <% if @previous_submitter.has_exid? %>
 	  <%= link_to expert_user_path(@previous_submitter) do %>
         <%= link_expert_user_avatar(@previous_submitter, :thumb) %> <%= link_to @previous_submitter.public_name, expert_user_path(@previous_submitter) %>
@@ -21,8 +27,9 @@
     <% else %>
       <%= humane_date(@previous_version.created_at) %>
     <% end %>
-    to <br />
-    Revision #<%= @version.id %> by 
+    <p>
+  
+    <p><strong>Revision <%= @version.id %></strong> by 
 	<% if @version_submitter.has_exid? %>
 	  <%= link_to expert_user_path(@version_submitter) do %>
         <%= link_expert_user_avatar(@version_submitter, :thumb) %> <%= link_to @version_submitter.public_name, expert_user_path(@version_submitter) %>
@@ -31,18 +38,32 @@
       <%= link_to @version_submitter.public_name, expert_user_submitted_path(@version_submitter) %>
     <% end %>
     at <%= humane_date(@version.created_at) %>
-</h3>
+  </p>
+
+  </div>
+
+</div>
 
 <% if defined?(@title_diff) && @title_diff.present? %>
-<p>
-	<strong>Title:</strong>
-</p>
-<p><%= @title_diff %></p>
+  <div class="diff_box">
+    <h3>Title Changes</h3>
+    <p><%= @title_diff %></p>
+  </div>
 <% end %>
 
 <% if defined?(@body_diff) && @body_diff.present? %>
-<p>
-	<strong>Body:</strong>
-</p>
-<p><%= @body_diff %></p>
+  <div class="diff_box">
+    <h3>Body Changes</h3>
+    <p><%= @body_diff %></p>
+  </div>
+<% end %>
+
+
+<%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => @version.id)) do %>
+  <p><% if @version == @question.versions.first %>
+      <%= submit_tag "Restore Original Question", {:class => 'btn'} %>
+    <% else %>
+      <%= submit_tag "Restore Revision ##{@previous_version.id}", {:class => 'btn btn-primary'} %>
+    <% end %>
+  </p>
 <% end %>
