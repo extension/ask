@@ -10,7 +10,7 @@
     <p><% if @version == @question.versions.first %>
       <strong>Revision 0 (Original Question)</strong>
     <% else %>
-      <strong>Revision <%= @previous_version.id %></strong>
+      <strong>Revision <%= @previous_version.index + 1 %></strong>
     <% end %>
       by
     
@@ -29,7 +29,7 @@
     <% end %>
     <p>
   
-    <p><strong>Revision <%= @version.id %></strong> by 
+    <p><strong>Revision <%= @version.index + 1 %></strong> by 
 	<% if @version_submitter.has_exid? %>
 	  <%= link_to expert_user_path(@version_submitter) do %>
         <%= link_expert_user_avatar(@version_submitter, :thumb) %> <%= link_to @version_submitter.public_name, expert_user_path(@version_submitter) %>
