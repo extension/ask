@@ -4,8 +4,8 @@
 
 <h1><%= link_to 'Revision History', history_expert_question_path(@question.id) %> > Revision Comparison</h1>
 
-<div>
-  <div class="revision_description">
+
+<div class="revision_description">
 
     <p><% if @version == @question.versions.first %>
       <strong>Revision 0 (Original Question)</strong>
@@ -40,8 +40,6 @@
     at <%= humane_date(@version.created_at) %>
   </p>
 
-  </div>
-
 </div>
 
 <% if defined?(@title_diff) && @title_diff.present? %>
@@ -57,7 +55,6 @@
     <p><%= @body_diff %></p>
   </div>
 <% end %>
-
 
 <%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => @version.id)) do %>
   <p><% if @version == @question.versions.first %>
