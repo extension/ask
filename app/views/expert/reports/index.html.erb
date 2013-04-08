@@ -123,6 +123,24 @@
           <% else %>
             <p>No Out-of-State Expert Activity</p>
           <% end %>
+        
+         <% if @responders_by_state_experts_outside_location_count %>
+           <p>
+            <%= @responders_by_state_experts_outside_location_count %> In-State Experts gave <%= @responses_by_state_experts_outside_location_count %> Answers to 
+            <% if @resolved_by_state_experts_outside_location > 0 %> 
+              <% if @date.class == DateTime || @date.class == Date %>
+                <%= link_to(number_with_delimiter(@resolved_by_state_experts_outside_location, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_questions_by_state_experts")) %>     
+              <% else %>
+                <%= link_to(number_with_delimiter(@resolved_by_state_experts_outside_location, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "out_of_state_questions_by_state_experts")) %>
+              <% end %>
+            <% else %>
+              0
+            <% end %>
+            Out-of-State Questions</p>
+          <% else %>
+            <p>No Out-of-State Expert Activity</p>
+          <% end %>
+       
         <% end %>
       </div>
       
