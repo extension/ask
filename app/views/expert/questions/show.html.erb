@@ -1,5 +1,31 @@
 <% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
 
+<% @working_on_it = true %>
+
+<div id="working_on_this">
+  <% if current_user == @question.assignee %>
+    <% if @working_on_it %>
+      <h3>You've got this question <em>(<%= time_ago_in_words(DateTime.now + 2.hours) %> left)</em></h3>
+      <p>If you decide you can't answer it, please assign it someone who can or hand it off to a Question Wrangler.</p>
+      <p><%= link_to "Give me another 2 hours", "", :class => "btn" %></p>
+    <% else %>
+      <h3>This question is currently up for grabs</h3>
+      <p>Yes, it is assigned to you, but unless you click the "I'm working on this" button, another expert may go ahead and answer it. Please tell us if you are actively working on it.</p>
+      <p><%= link_to "I'm working on this (Click and it's yours for 2 hours.)", "", :class => "btn" %></p>
+    <% end %>
+  <% else %>
+    <% if @working_on_it %>
+      <h3><em>Heads up: Answer In Progress</em> <%= @question.assignee %> is working on this question right now.</h3>
+      <p>They still have <%= time_ago_in_words(DateTime.now + 2.hours) %> left to answer it. If it's not answered or updated by then, you can take a stab at it. Thanks!</p>
+    <% else %>
+      <h3>This question is <%= time_ago_in_words(@question.created_at) %> old and up for grabs</h3>
+      <p>It is assigned to someone, but that person has not clicked the "I'm working on this" button or their working time has expired on it. You are welcome to go ahead and answer it.</p>
+      <p><%= link_to "I want this question (Assign it to me and take it 'off the market' for two hours.)", "", :class => "btn" %></p>
+    <% end %>
+<% end %>
+</div>
+
+
 <div id="main" class="span8">
   <div id="question_wrapper">
     <p id="aaeid">
