@@ -676,6 +676,34 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def self.resolved_questions_by_in_state_responders_outside_location(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = self.joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("questions.location_id IS NULL OR questions.location_id <> ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      
+      if question_id_records.count > 0    
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_in_state_responders_outside_location(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("questions.location_id IS NULL OR questions.location_id <> ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+    
   def self.resolved_questions_by_outside_state_responders(location, year_month)
     with_scope do
       year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'

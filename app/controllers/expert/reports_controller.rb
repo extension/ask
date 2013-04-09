@@ -78,6 +78,12 @@ class Expert::ReportsController < ApplicationController
       @responses_by_outside_state_count = responses_by_outside_state_experts.count
       @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count
       
+      # get number of questions (with origin out of state) resolved by experts in state 
+      @resolved_by_state_experts_outside_location = question_group_scope.not_rejected.resolved_questions_by_in_state_responders_outside_location(@location, @year_month).count
+      responses_by_state_experts_outside_location = question_group_scope.not_rejected.responses_by_in_state_responders_outside_location(@location, @year_month)
+      @responses_by_state_experts_outside_location_count = responses_by_state_experts_outside_location.count
+      @responders_by_state_experts_outside_location_count = responses_by_state_experts_outside_location.map{|r| r.initiated_by_id}.uniq.count
+      
       ###
       
       if params[:county_id].present?
@@ -192,6 +198,15 @@ class Expert::ReportsController < ApplicationController
         end
         @page_title = "#{@location.name} Questions #{@condition_string} Answered by Out-of-State Experts for #{@year_month}"
         @display_title = " #{@location.name} Questions #{@condition_string} Answered by Out-of-State Experts"
+        @subtext_display = "#{@year_month}"
+        return
+      when 'out_of_state_questions_by_state_experts'
+        @question_list = group_scope.not_rejected.resolved_questions_by_in_state_responders_outside_location(@location, @year_month).page((params[:page].present?) ? params[:page] : 1).per(30)
+        if params[:group_id].present?
+          @condition_string += "in #{@group.name} "
+        end
+        @page_title = "Questions outside of #{@location.name} #{@condition_string} Answered by In-State Experts for #{@year_month}"
+        @display_title = "Questions outside of #{@location.name} #{@condition_string} Answered by In-State Experts"
         @subtext_display = "#{@year_month}"
         return
       end
