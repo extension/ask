@@ -155,6 +155,10 @@ class Expert::GroupsController < ApplicationController
         change_hash[:individual_assignment] = {:old => @group.individual_assignment_was.to_s, :new => @group.individual_assignment.to_s}
       end
       
+      if @group.ignore_county_routing_changed?
+        change_hash[:ignore_county] = {:old => @group.ignore_county_routing_was.to_s, :new => @group.ignore_county_routing.to_s}
+      end
+      
       if @group.save
         GroupEvent.log_edited_attributes(@group, current_user, nil, change_hash)
         redirect_to(expert_group_assignment_options_path, :notice => 'Assignment preferences updated.')
