@@ -246,12 +246,17 @@ class Question < ActiveRecord::Base
       end
       
       if group.assignees.length > 0
-        if self.county.present?
-          assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
+        if (group.ignore_county_routing == true) && self.location.present?
+          assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
+        else
+          if self.county.present?
+            assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
+          end
+          if !assignee && self.location.present?
+            assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
+          end
         end
-        if !assignee && self.location.present?
-          assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
-        end
+        
         if !assignee 
           assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
         end

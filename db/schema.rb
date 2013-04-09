@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130404130550) do
+ActiveRecord::Schema.define(:version => 20130409151638) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -258,6 +258,7 @@ ActiveRecord::Schema.define(:version => 20130404130550) do
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.boolean  "group_active",                 :default => true,  :null => false
+    t.boolean  "ignore_county_routing",        :default => false
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
