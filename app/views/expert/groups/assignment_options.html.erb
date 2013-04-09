@@ -35,12 +35,7 @@
           <span>*Selecting this option will automatically enable the location field on widgets.</span>
         </label>
       </p>
-      <p>
-	    <label>
-		  <%= f.check_box 'ignore_county_routing' %>
-		  Ignore county routing and route load-based by state.
-		</label>
-	  </p>
+      
       </div>
     </div>
   </fieldset>
@@ -63,6 +58,14 @@
           <span>(Assignments respect individual member location preferences)</span>
         </label>
       </p>
+      
+      <p>
+	    <label>
+		  <%= f.check_box 'ignore_county_routing' %>
+		   Ignore a question's county when assigning to group members.
+		   <span>(This option eliminates the impact of high volume counties and distributes questions evenly across a state)
+		</label>
+	  </p>
     </div>
     </div>
   </fieldset>
