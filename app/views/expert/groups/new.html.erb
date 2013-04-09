@@ -1,5 +1,11 @@
 <h1>Create a New Group</h1>
 
+<div class="explanation">
+<p>Anyone can create an <strong>Ask an Expert Group</strong> to help organize their question answering efforts. When you create a Group, you get a dedicated Ask an Expert Form (hosted at ask.extension.org) which you can directly link to, or you can embed your Group's Ask an Expert form on your own webpage as a widget.</p>
+
+<h3>Every attribute of a Group is editable, so don't worry about making mistakes when creating it. You can always tweak it later.</h3>
+</div>
+
 <div class="form_group">
 
   <%- if @group.errors.any? -%>
@@ -19,7 +25,7 @@
   <fieldset>
     <p>
       <%= f.label :name, 'Group Name' %>
-      <%= f.text_field :name,  :class => "xl" %>
+      <%= f.text_field :name %>
     </p>
     
     <p>
