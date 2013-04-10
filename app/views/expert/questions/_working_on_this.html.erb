@@ -1,3 +1,4 @@
+<% if @question.status_state == Question::STATUS_SUBMITTED %>
 <% if @question.assignee.present? %>
 <div id="working_on_this">
   <% if current_user == @question.assignee %>
@@ -44,3 +45,4 @@
 
 <% end %>
 
+<% end %>
