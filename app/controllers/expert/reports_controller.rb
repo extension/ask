@@ -117,15 +117,12 @@ class Expert::ReportsController < ApplicationController
     if(!@earliest_assigned_at = @expert.earliest_assigned_at)
       return
     end
+    
     year_months = User.year_months_between_dates(@earliest_assigned_at,Time.now)
 
     assigned_count_by_year_month = @expert.assigned_count_by_year_month
     answered_count_by_year_month = @expert.answered_count_by_year_month
     touched_count_by_year_month = @expert.touched_count_by_year_month
-
-    assigned_count_by_year = @expert.assigned_count_by_year_month
-    answered_count_by_year = @expert.answered_count_by_year_month
-    touched_count_by_year = @expert.touched_count_by_year_month
 
     @counts_by_year_and_year_month = {}
     year_months.each do |year_month|
