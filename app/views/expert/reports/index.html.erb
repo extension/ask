@@ -159,6 +159,7 @@
           <th>Primary location</th>
           <th>Answered</th>
           <th>Assigned</th>
+          <th>Touched</th>
           <th>Last Active</th>
           <th>Metrics</th>
         <tr>
@@ -192,6 +193,17 @@
                 <% member_assigned_count = member.assigned_count_by_year[@year_month] %>
                 <span class="bignumber">
                 <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year: @year_month}) : 0%></span> 
+              <% end %>
+            </td>
+            <td>
+	          <% if @date.class == DateTime || @date.class == Date %>
+                <% member_touched_count = member.touched_count_by_year_month[@year_month] %>
+                <span class="bignumber">
+                <%= member_touched_count ? expert_question_list_link(member_touched_count, {id: member.id, filter: 'touched', year_month: @year_month}) : 0%></span>
+              <% else %>
+                <% member_touched_count = member.touched_count_by_year[@year_month] %>
+                <span class="bignumber">
+                <%= member_touched_count ? expert_question_list_link(member_touched_count, {id: member.id, filter: 'touched', year: @year_month}) : 0%></span> 
               <% end %>
             </td>
             <td><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></td>

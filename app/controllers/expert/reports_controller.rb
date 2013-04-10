@@ -117,13 +117,12 @@ class Expert::ReportsController < ApplicationController
     if(!@earliest_assigned_at = @expert.earliest_assigned_at)
       return
     end
+    
     year_months = User.year_months_between_dates(@earliest_assigned_at,Time.now)
 
     assigned_count_by_year_month = @expert.assigned_count_by_year_month
     answered_count_by_year_month = @expert.answered_count_by_year_month
-
-    assigned_count_by_year = @expert.assigned_count_by_year_month
-    answered_count_by_year = @expert.answered_count_by_year_month
+    touched_count_by_year_month = @expert.touched_count_by_year_month
 
     @counts_by_year_and_year_month = {}
     year_months.each do |year_month|
@@ -132,16 +131,19 @@ class Expert::ReportsController < ApplicationController
       @counts_by_year_and_year_month[year][year_month] = {}
       @counts_by_year_and_year_month[year][year_month]['assigned'] = (assigned_count_by_year_month[year_month] ? assigned_count_by_year_month[year_month] : 0)
       @counts_by_year_and_year_month[year][year_month]['answered'] = (answered_count_by_year_month[year_month] ? answered_count_by_year_month[year_month] : 0)
+      @counts_by_year_and_year_month[year][year_month]['touched'] = (touched_count_by_year_month[year_month] ? touched_count_by_year_month[year_month] : 0)
     end
 
     @counts_by_year = {}
     assigned_count_by_year = @expert.assigned_count_by_year
     answered_count_by_year = @expert.answered_count_by_year
+    touched_count_by_year = @expert.touched_count_by_year
     @counts_by_year_and_year_month.keys.each do |year|
       year_int = year.to_i
       @counts_by_year[year] = {} 
       @counts_by_year[year]['assigned'] = (assigned_count_by_year[year_int] ? assigned_count_by_year[year_int] : 0)
       @counts_by_year[year]['answered'] = (answered_count_by_year[year_int] ? answered_count_by_year[year_int] : 0)
+      @counts_by_year[year]['touched'] = (touched_count_by_year[year_int] ? touched_count_by_year[year_int] : 0)
     end
   end
   
@@ -249,7 +251,7 @@ class Expert::ReportsController < ApplicationController
   def expert_list
     @expert = User.find(params[:id])
     
-    if(params[:filter] and ['assigned','answered'].include?(params[:filter]))
+    if(params[:filter] and ['assigned','answered','touched'].include?(params[:filter]))
       filter = params[:filter]
     else
       filter = 'assigned'
@@ -275,6 +277,8 @@ class Expert::ReportsController < ApplicationController
       @question_list = @expert.assigned_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     when 'answered'
       @question_list = @expert.answered_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    when 'touched'
+      @question_list = @expert.touched_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     end
 
     @page_title = "#{filter.capitalize} Questions for #{@expert.name} (ID##{@expert.id}) for #{@year_month}"

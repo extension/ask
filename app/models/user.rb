@@ -471,6 +471,22 @@ class User < ActiveRecord::Base
     .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
+  
+  def touched_count_by_year
+    QuestionEvent.where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def touched_count_by_year_month
+    QuestionEvent.where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+  
+  def touched_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.initiated_by_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+  end
 
 
 

@@ -2,7 +2,7 @@
 
 
 <div class="page-header">
-  <h1>Yearly Answered/Assigned Statistics for <%= @expert.name %></h1>
+  <h1>Yearly Participation Metrics for <%= @expert.name %></h1>
 </div>
 
 <div class='row-fluid'>
@@ -18,7 +18,7 @@
             <h3>
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#yearly_breakdown" href="#collapse_<%= year %>">
               <%= year %>
-              <small><span>Answered: <%= @counts_by_year[year]['answered'] %></span> <span>Assigned: <%= @counts_by_year[year]['assigned'] %></span></small>
+              <small><span>Answered: <%= @counts_by_year[year]['answered'] %></span> <span>Assigned: <%= @counts_by_year[year]['assigned'] %></span> <span>Touched: <%= @counts_by_year[year]['touched'] %></span></small>
             </a>
             </h3>
           </div>
@@ -32,6 +32,7 @@
                     <th>Year-Month</th>
                     <th>Answered Questions</th>
                     <th>Assigned Questions</th>
+                    <th>Touched Questions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -46,6 +47,11 @@
                       <td>
                         <span class='bignumber'>
                         <%= expert_question_list_link(@counts_by_year_and_year_month[year][year_month]['assigned'], {id: @expert.id, filter: 'assigned', year_month: year_month}) %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class='bignumber'>
+                        <%= expert_question_list_link(@counts_by_year_and_year_month[year][year_month]['touched'], {id: @expert.id, filter: 'touched', year_month: year_month}) %>
                         </span>
                       </td>
                     </tr>
