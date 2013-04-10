@@ -61,8 +61,9 @@ del strong {background:#F598A1; color:#000;}
 #working_on_this h3 {font-size:1.9em; font-weight:normal;}
 #working_on_this p {font-size:1.3em; line-height:1.4em;}
 #working_on_this small {color:#133161;}
-#working_on_this .currently {}
+#working_on_this .currently {background:#ccc; color:#555;}
+#working_on_this .currently small {color:#555;}
 #working_on_this .currently h3 {font-size:1.7em; font-weight:normal;}
-#working_on_this .currently a {color:#000;}
+#working_on_this .currently a {color:#555;}
 #working_on_this .in_progress {background:#2139A6; color:#fff;}
 #working_on_this .in_progress h3 {color:#FBFF1D;}
