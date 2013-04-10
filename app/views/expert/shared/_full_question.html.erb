@@ -3,12 +3,14 @@
 <% hide_groups = local_assigns[:hide_groups].nil? ? false : hide_groups %>
 <% hide_assignee = local_assigns[:hide_assignee].nil? ? false : hide_assignee %>
 
-<div class="incoming_question">
+<div class="incoming_question <%= question.is_being_worked_on? ? 'being_worked_on' : '' %>">
   
   <div class="row-fluid">
     
     <div class="span8">
-      
+      <% if question.is_being_worked_on? %>
+        <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
+      <% end %>
       <%= link_to expert_question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
         <p><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
