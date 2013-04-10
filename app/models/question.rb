@@ -320,6 +320,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
+    self.working_on_this = nil
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
