@@ -361,7 +361,13 @@ class Expert::QuestionsController < ApplicationController
   
   def working_on_this
     @question = Question.find_by_id(params[:id])
-    #need to hook up assignment
+    current_assignee = User.find_by_id(params[:current_assignee_id])
+    
+    if current_assignee.id != current_user.id
+      params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
+      @question.assign_to(current_user, current_user, assign_comment)
+    end
+    
     @question.working_on_this = Time.now + 2.hour
     @question.save
   end
