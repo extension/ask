@@ -1,0 +1,28 @@
+<% if @question.status_state != Question::STATUS_REJECTED %>
+  <aside>
+    <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+      <h3>Last response by</h3>
+    <% else %>
+      <h3>Assigned to</h3>
+    <% end %>
+
+    <% if @question.assignee.present? %>
+      <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_expert_user(@question.assignee) %>
+    <% elsif @question.assigned_group.present? %>
+      <%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>
+    <% end %>
+    
+    
+    <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %>
+    
+  </aside>
+  
+  <% if !@question.assignee.blank? %>
+    <aside class="">
+      <div id="associated_group">
+        <%= render :partial => 'associated_group' %>
+      </div>      
+    </aside>
+  <% end %>
+  
+<% end %>
