@@ -359,6 +359,13 @@ class Expert::QuestionsController < ApplicationController
     redirect_to expert_question_url(@question)
   end
   
+  def working_on_this
+    @question = Question.find_by_id(params[:id])
+    #need to hook up assignment
+    @question.working_on_this = Time.now + 2.hour
+    @question.save
+  end
+  
   # show the expert form to answer a question
   def answer
     @question = Question.find_by_id(params[:id])

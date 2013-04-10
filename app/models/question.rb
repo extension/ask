@@ -212,6 +212,17 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def is_being_worked_on?
+    if !self.working_on_this.nil?
+      if self.working_on_this > Time.zone.now
+        return true
+      else
+        return false
+      end
+    end
+    return false
+  end
+  
   def title
     if self[:title].present?
       return self[:title]
