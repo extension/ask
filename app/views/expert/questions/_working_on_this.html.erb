@@ -10,7 +10,7 @@
       <div>
         <h3>This question is assigned to you. Please let us know if you are working on it.</h3>
         <p>Unless you tell us you are working on it, another expert may step in to answer it.</p>
-        <p><span class="btn take_question">I'm working on this question</span></p>
+        <p><span class="btn btn-primary take_question">I'm working on this question</span></p>
       </div>
     <% end %>
   <% else %>
@@ -22,7 +22,7 @@
     <% else %>
       <div>
         <h3>This question is <%= time_ago_in_words(@question.created_at) %> old. Can you answer it?</h3>
-        <p>It is assigned to <strong><%= @question.assignee.name %> (<%= @question.assignee.last_active_at.present? ? "who was last active #{time_ago_in_words(@question.assignee.last_active_at)} ago" : "who has not been active in a looooong time" %>)</strong>, but that person has not clicked the "I'm working on this" button recently. You are welcome to go ahead and answer it.</p>
+        <p>It is assigned to <strong><%= @question.assignee.name %>, <%= @question.assignee.last_active_at.present? ? "who was last active #{time_ago_in_words(@question.assignee.last_active_at)} ago" : "who has not been active in a looooong time" %></strong>, but that person has not clicked the "I'm working on this" button recently. You are welcome to go ahead and answer it.</p>
         <p><span class="btn take_question">I can answer this question right now</span></p>
       </div>
     <% end %>
