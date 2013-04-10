@@ -58,6 +58,7 @@ Aae::Application.routes.draw do
         get 'response_history'
         get 'diff_with_previous_response_revision'
         post 'restore_response_revision'
+        post 'working_on_this'
       end
     end
 
