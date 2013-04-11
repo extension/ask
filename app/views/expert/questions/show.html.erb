@@ -82,11 +82,18 @@
       </div>
 	    
 	<% else %>
+	  <% if @question.is_being_worked_on? && current_user != @question.assignee %>
+	    <div class="question_actions">
+	      <h3>Heads Up: Answer in Progress</h3>
+	      <p><%= @question.assignee.name %> is working on this question right now.</p>
+	    </div>
+	  <% else %>
       <div class="question_actions">
         <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
         <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn" %></span>
         <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn" %></span>
       </div>
+    <% end %>
      <% end %>
   </aside>
   
