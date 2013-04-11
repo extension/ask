@@ -29,7 +29,7 @@
     $("#working_on_this").on("click", ".take_question", function(){
       $.ajax({
         type: "POST",
-        url: "<%= working_on_this_expert_question_path(:id => @question.id, :assign_comment => "Clicked \"I'm working on this\"") %>",
+        url: "<%= working_on_this_expert_question_path(:id => @question.id) %>",
         cache: false
       })
       .done(function() {

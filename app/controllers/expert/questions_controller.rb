@@ -361,10 +361,8 @@ class Expert::QuestionsController < ApplicationController
   
   def working_on_this
     @question = Question.find_by_id(params[:id])
-    
     if !@question.assignee || @question.assignee.id != current_user.id
-      params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
-      @question.assign_to(current_user, current_user, assign_comment)
+      @question.assign_to(current_user, current_user, "Clicked \"I'm working on this\"")
     end
     
     @question.working_on_this = Time.now + 2.hour
