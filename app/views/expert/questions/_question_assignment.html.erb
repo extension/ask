@@ -15,6 +15,10 @@
     
     <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %>
     
+    <div id="working_on_this_sidebar">
+      <%= render :partial => 'working_on_this_sidebar' %>
+    </div>
+    
   </aside>
   
   <% if !@question.assignee.blank? %>
