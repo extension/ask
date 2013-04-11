@@ -361,6 +361,7 @@ class Expert::QuestionsController < ApplicationController
   
   def working_on_this
     @question = Question.find_by_id(params[:id])
+    @original_group = @question.original_group
     if !@question.assignee || @question.assignee.id != current_user.id
       @question.assign_to(current_user, current_user, "Clicked \"I'm working on this\"")
     end
