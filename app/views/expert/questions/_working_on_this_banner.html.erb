@@ -1,0 +1,8 @@
+<% if @question.status_state == Question::STATUS_SUBMITTED %>
+<% if @question.is_being_worked_on? && current_user != @question.assignee %>
+  <div id="working_on_this" class="in_progress">
+    <h3>Heads up: Answer In Progress</h3>
+    <p><%= @question.assignee.name %> is working on this question right now.</p>
+  </div>
+<% end %>
+<% end %>

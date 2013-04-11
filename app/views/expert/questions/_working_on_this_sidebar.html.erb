@@ -1,0 +1,40 @@
+<% if @question.status_state == Question::STATUS_SUBMITTED %>
+<% if @question.assignee.present? %>
+
+  <% if current_user == @question.assignee %>
+    <% if @question.is_being_worked_on? %>
+      <div id="working_on_this" class="currently">
+        <h3>We've got you currently working on this question <small>(<%= time_ago_in_words(@question.working_on_this) %> left)</small></h3>
+        <p><span class="btn take_question">Give me another 2 hours</span></p>
+      </div>
+    <% else %>
+      <div id="working_on_this">
+        <h3>This question is assigned to you. Let others know you are working on it.</h3>
+        <p>Unless you tell us you are working on it, another expert may step in to answer it.</p>
+        <p><span class="btn btn-primary take_question">I'm working on this question</span></p>
+      </div>
+    <% end %>
+  <% else %>
+    <% if !@question.is_being_worked_on? %>
+      <div id="working_on_this">
+        <h3>This question is <%= time_ago_in_words(@question.created_at) %> old. Can you answer it?</h3>
+        <p>It is assigned to <strong><%= @question.assignee.name %>, <%= @question.assignee.last_active_at.present? ? "who was last active #{time_ago_in_words(@question.assignee.last_active_at)} ago" : "who has not been active in a looooong time" %></strong>, but that person has not indicated they are working on it. You are welcome to go ahead and answer it.</p>
+        <p><span class="btn take_question">I can answer this question right now</span></p>
+      </div>
+    <% end %>
+  <% end %>
+  
+  <script class="code" type="text/javascript">
+    $("#working_on_this").on("click", ".take_question", function(){
+      $.ajax({
+        type: "POST",
+        url: "<%= working_on_this_expert_question_path(:id => @question.id, :assign_comment => "Clicked \"I'm working on this\"") %>",
+        cache: false
+      })
+      .done(function() {
+      })
+    });
+  </script>
+  
+<% end %>
+<% end %>
