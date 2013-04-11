@@ -1,3 +1,4 @@
-$("#working_on_this_sidebar").html("<%= escape_javascript(render partial: 'working_on_this_sidebar') %>")
 $("#history").html("<%= escape_javascript(render partial: 'history') %>")
 $("#question_assignment").html("<%= escape_javascript(render partial: 'question_assignment') %>")
+$("#working_on_this_sidebar #working_on_this").hide()
+$("#working_on_this_sidebar #working_on_this").fadeIn('slow')
