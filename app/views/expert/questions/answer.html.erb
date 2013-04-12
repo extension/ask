@@ -1,6 +1,10 @@
 <% @page_title = "Reply to question ##{@question.id}"%>
 
 <div id="main" class="span8">
+  
+  <div id="working_on_this_banner">
+    <%= render :partial => 'working_on_this_banner' %>
+  </div>
 
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
@@ -8,6 +12,12 @@
 
 <% if @question.assignee != current_user %>
   <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
+<% else %>
+  
+  <div id="working_on_this_answer_page">
+    <%= render :partial => 'working_on_this_sidebar' %>
+  </div>
+
 <% end %>
 
 <div id="response_form">

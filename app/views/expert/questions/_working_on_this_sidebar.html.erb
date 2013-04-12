@@ -4,7 +4,7 @@
   <% if current_user == @question.assignee %>
     <% if @question.is_being_worked_on? %>
       <div id="working_on_this" class="currently">
-        <h3>Thanks! We've got you currently working on this question.</h3>
+        <h3>We've got you currently working on this question.</h3>
         <p><small>(<%= time_ago_in_words(@question.working_on_this) %> left)</small></p>
         <p><span class="btn take_question">Give me another 2 hours</span></p>
       </div>
