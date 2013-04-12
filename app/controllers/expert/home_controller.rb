@@ -18,7 +18,7 @@ class Expert::HomeController < ApplicationController
         return redirect_to expert_home_url
       end
     end
-    @my_groups = @user.group_memberships
+    @my_groups = @user.group_memberships_ordered_by_open_questions
     @unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
     @questions_assigned_to_expert_count = @user.open_questions.length
