@@ -128,6 +128,7 @@
       </div>
       
       <% if @experts.size > 0 %>
+        <%= paginate @experts, :remote => true %>
       <div id="expert_summary">
       <h2>Expert Activity</h2>
       <p>For Experts in <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></p>
@@ -212,6 +213,7 @@
 
         <% end %>
         </table>
+        <%= paginate @experts, :remote => true %>
       <% else %>
         <!-- <p>There are no experts in this location</p> -->
       <% end %>
