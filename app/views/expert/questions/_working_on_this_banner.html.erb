@@ -4,5 +4,9 @@
     <h3>Heads up: Answer In Progress</h3>
     <p><%= @question.assignee.name %> is working on this question right now.</p>
   </div>
+<% elsif @question.is_being_worked_on? && current_user == @question.assignee %>
+  <div id="working_on_this" class="assigned_expert">
+    <p>We've got you working on this question right now.</p>
+  </div>
 <% end %>
 <% end %>
