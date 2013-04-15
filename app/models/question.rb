@@ -212,6 +212,17 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def is_being_worked_on?
+    if !self.working_on_this.nil?
+      if self.working_on_this > Time.zone.now
+        return true
+      else
+        return false
+      end
+    end
+    return false
+  end
+  
   def title
     if self[:title].present?
       return self[:title]
@@ -295,7 +306,7 @@ class Question < ActiveRecord::Base
   # them.
   def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil)
     raise ArgumentError unless user and user.instance_of?(User)  
-
+    
     # don't bother doing anything if this is assignment to the person already assigned unless it's 
     # a question that's been responded to by the public after it's been resolved that then gets 
     # assigned to whomever the question was last assigned to.
@@ -309,6 +320,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
+    self.working_on_this = nil
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
@@ -392,7 +404,7 @@ class Question < ActiveRecord::Base
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes) 
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)  
           @response.save
           QuestionEvent.log_resolution(self)    
         else
@@ -408,14 +420,14 @@ class Question < ActiveRecord::Base
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)  
           @response.save
           QuestionEvent.log_no_answer(self)  
         else
           raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
         end
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED, :working_on_this => nil)
         QuestionEvent.log_rejection(self)
     end
   end

@@ -359,6 +359,17 @@ class Expert::QuestionsController < ApplicationController
     redirect_to expert_question_url(@question)
   end
   
+  def working_on_this
+    @question = Question.find_by_id(params[:id])
+    @original_group = @question.original_group
+    if !@question.assignee || @question.assignee.id != current_user.id
+      @question.assign_to(current_user, current_user, "Clicked \"I'm working on this\"")
+    end
+    
+    @question.working_on_this = Time.now + 2.hour
+    @question.save
+  end
+  
   # show the expert form to answer a question
   def answer
     @question = Question.find_by_id(params[:id])
@@ -490,13 +501,15 @@ class Expert::QuestionsController < ApplicationController
                                       :status_state => Question::STATUS_NO_ANSWER,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
-                                      :current_response => last_response.response)
+                                      :current_response => last_response.response,
+                                      :working_on_this => nil)
         else    
           @question.update_attributes(:status => Question::RESOLVED_TEXT, 
                                       :status_state => Question::STATUS_RESOLVED,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
-                                      :current_response => last_response.response)
+                                      :current_response => last_response.response,
+                                      :working_on_this => nil)
         end
       # IF NO EXPERT RESPONSE YET...
       else
@@ -504,7 +517,8 @@ class Expert::QuestionsController < ApplicationController
                                     :status_state => Question::STATUS_CLOSED,
                                     :current_resolver => current_user,
                                     :resolved_at => Time.now,
-                                    :current_response => close_out_reason)
+                                    :current_response => close_out_reason,
+                                    :working_on_this => nil)
       end                                    
       
       QuestionEvent.log_close(@question, current_user, close_out_reason)                                                      
