@@ -20,6 +20,13 @@ class Expert::GroupsController < ApplicationController
     @groups = Group.page(params[:page]).order(:name)
   end
   
+  def about
+    @group = Group.find(params[:id])
+    if !@group 
+      return record_not_found
+    end
+  end
+  
   def show
     @group = Group.find(params[:id])
     if !@group 
