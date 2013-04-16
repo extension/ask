@@ -25,6 +25,7 @@ class Expert::GroupsController < ApplicationController
     if !@group 
       return record_not_found
     end
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
   end
   
   def show

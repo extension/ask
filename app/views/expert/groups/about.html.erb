@@ -3,71 +3,68 @@
 <div id="how_are_questions_assigned">
 <h1>How are questions assigned to this group?</h1>
 
-<h3>Questions can be assigned to this Group via...</h3>
-<ul>
+<div class="well">
+  <h3>Questions can be assigned to this Group via...</h3>
+  <ul>
   
-  <% if @group.widget_active %>
-    <li>The Group's <%= link_to "Ask an Expert form", ask_group_path(@group.id) %></li>
-    <li>The Group's widget (embedded on a third party page)</li>
-  <% end %>
-  <li>Manual reassignment by any AaE Expert</li>
-</ul>
+    <% if @group.widget_active %>
+      <li>The Group's <%= link_to "Ask an Expert form", ask_group_path(@group.id) %></li>
+      <li>The Group's widget (embedded on any third party page)</li>
+    <% end %>
+    <li>Manual reassignment by any AaE Expert</li>
+  </ul>
+</div>
 
-<% if @group.assignment_outside_locations == true %>
-<h3>This group only accepts questions from certain locations. If the question 1) doesn't have a location, or 2) has a state which don't match this Group's states, it will be automatically assigned to the QW group.</h3>
-
-<h3>However, assuming the Question's location matches the Group's location...</h3>
-
+<% if @group.assignment_outside_locations == false %>
+  <div class="well">
+    <h3>This Group Only Accepts Questions From Certain Locations.</h3>
+    <p>If the question <strong>doesn't have a location</strong>, or <strong>has a state which doesn't match this Group's states</strong>, it will be automatically assigned to the Question Wrangler group. A QW may add a matching location, if appropriate, and assign it back to this group.</p>
+  </div>
 <% else %>
-<h3>First of all, this group accepts questions from anywhere.</h3>
+  <div class="well">
+    <h3>This Group Accepts Questions From Anywhere.</h3>
+  </div>
 <% end %>
 
 
-  <p> and <strong>indicates a County</strong>, 
-
-  <% if @group.ignore_county_routing == true %>
-    the county will be ignored and we look for group members with that state expertise. The question is assigned to the state expert with the least questions.
-  <% else %>
-     we look for group members with that county expertise. The question is assigned to the county expert with the least questions.
+<% if @group.individual_assignment == false %>
+<div class="well">
+  <% if @group.assignment_outside_locations == false %>
+    <h3>Assuming the Question's location matches the Group's location...</h3>
   <% end %>
-</p>
-
-
-
-<p>If a question submitted through the Group <strong>Ask an Expert form</strong> or <strong>widget</strong> and <strong>indicates a State</strong></p>
-
-
-
-<h3>If a question with a State submitted through the Group Ask an Expert form or widget...</h3>
-
-
-<h3>If a question is submitted through the Group Ask an Expert form or widget...</h3>
-
-
-<h3>If a question is submitted through the Group Ask an Expert form or widget...</h3>
-
-
-
-
-<% if @group.assignment_outside_locations == true %>
-
-<p>it will be assigned to the QW group if the question doesn't have a location or is outside this group's state(s).</p>
-
-<p>Otherwise if the question has a county, we look for group members with that county expertise. The question is assigned to the county expert with the least questions.</p>
-
-<p>If there's a state, but no county the question, we look for group members with that state expertise. The question is assigned to the state expert with the least questions.</p>
-
+  
+  <p><strong>This group uses the assign-to-group option</strong>. Questions are assigned to the group itself, and members will need to select questions to answer.</p>
+</div>
 <% else %>
-If the question has a county, we look for group members with that county expertise. The question is assigned to the county expert with the least questions.
+<div class="well">
+  <% if @group.assignment_outside_locations == false %>
+    <h3>However, assuming the Question's location matches the Group's location...</h3>
+  <% end %>
+  
+  <p><strong>If the question indicates a county</strong>, 
 
-If the question has a state, we look for group members with that state expertise. The question is assigned to the state expert with the least questions.
+    <% if @group.ignore_county_routing == true %>
+      the county will be ignored (because this group is trying to equally distribute questions across the entire state) and we step back to the state level.
+    <% else %>
+       we look for group members with that county expertise. The question is assigned to the county expert with the least questions. If there's no county match, we step back to the state level.
+    <% end %>
+  </p>
 
-If the question has a county, it will be ignored and we look for group members with that state expertise. The question is assigned to the state expert with the least questions.
 
+  <p><strong>If the question indicates a state</strong>, we look for group members with that state expertise. The question is assigned to the state expert with the least questions.</p>
+</div>
+
+<div class="well">
+  <h3>Fallbacks</h3>
+  <p>If a question can't be assigned to a group member, we assign it to a group leader with the least number of questions. If it can't be assigned to a group leader, it's assigned to the Question Wrangler group.</p>
+  
+
+  
+</div>
 <% end %>
 
-
-<h2>If another expert assigns a question to this group...</h2>
-
+<div class="well">
+  <h3>Tags are not used for assigning questions to Group members.</h3>
+</div>
 
 </div>
