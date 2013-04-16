@@ -26,6 +26,7 @@ class Expert::GroupsController < ApplicationController
       return record_not_found
     end
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
+    @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
   
   def show

@@ -4,7 +4,8 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Handling Rate</th>
+      <th>Primary Location</th>
+      <th>Accepts Questions from</th>
       <th>Handling Rate</th>
       <th>Last Active</th>
       <th>Notified on every question</th>
@@ -19,8 +20,25 @@
         <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> 
         <% if member.leader_of_group(@group)%><strong><i class="icon-user"></i> Leader</strong><% end %>
       </td>
-      <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p></td>
-      <td><p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
+      <td>
+        <% if member.location %>
+          <% if member.county %>
+            <%= member.county.name %>, 
+          <% end %>
+          <%= member.location.abbreviation %>
+        <% end %>
+      </td>
+      <td>
+        <% case member.routing_instructions 
+           when "anywhere" %>
+        Anywhere
+        <% when "counties_only" %>
+        Counties only
+        <% when "locations_only" %>
+        States only
+        <% end %>
+      </td>
+      <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %> <%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
       <td><span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
       <td><% if member.send_incoming_notification?(@group) %>Notified on every question<% end %></td>
       <td><% if member.send_daily_summary?(@group) %>Receives daily summary<% end %></td>
