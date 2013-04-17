@@ -2,7 +2,6 @@
 
 <ul class="nav nav-tabs">
   <li><%= link_to 'Edit', expert_group_profile_path() %></li>
-  <li><%= link_to 'About', expert_about_group_path() %></li>
   <li><%= link_to "Reports", expert_reports_home_path(:group_id => @group.id) %></li>
 </ul>
 
@@ -26,6 +25,8 @@
     Questions must match this group's locations
   <% end %>
 </p>
+
+<p><%= link_to 'How are questions assigned to this group?', expert_about_group_path() %></p>
 
 </aside>
 
