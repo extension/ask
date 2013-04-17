@@ -19,7 +19,7 @@ class Expert::HomeController < ApplicationController
       end
     end
     
-    @my_groups = @user.group_memberships.except(:order).find(:all, :select => "groups.*", :joins => "LEFT JOIN questions on groups.id = questions.assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_SUBMITTED} OR questions.id IS NULL", :group => "groups.id", :order => "COUNT(questions.id) DESC, groups.name")
+    @my_groups = @user.group_memberships.except(:order).find(:all, :select => "groups.*", :joins => "LEFT JOIN questions on groups.id = questions.assigned_group_id", :group => "groups.id", :order => "COUNT(IF(questions.status_state = #{Question::STATUS_SUBMITTED}, questions.id, NULL)) DESC, groups.name")
     @unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
     @questions_assigned_to_expert_count = @user.open_questions.length
