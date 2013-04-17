@@ -4,25 +4,32 @@
   <h3 class="inactive_notice">This group is currently inactive. It cannot be assigned questions and the group's Ask form and widgets are disabled. You can change the group's status to active on the <%= link_to 'General Settings', expert_group_profile_path() %> page.</h3>
 <% end %>
 
-<div id="main" class="span8">
-  <%= link_expert_group_avatar(@group) %>
-  <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span> <%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></h1>
+<ul class="nav nav-tabs">
+  <li><%= link_to "Group Home", expert_group_path(@group) %></li>
+  <li><%= link_to "Needs an Answer (#{@group.open_questions.size})", expert_group_path(@group) %></li>
+  <li><%= link_to "Answered (#{number_with_delimiter(@group.answered_questions.size, :delimiter => ',')})", expert_group_answered_path(@group) %></li>
+  <li><%= link_to 'Reports', expert_reports_home_path(:group_id => @group.id) %></li>
+  <li><%= link_to 'History', expert_group_history_path() %></li>
+  <li><%= link_to 'Settings', expert_group_profile_path() %></li>
+</ul>
 
-  <div class="aboutme">
+<div id="main" class="span8">
+  <div id="group_masthead">
+    <%= link_expert_group_avatar(@group) %>
+    <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span></h1>
+    <p><%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></p>
+  </div>
+
+  <div class="group aboutme">
     <% if @group.description? %>
       <%= format_text_for_display(@group.description) %>
     <% else %>
-      <p>This group hasn't added a description yet...</p>
+      <p class="needs_description">This group hasn't added a description yet...</p>
     <% end  %>    
   </div>
   
   
-  <ul class="nav nav-tabs">
-    <li><%= link_to "Unanswered (#{@group.open_questions.size})", expert_group_path(@group) %></li>
-    <li><%= link_to "Answered (#{@group.answered_questions.size})", expert_group_answered_path(@group) %></li>
-    <li><%= link_to 'Group History', expert_group_history_path() %></li>
-    <li><%= link_to 'Reports', expert_reports_home_path(:group_id => @group.id) %></li>
-  </ul>
+  
   
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
 

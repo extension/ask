@@ -48,13 +48,13 @@
 <% else %>
 <div class="well">
   <% if @group.assignment_outside_locations == false %>
-    <h3>However, assuming the Question's location matches the Group's location...</h3>
+    <h3>Assuming the Question's location matches the Group's location...</h3>
   <% end %>
   
   <p><strong>If the question indicates a county</strong>, 
 
     <% if @group.ignore_county_routing == true %>
-      the county will be ignored (because this group is trying to equally distribute questions across the entire state) and we step back to the state level.
+      <strong>the county will be ignored</strong> (because this group is trying to equally distribute questions across the entire state) and we step back to the state level.
     <% else %>
        we look for group members with that county expertise. The question is assigned to the county expert with the least questions. If there's no county match, we step back to the state level.
     <% end %>
