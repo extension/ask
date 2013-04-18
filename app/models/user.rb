@@ -143,19 +143,19 @@ class User < ActiveRecord::Base
   
   
   def self.by_question_event_count(event_state,options = {})
-      with_scope do
-        (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
-        id_list = self.exid_holder.not_retired.pluck("#{self.table_name}.id")
-        return self.none if id_list.length == 0
-        qe_scope = QuestionEvent.where(event_state: event_state).where("initiated_by_id IN (#{id_list.join(',')})").group(:initiator)
-        qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth])  
-  
-        if(options[:limit])
-          qe_scope = qe_scope.limit(options[:limit])
-        end
-        qe_scope.order("count_distinct_question_id DESC").count('distinct(question_id)')
-      end
+    with_scope do
+      (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
+        
+      qe_scope = self.exid_holder.not_retired
+      .select("users.*, 
+               COUNT(DISTINCT IF(question_events.event_state = #{event_state}, question_id, NULL)) AS resolved_count")
+      .joins("LEFT JOIN question_events on question_events.initiated_by_id = users.id")
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth]).group("initiated_by_id")
+        
+      qe_scope = qe_scope.limit(options[:limit]) if options[:limit].present?
+      qe_scope.order("resolved_count DESC")
     end
+  end
 
   def name
     if (self.first_name.present? && self.last_name.present?)

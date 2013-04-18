@@ -1,0 +1,2 @@
+$('#experts').html('<%= escape_javascript render :partial => "expert/reports/experts" %>');
+$('#paginator').html('<%= escape_javascript(paginate(@experts, :remote => true).to_s) %>');

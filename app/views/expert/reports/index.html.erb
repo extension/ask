@@ -127,8 +127,7 @@
         <% end %>
       </div>
       
-      <% if @experts.size > 0 %>
-        <%= paginate @experts, :remote => true %>
+      <% if @experts.total_count > 0 %>
       <div id="expert_summary">
       <h2>Expert Activity</h2>
       <p>For Experts in <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></p>
@@ -153,67 +152,14 @@
         <% end %>
       <% end %>
       
-      <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-          <th>Expert</th>
-          <th>Primary location</th>
-          <th>Answered</th>
-          <th>Assigned</th>
-          <th>Touched</th>
-          <th>Last Active</th>
-          <th>Metrics</th>
-        <tr>
-        </thead>  
-        <% @experts.each do |member, answered_count| %>
-          <tr>
-            <td><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %></td>
-            <td>
-              <% if member.location %>
-                <% if member.county %>
-                  <%= member.county.name %>, 
-                <% end %>
-                <%= member.location.abbreviation %>
-              <% end %>
-            </td>
-            <td>
-	          <% if @date.class == DateTime || @date.class == Date %>
-	            <% member_answered_count = member.answered_count_by_year_month[@year_month] %>
-                <span class="bignumber"><%= member_answered_count ? expert_question_list_link(member_answered_count, {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
-              <% else %>
-                <% member_answered_count = member.answered_count_by_year[@year_month] %>
-                <span class="bignumber"><%= member_answered_count ? expert_question_list_link(member_answered_count, {id: member.id, filter: 'answered', year: @year_month}) : "0"%></span>
-              <% end %>
-            </td>
-            <td>
-	          <% if @date.class == DateTime || @date.class == Date %>
-                <% member_assigned_count = member.assigned_count_by_year_month[@year_month] %>
-                <span class="bignumber">
-                <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year_month: @year_month}) : 0%></span>
-              <% else %>
-                <% member_assigned_count = member.assigned_count_by_year[@year_month] %>
-                <span class="bignumber">
-                <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year: @year_month}) : 0%></span> 
-              <% end %>
-            </td>
-            <td>
-	          <% if @date.class == DateTime || @date.class == Date %>
-                <% member_touched_count = member.touched_count_by_year_month[@year_month] %>
-                <span class="bignumber">
-                <%= member_touched_count ? expert_question_list_link(member_touched_count, {id: member.id, filter: 'touched', year_month: @year_month}) : 0%></span>
-              <% else %>
-                <% member_touched_count = member.touched_count_by_year[@year_month] %>
-                <span class="bignumber">
-                <%= member_touched_count ? expert_question_list_link(member_touched_count, {id: member.id, filter: 'touched', year: @year_month}) : 0%></span> 
-              <% end %>
-            </td>
-            <td><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
-            <td><%= link_to('Full report',expert_expert_report_path(member.id)) %></td>
-            </tr>
-
-        <% end %>
-        </table>
+      <div id="paginator">
         <%= paginate @experts, :remote => true %>
+      </div>
+        
+      <div id="experts">
+        <%= render :partial => "expert/reports/experts" %>
+      </div>
+       
       <% else %>
         <!-- <p>There are no experts in this location</p> -->
       <% end %>
