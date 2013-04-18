@@ -53,6 +53,7 @@
     <fieldset>
       <p>
         <label>Image (optional)</label>
+        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
         <%= f.fields_for :images do |image_form| %>
           <%= image_form.file_field :attachment  %>
         <% end %>

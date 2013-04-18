@@ -195,6 +195,9 @@ body {
   #collapsed_nav_options .extension_global_nav {display:none !important;}
   .app-navbar .container {max-width: 1180px;margin: 0 auto;}
   
+  #form_errors {color:red; padding:1em; font-size:1.5em; background:#fff; margin:1em 0;}
+  #form_errors h3 {color:red; font-size:1.1em;}
+  
   @media screen and (max-width: 1200px) {
 /*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
     .app-navbar .container {width: auto; padding-left:20px; padding-right:20px;}
