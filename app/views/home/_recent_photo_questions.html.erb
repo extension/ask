@@ -7,7 +7,7 @@
       <%= link_to question_path(question.id) do %>
       <div class="answered_question_images_wrapper">
       <% if File.exists?(Rails.root.join("public#{question.images.first.url(:original,false)}")) %>
-        <%= image_tag question.images.first.dynamic_attachment_url("300x300#"), :class => "size300w" %>
+        <%= image_tag question.images.first.dynamic_attachment_url("300x300#") %>
       <% else %>
         <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
       <% end %>
