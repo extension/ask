@@ -9,12 +9,17 @@
 
     <div id="question">
 
-    <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>
+    <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>  
+      
+    <% if @question.images.size > 0 %>
 
+      <div class="images_wrapper">  
       <% @question.images.each do |image| %>
         <% if image.persisted? %>
           <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
+          <div class="question_image_wrapper">
+            <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size150w" %></a>
+          </div>
 
           <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
@@ -32,7 +37,12 @@
           <% end %>
         <% end %>
       <% end %>  
+      <br class="clearing" />
+    </div>
 
+  <% end %>
+  
+  
     <p><small>Asked <%= time_ago_in_words(@question.created_at) %> ago</small></p>
 
       <p>

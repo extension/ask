@@ -186,12 +186,16 @@ body {
   .size50x50 {width:50px !important; height:50px !important;}
   .size80x80 {width:80px !important; height:80px !important;}
   .size100w {width:100px !important;}
+  .size150w {width:150px !important;}
   
   .medium {width:100px !important; height:100px !important; max-width: 100px !important;}
   .thumb {width:40px !important; height:40px !important;}
   .mini {width:20px !important; height:20px !important;}
   .size300w {width:300px !important;}
-
+  
+  .question_image_wrapper {padding:2px; border:1px solid #ddd; display:block; float:left; margin-right:10px; background:#fff;}
+  .images_wrapper {margin-bottom:10px;}
+  
   #collapsed_nav_options .extension_global_nav {display:none !important;}
   .app-navbar .container {max-width: 1180px;margin: 0 auto;}
   
