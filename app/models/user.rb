@@ -204,7 +204,12 @@ class User < ActiveRecord::Base
   def retired?
     return self.retired
   end
-
+    
+  def previously_assigned(question)
+    find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
+    !find_question.blank?
+  end
+  
   def set_tag(tag)
     if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
       return false
