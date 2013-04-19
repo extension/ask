@@ -152,7 +152,10 @@
         <% end %>
       <% end %>
       
+      <p>Expert Total: <%= @experts.total_count %></p>
+	  
       <div id="paginator">
+	    <%= "Viewing page #{@experts.current_page} of #{@experts.num_pages}" %>
         <%= paginate @experts, :remote => true %>
       </div>
         

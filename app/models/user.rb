@@ -5,6 +5,7 @@
 #  BSD(-compatible)
 #  see LICENSE file
 
+require 'valid_email'
 class User < ActiveRecord::Base
   extend YearMonth
   DEFAULT_TIMEZONE = 'America/New_York'
@@ -62,9 +63,8 @@ class User < ActiveRecord::Base
 
   # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
   # does not pass email information back.
-  validates :email, :presence => true, unless: Proc.new { |u| u.first_authmap_twitter? }
-  validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, allow_blank: true
-
+  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
+  
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
 
