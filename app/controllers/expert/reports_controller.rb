@@ -99,7 +99,7 @@ class Expert::ReportsController < ApplicationController
       expert_location_scope = expert_group_scope
     end
     
-    @experts = expert_location_scope.by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month})
+    @experts = expert_location_scope.except(:select).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month}).page(params[:page]).per(20)
     @unanswered_questions_count = question_location_scope.submitted.not_rejected.order('created_at DESC').count
     @questions_asked_count = question_location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC').count
     @questions_answered_count = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').count
@@ -109,6 +109,11 @@ class Expert::ReportsController < ApplicationController
     @responder_count = question_location_scope.not_rejected.resolved_response_initiators_for_year_month(@year_month).count
            
     @condition_array += " #{@group.name} " if defined?(@group) && @group.present?
+    
+    respond_to do |format| 
+      format.html 
+      format.js 
+    end
   end
   
   def expert

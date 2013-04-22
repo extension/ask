@@ -283,6 +283,9 @@ GEM
     uglifier (1.3.0)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
+    valid_email (0.0.4)
+      activemodel
+      mail
     warden (1.2.1)
       rack (>= 1.0)
 
@@ -345,3 +348,4 @@ DEPENDENCIES
   turbo-sprockets-rails3
   turn
   uglifier (>= 1.0.3)
+  valid_email

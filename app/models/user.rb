@@ -5,6 +5,7 @@
 #  BSD(-compatible)
 #  see LICENSE file
 
+require 'valid_email'
 class User < ActiveRecord::Base
   extend YearMonth
   DEFAULT_TIMEZONE = 'America/New_York'
@@ -62,9 +63,8 @@ class User < ActiveRecord::Base
 
   # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
   # does not pass email information back.
-  validates :email, :presence => true, unless: Proc.new { |u| u.first_authmap_twitter? }
-  validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, allow_blank: true
-
+  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
+  
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
 
@@ -143,19 +143,19 @@ class User < ActiveRecord::Base
   
   
   def self.by_question_event_count(event_state,options = {})
-      with_scope do
-        (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
-        id_list = self.exid_holder.not_retired.pluck("#{self.table_name}.id")
-        return self.none if id_list.length == 0
-        qe_scope = QuestionEvent.where(event_state: event_state).where("initiated_by_id IN (#{id_list.join(',')})").group(:initiator)
-        qe_scope = qe_scope.where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth])  
-  
-        if(options[:limit])
-          qe_scope = qe_scope.limit(options[:limit])
-        end
-        qe_scope.order("count_distinct_question_id DESC").count('distinct(question_id)')
-      end
+    with_scope do
+      (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
+        
+      qe_scope = self.exid_holder.not_retired
+      .select("users.*, 
+               COUNT(DISTINCT IF(question_events.event_state = #{event_state}, question_id, NULL)) AS resolved_count")
+      .joins("LEFT JOIN question_events on question_events.initiated_by_id = users.id")
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth]).group("initiated_by_id")
+        
+      qe_scope = qe_scope.limit(options[:limit]) if options[:limit].present?
+      qe_scope.order("resolved_count DESC")
     end
+  end
 
   def name
     if (self.first_name.present? && self.last_name.present?)
