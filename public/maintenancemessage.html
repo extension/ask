@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ask</title>
+  <title>Ask an Expert - Scheduled maintenance</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"></meta>
 
   <style type="text/css" media="all">
@@ -20,9 +20,12 @@
   }
 
   header img {float:left;}
-  .texthide {text-indent: -9000px;}
+  #extension_logo img {width:200px; height:94px;}
+  #branding {background: #f47B28; width:100%;}
+  #extension_logo img {width:200px; height:94px; margin-right:1em; background:#fff;}
+  #ask_an_expert_logo img {width:200px; height:auto;}
   .clearing {clear:both;}
-  #maintenance {background:#fff;width:35em;margin:3em auto;padding:1.2em;
+  #maintenance {background: #f47B28;width:35em;margin:3em auto;padding:1.2em;
     -webkit-box-shadow: 2px 2px 3px #444;
     -moz-box-shadow: 2px 2px 3px #444;
     box-shadow: 2px 2px 3px #444;
@@ -30,20 +33,29 @@
     -webkit-border-radius:10px;}
   h2 {margin:0 0 .5em;padding:0;font-weight:normal;}
   p {line-height:1.5em;}
-
+  .message_body {background:#f4f4f4; padding:2.5em 2em 1em; color:#333;}
+  #branding {margin:0 0 .25em; }
+  #ask_an_expert_logo {vertical-align:middle; float:left; padding:20px 0;}
+  #ask_an_expert_logo img {width:200px; vertical-align:middle;}
   -->
   </style>
   
 </head>
 <body>
-      <div id="maintenance">
-        <header>
-          <img alt="Ask_logo" height="100" src="/images/logo_small.png" width="264" />
-          <h1 class="texthide">Ask</h1>
-        </header>
-        <h2 class="clearing">Ask will be back soon. We're undergoing scheduled maintenance.</h2>
-        <p>We expect to be up and running in a few minutes. We're sorry about this downtime. Thanks for your patience!</p>
-        <p>- eXtension Engineering</p>
+  
+  <div id="maintenance">
+    <header>
+      <div id="branding">
+        <span id="extension_logo"><img alt="eXtension" src="/images/extension_logo_hires.png" /></span> <span id="ask_an_expert_logo"><img alt="Ask an Expert" src="/images/ask_an_expert.png" /></span>
+      <br class="clearing" />
       </div>
+    </header>
+        
+    <div class="message_body">
+      <h2 class="clearing">Ask an Expert will be back soon. We're undergoing scheduled maintenance.</h2>
+      <p>We expect to be up and running in a few minutes. We're sorry about this downtime. Thanks for your patience!</p>
+      <p>- eXtension Engineering</p>
+    </div>
+  </div>
 </body>
 </html>
