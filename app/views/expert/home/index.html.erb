@@ -5,7 +5,7 @@
 <div id="dashboard">
   
   
-  <div class="span6">
+  <div class="span6 simple_border">
   <div id="oldest_question" class="formy">
     
     <div id="user_masthead">
@@ -101,7 +101,10 @@
           <% end %>
           
       <% end %>
-    <% end %>  
+    <% end %> 
+  <% else %>
+    <h4>Help improve your question assignments<h4>
+    <p><%= link_to 'Add locations to your profile', expert_settings_location_path(), :class => "btn btn-primary" %>
   <% end %>
 
   <% if @user.tags.size > 0 %>
@@ -129,17 +132,18 @@
 
 <div class="span6">
   
-  
-  
-  <div class="expert_dashboard_tags">
+
+  <div class="expert_dashboard_tags simple_border">
   <h3>My Groups</h3>
-  <p><%= link_to "Groups home", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>
+  
   <% if @my_groups.size == 0 %>
-    <p>You currently are not a member any groups.</p>
+    <h3>You are not a member any groups.</h3>
+    <p><%= link_to 'Explore Groups', expert_groups_path(), :class => "btn btn-primary" %>
   <% else %>
+    <p><%= link_to "Explore Groups", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>
     <% @my_groups.each do |group| %>
       <% if group.group_active %>
-        <div class="group_in_group_list active">
+        <div class="group_in_group_list active <%= group.open_questions.length > 0 ? '' : 'downplay' %>">
           <p class="group_list_avatar"><%= link_expert_group_avatar(group, :mini) %></p>
           <h4>
             <%= link_to group.name, expert_group_path(group.id) %> 

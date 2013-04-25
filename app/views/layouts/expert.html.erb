@@ -71,7 +71,7 @@
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Dashboard", expert_home_path %></li>
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Needs an Answer", expert_home_unanswered_path %></li>
                 <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Groups", expert_groups_path %></li>
+                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Reports", expert_reports_home_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
                 <p id="search">
@@ -100,7 +100,7 @@
   <% end %>
     
   <% if current_user.tags.size < 1 %>
-    <div id="on_vacation"><i class="icon-exclamation-sign"></i> Hi there! We know you've got expertise. Why not tell us about it by adding some tags? It helps the rest of us know what kind of questions you want to answer. Please add a handful on your <%= link_to 'settings page', expert_settings_tags_path() %>. Thanks!</div>
+    <div id="tags_prompt">Hi there! We know you've got expertise. Why not tell us about it by adding some tags? That helps the rest of us know what kind of questions you want to answer. Please add a few in your <%= link_to 'settings', expert_settings_tags_path() %>. Thanks!</div>
   <% end %>
   
   <%- if @override_rows.present? and @override_rows -%>

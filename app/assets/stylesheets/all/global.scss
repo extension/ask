@@ -114,6 +114,7 @@ body {
   #location_filter #county_list {float:left; margin: 0 1em 0 0 !important;}
   
   #on_vacation {background:#FEFF8D; padding:1em; color:#444; font-weight:bold; font-size:1.1em;}
+  #tags_prompt {background:#FEFF8D; padding:1em; color:#444; font-weight:normal; font-size:1.5em; font-family: Georgia, serif; line-height:1.5em;}
   .on_vacation {color: #888 !important;}
   
   .link {cursor:pointer; color:#0088cc;}
@@ -263,6 +264,8 @@ body#public {
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}
   .group_in_group_list h4 {margin:0;};
     #location_list {padding:0; margin:3em 0;}
+    
+  
   #user_masthead {margin:0 0 .75em; border-bottom:1px solid #e5e5e5; padding-bottom:1em;}
 	#user_masthead a.medium {float:left; margin: 0 1.5em 2.5em 0;}
   .aboutme {clear:both; line-height:1.5em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.3em;}
@@ -413,7 +416,7 @@ body#expert {
   #dashboard {padding-bottom:4em;}
   #dashboard #user_masthead {border:0;}
   #dashboard .group_in_group_list h4 {font-weight:normal; font-size:1.2em;}
-  #last_30_days {margin:1em 0 0; background:#eee; color:#444;}
+  #last_30_days {margin:1em 0 0; background:#eee; color:#666;}
   #last_30_days h2 {margin-bottom:.75em; font-weight:normal;}
   #last_30_days h4 {font-weight:normal;}
   h3 span {font-size:1.3em;}
@@ -426,7 +429,10 @@ body#expert {
   #tag_list p {margin-bottom:.5em; font-size:1.1em;}
   .group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5; clear:left;}
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}
-  .group_in_group_list h4 {margin:0;};
+  .group_in_group_list h4 {margin:0;}
+  .group_in_group_list.downplay {padding-top:.75em; padding-bottom:0;}
+  .group_in_group_list.downplay p {padding-bottom:0; margin-bottom:0 !important;}
+  .group_in_group_list.downplay .avatar_with_badge {margin-bottom:0;}
   .group_list_avatar {float:left; margin-right:1em;}
   #cant_assign {font-size:1.2em; padding:2em; line-height:1.4em; background:#FFFFE6; margin-bottom:2em; border:1px solid #E3E3E3;}
   .location_warning {font-size:1.1em; padding:.2em;}
