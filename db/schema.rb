@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130409200643) do
+ActiveRecord::Schema.define(:version => 20130424155226) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -427,6 +427,7 @@ ActiveRecord::Schema.define(:version => 20130409200643) do
     t.integer  "original_location_id"
     t.integer  "original_county_id"
     t.datetime "working_on_this"
+    t.boolean  "featured",                 :default => false, :null => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
