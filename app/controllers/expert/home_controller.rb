@@ -20,22 +20,20 @@ class Expert::HomeController < ApplicationController
     end
     
     @my_groups = @user.group_memberships.except(:order).find(:all, :select => "groups.*", :joins => "LEFT JOIN questions on groups.id = questions.assigned_group_id", :group => "groups.id", :order => "COUNT(IF(questions.status_state = #{Question::STATUS_SUBMITTED}, questions.id, NULL)) DESC, groups.name")
-    @unanswered_questions_count = Question.submitted.not_rejected.count
+    @all_unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
     @questions_assigned_to_expert_count = @user.open_questions.length
     
-    if(params[:year_month])
-      @date = Date.strptime(params[:year_month] + "-01")
-      @year_month = params[:year_month]
-      @previous_year_month = (@date - 1.month).strftime('%Y-%m')
-    else
-      @date = DateTime.now
-      @year_month = User.year_month_string(Date.today.year,Date.today.month)
-      @previous_year_month = (DateTime.now - 1.month).strftime('%Y-%m')
-    end
+    @date = DateTime.now
+    @year_month = User.year_month_string(Date.today.year,Date.today.month)
     
     @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
     @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
+    
+    # @year_month = User.year_month_string(Date.today.year,Date.today.month)
+    @assigned = @user.assigned_list_for_year_month(@year_month)
+    @answered = @user.answered_list_for_year_month(@year_month)
+    @touched = @user.touched_list_for_year_month(@year_month)
   end
   
   def unanswered
