@@ -9,7 +9,7 @@ body {
   h2 {font-size:24px; line-height: 28px; margin:0 0 .25em;}
   h3 {font-size:18px; line-height: 24px; margin:0 0 .25em;}
 
-	#app_location.demo {background:#FFDC50; padding:.5em 1em .1em;}
+	#app_location.demo {background:#FFDC50; padding:.5em 1em .1em; text-align:center;}
 	#app_location.demo p {font-size:1.1em; color:#000;}
 	#app_location.demo p a {color:#000; text-decoration:underline;}
 	
@@ -315,7 +315,7 @@ body#public {
 	.logout {margin-left:1em;}
 	ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
   
-  #app_location.demo {margin-top:1em; background:#FFFF7E;}
+  #app_location.demo {background:#FFFF7E;}
   #content_wrapper {margin:3em 1.5em 1em;}
   .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
   .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}

@@ -11,6 +11,13 @@
   <%= render(:partial => 'home/google_analytics') %>
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
+  
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>This is the <strong>AaE <%= Settings.app_location.upcase %></strong> site. Feel free to test/play. Note: The data on this site is regularly deleted/refreshed, and all notifications are turned off. Visit <%= link_to("Ask an Expert", "http://ask.extension.org") -%>.</p>
+    </div>
+  <% end %>
+
 
   <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   
@@ -87,12 +94,6 @@
       </div>
       
 <div class="container-fluid">
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <div id="app_location" class="demo">
-      
-      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong>Feel free to test and play</strong>: No notifications, responses or assignments are sent to anyone. <%= link_to("Visit Ask 2.0 Production", "http://ask.extension.org") -%>. Visit the <%= link_to("AaE 2.0 Help page", "http://about.extension.org/ask/") %>.</p>
-    </div>
-  <% end %>
   
   <% if current_user.away %>
     <div id="on_vacation"><i class="icon-exclamation-sign"></i> Your availability is set to "Away." Questions cannot be assigned to you. <%= link_to 'Edit your settings', expert_settings_assignment_path() %></div>
