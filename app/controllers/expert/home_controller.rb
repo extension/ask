@@ -30,7 +30,6 @@ class Expert::HomeController < ApplicationController
     @questions_asked = Question.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC')
     @questions_answered = Question.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC')
     
-    # @year_month = User.year_month_string(Date.today.year,Date.today.month)
     @assigned = @user.assigned_list_for_year_month(@year_month)
     @answered = @user.answered_list_for_year_month(@year_month)
     @touched = @user.touched_list_for_year_month(@year_month)

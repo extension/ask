@@ -50,17 +50,17 @@
           <tr>
             <td>
               <span class='bignumber'>
-              <%= expert_question_list_link(@answered.count, {id: @user.id, filter: 'answered', year_month: @year_month}) %>
+              <%= expert_question_list_link(@answered.length, {id: @user.id, filter: 'answered', year_month: @year_month}) %>
               </span>
             </td>
             <td>
               <span class='bignumber'>
-              <%= expert_question_list_link(@assigned.count, {id: @user.id, filter: 'assigned', year_month: @year_month}) %>
+              <%= expert_question_list_link(@assigned.length, {id: @user.id, filter: 'assigned', year_month: @year_month}) %>
               </span>
             </td>
             <td>
               <span class='bignumber'>
-              <%= expert_question_list_link(@touched.count, {id: @user.id, filter: 'touched', year_month: @year_month}) %>
+              <%= expert_question_list_link(@touched.length, {id: @user.id, filter: 'touched', year_month: @year_month}) %>
               </span>
             </td>
           </tr>
