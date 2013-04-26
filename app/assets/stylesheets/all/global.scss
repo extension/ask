@@ -63,14 +63,13 @@ body {
     @include rounded16;
     padding: 0 7px;
 	}
-/*  .avatar_with_badge {width:20px;}*/
+
 	.avatar_with_badge {
 	  position:relative; 
     display:inline-block;
     border:2px solid #ccc;
     padding:2px;
     margin-bottom:8px;
-    overflow:hidden;
 	}
 	.badge {
     display: block;
