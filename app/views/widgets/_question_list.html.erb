@@ -1,8 +1,10 @@
 <div id="question_widget" style="width:<%= @width %>px">
-	
+		
 <h3> 
-	<span>eXtension Latest Resolved Questions</span><br class="clearing" />
+	<span><%= @title %></span><br />
 </h3>
+
+<%= link_to 'See More', @path_to_questions %>
 
 <% if @question_list.length == 0 %>
   <h3>There are currently no content items at this time.</h3>

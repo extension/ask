@@ -4,7 +4,9 @@ class WidgetsController < ApplicationController
     @question_list = Array.new
     group_array = Array.new
     
-    questions = Question.public_visible_answered.featured.order('resolved_at DESC')
+    @title = "eXtension Latest Resolved Questions"
+    @path_to_questions = root_path
+    questions = Question.public_visible_answered.featured.order('featured_at DESC')
     
     if params[:limit].blank? || params[:limit].to_i <= 0
       question_limit = 5

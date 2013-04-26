@@ -108,5 +108,19 @@
       <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
     <% end %>
   </aside>
-  
+
+  <% if @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
+  <aside>
+	<h4>Feature Option</h4>
+	<%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
+	  <%= check_box_tag :feature_question_option, "1", @question.featured == true %>
+	<% end %>
+  <aside>
+  <% end %>
 </div>
+
+<script class="code" type="text/javascript">
+  $("#feature_question_option").click(function () {
+    $("#feature_question").submit();
+  });
+</script>

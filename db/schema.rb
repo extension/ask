@@ -428,6 +428,7 @@ ActiveRecord::Schema.define(:version => 20130424155226) do
     t.integer  "original_county_id"
     t.datetime "working_on_this"
     t.boolean  "featured",                 :default => false, :null => false
+    t.datetime "featured_at"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
