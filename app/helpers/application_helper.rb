@@ -86,10 +86,10 @@ module ApplicationHelper
     show_badge = show_badge ? (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") : ""
 
     if group.avatar.present?
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag(group.avatar.url(image_size), :size => image_size_in_px, :class => "#{image_size}" ) + group_label + show_badge + raw("</span>")
+      return_string = raw("<span class=\"avatar_with_badge #{image_size}\">") + image_tag(group.avatar.url(image_size), :size => image_size_in_px, :class => "#{image_size}" ) + group_label + show_badge + raw("</span>")
     else
       # if no avatar, assign a random image
-      return_string =  raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px, :class => "#{image_size}") + group_label + show_badge + raw("</span>")
+      return_string =  raw("<span class=\"avatar_with_badge #{image_size}\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px, :class => "#{image_size}") + group_label + show_badge + raw("</span>")
     end
     return return_string
   end
