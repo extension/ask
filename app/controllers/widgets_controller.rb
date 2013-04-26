@@ -32,6 +32,46 @@ class WidgetsController < ApplicationController
         end
       end
     end
+    
+    render "widgets"
+  end
+  
+  def answered
+    if params[:limit].blank? || params[:limit].to_i <= 0
+      question_limit = 5
+    else
+      question_limit = params[:limit].to_i
+    end
+    
+    if params[:width].blank? || params[:width].to_i <= 0
+      @width = 300
+    else
+      @width = params[:width].to_i
+    end
+    
+    if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
+      question_group_scope = Question.from_group(group.id)
+      @path_to_questions = group_path(group.id)
+    else
+      question_group_scope = Question.where({})
+      @path_to_questions = root_path
+    end
+      
+    if params[:tags].present?  
+      @tag_list = params[:tags].split(',')
+      @title = "eXtension Latest Resolved Questions in #{@tag_list.join(',')}"
+      if params[:operator].present?
+        if params[:operator].downcase == 'and'
+          @question_list = question_group_scope.public_visible_answered.tagged_with_all(@tag_list).order('resolved_at DESC').limit(question_limit)  
+        end
+      elsif params[:operator].blank? || params[:operator].downcase != 'and'
+        @question_list = question_group_scope.public_visible_answered.tagged_with_any(@tag_list).order('COUNT(questions.id) DESC, resolved_at DESC').limit(question_limit)
+      end
+    else
+      @question_list = question_group_scope.public_visible_answered.order('resolved_at DESC').limit(question_limit)
+    end
+    
+    render "widgets"
   end
   
 end

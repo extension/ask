@@ -76,6 +76,8 @@ module QuestionsHelper
       message += "#{old_county} #{old_location} to #{new_county} #{new_location}"
       message += "</span>"
       return message.html_safe
+    when QuestionEvent::CHANGED_FEATURED
+      return "Question featured changed from #{q_event.updated_question_values[:old_value]} to #{q_event.updated_question_values[:new_value]} by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::WORKING_ON
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::EDIT_QUESTION

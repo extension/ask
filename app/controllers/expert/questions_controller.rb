@@ -154,8 +154,13 @@ class Expert::QuestionsController < ApplicationController
   def feature
     @question = Question.find_by_id(params[:id])
     @question.toggle! :featured if @question.present?
-    @question.featured == true ? @question.update_column(:featured_at, Time.now) : @question.update_column(:featured_at, nil)
-    render :nothing => true
+    if @question.featured == true 
+      @question.update_column(:featured_at, Time.now)
+    else  
+      @question.update_column(:featured_at, nil)
+    end
+    
+    QuestionEvent.log_featured_changed(@question, current_user)
   end
   
   def response_history

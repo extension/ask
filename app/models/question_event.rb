@@ -44,6 +44,7 @@ class QuestionEvent < ActiveRecord::Base
   CHANGED_LOCATION = 17
   EXPERT_EDIT_QUESTION = 18
   EXPERT_EDIT_RESPONSE = 19
+  CHANGED_FEATURED = 20
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -114,6 +115,14 @@ class QuestionEvent < ActiveRecord::Base
     else
       return false
     end
+  end
+  
+  def self.log_featured_changed(question, initiated_by)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :updated_question_values => {:old_value => !question.featured, :new_value => question.featured},
+                           :event_state => CHANGED_FEATURED
+    })
   end
   
   def self.log_tag_change(question, initiated_by, tags, previous_tags)
