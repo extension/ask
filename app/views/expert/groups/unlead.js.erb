@@ -1,3 +1,5 @@
+$("#leadership_options").html("<%= escape_javascript(render partial: 'leadership_options') %>");
+$('#leadership_options').prepend('<h3><span>You are no longer a group leader.</span></h3> ');
 $("#membership_connection").html("<%= escape_javascript(render partial: 'membership_connection') %>");
 
 $("#group_members p strong").first().fadeOut('slow', function() {

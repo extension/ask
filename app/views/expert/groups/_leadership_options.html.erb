@@ -1,0 +1,15 @@
+<% if current_user.member_of_group(@group) && !current_user.leader_of_group(@group) %>
+  <p>
+    <%= link_to "Back to group home", expert_group_path(), :class => "btn" %>
+    <%= link_to 'Be a Group Leader', expert_group_lead_path(), :class => "btn btn-primary", :remote => true %>
+  </p>
+
+<% elsif current_user.leader_of_group(@group) %>
+  <p>
+    <%= link_to "Back to group home", expert_group_path(), :class => "btn btn-primary" %>
+    <%= link_to 'Leave Leadership', expert_group_unlead_path(), :class => "btn", :remote => true %>
+  </p>
+
+<% else%>
+  <p><%= link_to 'Join Group', expert_group_join_path(), :class => "btn", :remote => true %></p>
+<% end %>

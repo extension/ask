@@ -29,6 +29,15 @@ class Expert::GroupsController < ApplicationController
     @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
   
+  def leaders
+    @group = Group.find(params[:id])
+    if !@group 
+      return record_not_found
+    end
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
+    @group_members_route_from_anywhere = @group.joined.route_from_anywhere
+  end
+  
   def show
     @group = Group.find(params[:id])
     if !@group 

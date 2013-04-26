@@ -1,5 +1,23 @@
 <h1><%= link_to @group.name, expert_group_path() %> Members (<%= @group.joined.count %>)</h1>
 
+<div class="explanation">
+  <h2>What Are Group Leaders?</h2>
+  <p>Group leadership is a self-serve option. Anyone can choose to take a more active role in a group by becoming a leader.</p>
+  
+  <ul>
+    <li>Leaders are identified as a point person for a group.</li>
+    <li>Leaders receive notifications when a member or leader joins or leaves.</li>
+    <li>If a question can't be assigned to group members, we try to assign it to a leader before passing it to a Question Wrangler.</li>
+  </ul>
+
+  <div id="leadership_options">
+    <%= render :partial => 'leadership_options' %>
+  </div>
+  
+</div>
+
+
+
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
