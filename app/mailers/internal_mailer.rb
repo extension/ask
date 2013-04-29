@@ -124,7 +124,7 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @response = options[:response]
     @question = @response.question
-    @subject = "Your Ask an Expert question has a new public response (Question:#{@question.id})"
+    @subject = "Your Ask an Expert question has a new response from the question submitter (Question:#{@question.id})"
     @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
