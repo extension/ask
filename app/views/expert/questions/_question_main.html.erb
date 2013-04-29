@@ -1,6 +1,8 @@
-<h1 class="title"><%= format_text_for_display(@question.title) -%></h1>
 
-<div id="question">
+
+<div >
+  <div class="main_question">
+    <h1 class="title"><%= format_text_for_display(@question.title) -%></h1>
 <div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
   <% if @question.images.size > 0 %>
@@ -34,27 +36,17 @@
 
   <% end %>
 
-<p>Asked 
-  <% if @original_group.present? %>
-    to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
-  <% end %>
-	      
-  <%= time_ago_in_words(@question.created_at) %> ago 
-  
-  <% if @question.submitter %>
-    by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %> (This person has <%= link_to "submitted  #{@question.submitter.submitted_questions.length} questions", expert_user_submitted_path(@question.submitter) %>.)
-  <% end %>
-</p>
-
   <div id="question_location">
     <%= render :partial => 'question_location' %>
   </div>
   
+   
   
 
+    <div id="tag_interface">
     <div id="tag_picker_wrapper">
       <div class="ui-widget">
-        <label for="tag_picker">Add Tags</label>
+        <label for="tag_picker">Add Tags <small>(Tags are viewable on public questions)</small></label>
     	  <input id="tag_picker" placeholder="Type a word and select it..." /> 
       </div>
     </div>
@@ -70,14 +62,32 @@
     <% end %>
 
     </div>
+    </div>
+   
+    
 
-    <p class="dontprintme"><small>(All tags are viewable on public questions)</small></p>
-
-  
+</div>    
 </div>
-
-<% if @question_responses.size > 0 %>
+  
   <h2>Answers &amp; Replies</h2>
+  
+  
+  <% if @question.status_state != Question::STATUS_REJECTED && @question.status_state != Question::STATUS_NO_ANSWER && @question.status_state != Question::STATUS_CLOSED && @question.status_state != Question::STATUS_RESOLVED %>
+      
+  <% if @question.is_being_worked_on? && current_user != @question.assignee %>
+    <div class="question_actions">
+      <h3>Heads Up: Answer in Progress</h3>
+      <p><%= @question.assignee.name %> is working on this question right now.</p>
+    </div>
+  <% else %>
+    <p><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+
+  <% end %>
+  <% end %>
+  
+  
+<% if @question_responses.size > 0 %>
+  
   <p>Answers from experts and replies from the submitter</p>
   <% @question_responses.each do |response| %>
     <div class="response_block">

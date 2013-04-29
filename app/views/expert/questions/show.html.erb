@@ -12,7 +12,22 @@
       <% end %> 
       Question #<%= @question.id %> - <%= link_to "Public View", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revision History", history_expert_question_path(@question.id) %>
     </p>
+    
+    <div id="main_question_meta">
+      <p>Asked 
+        <% if @original_group.present? %>
+          to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+        <% end %>
 
+        <%= time_ago_in_words(@question.created_at) %> ago 
+
+        <% if @question.submitter %>
+          by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %> who has <%= link_to "submitted  #{@question.submitter.submitted_questions.length} questions", expert_user_submitted_path(@question.submitter) %>.
+        <% end %>
+      </p>
+
+      </div>
+      
     <%= render :partial => 'question_main' %>
 
     <h2>Comments</h2>
