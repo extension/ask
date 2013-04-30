@@ -69,26 +69,16 @@
 </div>    
 </div>
   
-  <h2>Answers &amp; Replies</h2>
   
-  
-  <% if @question.status_state != Question::STATUS_REJECTED && @question.status_state != Question::STATUS_NO_ANSWER && @question.status_state != Question::STATUS_CLOSED && @question.status_state != Question::STATUS_RESOLVED %>
-      
-  <% if @question.is_being_worked_on? && current_user != @question.assignee %>
-    <div class="question_actions">
-      <h3>Heads Up: Answer in Progress</h3>
-      <p><%= @question.assignee.name %> is working on this question right now.</p>
-    </div>
-  <% else %>
-    <p><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-
-  <% end %>
-  <% end %>
   
   
 <% if @question_responses.size > 0 %>
   
-  <p>Answers from experts and replies from the submitter</p>
+  <div class="title_block">
+    <h2>Answers &amp; Replies</h2>
+    <p>Answers from experts and replies from the submitter</p>
+  </div>
+  
   <% @question_responses.each do |response| %>
     <div class="response_block">
       <div class="response"><%= format_text_for_display(response.body) %></div>

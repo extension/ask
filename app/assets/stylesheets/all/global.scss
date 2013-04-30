@@ -152,7 +152,7 @@ body {
     .clearing {clear:both !important;}
   .block_callout {padding:2em; background:#e5e5e5; margin:3em 0 3em; @include rounded10;clear:both;}
   
-  .response_block {margin-bottom:2em; border-bottom:1px solid #bbb; background:#fff; padding:1.5em 1em 1.5em;}
+  .response_block {margin-bottom:2em; border:1px solid #e5e5e5; border-bottom:1px solid #bbb;  background:#fff; padding:1.5em 1.5em 1.5em;}
 	.response_block div.response {font-size:1.3em; line-height:1.4em; font-family: Georgia, serif;}
 	.response_block div.signature {font-size:1.1em; line-height:1.4em; font-family: Georgia, serif;}
 	.response_block {margin-bottom:2em;}
@@ -590,7 +590,7 @@ body#expert {
 	-o-transform: rotate(-30deg);
 	}
 	.question.list {margin:0 0 2em; }
-	#history {margin:4em 0 5em; background:#F8F8F8; color:#363955; padding:2em;}
+	#history {margin:0 0 5em; background:#F8F8F8; color:#363955; padding:2em 1em;}
 	#history a {color:#363955; font-weight:bold;}
 	#history li {margin-bottom:.5em; list-style:none; border-bottom:1px solid #ddd;}
 	textarea {width:40em; max-width:95%;}
@@ -621,6 +621,8 @@ body#expert {
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
 	.tag-public,
 	.tag-public a {background:#468847; color:#fff; padding:.1em .5em;}
+	.tag-private,
+	.tag-private a {background:#888; color:#fff; padding:.1em .5em;}
 	
 	
 /*	#tags {border:1px solid lime;}*/
@@ -658,7 +660,7 @@ body#expert {
 	
 	.group {margin:1em 0;}
 	#associated_group_picker {margin:0 0 3em;}
-	#privacy_status a {color:#999;}
+/*  #privacy_status a {color:#999;}*/
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 	
 	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; padding:4px;}

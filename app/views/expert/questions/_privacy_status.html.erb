@@ -1,36 +1,45 @@
+<p id="aaeid">
+  <% if @question.is_private %>
+    <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
+      <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+        <span class="tag tag-private">Private</span>
+      <% end %>
+
+      <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+        <span class="tag tag-public">Switched to Private</span> <span class="cursor make_public_link">edit</span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <span class="tag tag-public">Public</span> <span class="cursor make_private_link">edit</span>
+  <% end %>
+
+  Question #<%= @question.id %> - <%= link_to "Public View", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revision History", history_expert_question_path(@question.id) %>
+</p>
 
 
 <% if @question.is_private %>
   <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
-    <aside id="private_question">
-  
-    <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
-      <p class="private lock">Submitted as a private question</p>
-      <div id="privacy_edit">
-        <p><small>This question cannot be made public.</small></p>
-      </div>
-    <% end %>
-  
+
     <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-      <p class="private lock">This question is private <span class="cursor make_public_link">edit</span></p>
       <div id="make_public_edit" style="display:none;">
+        <aside id="public_question">
         <p>This question was submitted as a public question, but an expert switched it to private.</p>
         <p class="btn btn-primary make_public">Make this question public again</p>
+        </aside>
       </div>
     <% end %>
-    </aside>
+
   <% end %>
 <% else %>
 
-  <aside id="public_question">
-  
-    <p class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="cursor make_private_link">edit</span></p>
   
     <div id="make_private_edit" style="display:none;">
+      <aside id="public_question">
       <p>This question was submitted as a public question, but it can be switched to private.</p>
       <p class="btn btn-primary make_private">Make this question private</p>
+      </aside>
     </div>
-  </aside>
+  
   
 <% end %>
 
