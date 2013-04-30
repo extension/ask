@@ -5,7 +5,7 @@ class WidgetsController < ApplicationController
     group_array = Array.new
     
     @title = "eXtension Latest Resolved Questions"
-    @path_to_questions = root_path
+    @path_to_questions = root_url
     questions = Question.public_visible_answered.featured.order('featured_at DESC')
     
     if params[:limit].blank? || params[:limit].to_i <= 0
@@ -51,10 +51,10 @@ class WidgetsController < ApplicationController
     
     if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
       question_group_scope = Question.from_group(group.id)
-      @path_to_questions = group_path(group.id)
+      @path_to_questions = group_url(group.id)
     else
       question_group_scope = Question.where({})
-      @path_to_questions = root_path
+      @path_to_questions = root_url
     end
       
     if params[:tags].present?  
@@ -68,6 +68,11 @@ class WidgetsController < ApplicationController
         @question_list = question_group_scope.public_visible_answered.tagged_with_any(@tag_list).order('COUNT(questions.id) DESC, resolved_at DESC').limit(question_limit)
       end
     else
+      if group.present?
+        @title = "eXtension Latest Resolved Questions from Group #{group.name}"
+      else
+        @title = "eXtension Latest Resolved Questions"
+      end
       @question_list = question_group_scope.public_visible_answered.order('resolved_at DESC').limit(question_limit)
     end
     

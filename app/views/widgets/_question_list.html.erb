@@ -11,7 +11,7 @@
 <% else %>
   <ul>
   <% @question_list.each do |q| %>
-    <li><%= link_to q.title, question_path(q.id) %></li>
+    <li><%= link_to q.title, question_url(q.id) %></li>
   <% end %>
   </ul>
 <% end %>
