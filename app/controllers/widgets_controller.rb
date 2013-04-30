@@ -26,7 +26,7 @@ class WidgetsController < ApplicationController
       questions.each do |q|
         assigned_group = q.assigned_group
         @question_list << q if (!group_array.include?(assigned_group.id) || assigned_group.blank?)
-        break if (@question_list == question_limit || @question_list.length == questions.length)
+        break if (@question_list.length == question_limit || @question_list.length == questions.length)
         if assigned_group.present? 
           group_array << assigned_group.id
         end
