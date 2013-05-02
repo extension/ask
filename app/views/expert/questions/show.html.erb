@@ -121,7 +121,7 @@
     <% if @question.comments.size > 0 %>
     <div class="title_block">
       <h2>Comments</h2>
-      <p>Comments can be posted on public questions</p>
+      <p>Comments can be posted on public questions and appear below Expert answers and replies.</p>
     </div>
     <div id="comment-list">
 	  <%= render :partial => '/comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
