@@ -1,4 +1,10 @@
-<p id="aaeid">Question #<%= @question.id %></p>
+<p id="aaeid">Question #<%= @question.id %> - <a id="notify_me_link" class="cursor">watch</a></p>
+
+<div id="notificationprefs" style="display:none;">
+  <%= render :partial => 'activity_notification' %>
+</div>
+
+
 <p id="aaeid"> 
   <% if @question.is_private %>
     <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
@@ -54,6 +60,9 @@
 
 
 <script class="code" type="text/javascript">
+  $("#notify_me_link").click(function () {
+    $("#notificationprefs").toggle();
+  });
   
   $(".make_private_link").click(function () {
     $("#make_private_edit").toggle();

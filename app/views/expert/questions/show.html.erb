@@ -61,7 +61,7 @@
     	<% else %>
     	  <strong>Needs a response</strong>
     	<% end %>
-      
+      <% if @question.comments.size > 0 %> - <%= @question.comments.size == 1 ? "1 Comment" : "#{@question.comments.size} Comments"%><% end %>
     </p>
     <% end %>
       
@@ -137,9 +137,6 @@
 
 <div id="secondary" class="span4">
 
-<div id="notificationprefs">
-  <%= render :partial => 'activity_notification' %>
-</div>
 
   
 	<% if @question.status_state == Question::STATUS_NO_ANSWER %>
