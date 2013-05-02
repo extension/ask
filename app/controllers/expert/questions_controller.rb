@@ -38,6 +38,52 @@ class Expert::QuestionsController < ApplicationController
     if ga_tracking.length > 0
       flash.now[:googleanalytics] = expert_question_path(@question.id) + "?" + ga_tracking.join(",")
     end
+
+    
+    @status = params[:status_state]
+    # @sampletext = params[:sample] if params[:sample]
+    current_user.signature.present? ? @signature = current_user.signature : @signature = "-#{current_user.public_name}"
+    @image_count = 3
+    
+    if request.post?
+      if params[:status_state]
+        @status = params[:status_state]
+      end
+
+      answer = params[:current_response]
+      (params[:signature] and params[:signature].strip != '') ? @signature = params[:signature] : @signature = ''
+      
+      if answer.blank? 
+        flash[:error] = "The answer is blank. Please add an answer and submit again."
+        return
+      end
+      
+      if (current_user != @question.assignee)
+        @question.assign_to(current_user, current_user, nil)
+      end
+      
+      @related_question ? contributing_question = @related_question : contributing_question = nil
+      (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
+      
+      begin
+        @question.add_resolution(q_status, current_user, answer, @signature, contributing_question, params[:response])
+      rescue Exception => e
+        @answer = answer
+        flash[:error] = "Error: #{e}"
+        return render nil
+      end
+      
+      # TODO: Add new notification logic here.
+      #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })  	    
+      flash[:success] = "Thanks for answering this question."
+      redirect_to expert_question_url(@question)
+    end
+    
+    
+    
+    
+    
+    
   end
   
   def submitted

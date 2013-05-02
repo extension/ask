@@ -14,7 +14,7 @@
     <div id="main_question_meta">
       <p>Asked 
         <% if @original_group.present? %>
-          to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+          to <%= link_to @original_group.name, expert_group_path(@original_group.id) %> 
         <% end %>
 
         <%= time_ago_in_words(@question.created_at) %> ago 
@@ -44,41 +44,33 @@
       </div>
   	<% end%>
   	
-    
+    <% if @question.status_state != Question::STATUS_REJECTED %>
     <p class="response_count">
       <% if @question.status_state == Question::STATUS_RESOLVED %>
-    	  <strong>Answered with <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %></strong>
+    	  <strong>Answered</strong> with <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %>
     	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
-    	  <strong>Answered with a canned response - <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %></strong> <%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn" %>
+    	  <strong>Answered</strong> with a canned response - <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %>
+    	<% elsif @question.status_state == Question::STATUS_CLOSED %>
+    	  <strong>0 responses.</strong> Closed by
+    	    <% if @question.current_resolver_id == User.system_user_id %>
+            System:
+          <% else %>
+            <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>:
+          <% end %>
+          "<%= wrap_text(@question.current_response) %>"
     	<% else %>
-    	  <strong><%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %></strong>
+    	  <strong>Needs a response</strong>
     	<% end %>
       
     </p>
-
+    <% end %>
       
     <%= render :partial => 'question_main' %>
     
     
     <div id="inline_question_actions">
       <% if @question.status_state == Question::STATUS_REJECTED %>
-
-        <h3 class="rejected">This Question Has Been Rejected</h3>
-        <h3><strong>Reason:</strong> <%= wrap_text(@question.current_response) %></h3>
-        <p>
-      	  <% if @question.current_resolver_id == User.system_user_id %>
-      	    System
-      	  <% else %>
-      	    <%= link_to expert_user_path(@question.current_resolver_id) do %>
-              <%= link_expert_user_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
-            <% end %>
-
-      	  <% end %>
-      	</p>
-
-        <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
-
-  	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
+      <% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
   	   <h3>A canned response was used to answer this question</h3>
   	   <div class="question_actions">
          <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
@@ -110,10 +102,16 @@
   	      <p><%= @question.assignee.name %> is working on this question right now.</p>
   	    </div>
   	  <% else %>
-        <div class="question_actions">
-          <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
-          <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn" %></span>
-          <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn" %></span>
+        
+        
+        
+        <div id="answer_form">
+          <div class="title_block">
+            <h2>Send an Answer</h2>
+          </div>
+        
+          
+          <%= render :partial => 'answer_form' %>
         </div>
       <% end %>
        <% end %>
@@ -142,38 +140,14 @@
 <div id="notificationprefs">
   <%= render :partial => 'activity_notification' %>
 </div>
-  
-  
-  
-  
 
   
 	<% if @question.status_state == Question::STATUS_NO_ANSWER %>
-	   
 	<% elsif @question.status_state == Question::STATUS_CLOSED %>
-	  <aside class="dontprintme">
-	   	<h3>This question has been closed</h3>
-      <p>
-        <strong>Closed by: </strong> 
-        <% if @question.current_resolver_id == User.system_user_id %>
-          System
-        <% else %>
-          <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
-        <% end %>
-      </p>
-      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-      </aside>
 	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
 	
-	  <aside class="dontprintme">
-	    <h3>This question has been resolved</h3>
-	    <div class="question_actions last">
-        <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-      </div>
-	    </aside>
 	<% else %>
-	  <aside class="dontprintme">
+	  <aside class="dontprintme" style="display:none;">
       <p><strong>Question actions are now under the question.</strong></p>
       </aside>
   <% end %>
@@ -183,6 +157,16 @@
     <%= render :partial => 'question_assignment' %>
   </div>
   
+  <% if @question.submitter.submitted_questions.length > 1 %>
+  <aside class="nobg dontprintme related_questions">
+    <h4>Other Questions From This Person</h4>
+    <% @question.submitter.submitted_questions.each do |question,score| %>
+      <% if question.id != @question.id %>
+      <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
+      <% end %>
+    <% end %>
+  </aside>
+  <% end %>
   
   <aside class="nobg dontprintme related_questions">
     <h4>Related Questions</h4>

@@ -1,4 +1,5 @@
-<p id="aaeid">
+<p id="aaeid">Question #<%= @question.id %></p>
+<p id="aaeid"> 
   <% if @question.is_private %>
     <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
       <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
@@ -6,14 +7,22 @@
       <% end %>
 
       <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-        <span class="tag tag-public">Switched to Private</span> <span class="cursor make_public_link">edit</span>
+        <span class="tag tag-public">Switched to Private</span> <span class="cursor make_public_link">edit</span> |
       <% end %>
     <% end %>
   <% else %>
-    <span class="tag tag-public">Public</span> <span class="cursor make_private_link">edit</span>
+    <span class="tag tag-public">Public</span> <span class="cursor make_private_link">edit</span> |
   <% end %>
 
-  Question #<%= @question.id %> - <%= link_to "Public View", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revision History", history_expert_question_path(@question.id) %>
+ <%= link_to "Public URL", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revisions", history_expert_question_path(@question.id) %> 
+ 
+ <% if  @question.status_state != Question::STATUS_RESOLVED && 
+   @question.status_state != Question::STATUS_NO_ANSWER &&
+  @question.status_state != Question::STATUS_REJECTED && 
+  @question.status_state != Question::STATUS_CLOSED %>
+ | <%= link_to "Close", close_out_expert_question_path(@question.id) %> | <%= link_to "Reject", reject_expert_question_path(@question.id) %>
+ <% end %>
+ 
 </p>
 
 
@@ -23,7 +32,7 @@
     <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
       <div id="make_public_edit" style="display:none;">
         <aside id="public_question">
-        <p>This question was submitted as a public question, but an expert switched it to private.</p>
+        <h3>This question was submitted as a public question, but an expert switched it to private.</h3>
         <p class="btn btn-primary make_public">Make this question public again</p>
         </aside>
       </div>
@@ -35,7 +44,7 @@
   
     <div id="make_private_edit" style="display:none;">
       <aside id="public_question">
-      <p>This question was submitted as a public question, but it can be switched to private.</p>
+      <h3>This question was submitted as a public question, but it can be switched to private.</h3>
       <p class="btn btn-primary make_private">Make this question private</p>
       </aside>
     </div>

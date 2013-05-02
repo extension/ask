@@ -32,6 +32,7 @@ Aae::Application.routes.draw do
   namespace :expert do
     resources :questions, :only => [:show, :edit, :update] do
       member do
+        post 'show'
         post 'assign'
         post 'assign_to_group'
         get 'assign_options'
