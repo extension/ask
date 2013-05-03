@@ -1,16 +1,17 @@
 <% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
 
-<div id="working_on_this_banner">
-  <%= render :partial => 'working_on_this_banner' %>
-</div>
 
-<div id="main" class="span8">
-  <div id="question_wrapper">
-    
+<div id="show_question_wrapper">
+  
+  <div id="show_question_header">
+    <div id="working_on_this_banner">
+      <%= render :partial => 'working_on_this_banner' %>
+    </div>
+
     <div id="privacy_status" class="dontprintme">
       <%= render :partial => 'privacy_status' %>
     </div>
-    
+
     <div id="main_question_meta">
       <p>Asked 
         <% if @original_group.present? %>
@@ -24,7 +25,7 @@
         <% end %>
       </p>
     </div>
-    
+
     <% if @question.status_state == Question::STATUS_REJECTED %>
       <div class="dontprintme rejected">
         <h3 class="rejected">This Question Has Been Rejected</h3>
@@ -42,8 +43,12 @@
 
         <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
       </div>
-  	<% end%>
-  	
+    <% end%>
+  </div>
+  
+  
+  
+<div id="main" class="span8">
     <% if @question.status_state != Question::STATUS_REJECTED %>
     <p class="response_count">
       <% if @question.status_state == Question::STATUS_RESOLVED %>
@@ -64,7 +69,7 @@
       <% if @question.comments.size > 0 %> - <%= @question.comments.size == 1 ? "1 Comment" : "#{@question.comments.size} Comments"%><% end %>
     </p>
     <% end %>
-      
+
     <%= render :partial => 'question_main' %>
     
     
@@ -133,7 +138,7 @@
       <%= render :partial => 'history' %>
     </div>
   </div>
-</div>
+
 
 <div id="secondary" class="span4">
 
@@ -172,4 +177,6 @@
     <% end %>
   </aside>
   
+</div>
+<br class="clearing" />
 </div>
