@@ -1,7 +1,7 @@
-$('#filtered_question_list').html('<%= escape_javascript(render "/expert/home/list_of_questions", :questions => @recent_questions, :listview => params[:list_view]) %>');
+$('#filtered_question_list').html('<%= escape_javascript(render "/expert/questions/list_of_questions", :questions => @recent_questions) %>');
 <% if !params[:location_id].nil? %>
   <% if !params[:location_id].blank? %> 
-    $('#county_list').html('<%= escape_javascript(render "/expert/home/counties", :location_obj => @location_pref, :listview => params[:list_view]) %>');
+    $('#county_list').html('<%= escape_javascript(render "/expert/home/counties", :location_obj => @location_pref) %>');
   <% else %>
     $('#county_list').html('');
   <% end %>

@@ -132,6 +132,7 @@ Aae::Application.routes.draw do
     match 'home/get_counties/:location_id' => 'home#get_counties', :via => :get
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
+    match "questions" => "questions#index"
     match "questions/:id/submitted" => "questions#submitted", :via => [:get], :as => 'user_submitted'
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]

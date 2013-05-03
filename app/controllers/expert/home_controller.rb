@@ -34,14 +34,7 @@ class Expert::HomeController < ApplicationController
     @answered = @user.answered_list_for_year_month(@year_month)
     @touched = @user.touched_list_for_year_month(@year_month)
   end
-  
-  def unanswered
-    @locations = Location.order('fipsid ASC')
-    @my_groups = current_user.group_memberships
-    @my_tags = current_user.tags
-    @recent_questions = questions_based_on_pref_filter('incoming', current_user.filter_preference)
-  end
-  
+    
   def dashboard
     redirect_to expert_home_path()
   end
@@ -52,14 +45,7 @@ class Expert::HomeController < ApplicationController
   def get_counties
     render :partial => "counties", :locals => {:location_obj => nil}
   end
-  
-  def answered
-    @recently_answered_questions = questions_based_on_pref_filter('resolved', current_user.filter_preference)
-    @locations = Location.order('fipsid ASC')
-    @my_groups = current_user.group_memberships
-    @my_tags = current_user.tags
-  end
-  
+    
   def tags
     @tag = Tag.find_by_name(params[:name])
     if @tag

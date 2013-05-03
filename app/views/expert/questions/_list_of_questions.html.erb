@@ -1,0 +1,21 @@
+<h1 class="filter_string"><%= @filter_string.present? ? @filter_string : "No filters" %></h1>
+
+<% if questions.count > 0 %>
+  
+  <%= page_entries_info questions %>
+  <%= paginate questions, :params => {:controller => 'expert/questions', :action => 'index'} %>
+
+  <% questions.each do |question| %>
+    <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true, :highlight_unanswered => true} %>  
+  <% end %>
+
+  <%= page_entries_info questions %>
+  <%= paginate questions, :params => {:controller => 'expert/questions', :action => 'index'} %>
+
+<% else %>
+
+  <div class="no_reassign_matches">
+    <h3>There are no questions that match that filter</h3>
+  </div>
+  
+<% end %>

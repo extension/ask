@@ -68,10 +68,10 @@
             <% end %>
             <div id="collapsed_nav_options" class="nav-collapse collapse">
               <ul class="nav">
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Dashboard", expert_home_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Needs an Answer", expert_home_unanswered_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Reports", expert_reports_home_path %></li>
+                <li><%= link_to "Dashboard", expert_home_path %></li>
+                <li><%= link_to "Needs an Answer", expert_questions_path(:status => "unanswered") %></li>
+                <li><%= link_to "Answered", expert_questions_path(:status => "answered") %></li>
+                <li><%= link_to "Reports", expert_reports_home_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
                 <p id="search">

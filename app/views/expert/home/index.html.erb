@@ -80,7 +80,7 @@
           <div class="group_in_group_list active">
             <h4>
               <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span> 
-              <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id)%></strong>
+              <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:override => true, :status => "unanswered", :location_id => l.id)%></strong>
             </h4>
             <br class="clearing" />
           </div>
@@ -92,7 +92,7 @@
                 <div class="group_in_group_list active">
                   <h4>
                     <span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span>
-                    <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :location_id => l.id, :county_id => c.id)%></strong>
+                    <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:override => true, :status => "unanswered", :location_id => l.id, :county_id => c.id)%></strong>
                   </h4>
                   <br class="clearing" />
                 </div>
@@ -114,7 +114,7 @@
         <div class="group_in_group_list active">
           <h4>
             <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> 
-            <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_home_unanswered_path(:override => true, :tag_id => tag.id)%></strong>
+            <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:override => true, :status => "unanswered", :tag_id => tag.id)%></strong>
           </h4>
           <br class="clearing" />
         </div>
@@ -148,7 +148,7 @@
           <h4>
             <%= link_to group.name, expert_group_path(group.id) %> 
             <% if group.open_questions.length > 0 %>
-              <strong><%= link_to "#{group.open_questions.length} unanswered", expert_home_unanswered_path(:override => true, :group_id => group.id)%></strong>
+              <strong><%= link_to "#{group.open_questions.length} unanswered", expert_questions_path(:override => true, :status => "unanswered", :group_id => group.id)%></strong>
             <% end %>
           </h4>
           <br class="clearing" />
@@ -160,7 +160,7 @@
   
   <div id="last_30_days" class="formy">
     <h2>Ask an Expert Overview</h2>
-    <h3><%= link_to "#{@all_unanswered_questions_count} Questions Need an Answer", expert_home_unanswered_path %></h3>
+    <h3><%= link_to "#{@all_unanswered_questions_count} Questions Need an Answer", expert_questions_path(:override => true, :status => "unanswered") %></h3>
     <h3><%= @date.strftime("%B, %Y") %> at a Glance</h3>
     <h4><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h4>
     <h4><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h4>

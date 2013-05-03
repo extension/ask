@@ -9,15 +9,15 @@
   <% if @question.is_private %>
     <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
       <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
-        <span class="tag tag-private">Private</span>
+        <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:override => true, :privacy => "private") %></span>
       <% end %>
 
       <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-        <span class="tag tag-public">Switched to Private</span> <span class="cursor make_public_link">edit</span> |
+        <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:override => true, :privacy => "switched_to_private") %></span> <span class="cursor make_public_link">edit</span> |
       <% end %>
     <% end %>
   <% else %>
-    <span class="tag tag-public">Public</span> <span class="cursor make_private_link">edit</span> |
+    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:override => true, :privacy => "public") %></span> <span class="cursor make_private_link">edit</span> |
   <% end %>
 
  <%= link_to "Public URL", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revisions", history_expert_question_path(@question.id) %> 

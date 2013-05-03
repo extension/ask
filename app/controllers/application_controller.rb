@@ -108,7 +108,7 @@ class ApplicationController < ActionController::Base
     return true
   end
 
-  def questions_based_on_pref_filter(list_view, filter_pref)
+  def questions_based_on_pref_filter(filter_pref)
     condition_array = Array.new
     if filter_pref
       filter_pref.setting[:question_filter][:locations].present? ? @location_pref = filter_pref.setting[:question_filter][:locations][0].to_i : @location_pref = nil
@@ -117,6 +117,7 @@ class ApplicationController < ActionController::Base
       filter_pref.setting[:question_filter][:tags].present? ? @tag_pref = filter_pref.setting[:question_filter][:tags][0].to_i : @tag_pref = nil 
     end
     
+    filter_description_array = Array.new
     
     if params[:override].present?
       @location_pref = params[:location_id]
@@ -125,59 +126,69 @@ class ApplicationController < ActionController::Base
       @tag_pref = params[:tag_id]
     end
     
-    @filter_description = ""
+    if params[:status].present?
+      @status = params[:status]
+      if @status == "answered"
+        filter_description_array << "Answered"
+      elsif @status == "unanswered"
+        filter_description_array << "Needs an Answer"
+      else
+        # all questions
+      end
+    end
 
     if @county_pref.present?
       condition_array << "questions.county_id = #{@county_pref.to_i}"
       @county = County.find_by_id(@county_pref)
-      @filter_description += " #{@county.name},"
+      filter_description_array << "#{@county.name}"
     end
     
     if @location_pref.present?
       condition_array << "questions.location_id = #{@location_pref.to_i}"
       @location = Location.find_by_id(@location_pref)
-      @filter_description += " #{@location.name} "
+      filter_description_array << "#{@location.name}"
     end
     
     if @group_pref.present?
       condition_array << "questions.assigned_group_id = #{@group_pref.to_i}"
       @group = Group.find_by_id(@group_pref)
-      @filter_description += "|" if @filter_description.present?
-      @filter_description += " Group: #{@group.name} "
+      filter_description_array << "Group: #{@group.name}"
+    end
+    
+    q = Question
+    
+    if params[:privacy].present?
+      @privacy = params[:privacy]
+    end
+    
+    if @privacy == 'public'
+      filter_description_array << "Public"
+      q = q.public_visible
+    elsif @privacy == 'switched_to_private'
+      filter_description_array << "Switched to Private"
+      q = q.switched_to_private
+    elsif @privacy == 'private'
+      filter_description_array << "Private"
+      q = q.private
+    end
+    
+    if @tag_pref.present?
+      @tag = Tag.find_by_id(@tag_pref)
+      filter_description_array << "Tag: #{@tag.name}"
+      q = q.tagged_with(@tag_pref.to_i)
     end
     
     condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
+    filter_description_array.empty? ? @filter_string = nil : @filter_string = filter_description_array.join(' | ')
     
-    if list_view.present? 
-      if list_view == 'resolved'
-        question_order = "questions.resolved_at DESC"
-      elsif list_view == 'incoming'
-        question_order = "questions.created_at DESC"
-      end
+    if @status == 'answered'
+      return q.answered.where(condition_string).order("questions.resolved_at DESC").page(params[:page])
+    elsif @status == 'unanswered'
+      return q.submitted.where(condition_string).order("questions.created_at DESC").page(params[:page])
     else
-      question_order = "questions.created_at DESC"
-    end    
-      
-    if @tag_pref.present?
-      @tag = Tag.find_by_id(@tag_pref)
-      @filter_description += "|" if @filter_description.present?
-      @filter_description += " Tag: #{@tag.name} "
-      if !list_view.present?
-        return Question.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
-      elsif list_view == 'resolved'
-        return Question.answered.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
-      elsif list_view == 'incoming'
-        return Question.submitted.tagged_with(@tag_pref.to_i).where(condition_string).order(question_order).page(params[:page])
-      end
-    else
-      if !list_view.present?
-        return Question.where(condition_string).order(question_order).page(params[:page])
-      elsif list_view == 'resolved'
-        return Question.answered.where(condition_string).order(question_order).page(params[:page])
-      elsif list_view == 'incoming'
-        return Question.submitted.where(condition_string).order(question_order).page(params[:page])
-      end
+      return q.where(condition_string).order("questions.created_at DESC").page(params[:page])
     end
+    
   end
   
   private

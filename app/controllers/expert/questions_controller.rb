@@ -9,6 +9,13 @@ class Expert::QuestionsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
+  def index
+    @locations = Location.order('fipsid ASC')
+    @my_groups = current_user.group_memberships
+    @my_tags = current_user.tags
+    @recent_questions = questions_based_on_pref_filter(current_user.filter_preference)
+  end
+  
   def show
     @question = Question.find_by_id(params[:id])
     if @question.blank?

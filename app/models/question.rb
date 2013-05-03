@@ -133,6 +133,8 @@ class Question < ActiveRecord::Base
   EVALUATION_ELIGIBLE = '2013-03-15 00:00:00 UTC' # beware the ides of March
 
   scope :public_visible, conditions: { is_private: false }
+  scope :private, conditions: { is_private: true }
+  scope :switched_to_private, conditions: { is_private: true, :is_private_reason => PRIVACY_REASON_EXPERT}
   scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
   scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
   scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_RESOLVED}"

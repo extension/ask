@@ -1,6 +1,17 @@
 <p class="question_meta_data">
-  <% if !question.is_private %>
-    <span class="tag tag-public"><%= link_to "Public", question_path(question.id) %></span>
+  
+  <% if question.is_private %>
+    <% if question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
+      <% if question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+        <span class="tag tag-private">Private</span>
+      <% end %>
+
+      <% if question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+        <span class="tag tag-public">Switched to Private</span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <span class="tag tag-public">Public</span>
   <% end %>
   
   <% if question.location.present? %>

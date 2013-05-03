@@ -3,7 +3,7 @@
 <script class="code" type="text/javascript">
 $("#county_option").change(function() {
     var county_id = $('select#county_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { list_view: '<%= listview %>', county_id: county_id });
+    jQuery.post("/expert/users/save_listview_filter", {county_id: county_id });
     return false;
 });
 </script>
