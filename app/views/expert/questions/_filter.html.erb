@@ -22,28 +22,28 @@
   $("#location_option").change(function() {
     var location_id = $('select#location_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { location_id: location_id });
-    window.location = '<%= expert_questions_path(:override => true, :status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&location_id=' + location_id;
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&location_id=' + location_id;
     return false;
   });
 
   $("#county_option").change(function() {
     var county_id = $('select#county_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { county_id: county_id });
-    window.location = '<%= expert_questions_path(:override => true,:status => params[:status], :privacy => params[:privacy], :location_id => params[:location_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&county_id=' + county_id;
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :location_id => params[:location_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&county_id=' + county_id;
     return false;
   });
 
   $("#group_option").change(function() {
     var group_id = $('select#group_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { group_id: group_id });
-    window.location = '<%= expert_questions_path(:override => true,:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :location_id => params[:location_id], :tag_id => params[:tag_id]) %>&group_id=' + group_id;
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :location_id => params[:location_id], :tag_id => params[:tag_id]) %>&group_id=' + group_id;
     return false;
   });
 
   $("#tag_option").change(function() {
     var tag_id = $('select#tag_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { tag_id: tag_id });
-    window.location = '<%= expert_questions_path(:override => true,:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :location_id => params[:location_id]) %>&tag_id=' + tag_id;
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :location_id => params[:location_id]) %>&tag_id=' + tag_id;
     return false;
   });
 </script>

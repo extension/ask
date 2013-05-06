@@ -69,8 +69,8 @@
             <div id="collapsed_nav_options" class="nav-collapse collapse">
               <ul class="nav">
                 <li><%= link_to "Dashboard", expert_home_path %></li>
-                <li><%= link_to "Needs an Answer", expert_questions_path(:status => "unanswered") %></li>
-                <li><%= link_to "Answered", expert_questions_path(:status => "answered") %></li>
+                <li><%= build_url_based_on_pref_filters("unanswered") %></li>
+                <li><%= build_url_based_on_pref_filters("answered") %></li>
                 <li><%= link_to "Reports", expert_reports_home_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>

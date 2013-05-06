@@ -23,6 +23,14 @@ module ApplicationHelper
      end
   end
 
+  def build_url_based_on_pref_filters(question_status)
+    if question_status == "unanswered"
+      return (link_to "Needs an Answer", expert_questions_path(:status => "unanswered") + "&" + current_user.filter_preference.setting[:question_filter].to_param)
+    else
+      return (link_to "Answered", expert_questions_path(:status => "answered") + "&" + current_user.filter_preference.setting[:question_filter].to_param)
+    end
+  end
+  
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning] || flash[:success]
     return_string = ''
