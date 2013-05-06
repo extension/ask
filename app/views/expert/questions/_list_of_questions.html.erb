@@ -1,6 +1,6 @@
 <h1 class="filter_string"><%= @filter_string.present? ? @filter_string : "No filters" %></h1>
 
-<% if questions.count > 0 %>
+<% if questions.present? && questions.count > 0 %>
   
   <%= page_entries_info questions %>
   <%= paginate questions, :params => {:controller => 'expert/questions', :action => 'index'} %>
