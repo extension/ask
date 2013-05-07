@@ -3,15 +3,15 @@
   <% if question.is_private %>
     <% if question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
       <% if question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
-        <span class="tag tag-private">Private</span>
+        <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:privacy => "private") %></span>
       <% end %>
 
       <% if question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-        <span class="tag tag-public">Switched to Private</span>
+        <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:privacy => "switched_to_private") %></span>
       <% end %>
     <% end %>
   <% else %>
-    <span class="tag tag-public">Public</span>
+    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:privacy => "public") %></span>
   <% end %>
   
   <% if question.location.present? %>

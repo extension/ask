@@ -17,6 +17,7 @@
 	
   <%= select_tag "tag_option", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_option"} %>
   
+  <span id="clearfilter" class="cursor downplay btn">clear filter</span>
     
   <br class="clearing" />
 </div>
@@ -24,6 +25,14 @@
 
 
 <script class="code" type="text/javascript">
+  
+  $("#clearfilter").click(function () {
+    jQuery.post("/expert/users/save_listview_filter", {});
+    window.location = '<%= expert_questions_path() %>';
+    return false;
+  });
+  
+
   $("#location_option").change(function() {
     var location_id = $('select#location_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { location_id: location_id });

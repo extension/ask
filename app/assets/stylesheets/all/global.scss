@@ -620,9 +620,10 @@ body#expert {
 	.tag-topic a {background:#C2E5EC; color:#1F5983;}
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
 	.tag-public,
-	.tag-public a {background:#468847; color:#fff; padding:.1em .5em;}
+	.tag-public a {background:#468847; color:#fff;}
+	.tag-public a:hover {background:#0A4F05; color:#fff;}
 	.tag-private,
-	.tag-private a {background:#888; color:#fff; padding:.1em .5em;}
+	.tag-private a {background:#888; color:#fff;}
 	
 	
 /*	#tags {border:1px solid lime;}*/
