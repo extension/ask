@@ -6,7 +6,7 @@
   <h1><%= @location.name %></h1>
   <h2>
     <% if @unanswered_questions_count %>
-      <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:override => true, :status => "unanswered", :location_id => @location.id)%>
+      <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :locations => @location.id)%>
     <% else %>
       
     <% end %>

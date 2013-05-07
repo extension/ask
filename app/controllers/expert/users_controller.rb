@@ -118,35 +118,35 @@ class Expert::UsersController < ApplicationController
       pref = FilterPreference.create(:user => user, :setting => {:question_filter => {}})
     end
     
-    if !params[:location_id].nil?
-      if params[:location_id].blank?
+    if !params[:locations].nil?
+      if params[:locations].blank?
         pref.setting[:question_filter].merge!({:locations => nil, :counties => nil})
       else
-        location = Location.find_by_id(params[:location_id])
+        location = Location.find_by_id(params[:locations])
         pref.setting[:question_filter].merge!({:locations => [location.id], :counties => nil})
       end
       pref.save
-    elsif !params[:county_id].nil?
-      if params[:county_id].blank?
+    elsif !params[:counties].nil?
+      if params[:counties].blank?
         pref.setting[:question_filter].merge!({:counties => nil})
       else
-        county = County.find_by_id(params[:county_id])
+        county = County.find_by_id(params[:counties])
         pref.setting[:question_filter].merge!({:counties => [county.id]})
       end
       pref.save
-    elsif !params[:group_id].nil?
-      if params[:group_id].blank?
+    elsif !params[:groups].nil?
+      if params[:groups].blank?
         pref.setting[:question_filter].merge!({:groups => nil})
       else
-        group = Group.find_by_id(params[:group_id])
+        group = Group.find_by_id(params[:groups])
         pref.setting[:question_filter].merge!({:groups => [group.id]})
       end
       pref.save
-    elsif !params[:tag_id].nil?
-      if params[:tag_id].blank?
+    elsif !params[:tags].nil?
+      if params[:tags].blank?
         pref.setting[:question_filter].merge!({:tags => nil})
       else
-        tag = Tag.find_by_id(params[:tag_id])
+        tag = Tag.find_by_id(params[:tags])
         pref.setting[:question_filter].merge!({:tags => [tag.id]})
       end
       pref.save

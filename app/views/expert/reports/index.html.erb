@@ -17,7 +17,7 @@
       <%= select_tag "group_option", options_from_collection_for_select(@my_groups, "id", "name", params[:group_id]), {:prompt => "All groups", :name => "group_option"} %>
       <% select_tag "tag_option", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_option"} %>
       <% if @unanswered_questions_count > 0 && @condition_array.present? %>
-        <h5 class="highlight_unanswered"><span>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_home_unanswered_path(:override => true, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id])%> that match this filter.</span></h5>
+        <h5 class="highlight_unanswered"><span>There are <%= link_to "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :locations => params[:location_id], :counties => params[:county_id], :groups => params[:group_id])%> that match this filter.</span></h5>
       <% end %>
 
     </div>

@@ -109,22 +109,9 @@ class ApplicationController < ActionController::Base
   end
 
   def questions_based_on_pref_filter(filter_pref)
+    
     condition_array = Array.new
-    if filter_pref
-      filter_pref.setting[:question_filter][:locations].present? ? @location_pref = filter_pref.setting[:question_filter][:locations][0].to_i : @location_pref = nil
-      filter_pref.setting[:question_filter][:counties].present? ? @county_pref = filter_pref.setting[:question_filter][:counties][0].to_i : @county_pref = nil
-      filter_pref.setting[:question_filter][:groups].present? ? @group_pref = filter_pref.setting[:question_filter][:groups][0].to_i : @group_pref = nil
-      filter_pref.setting[:question_filter][:tags].present? ? @tag_pref = filter_pref.setting[:question_filter][:tags][0].to_i : @tag_pref = nil 
-    end
-    
     filter_description_array = Array.new
-    
-    if params[:override].present?
-      @location_pref = params[:location_id]
-      @county_pref = params[:county_id]
-      @group_pref = params[:group_id]
-      @tag_pref = params[:tag_id]
-    end
     
     if params[:status].present?
       @status = params[:status]
@@ -137,21 +124,24 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    if @county_pref.present?
-      condition_array << "questions.county_id = #{@county_pref.to_i}"
-      @county = County.find_by_id(@county_pref)
+    if params[:counties].present?
+      @county = County.find_by_id(params[:counties])
+      @county_pref = @county.id
+      condition_array << "questions.county_id = #{@county.id}"
       filter_description_array << "#{@county.name}"
     end
     
-    if @location_pref.present?
-      condition_array << "questions.location_id = #{@location_pref.to_i}"
-      @location = Location.find_by_id(@location_pref)
+    if params[:locations].present?
+      @location = Location.find_by_id(params[:locations])
+      @location_pref = @location.id
+      condition_array << "questions.location_id = #{@location.id}"
       filter_description_array << "#{@location.name}"
     end
     
-    if @group_pref.present?
-      condition_array << "questions.assigned_group_id = #{@group_pref.to_i}"
-      @group = Group.find_by_id(@group_pref)
+    if params[:groups].present?
+      @group = Group.find_by_id(params[:groups])
+      @group_pref = @group.id
+      condition_array << "questions.assigned_group_id = #{@group.id}"
       filter_description_array << "Group: #{@group.name}"
     end
     
@@ -172,10 +162,11 @@ class ApplicationController < ActionController::Base
       q = q.private
     end
     
-    if @tag_pref.present?
-      @tag = Tag.find_by_id(@tag_pref)
+    if params[:tags].present?
+      @tag = Tag.find_by_id(params[:tags])
+      @tag_pref = @tag.id
       filter_description_array << "Tag: #{@tag.name}"
-      q = q.tagged_with(@tag_pref.to_i)
+      q = q.tagged_with(@tag.id)
     end
     
     condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
