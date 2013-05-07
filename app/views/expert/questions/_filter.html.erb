@@ -1,4 +1,5 @@
 <div id="location_filter">
+
   <%= select_tag "status_option", raw('<option value="unanswered">Needs an Answer</option>, <option value="answered">Answered</option>'), {:prompt => "Any Status", :name => "status_option"} %>
   <%= select_tag "privacy_option", raw('<option value="private">Private</option>, <option value="public">Public</option>, <option value="switched_to_private">Switched to Private</option>'), {:prompt => "Any Privacy", :name => "privacy_option"} %>
   <br class="clearing" />
@@ -24,42 +25,42 @@
 
 <script class="code" type="text/javascript">
   $("#location_option").change(function() {
-    var locations = $('select#location_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { locations: locations });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :groups => params[:groups], :tags => params[:tags]) %>&locations=' + locations;
+    var location_id = $('select#location_option :selected').val();
+    jQuery.post("/expert/users/save_listview_filter", { location_id: location_id });
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&location_id=' + location_id;
     return false;
   });
 
   $("#county_option").change(function() {
-    var counties = $('select#county_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { counties: counties });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :locations => params[:locations], :groups => params[:groups], :tags => params[:tags]) %>&counties=' + counties;
+    var county_id = $('select#county_option :selected').val();
+    jQuery.post("/expert/users/save_listview_filter", { county_id: county_id });
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :location_id => params[:location_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&county_id=' + county_id;
     return false;
   });
 
   $("#group_option").change(function() {
-    var groups = $('select#group_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { groups: groups });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :counties => params[:counties], :locations => params[:locations], :tags => params[:tags]) %>&groups=' + groups;
+    var group_id = $('select#group_option :selected').val();
+    jQuery.post("/expert/users/save_listview_filter", { group_id: group_id });
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :locations => params[:locations], :tag_id => params[:tag_id]) %>&group_id=' + group_id;
     return false;
   });
 
   $("#tag_option").change(function() {
-    var tags = $('select#tag_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { tags: tags });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :counties => params[:counties], :groups => params[:groups], :locations => params[:locations]) %>&tags=' + tags;
+    var tag_id = $('select#tag_option :selected').val();
+    jQuery.post("/expert/users/save_listview_filter", { tag_id: tag_id });
+    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :location_id => params[:location_id]) %>&tag_id=' + tag_id;
     return false;
   });
   $("#status_option").change(function() {
     var status = $('select#status_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { status: status });
-    window.location = '<%= expert_questions_path(:locations => params[:locations], :privacy => params[:privacy], :groups => params[:groups], :tags => params[:tags]) %>&status=' + status;
+    window.location = '<%= expert_questions_path(:location_id => params[:location_id], :county_id => params[:county_id], :privacy => params[:privacy], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&status=' + status;
     return false;
   });
   $("#privacy_option").change(function() {
     var privacy = $('select#privacy_option :selected').val();
     jQuery.post("/expert/users/save_listview_filter", { privacy: privacy });
-    window.location = '<%= expert_questions_path(:locations => params[:locations], :status => params[:status], :groups => params[:groups], :tags => params[:tags]) %>&privacy=' + privacy;
+    window.location = '<%= expert_questions_path(:location_id => params[:location_id], :county_id => params[:county_id], :status => params[:status], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&privacy=' + privacy;
     return false;
   });
 </script>

@@ -124,22 +124,22 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    if params[:counties].present?
-      @county = County.find_by_id(params[:counties])
+    if params[:county_id].present?
+      @county = County.find_by_id(params[:county_id])
       @county_pref = @county.id
       condition_array << "questions.county_id = #{@county.id}"
       filter_description_array << "#{@county.name}"
     end
     
-    if params[:locations].present?
-      @location = Location.find_by_id(params[:locations])
+    if params[:location_id].present?
+      @location = Location.find_by_id(params[:location_id])
       @location_pref = @location.id
       condition_array << "questions.location_id = #{@location.id}"
       filter_description_array << "#{@location.name}"
     end
     
-    if params[:groups].present?
-      @group = Group.find_by_id(params[:groups])
+    if params[:group_id].present?
+      @group = Group.find_by_id(params[:group_id])
       @group_pref = @group.id
       condition_array << "questions.assigned_group_id = #{@group.id}"
       filter_description_array << "Group: #{@group.name}"
@@ -162,8 +162,8 @@ class ApplicationController < ActionController::Base
       q = q.private
     end
     
-    if params[:tags].present?
-      @tag = Tag.find_by_id(params[:tags])
+    if params[:tag_id].present?
+      @tag = Tag.find_by_id(params[:tag_id])
       @tag_pref = @tag.id
       filter_description_array << "Tag: #{@tag.name}"
       q = q.tagged_with(@tag.id)

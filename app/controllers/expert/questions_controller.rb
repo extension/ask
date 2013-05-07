@@ -14,7 +14,7 @@ class Expert::QuestionsController < ApplicationController
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
     @recent_questions = questions_based_on_pref_filter(current_user.filter_preference)
-
+    @status_options = [{:name=>"Needs an Answer", :id=>"unanswered"}, {:name=>"Answered", :id=>"answered"}]
   end
   
   def show
