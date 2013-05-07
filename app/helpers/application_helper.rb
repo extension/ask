@@ -25,9 +25,9 @@ module ApplicationHelper
 
   def build_url_based_on_pref_filters(question_status)
     if question_status == "unanswered"
-      return (link_to "Needs an Answer", expert_questions_path(:status => "unanswered") + "&" + current_user.filter_preference.setting[:question_filter].to_param)
+      return (link_to "Needs an Answer", expert_questions_path(:status => "unanswered") + get_question_filter_params(current_user.filter_preference.setting[:question_filter]))
     else
-      return (link_to "Answered", expert_questions_path(:status => "answered") + "&" + current_user.filter_preference.setting[:question_filter].to_param)
+      return (link_to "Answered", expert_questions_path(:status => "answered") + get_question_filter_params(current_user.filter_preference.setting[:question_filter]))
     end
   end
   
@@ -120,5 +120,30 @@ module ApplicationHelper
 
     return return_string
   end
-
+  
+  private 
+  
+  def get_question_filter_params(question_filter_settings)
+    return_params = ''
+    
+    question_filter_settings.each do |key, value|
+      case key
+        when :groups
+          return_params << "&group_id=#{value.first.to_i}" if value.present?
+        when :locations
+          return_params << "&location_id=#{value.first.to_i}" if value.present? 
+        when :counties
+          return_params << "&county_id=#{value.first.to_i}" if value.present?
+        when :tags
+          return_params << "&tag_id=#{value.first.to_i}" if value.present?
+        when :privacy
+          return_params << "&privacy=#{value.first}" if value.present?
+        when :status
+          return_params << "&status=#{value.first}" if value.present?
+      end
+    end
+    
+    return return_params
+  end
+  
 end
