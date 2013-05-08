@@ -1,7 +1,6 @@
 <div id="location_filter">
-
-  <%= select_tag "status_option", raw('<option value="unanswered">Needs an Answer</option>, <option value="answered">Answered</option>'), {:prompt => "Any Status", :name => "status_option"} %>
-  <%= select_tag "privacy_option", raw('<option value="private">Private</option>, <option value="public">Public</option>, <option value="switched_to_private">Switched to Private</option>'), {:prompt => "Any Privacy", :name => "privacy_option"} %>
+  <%= select_tag "status_option", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status_option"} %>
+  <%= select_tag "privacy_option", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "status_option"} %>
   <br class="clearing" />
   <div id="location_picker">
 	<%= select_tag "location_option", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_option"} %>
