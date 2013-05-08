@@ -24,10 +24,18 @@ module ApplicationHelper
   end
 
   def build_url_based_on_pref_filters(question_status)
-    if question_status == "unanswered"
-      return (link_to "Needs an Answer", expert_questions_path({status: "unanswered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+    if current_user.filter_preference
+      if question_status == "unanswered"
+        return (link_to "Needs an Answer", expert_questions_path({status: "unanswered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+      else
+        return (link_to "Answered", expert_questions_path({status: "answered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+      end
     else
-      return (link_to "Answered", expert_questions_path({status: "answered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+      if question_status == "unanswered"
+        return (link_to "Needs an Answer", expert_questions_path({status: "unanswered"}))
+      else
+        return (link_to "Answered", expert_questions_path({status: "answered"}))
+      end
     end
   end
   
