@@ -142,6 +142,20 @@ class Expert::UsersController < ApplicationController
         pref.setting[:question_filter].merge!({:groups => [group.id]})
       end
       pref.save
+    elsif !params[:status].nil?
+      if params[:status].blank?
+        pref.setting[:question_filter].merge!({:status => nil})
+      else
+        pref.setting[:question_filter].merge!({:status => [params[:status]]})
+      end
+      pref.save
+    elsif !params[:privacy].nil?
+      if params[:privacy].blank?
+        pref.setting[:question_filter].merge!({:privacy => nil})
+      else
+        pref.setting[:question_filter].merge!({:privacy => [params[:privacy]]})
+      end
+      pref.save
     elsif !params[:tag_id].nil?
       if params[:tag_id].blank?
         pref.setting[:question_filter].merge!({:tags => nil})

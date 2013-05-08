@@ -1,9 +1,9 @@
 <div id="location_filter">
-  <%= select_tag "status_option", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status_option"} %>
-  <%= select_tag "privacy_option", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "status_option"} %>
+  <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status"} %>
+  <%= select_tag "privacy", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "privacy"} %>
   <br class="clearing" />
   <div id="location_picker">
-	<%= select_tag "location_option", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_option"} %>
+	<%= select_tag "location_id", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_id"} %>
   </div>
   
   <div id="county_list">
@@ -12,9 +12,9 @@
     <% end %>
   </div>
 
-  <%= select_tag "group_option", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_option"} %>
+  <%= select_tag "group_id", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_id"} %>
 	
-  <%= select_tag "tag_option", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_option"} %>
+  <%= select_tag "tag_id", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_id"} %>
   
   <span id="clearfilter" class="cursor downplay btn">clear filter</span>
     
@@ -31,44 +31,30 @@
     return false;
   });
   
-
-  $("#location_option").change(function() {
-    var location_id = $('select#location_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { location_id: location_id });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&location_id=' + location_id;
-    return false;
+  var loadtimeParameters = {
+    <% request.GET.each do |key,value| %>
+      "<%= key %>": "<%= value %>",
+    <% end %>
+  };
+  
+  $("select").change(function() {
+    var option_name = $(this).attr("name");
+    var option_value = $(this).children(":selected").val();
+    loadtimeParameters[option_name] = option_value;
+    newParams = $.param(loadtimeParameters);
+    var data = {};
+    data[option_name] = option_value;
+    $.ajax({
+         url: "/expert/users/save_listview_filter",
+         type: "POST",
+         cache: false,
+         data: data
+     })
+     .done(function() {
+        window.location = '<%= expert_questions_path() %>' + "?" + newParams;
+ 			  return false;
+     });
   });
 
-  $("#county_option").change(function() {
-    var county_id = $('select#county_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { county_id: county_id });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :location_id => params[:location_id], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&county_id=' + county_id;
-    return false;
-  });
-
-  $("#group_option").change(function() {
-    var group_id = $('select#group_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { group_id: group_id });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :locations => params[:locations], :tag_id => params[:tag_id]) %>&group_id=' + group_id;
-    return false;
-  });
-
-  $("#tag_option").change(function() {
-    var tag_id = $('select#tag_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { tag_id: tag_id });
-    window.location = '<%= expert_questions_path(:status => params[:status], :privacy => params[:privacy], :county_id => params[:county_id], :group_id => params[:group_id], :location_id => params[:location_id]) %>&tag_id=' + tag_id;
-    return false;
-  });
-  $("#status_option").change(function() {
-    var status = $('select#status_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { status: status });
-    window.location = '<%= expert_questions_path(:location_id => params[:location_id], :county_id => params[:county_id], :privacy => params[:privacy], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&status=' + status;
-    return false;
-  });
-  $("#privacy_option").change(function() {
-    var privacy = $('select#privacy_option :selected').val();
-    jQuery.post("/expert/users/save_listview_filter", { privacy: privacy });
-    window.location = '<%= expert_questions_path(:location_id => params[:location_id], :county_id => params[:county_id], :status => params[:status], :group_id => params[:group_id], :tag_id => params[:tag_id]) %>&privacy=' + privacy;
-    return false;
-  });
+ 
 </script>
