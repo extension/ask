@@ -108,3 +108,5 @@ div.rejected {padding:1em; @include rounded10; margin-bottom:2em; background:#F5
 #show_question_wrapper {padding:1em;}
 #show_question_header {margin-bottom:2.5em;}
 .filter_string {margin:.5em 0;}
+#helper {border:2px solid #ccc;}
+#helper span {background:yellow; padding:.1em .4em; color:#666;}

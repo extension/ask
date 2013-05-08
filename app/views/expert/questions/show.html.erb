@@ -149,8 +149,8 @@
 	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
 	
 	<% else %>
-	  <aside class="dontprintme" style="display:none;">
-      <p><strong>Question actions are now under the question.</strong></p>
+	  <aside class="dontprintme" id="helper">
+      <p><span>NEW</span> "<strong>Send an Answer</strong>" is now at the bottom of the question. The "<strong>Close</strong>" and "<strong>Reject</strong>" options are above the question.</p>
       </aside>
   <% end %>
   
