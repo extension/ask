@@ -15,7 +15,7 @@
             
   <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'wysiwyg'} %></p>
             
-  <p class="save_it"><%= submit_tag 'Send', :class => "btn btn-primary" %></p>
+  <p class="save_it"><%= submit_tag 'Send Response', :class => "btn btn-primary btn-large" %></p>
             
   <p>All responses include <a id="disclaimer_switch" class="cursor">this disclaimer</a></p>
   <p id="disclaimer" style="display:none;"><%= Question::EXPERT_DISCLAIMER %></p>
