@@ -141,18 +141,9 @@
 
 
 <div id="secondary" class="span4">
-
-
-  
-	<% if @question.status_state == Question::STATUS_NO_ANSWER %>
-	<% elsif @question.status_state == Question::STATUS_CLOSED %>
-	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
-	
-	<% else %>
 	  <aside class="dontprintme" id="helper">
       <p><span>NEW</span> "<strong>Send an Answer</strong>" is now at the bottom of the question. The "<strong>Close</strong>" and "<strong>Reject</strong>" options are above the question.</p>
-      </aside>
-  <% end %>
+    </aside>
   
   
   <div id="question_assignment">
