@@ -26,7 +26,7 @@
    @question.status_state != Question::STATUS_NO_ANSWER &&
   @question.status_state != Question::STATUS_REJECTED && 
   @question.status_state != Question::STATUS_CLOSED %>
- | <%= link_to "Close", close_out_expert_question_path(@question.id) %> | <%= link_to "Reject", reject_expert_question_path(@question.id) %>
+ | <%= link_to raw("Close&hellip;"), close_out_expert_question_path(@question.id) %> | <%= link_to raw("Reject&hellip;"), reject_expert_question_path(@question.id) %>
  <% end %>
  
 </p>
