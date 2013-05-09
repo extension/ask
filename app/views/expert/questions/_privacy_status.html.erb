@@ -1,4 +1,4 @@
-<p id="aaeid">Question #<%= @question.id %> - <a id="notify_me_link" class="cursor"><small>watch</small></a></p>
+<p id="aaeid">Question #<%= @question.id %> - <small><%= link_to "Public URL", question_path(@question.id) %></small> | <small><%= link_to "Revisions", history_expert_question_path(@question.id) %></small> | <small><a id="notify_me_link" class="cursor">Watch</a></small></p>
 
 <div id="notificationprefs" style="display:none;">
   <%= render :partial => 'activity_notification' %>
@@ -13,14 +13,14 @@
       <% end %>
 
       <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-        <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:privacy => "switched_to_private") %></span> <span class="cursor make_public_link">edit</span> |
+        <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:privacy => "switched_to_private") %></span> <span class="cursor make_public_link">change</span> |
       <% end %>
     <% end %>
   <% else %>
-    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:privacy => "public") %></span> <span class="cursor make_private_link">edit</span> |
+    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:privacy => "public") %></span> <span class="cursor make_private_link">change</span> |
   <% end %>
 
- <%= link_to "Public URL", question_path(@question.id) %> | <%= link_to "Edit", edit_expert_question_path(@question.id) %> | <%= link_to "Revisions", history_expert_question_path(@question.id) %> 
+ <%= link_to "Edit", edit_expert_question_path(@question.id) %>  | <%= link_to "Reassign", reassign_expert_question_path(@question.id) %>
  
  <% if  @question.status_state != Question::STATUS_RESOLVED && 
    @question.status_state != Question::STATUS_NO_ANSWER &&
