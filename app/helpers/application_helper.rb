@@ -147,7 +147,7 @@ module ApplicationHelper
         when :privacy
           return_params.merge!({privacy: value.first}) if value.present?
         when :status
-          return_params.merge!({status: value.first}) if value.present?
+          # return_params.merge!({status: value.first}) if value.present?
       end
     end
     
