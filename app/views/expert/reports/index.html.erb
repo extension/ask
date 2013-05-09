@@ -75,7 +75,6 @@
         </p>
 
         <p>
-        <%= @response_count %> Answers to 
         <% if @questions_answered_count > 0 %>
           <% if @date.class == DateTime || @date.class == Date %>
             <%= link_to(number_with_delimiter(@questions_answered_count, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) %>
@@ -85,7 +84,7 @@
         <% else %>
             0
         <% end %>
-        Questions by <%= @responder_count %> Experts
+        Questions Answered by <%= @responder_count %> Experts
         </p>
        
         <% if defined?(@location) && @location.present? && !defined?(@county) %>
@@ -93,7 +92,7 @@
           <h2>Distribution of Activity for <%= @location.abbreviation %> Questions</h2>
           <% if @responders_in_state_count > 0 %>  
           <p>
-          <%= @responders_in_state_count %> In-State Experts gave  <%= @responses_by_in_state_count %> Answers to 
+          <%= @responders_in_state_count %> In-State Experts Answered 
           <% if @resolved_by_state_experts > 0 %>
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) %>
@@ -109,7 +108,7 @@
           <% end %>
           <% if @responders_outside_state_count > 0 %>
           <p>
-          <%= @responders_outside_state_count %> Out-of-State Experts gave <%= @responses_by_outside_state_count %> Answers to 
+          <%= @responders_outside_state_count %> Out-of-State Experts Answered 
           <% if @resolved_by_outside_state_experts > 0 %> 
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) %>     
@@ -136,7 +135,7 @@
       <% if defined?(@location) && @location.present? && !defined?(@county) %>
       <% if @responders_by_state_experts_outside_location_count %>
          <p>
-          <%= @responders_by_state_experts_outside_location_count %> In-State Experts gave <%= @responses_by_state_experts_outside_location_count %> Answers to 
+          <%= @responders_by_state_experts_outside_location_count %> In-State Experts Answered 
           <% if @resolved_by_state_experts_outside_location > 0 %> 
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_state_experts_outside_location, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_questions_by_state_experts")) %>     
