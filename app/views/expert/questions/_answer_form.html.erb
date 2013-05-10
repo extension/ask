@@ -23,16 +23,29 @@
 
 
 <script class="code" type="text/javascript">
-  $("#canned_response").click(function () {
+  
+  $(document).ready(function(){
+    <% if params[:canned_response] == "true" %>
+      insertCannedResponse();
+    <% end %>
+  });
+  
+  function insertCannedResponse() {
     $("#current_response").val("<%= Question::DECLINE_ANSWER %>");
     var wysihtml5EditorForResponse = $("#current_response").data("wysihtml5").editor;
     wysihtml5EditorForResponse.setValue('<%= Question::DECLINE_ANSWER %>');
+    
     $('<input>').attr({
         type: 'hidden',
         value: '<%= Question::STATUS_NO_ANSWER %>',
         name: 'status_state'
     }).appendTo('#response_form');
+  }
+
+  $("#canned_response").click(function () {
+    insertCannedResponse();
   });
+  
   $("#disclaimer_switch").click(function () {
     $("#disclaimer").toggle();
   });

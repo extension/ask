@@ -6,7 +6,7 @@
 
 <div class="bekind">
   <h3>Please don't close questions that can be answered.</h3>
-  <p>If no one can answer this question within Ask an Expert, you could use the canned response to suggest their local office: <%= link_to "Canned response", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn" %></p>
+  <p>If no one can answer this question within Ask an Expert, you could use the <%= link_to "canned response answer option", expert_question_path(@question, :anchor => "answer_form", :canned_response => true) %> to suggest contacting their local office.</p>
 </div>
 
 <h4><strong>Note:</strong> No information is sent to the question submitter when a question is closed.</h4>
