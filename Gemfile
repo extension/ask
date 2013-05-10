@@ -122,9 +122,6 @@ gem "thor"
 # anti-spam test
 gem 'rakismet'
 
-# scout performance monitoring
-gem 'scout_rails'
-
 # memcached
 gem 'dalli'
 
