@@ -162,7 +162,8 @@ class Expert::QuestionsController < ApplicationController
       QuestionEvent.log_response_edit_by_expert(@question, current_user, @response)
       redirect_to expert_question_url(@question)
     else
-      flash.now[:error] = "Error saving the response, make sure the response body is complete."
+      flash[:error] = "Error saving the response, make sure the response body is complete."
+      redirect_to edit_response_expert_question_url(:id => @question.id, :response_id => @response.id)
     end
   end
   
