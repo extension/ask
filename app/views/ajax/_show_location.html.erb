@@ -1,6 +1,6 @@
 <p class="edit_location btn right">edit</p>
 
-<h3><%= location.name %></h3>
+<h3><span class="tag tag-geography"><%= location.name %></span> <span id="location_<%= location.id %>" class="removestate btn">X</span></h3>
   
 <div class="ux_actions"></div>
   
@@ -10,7 +10,9 @@
     <% if @object.expertise_counties.where("location_id = ?", location.id).size > 0 %>
       <ul>
         <% @object.expertise_counties.where("location_id = ?", location.id).each do |c| %>
-          <li><%= c.name %></li>
+          <% if c.name != "Entire state" %>
+            <li><span class="tag tag-geography"><%= c.name %></span> <span id="county_<%= c.id %>" class="removecounty btn">X</span></li>
+          <% end %>
         <% end %>
       </ul>
 
