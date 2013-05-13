@@ -1,0 +1,28 @@
+<canvas id="myCanvas" width="450" height="40"></canvas>
+    <script>
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+      
+      var graph_width = 400;
+      var out_percent = <%= (@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f) %>;
+      var out_width = 400 * out_percent;
+      
+      context.beginPath();
+      context.rect(0, 0, graph_width, 30);
+      context.fillStyle = 'rgb(79,117,205)';
+      context.fill();
+      
+      context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
+      context.fillStyle = 'white';
+      context.fillText('<%= sprintf('%.0f',(@resolved_by_state_experts.to_f / @questions_answered_count.to_f)  * 100) %>%', 10, 22);
+      
+      context.beginPath();
+      context.rect(graph_width - out_width, 0, out_width, 30);
+      context.fillStyle = 'rgb(188,227,119)';
+      context.fill();
+      
+      context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
+      context.fillStyle = 'rgb(10,63,63)';
+      context.fillText('<%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f)  * 100) %>%', 350, 22);
+      
+    </script>
