@@ -24,7 +24,9 @@ body {
   .btn,
   #fixed_fixer,
   #aaeid a,
-  .badge {
+  .badge,
+  .extension_global_nav,
+  #location_filter {
     display: none;
   }
 	
@@ -51,4 +53,19 @@ body {
   	text-decoration: underline;
   }
 }
+body#expert {background:#fff;}
+#report_summary {font-family:Arial, Helvetica, sans-serif !important;}
+#report_summary h1 {font-family:Arial, Helvetica, sans-serif;}
+#report_summary h2 {font-family:Arial, Helvetica, sans-serif;}
+#report_summary p {font-size:10pt; line-height:12pt !important; margin:0 0 6pt !important;}
+#data_summary, #expert_summary {border:0 !important; margin:0 0 20pt !important;}
+.report_date_range {border-bottom:1px solid #888; font-size: 14pt;}
 
+#data_summary h2, #expert_summary h2 {margin:0 0 6pt !important;}
+#report_summary #paginator {margin-top:24pt !important;}
+#report_summary .pagination {display:none;}
+
+#report_summary table td {vertical-align:middle; font-size:10pt; line-height:12pt !important;}
+#report_summary td .bignumber {font-size:10pt; text-align:center;}
+#report_summary table {border:0;}
+.center {text-align:center !important;}

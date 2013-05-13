@@ -22,14 +22,14 @@
         <%= member.location.abbreviation %>
       <% end %>
     </td>
-    <td>
+    <td class="center">
       <% if @date.class == DateTime || @date.class == Date %>
         <span class="bignumber"><%= member.resolved_count > 0 ? expert_question_list_link(member.resolved_count, {id: member.id, filter: 'answered', year_month: @year_month}) : "0"%></span>
       <% else %>
         <span class="bignumber"><%= member.resolved_count > 0 ? expert_question_list_link(member.resolved_count, {id: member.id, filter: 'answered', year: @year_month}) : "0"%></span>
       <% end %>
     </td>
-    <td>
+    <td class="center">
       <% if @date.class == DateTime || @date.class == Date %>
         <% member_assigned_count = member.assigned_count_by_year_month[@year_month] %>
         <span class="bignumber">
@@ -40,7 +40,7 @@
         <%= member_assigned_count ? expert_question_list_link(member_assigned_count, {id: member.id, filter: 'assigned', year: @year_month}) : 0%></span> 
       <% end %>
     </td>
-    <td>
+    <td class="center">
       <% if @date.class == DateTime || @date.class == Date %>
         <% member_touched_count = member.touched_count_by_year_month[@year_month] %>
         <span class="bignumber">

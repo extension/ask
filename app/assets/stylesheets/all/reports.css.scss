@@ -14,9 +14,13 @@
 #data_summary p, #expert_summary p {font-size:1.5em;}
 #expert_summary p.downplay {font-size:1.2em !important;}
 
-#dashboard .state_ratio .handling_rate_graph {display:block;padding:0;border:0;width:400px; position:relative; background:#BCE377; color:#083F3F; margin-bottom:1.5em;}
+#dashboard .state_ratio .handling_rate_graph {display:block;padding:0;border:0;width:400px; position:relative; background:#BCE377; color:#083F3F; margin-bottom:0;}
 #dashboard .state_ratio .handling_rate_graph .graph {display:block; background:#4F76CD; height:30px; line-height:30px; padding-left:0; overflow:hidden;}
 .out_of_state {position:absolute; top:0; right:5px; line-height:30px;}
 .in_state_label {padding-left:10px; color:#F0F5FF;}
 .in_state {background:#4F76CD; color:#F0F5FF; padding: .05em .4em;}
 .out_state {background:#BCE377; color:#083F3F; padding: .05em .4em;}
+
+
+#dashboard .state_ratio {margin-bottom:10px;}
+#dashboard .state_ratio_label {margin-bottom:2em; font-size:1.2em;}

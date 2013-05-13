@@ -1,7 +1,7 @@
 <div id="dashboard">
   <div class="span12">
     
-    <p><%= link_to "Reports Home", expert_reports_home_path() %></p>
+    <p class="dontprintme"><%= link_to "Reports Home", expert_reports_home_path() %></p>
     
     <div id="location_filter">
       <div id="location_picker">
@@ -29,9 +29,9 @@
       <h1><%= @condition_array.present? ? "Summary Report for #{@condition_array}" : "Summary Report - All Locations and Groups" %></h1>
       
       <% if @date.class == DateTime || @date.class == Date %>
-        <h2><%= @date.strftime("%B, %Y") %></h2>
+        <h2 class="report_date_range"><%= @date.strftime("%B, %Y") %></h2>
         
-        <p>
+        <p class="dontprintme">
           <%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
           <% if @following_year_month %>
   	      |  <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
@@ -44,9 +44,9 @@
         </p>
         
       <% elsif @date.class == String %>
-        <h2><%= @date %></h2>
+        <h2 class="report_date_range"><%= @date %></h2>
         
-        <p>
+        <p class="dontprintme">
           <%= link_to "Current month", expert_reports_home_path(:year_month => (DateTime.now).strftime('%Y-%m'), :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
   	      <span class="pull-right">
   	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
@@ -88,8 +88,9 @@
         </p>
        
         <% if defined?(@location) && @location.present? && !defined?(@county) %>
+        <% if @questions_asked_count > 0 || @questions_answered_count > 0 %>
           <br />
-          <h2>Distribution of Activity for <%= @location.abbreviation %> Questions</h2>
+          <h2>In-State vs Out-of-State Answering</h2>
           
           
           <p class="state_ratio">
@@ -98,6 +99,8 @@
               </span><span class="out_of_state"><%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f)  * 100) %><small>%</small></span>
             </span>
           </p>
+          <p class="state_ratio_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / @questions_answered_count.to_f)  * 100) %><small>%</small> of <%= @location.abbreviation %> questions were answered in-state. <%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f)  * 100) %><small>%</small> were answered out-of-state.</p>
+          
           
           <% if @responders_in_state_count > 0 %>  
           <p>
@@ -132,6 +135,7 @@
             <p>No Out-of-State Expert Activity</p>
           <% end %>
        
+        <% end %>
         <% end %>
       </div>
       
