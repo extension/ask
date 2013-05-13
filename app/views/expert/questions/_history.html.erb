@@ -14,8 +14,8 @@
 </div>
 
 <ul>
-<% if @original_group.present? %>
-  <li>Submitted to the <strong><%= link_to @original_group.name, expert_group_path(@original_group.id) %></strong> Group</li>
+<% if @question.original_group.present? %>
+  <li>Submitted to the <strong><%= link_to @question.original_group.name, expert_group_path(@question.original_group.id) %></strong> Group</li>
 <% end %>
 
 <% if @question.question_events.size > 0 %>

@@ -44,6 +44,8 @@ class QuestionEvent < ActiveRecord::Base
   CHANGED_LOCATION = 17
   EXPERT_EDIT_QUESTION = 18
   EXPERT_EDIT_RESPONSE = 19
+  CHANGED_TO_PUBLIC = 20
+  CHANGED_TO_PRIVATE = 21
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -61,7 +63,9 @@ class QuestionEvent < ActiveRecord::Base
                             CHANGED_GROUP => 'group changed',
                             CHANGED_LOCATION => 'location changed',
                             EXPERT_EDIT_QUESTION => 'expert edit of question',
-                            EXPERT_EDIT_RESPONSE => 'expert edit of response'
+                            EXPERT_EDIT_RESPONSE => 'expert edit of response',
+                            CHANGED_TO_PUBLIC => 'changed to public by',
+                            CHANGED_TO_PRIVATE => 'changed to private by'
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
@@ -154,6 +158,20 @@ class QuestionEvent < ActiveRecord::Base
       :initiated_by_id => User.system_user_id,
       :event_state => PUBLIC_RESPONSE,
       :submitter_id => submitter_id})  
+  end
+  
+  def self.log_make_public(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => CHANGED_TO_PUBLIC
+    })
+  end
+  
+  def self.log_make_private(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => CHANGED_TO_PRIVATE
+    })
   end
   
   def self.log_question_edit_by_expert(question, initiated_by)
