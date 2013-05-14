@@ -5,6 +5,7 @@
 # see LICENSE file
 
 class AjaxController < ApplicationController
+  include ActionView::Helpers::NumberHelper
   def tags
     if params[:term]
       search_term = params[:term]
@@ -15,7 +16,7 @@ class AjaxController < ApplicationController
     list = []
     tag_count_description = "not used yet"
     tags.each do |t|
-      list <<  Hash[ id: t.id, label: t.name, name: t.name, tag_count: t.tag_count] if t.name != search_term
+      list <<  Hash[ id: t.id, label: t.name, name: t.name, tag_count: "#{number_with_delimiter(t.tag_count, :delimiter => ',')}"] if t.name != search_term
       if t.name == search_term
         tag_count_description = t.tag_count
       end
