@@ -274,13 +274,18 @@ class Expert::QuestionsController < ApplicationController
     @question.is_private = true
     @question.is_private_reason = Question::PRIVACY_REASON_EXPERT
     @question.save
+    QuestionEvent.log_make_private(@question, current_user)
   end
   
   def make_public
     @question = Question.find_by_id(params[:id])
-    @question.is_private = false
-    @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
-    @question.save
+    # make sure we're not dealing with a rejected question or a question that was marked private by the question submitter
+    if @question.is_private && @question.is_private_reason != Question::PRIVACY_REASON_REJECTED && @question.is_private_reason == Question::PRIVACY_REASON_EXPERT
+      @question.is_private = false
+      @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
+      @question.save
+      QuestionEvent.log_make_public(@question, current_user)
+    end
   end
   
   def assign
