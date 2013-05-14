@@ -63,7 +63,12 @@
       if (e.keyCode === 13) {
         add_tag(this.value);
       }
-    });
+    }).data( "autocomplete" )._renderItem = function( ul, item ) {
+        return $( "<li></li>" )
+        .data( "item.autocomplete", item )
+        .append( "<a>"+ item.label + " <strong>(" + item.tag_count + ")</strong></a>" )
+        .appendTo( ul );
+      };
     });
     
     // remove tags

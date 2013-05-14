@@ -13,10 +13,15 @@ class AjaxController < ApplicationController
       tags = Tag.used_at_least_once.order('created_at DESC').limit(12)
     end
     list = []
+    tag_count_description = "not used yet"
     tags.each do |t|
-      list <<  Hash[ id: t.id, label: t.name, name: t.name] if t.name != search_term
+      list <<  Hash[ id: t.id, label: t.name, name: t.name, tag_count: t.tag_count] if t.name != search_term
+      if t.name == search_term
+        tag_count_description = t.tag_count
+      end
     end
-    list.unshift(Hash[id: nil, label: search_term, name: search_term])
+
+    list.unshift(Hash[id: nil, label: search_term, name: search_term, tag_count: tag_count_description])
     render json: list
   end
 
