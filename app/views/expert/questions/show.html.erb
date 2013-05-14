@@ -150,7 +150,7 @@
     <%= render :partial => 'question_assignment' %>
   </div>
   
-  <% if @question.submitter.submitted_questions.length > 1 %>
+  <% if @question.submitter.present? && @question.submitter.submitted_questions.length > 1 %>
   <aside class="nobg dontprintme related_questions">
     <h4>Other Questions From This Person</h4>
     <% @question.submitter.submitted_questions.each do |question,score| %>

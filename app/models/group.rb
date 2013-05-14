@@ -52,6 +52,8 @@ class Group < ActiveRecord::Base
   
   scope :route_outside_locations, where(assignment_outside_locations: true)
   
+  scope :order_by_assignee_count, joins(:assignees).group('groups.id').order('COUNT(users.id) DESC')
+  
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
