@@ -611,19 +611,19 @@ class Expert::QuestionsController < ApplicationController
       # populate experts
       if @question.county.present? && !@question.county.is_all_county?
         @experts.concat(User.active.tagged_with_any(question_tags_array).with_expertise_county(@question.county_id))
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).with_expertise_county(@question.county_id))
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).with_expertise_county(@question.county_id).order_by_assignee_count)
       end
 
       if @question.location.present?
         @experts.concat(User.active.tagged_with_any(question_tags_array).with_expertise_location_all_counties(@question.location_id)) if @experts.count < experts_to_display
         @experts.concat(User.active.tagged_with_any(question_tags_array).route_from_anywhere.with_expertise_location(@question.location_id)) if @experts.count < experts_to_display
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).with_expertise_location_all_counties(@question.location_id)) if @groups.count < groups_to_display
-        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).route_outside_locations.with_expertise_location(@question.location_id)) if @groups.count < groups_to_display
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).with_expertise_location_all_counties(@question.location_id).order_by_assignee_count) if @groups.count < groups_to_display
+        @groups.concat(Group.assignable.tagged_with_any(question_tags_array).route_outside_locations.with_expertise_location(@question.location_id).order_by_assignee_count) if @groups.count < groups_to_display
       end
       
       # after location, tag matches just include the experts with the best tag matches as next in the list of related experts
       @experts.concat(User.active.tagged_with_any(question_tags_array).route_from_anywhere) if @experts.count < experts_to_display
-      @groups.concat(Group.assignable.tagged_with_any(question_tags_array).route_outside_locations) if @groups.count < groups_to_display
+      @groups.concat(Group.assignable.tagged_with_any(question_tags_array).route_outside_locations.order_by_assignee_count) if @groups.count < groups_to_display
     end
     
     # we have the tag and location best matches above, now further down the list, we'll list just the best locational matches
@@ -631,9 +631,9 @@ class Expert::QuestionsController < ApplicationController
     @experts.concat(User.active.with_expertise_location_all_counties(@question.location_id)) if @question.location_id.present? && @experts.count < experts_to_display
     @experts.concat(User.active.route_from_anywhere.with_expertise_location(@question.location_id)) if @question.location_id.present? && @experts.count < experts_to_display
     
-    @groups.concat(Group.assignable.with_expertise_county(@question.county_id)) if @question.county.present? && !@question.county.is_all_county? && @groups.count < groups_to_display
-    @groups.concat(Group.assignable.with_expertise_location_all_counties(@question.location_id)) if @question.location_id.present? && @groups.count < groups_to_display
-    @groups.concat(Group.assignable.route_outside_locations.with_expertise_location(@question.location_id)) if @question.location_id.present? && @groups.count < groups_to_display
+    @groups.concat(Group.assignable.with_expertise_county(@question.county_id).order_by_assignee_count) if @question.county.present? && !@question.county.is_all_county? && @groups.count < groups_to_display
+    @groups.concat(Group.assignable.with_expertise_location_all_counties(@question.location_id).order_by_assignee_count) if @question.location_id.present? && @groups.count < groups_to_display
+    @groups.concat(Group.assignable.route_outside_locations.with_expertise_location(@question.location_id).order_by_assignee_count) if @question.location_id.present? && @groups.count < groups_to_display
     
     @experts.uniq!
     @groups.uniq!
