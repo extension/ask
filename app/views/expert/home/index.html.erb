@@ -81,6 +81,7 @@
             <h4>
               <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span> 
               <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id)%></strong>
+              <span>- <%= link_to "activity report", expert_reports_home_path(:location_id => l.id) %></span>
             </h4>
             <br class="clearing" />
           </div>
