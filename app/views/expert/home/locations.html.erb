@@ -4,14 +4,14 @@
   
   <div class="map"></div>
   <h1><%= @location.name %></h1>
-  <h2>
+  <h2><%= link_to "View Summary Report", expert_reports_home_path(:location_id => @location.id) %></h2>
+  <h3>
     <% if @unanswered_questions_count %>
       <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :location_id => @location.id)%>
     <% else %>
       
     <% end %>
-  </h2>
-  <p><%= link_to "Monthly Summary", expert_reports_home_path(:location_id => @location.id) %></p>
+  </h3>
   <br class="clearing" />
   <div class="span5">
     <div class="location_section">
