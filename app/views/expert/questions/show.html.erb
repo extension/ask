@@ -109,7 +109,9 @@
     <% end %>
   </aside>
 
-  <% if @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
+  <!-- this code has a failing conditional in it for now (@question.id == 0) so this feature (the featured question option) can be hidden on production. -->
+  <!-- when the featured option is ready to be enabled, just remove the @question.id == 0 conditional -->
+  <% if @question.id == 0 && @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
   <aside>
 	<h4>Feature Option</h4>
 	<%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
