@@ -46,6 +46,7 @@ class QuestionEvent < ActiveRecord::Base
   EXPERT_EDIT_RESPONSE = 19
   CHANGED_TO_PUBLIC = 20
   CHANGED_TO_PRIVATE = 21
+  CHANGED_FEATURED = 22
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -65,7 +66,8 @@ class QuestionEvent < ActiveRecord::Base
                             EXPERT_EDIT_QUESTION => 'expert edit of question',
                             EXPERT_EDIT_RESPONSE => 'expert edit of response',
                             CHANGED_TO_PUBLIC => 'changed to public by',
-                            CHANGED_TO_PRIVATE => 'changed to private by'
+                            CHANGED_TO_PRIVATE => 'changed to private by',
+                            CHANGED_FEATURED => 'changed featured by'
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
@@ -118,6 +120,14 @@ class QuestionEvent < ActiveRecord::Base
     else
       return false
     end
+  end
+  
+  def self.log_featured_changed(question, initiated_by)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :updated_question_values => {:old_value => !question.featured, :new_value => question.featured},
+                           :event_state => CHANGED_FEATURED
+    })
   end
   
   def self.log_tag_change(question, initiated_by, tags, previous_tags)

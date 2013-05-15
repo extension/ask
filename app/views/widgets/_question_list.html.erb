@@ -1,0 +1,20 @@
+<div id="question_widget" style="width:<%= @width %>px">
+		
+<h3> 
+	<span><%= @title %></span><br />
+</h3>
+
+<%= link_to 'See More', @path_to_questions %>
+
+<% if @question_list.length == 0 %>
+  <h3>There are currently no content items at this time.</h3>
+<% else %>
+  <ul>
+  <% @question_list.each do |q| %>
+    <li><%= link_to q.title, question_url(q.id) %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+</div>
+

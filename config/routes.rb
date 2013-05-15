@@ -59,6 +59,7 @@ Aae::Application.routes.draw do
         get 'diff_with_previous_response_revision'
         post 'restore_response_revision'
         post 'working_on_this'
+        post 'feature'
       end
     end
 
@@ -151,6 +152,10 @@ Aae::Application.routes.draw do
   
   # public search
   match "search/all" => "search#all", :via => [:get]
+  
+  # widgets for resolved questions
+  match "widgets/front_porch" => "widgets#front_porch", :via => [:get]
+  match "widgets/answered" => "widgets#answered", :via => [:get]
   
   # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
   match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130409200643) do
+ActiveRecord::Schema.define(:version => 20130501190052) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -427,6 +427,8 @@ ActiveRecord::Schema.define(:version => 20130409200643) do
     t.integer  "original_location_id"
     t.integer  "original_county_id"
     t.datetime "working_on_this"
+    t.boolean  "featured",                 :default => false, :null => false
+    t.datetime "featured_at"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -581,6 +583,17 @@ ActiveRecord::Schema.define(:version => 20130409200643) do
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+
+  create_table "widget_logs", :force => true do |t|
+    t.string   "referrer_host"
+    t.string   "referrer_url"
+    t.string   "base_widget_url"
+    t.string   "widget_url"
+    t.string   "widget_fingerprint"
+    t.integer  "count",              :default => 0, :null => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
 
   create_table "yo_los", :force => true do |t|
     t.integer  "user_id",              :default => 0
