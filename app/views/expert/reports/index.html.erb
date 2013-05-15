@@ -59,7 +59,7 @@
 
       
       <div id="data_summary">
-        <h2>Question Activity</h2>
+        <h2>Questions from <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></h2>
 
         <p>
         <% if @questions_asked_count > 0 %> 
@@ -71,7 +71,7 @@
         <% else %>
            0
         <% end %>
- Questions Asked
+ Questions asked
         </p>
 
         <p>
@@ -84,27 +84,39 @@
         <% else %>
             0
         <% end %>
-        Questions Answered by <%= @responder_count %> Experts
+         Questions answered
         </p>
        
         <% if defined?(@location) && @location.present? && !defined?(@county) %>
         <% if @questions_asked_count > 0 || @questions_answered_count > 0 %>
           <br />
-          <h2>In-State vs Out-of-State Answering</h2>
+          <h3>In-State vs Out-of-State Answering</h3>
           
           
           <p class="state_ratio">
             <span class="handling_rate_graph">
-              <span class="graph" style="width: <%= (@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100 %>%"><span class="in_state_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / @questions_answered_count.to_f)  * 100) %><small>%</small></span>
+              <span class="graph" style="width: <%= (@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100 %>%"><span class="in_state_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
               </span><span class="out_of_state"><%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
             </span>
           </p>
-          <p class="state_ratio_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / @questions_answered_count.to_f)  * 100) %><small>%</small> of <%= @location.abbreviation %> questions were answered in-state. <%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> were answered out-of-state.</p>
+          <p class="state_ratio_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> of questions were answered in-state. <%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> were answered out-of-state.</p>
           
-          
+          <p><%= @responder_count %> experts answered 
+            
+            <% if @questions_answered_count > 0 %>
+              <% if @date.class == DateTime || @date.class == Date %>
+                <%= link_to(number_with_delimiter(@questions_answered_count, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "answered")) %>
+              <% else %>
+                <%= link_to(number_with_delimiter(@questions_answered_count, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year => @year_month, :filter => "answered")) %>
+              <% end %>
+            <% else %>
+                0
+            <% end %>
+            
+            questions</p>
           <% if @responders_in_state_count > 0 %>  
           <p>
-          <%= @responders_in_state_count %> <span class="in_state">In-State</span> Experts Answered 
+          <%= @responders_in_state_count %> <span class="in_state">In-State</span> experts answered 
           <% if @resolved_by_state_experts > 0 %>
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "in_state_experts")) %>
@@ -114,13 +126,13 @@
           <% else %>
             0
           <% end %>
-          Questions</p>
+            questions</p>
           <% else %>
-            <p>No In-State Expert Activity</p>
+            <p>No in-state expert activity</p>
           <% end %>
           <% if @responders_outside_state_count > 0 %>
           <p>
-          <%= @responders_outside_state_count %> <span class="out_state">Out-of-State</span> Experts Answered 
+          <%= @responders_outside_state_count %> <span class="out_state">Out-of-State</span> experts answered 
           <% if @resolved_by_outside_state_experts > 0 %> 
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_outside_state_experts, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_experts")) %>     
@@ -130,9 +142,9 @@
           <% else %>
             0
           <% end %>
-          Questions</p>
+           questions</p>
           <% else %>
-            <p>No Out-of-State Expert Activity</p>
+            <p>No out-of-state expert activity</p>
           <% end %>
        
         <% end %>
@@ -141,14 +153,13 @@
       
       <% if @experts.total_count > 0 %>
       <div id="expert_summary">
-      <h2>Expert Activity</h2>
-      <p>For Experts in <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></p>
+      <h2>Experts in <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></h2>
       
       
       <% if defined?(@location) && @location.present? && !defined?(@county) %>
       <% if @responders_by_state_experts_outside_location_count %>
          <p>
-          <%= @responders_by_state_experts_outside_location_count %> In-State Experts Answered 
+          <%= @responders_by_state_experts_outside_location_count %> experts answered 
           <% if @resolved_by_state_experts_outside_location > 0 %> 
             <% if @date.class == DateTime || @date.class == Date %>
               <%= link_to(number_with_delimiter(@resolved_by_state_experts_outside_location, :delimiter => ','), expert_reports_question_list_path(:location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id], :year_month => @year_month, :filter => "out_of_state_questions_by_state_experts")) %>     
@@ -158,16 +169,23 @@
           <% else %>
             0
           <% end %>
-          Out-of-State Questions</p>
+          out-of-state questions</p>
         <% else %>
           <p>No Out-of-State Expert Activity</p>
         <% end %>
       <% end %>
       
-      <p>Expert Total: <%= @experts.total_count %></p>
+      <h3 class="table_header"><%= @experts.total_count %> Experts Answered, Were Assigned or Touched a Question in 
+      
+        <% if @date.class == DateTime || @date.class == Date %>
+          <%= @date.strftime("%B, %Y") %>
+        <% elsif @date.class == String %>
+          <%= @date %>
+        <% end %>
+    
+      </h3>
 	  
       <div id="paginator">
-	    <%= "Viewing page #{@experts.current_page} of #{@experts.num_pages}" %>
         <%= paginate @experts, :remote => true %>
       </div>
         
@@ -176,7 +194,18 @@
       </div>
        
       <% else %>
-        <!-- <p>There are no experts in this location</p> -->
+        <div id="expert_summary">
+          <h2>Experts in <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %></h2>
+          <h3>No Experts Answered, Were Assigned or Touched a Question in 
+
+            <% if @date.class == DateTime || @date.class == Date %>
+              <%= @date.strftime("%B, %Y") %>
+            <% elsif @date.class == String %>
+              <%= @date %>
+            <% end %>
+
+          </h3>
+        </div>
       <% end %>
       </div>
   </div>
