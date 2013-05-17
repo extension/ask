@@ -1,28 +1,47 @@
+<p class="state_ratio">
+  <span class="handling_rate_graph">
+    <span class="graph" style="width: <%= (@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100 %>%"><span class="in_state_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
+    </span><span class="out_of_state"><%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
+  </span>
+</p>
+
 <canvas id="myCanvas" width="450" height="40"></canvas>
-    <script>
-      var canvas = document.getElementById('myCanvas');
-      var context = canvas.getContext('2d');
-      
-      var graph_width = 400;
-      var out_percent = <%= (@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f) %>;
-      var out_width = 400 * out_percent;
-      
-      context.beginPath();
-      context.rect(0, 0, graph_width, 30);
-      context.fillStyle = 'rgb(79,117,205)';
-      context.fill();
-      
-      context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
-      context.fillStyle = 'white';
-      context.fillText('<%= sprintf('%.0f',(@resolved_by_state_experts.to_f / @questions_answered_count.to_f)  * 100) %>%', 10, 22);
-      
-      context.beginPath();
-      context.rect(graph_width - out_width, 0, out_width, 30);
-      context.fillStyle = 'rgb(188,227,119)';
-      context.fill();
-      
-      context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
-      context.fillStyle = 'rgb(10,63,63)';
-      context.fillText('<%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f)  * 100) %>%', 350, 22);
-      
-    </script>
+
+<script class="code" type="text/javascript">
+  var canvas2DSupported = !!window.CanvasRenderingContext2D;
+
+  if (canvas2DSupported) {
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+
+    var graph_width = 400;
+    var out_percent = <%= (@resolved_by_outside_state_experts.to_f / @questions_answered_count.to_f) %>;
+    var out_width = 400 * out_percent;
+
+    context.beginPath();
+    context.rect(0, 0, graph_width, 30);
+    context.fillStyle = 'rgb(79,117,205)';
+    context.fill();
+
+    context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
+    context.fillStyle = 'white';
+    context.fillText('<%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %>%', 10, 22);
+
+    context.beginPath();
+    context.rect(graph_width - out_width, 0, out_width, 30);
+    context.fillStyle = 'rgb(188,227,119)';
+    context.fill();
+
+    context.font = '20px "Helvetica Neue", Helvetica, Arial, sans-serif';
+    context.fillStyle = 'rgb(10,63,63)';
+    if ((<%= (@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100 %>) < 10 ) {
+      context.fillText('<%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %>%', 405, 22);
+    } else {
+      context.fillText('<%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %>%', 355, 22);
+    }
+    
+    
+    $(".state_ratio").hide();
+  }
+
+</script>
