@@ -22,15 +22,10 @@
       <br class="clearing" />
     <% end %>
   <% else %>
-      <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
-      <%= render(partial: 'partials/sign_in_to_vote')%>
-        <div class="sitv_element commentfield">
-        <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 2} %>
-        <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
-        </div>
-        <br class="clearing" />
-        </div> <!-- end .sitv_element_wrapper  -->
-      <% end %>
+      <div class="sign_in_prompt" >
+        <p>Please sign in</p>
+        <p><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath), :class => "btn" )%></p>
+      </div>
       
   <% end %>
   
@@ -47,35 +42,10 @@
 
 <script class="code" type="text/javascript">
   
+  $("#comments_form").hide();
+
+  $(".comments_form_toggle").click(function () {
+    $("#comments_form").toggle();
+  });
   
-    // sitv = sign in to vote
-    $('.nojs_display').hide();
-    
-
-    $('.sitv_element_wrapper').each(function(index) {
-        var $sitv_element = $(this).find('.sitv_element')
-        var $h = $sitv_element.outerHeight();
-        var $w = $sitv_element.outerWidth();
-        $(this)
-          .find('.sitv_targetarea').height($h).width($w);
-    });
-    
-    $('.sitv_targetarea').bind('click', function () {
-        $(this)
-          .siblings('.sitv_content')
-          .fadeIn('fast');
-    });
-    
-    $('.sitv_content')
-      .mouseleave(function() {
-        $(this)
-          .fadeOut('fast');
-    });
-    
-    $("#comments_form").hide();
-
-    $(".comments_form_toggle").click(function () {
-      $("#comments_form").toggle();
-    });
-
 </script>
