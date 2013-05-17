@@ -40,7 +40,7 @@
   	      <span class="pull-right">
   	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
     	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
-    	      <span>
+    	      </span>
         </p>
         
       <% elsif @date.class == String %>
@@ -51,7 +51,7 @@
   	      <span class="pull-right">
   	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
     	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
-    	      <span>
+    	      </span>
         </p>
       <% end %>
       
@@ -92,13 +92,8 @@
           <br />
           <h3>In-State vs Out-of-State Answering</h3>
           
-          
-          <p class="state_ratio">
-            <span class="handling_rate_graph">
-              <span class="graph" style="width: <%= (@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100 %>%"><span class="in_state_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
-              </span><span class="out_of_state"><%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small></span>
-            </span>
-          </p>
+          <%= render :partial => "expert/reports/ratio_graph" %>
+
           <p class="state_ratio_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> of questions were answered in-state. <%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> were answered out-of-state.</p>
           
           <p><%= @responder_count %> experts answered 
