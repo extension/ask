@@ -26,6 +26,12 @@ class GroupsController < ApplicationController
     end
     
     if request.post?
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+      if params[:question].blank?
+        flash[:error] = "The question form is not complete. Please fill out all fields."  
+        return redirect_to root_url
+      end
+        
       begin
         @question = Question.new(params[:question])
       rescue

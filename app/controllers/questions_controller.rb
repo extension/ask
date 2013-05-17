@@ -123,12 +123,20 @@ class QuestionsController < ApplicationController
   
   # TODO: incorporate title into this.
   def create
-    if request.post?
+    if request.post?  
+      
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+      if params[:question].blank?
+        @status_message = "The question form is not complete. Please fill out all fields."  
+        return render(:template => '/widget/status', :layout => false)
+      end
+      
       @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
         @status_message = "Unknown widget specified."
         return render(:template => '/widget/status', :layout => false)
       end
+      
       begin
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
