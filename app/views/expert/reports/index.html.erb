@@ -92,7 +92,7 @@
           <br />
           <h3>In-State vs Out-of-State Answering</h3>
           
-          <%= render :partial => "expert/reports/canvas_experiment" %>
+          <%= render :partial => "expert/reports/ratio_graph" %>
 
           <p class="state_ratio_label"><%= sprintf('%.0f',(@resolved_by_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> of questions were answered in-state. <%= sprintf('%.0f',(@resolved_by_outside_state_experts.to_f / (@resolved_by_outside_state_experts+@resolved_by_state_experts).to_f)  * 100) %><small>%</small> were answered out-of-state.</p>
           
