@@ -126,9 +126,9 @@ class User < ActiveRecord::Base
       conditions = ["((first_name rlike :firstword AND last_name rlike :secondword) OR (first_name rlike :secondword AND last_name rlike :firstword))",findvalues]
     else
       if type.nil?
-        conditions = ["(first_name rlike ? OR last_name rlike ?)", sanitizedsearchterm, sanitizedsearchterm]
+        conditions = ["(first_name rlike ? OR last_name rlike ? OR login rlike ?)", sanitizedsearchterm, sanitizedsearchterm, sanitizedsearchterm]
       elsif type == "prefix"
-        conditions = ["(first_name rlike ? OR last_name rlike ?)", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}"]
+        conditions = ["(first_name rlike ? OR last_name rlike ? OR login rlike ?)", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}"]
       end
     end
     {:conditions => conditions}
