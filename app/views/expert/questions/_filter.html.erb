@@ -32,7 +32,7 @@
   });
   
   var loadtimeParameters = {
-    <% request.GET.each do |key,value| %>
+    <% request.GET.except(:page).each do |key,value| %>
       "<%= key %>": "<%= value %>",
     <% end %>
   };
