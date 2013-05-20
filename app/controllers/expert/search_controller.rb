@@ -39,6 +39,7 @@ class Expert::SearchController < ApplicationController
                 fulltext(params[:q]) do
                   fields(:name)
                   fields(:bio)
+                  fields(:login)
                 end
                 with :is_blocked, false
                 with :retired, false
