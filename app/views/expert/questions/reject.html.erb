@@ -13,7 +13,7 @@
 <h2>Still need to Reject?</h2>
 <%= form_tag reject_expert_question_path(@question) do %>
 
-    <div class="radio_options">
+    <div class="radio_options">          
     <p>
       <label>
         <%= radio_button_tag :rejection_reason, "Spam", false %>
@@ -34,6 +34,13 @@
       </label>
     </p>
     
+    <p>
+      <label>
+        <%= radio_button_tag :rejection_reason, "Submitter email invalid", false %>
+        Submitter email invalid
+      </label>
+    </p>
+
     <p>
       <label>
         <%= radio_button_tag :rejection_reason, "", false %>

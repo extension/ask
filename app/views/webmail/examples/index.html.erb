@@ -1,0 +1,33 @@
+<h1>Ask an Expert Email Templates</h1>
+
+<h3>These emails are sent to question submitters</h3>
+<ul>
+  <li><%= link_to "Your question has been submitted", {:action => "public_submission_acknowledgement"} %></li>
+  <li><%= link_to "There's a response to your question", {:action => "public_expert_response"} %></li>
+  <li><%= link_to "Ask an Expert evaulation", {:action => "public_evaluation_request"} %></li>
+  <li><%= link_to "Someone posted a reply to your comment", {:action => "public_comment_reply"} %></li>
+</ul>
+
+<h3>These emails are sent to experts</h3>
+<ul>
+  <li><%= link_to "You have a new Ask an Expert Question", {:action => "internal_aae_assignment"} %></li>
+  <li><%= link_to "Your Group has a New Question", {:action => "internal_aae_assignment_group"} %></li>
+  <li><%= link_to "Your Question Has Been Reassigned", {:action => "internal_aae_reassignment"} %></li>
+  <li><%= link_to "Ask an Expert Daily Summary", {:action => "internal_aae_daily_summary"} %></li>
+  <li><%= link_to "A Question Assigned to You Has Been Edited", {:action => "internal_aae_public_edit"} %></li>
+  <li><%= link_to "New response to a question assigned to you", {:action => "internal_aae_public_response"} %></li>
+  <li><%= link_to "An Expert Added a Note to Your Question", {:action => "internal_aae_internal_comment"} %></li>
+  <li><%= link_to "Your Assigned Question Was Rejected", {:action => "internal_aae_reject"} %></li>
+  <li><%= link_to "Your Profile tags have been edited", {:action => "internal_aae_expert_tag_edit"} %></li>
+  <li><%= link_to "Your Ask an Expert away status was changed", {:action => "internal_aae_expert_vacation_edit"} %></li>
+  <li><%= link_to "Handling Reminder", {:action => "internal_aae_expert_handling_reminder"} %></li>
+  <li><%= link_to "New Activity On a Question You Followed", {:action => "internal_aae_question_activity"} %></li>
+</ul>
+
+<h3>These emails are sent to group leaders</h3>
+<ul>
+  <li><%= link_to "Someone joined a group", {:action => "group_user_join"} %></li>
+  <li><%= link_to "Someone left a group", {:action => "group_user_left"} %></li>
+  <li><%= link_to "Someone became a group leader", {:action => "group_leader_join"} %></li>
+  <li><%= link_to "Someone stepped down as a group leader", {:action => "group_leader_left"} %></li>
+</ul>
