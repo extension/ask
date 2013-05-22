@@ -41,7 +41,11 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
     
     if @user.persisted?
       if @user.retired == false
-        flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
+        if params[:redirect_to].present? && (params[:redirect_to].include? '/expert/')
+          # don't indicate a successful login because the user never clicked a "sign in" button
+        else
+          flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
+        end
       else
         redirect_to retired_url
         return

@@ -45,7 +45,7 @@
   
   <% if current_user %>
     <% if current_user.has_exid? %>
-      <div class="navbar navbar-inverse app-navbar <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
+      <div class="navbar navbar-inverse app-navbar">
         <div id="expertbar" class="navbar-inner">
           <div class="container">
             
@@ -74,7 +74,7 @@
               
             </ul>
             
-            <%= link_to("AaE Experts", expert_home_path(), :class => "brand") %>
+            <%= link_to("AaE Expert Dashboard", expert_home_path(), :class => "brand") %>
             
           </div>
         </div>

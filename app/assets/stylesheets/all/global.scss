@@ -292,8 +292,8 @@ body#public {
 	}
 	#publicbar .brand {color:#000;}
 	
-	#expertbar {border-bottom: 2px solid #000 !important;}
-	#expertbar a.brand {font-size:1.1em; }
+	#expertbar {border-bottom: 2px solid #000 !important; padding-top:.5em; padding-bottom:.75em;}
+	#expertbar a.brand {font-size:1.4em; }
 	#expertbar a:hover {color:#fff !important; text-decoration:none;}
 	#expertbar .navavatar.loggedin a {color:#999;}
 	#expertbar.navbar-inner {min-height:35px; height:35px;}

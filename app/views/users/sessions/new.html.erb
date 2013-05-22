@@ -5,7 +5,7 @@
   <div class="sign_in_group">
   <p>
     <h4>eXtension experts should sign in with their eXtension account.</h4>
-    <%= link_to authmap_omniauth_authorize_path(:people, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
+    <%= link_to authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
       <%= image_tag("extension_logo.jpg", :size => "50x50", :class => "size50x50") %>
       <span class="btn btn-large">Sign in with eXtension</span>
     <% end %>
