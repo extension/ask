@@ -61,7 +61,12 @@
 			}
 		}).keypress(function(e) {
       if (e.keyCode === 13) {
-        add_tag(this.value);
+        if ($.trim(this.value) != "") {
+          add_tag(this.value);
+        } else {
+          $("#tag_picker").val('');
+  				return false;
+        }
       }
     }).data( "autocomplete" )._renderItem = function( ul, item ) {
         return $( "<li></li>" )
