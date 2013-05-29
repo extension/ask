@@ -12,7 +12,7 @@
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+  <% if Settings.app_location == 'dev' %>
     <div id="app_location" class="demo">
       <p>This is the <strong>AaE <%= Settings.app_location.upcase %></strong> site. Feel free to test/play. Note: The data on this site is regularly deleted/refreshed, and all notifications are turned off. Visit <%= link_to("Ask an Expert", "http://ask.extension.org") -%>.</p>
     </div>
