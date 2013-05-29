@@ -167,17 +167,16 @@
   <!-- this code has a failing conditional in it for now (@question.id == 0) so this feature (the featured question option) can be hidden on production. -->
   <!-- when the featured option is ready to be enabled, just remove the @question.id == 0 conditional -->
   
-  <% if @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
+  <% if @question.id == 0 && @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
     <aside class="nobg dontprintme related_questions">
   	  <h4>Highlight this Question</h4>
   	  <%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
   	    <p>
           <label>
             <%= check_box_tag :feature_question_option, "1", @question.featured == true %> Include in AaE featured questions
-  			    <span>(Featured questions are displayed on the home page of extension.org. Please only feature questions which are interesting, insightful, compelling, etc.)</span>
+  			    <span>(Featured questions are displayed on the home page of extension.org. Featured questions should be interesting, insightful, compelling, etc.)</span>
           </label>
-      </p>
-  	    
+        </p>
   	  <% end %>
     </aside>
   <% end %>
