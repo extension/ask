@@ -1,20 +1,28 @@
-<div id="question_widget" style="width:<%= @width %>px">
+<div id="aae_qw">
 		
-<h3> 
-	<span><%= @title %></span><br />
-</h3>
-
-<%= link_to 'See More', @path_to_questions %>
-
-<% if @question_list.length == 0 %>
-  <h3>There are currently no content items at this time.</h3>
-<% else %>
-  <ul>
-  <% @question_list.each do |q| %>
-    <li><%= link_to q.title, question_url(q.id) %></li>
+  <h3 class="aae_qw_subhead"><%= @title %></h3>
+  
+  <% if @question_list.length == 0 %>
+    <h3 class="aae_qw_no_matches">There are currently no content items at this time.</h3>
+  <% else %>
+    <ul>
+      <% @question_list.each_with_index do |q, i| %>
+        <%= link_to question_url(q.id) do %>
+          <% if i == 0 %>
+            <li class="first">
+          <% elsif i == (@question_list.length - 1) %>
+            <li class="last">
+          <% else %>
+            <li>
+          <% end %>
+            <span class="aae_qw_title"><%= q.title %></span> <span class="aae_qw_view_response">view response &raquo;</span>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
   <% end %>
-  </ul>
-<% end %>
-
+  
+  <p class="aae_qw_see_more"><%= link_to 'See More', @path_to_questions %></p>
+  
 </div>
 
