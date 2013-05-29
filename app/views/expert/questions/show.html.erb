@@ -141,10 +141,6 @@
 
 
 <div id="secondary" class="span4">
-	  <aside class="dontprintme" id="helper">
-      <p><span>NEW</span> "<strong>Send an Answer</strong>" is now at the bottom of the question. The "<strong>Close</strong>" and "<strong>Reject</strong>" options are above the question.</p>
-    </aside>
-  
   
   <div id="question_assignment">
     <%= render :partial => 'question_assignment' %>
@@ -167,16 +163,23 @@
       <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
     <% end %>
   </aside>
-
+  
   <!-- this code has a failing conditional in it for now (@question.id == 0) so this feature (the featured question option) can be hidden on production. -->
   <!-- when the featured option is ready to be enabled, just remove the @question.id == 0 conditional -->
+  
   <% if @question.id == 0 && @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
-  <aside>
-	<h4>Feature Option</h4>
-	<%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
-	  <%= check_box_tag :feature_question_option, "1", @question.featured == true %>
-	<% end %>
-  <aside>
+    <aside class="nobg dontprintme related_questions">
+  	  <h4>Highlight this Question</h4>
+  	  <%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
+  	    <p>
+          <label>
+            <%= check_box_tag :feature_question_option, "1", @question.featured == true %> Include in AaE featured questions
+  			    <span>(Featured questions are displayed on the home page of extension.org. Please only feature questions which are interesting, insightful, compelling, etc.)</span>
+          </label>
+      </p>
+  	    
+  	  <% end %>
+    </aside>
   <% end %>
   
 </div>
