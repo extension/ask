@@ -8,8 +8,8 @@ class AjaxController < ApplicationController
   include ActionView::Helpers::NumberHelper
   def tags
     if params[:term]
-      search_term = params[:term]
-      tags = Tag.used_at_least_once.where("name like ?", "%#{params[:term]}%").limit(12)
+      search_term = Tag.normalizename(params[:term])
+      tags = Tag.used_at_least_once.where("name like ?", "%#{search_term}%").limit(12)
     else
       tags = Tag.used_at_least_once.order('created_at DESC').limit(12)
     end
