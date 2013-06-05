@@ -1,9 +1,8 @@
 <div id="aae_qw">
 		
   <h3 class="aae_qw_subhead"><%= @title %></h3>
-  
   <% if @question_list.length == 0 %>
-    <h3 class="aae_qw_no_matches">There are currently no content items at this time.</h3>
+    <h3 class="aae_qw_no_matches">There are no matching questions at this time.</h3>
   <% else %>
     <ul>
       <% @question_list.each_with_index do |q, i| %>
