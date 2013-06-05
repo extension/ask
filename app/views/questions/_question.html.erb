@@ -57,7 +57,9 @@
 
         <% if @question.tags.size > 0 %>
           <% @question.tags.each do |tag| %>
+            <% if tag.name != "front page" %>
               <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
+            <% end %>
           <% end %>
         <% end %>
       </p>
