@@ -6,7 +6,8 @@ class WidgetsController < ApplicationController
     
     @title = "eXtension Latest Resolved Questions"
     @path_to_questions = root_url
-    questions = Question.public_visible_answered.featured.order('featured_at DESC')
+    @tag = Tag.find_by_name("front page")
+    return record_not_found if (!@tag)
     
     if params[:limit].blank? || params[:limit].to_i <= 0
       question_limit = 5
@@ -14,23 +15,12 @@ class WidgetsController < ApplicationController
       question_limit = params[:limit].to_i
     end
     
+    @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
+    
     if params[:width].blank? || params[:width].to_i <= 0
       @width = 300
     else
       @width = params[:width].to_i
-    end
-    
-    if questions.length == 0
-      @question_list = []
-    else
-      questions.each do |q|
-        assigned_group = q.assigned_group
-        @question_list << q if (!group_array.include?(assigned_group.id) || assigned_group.blank?)
-        break if (@question_list.length == question_limit || @question_list.length == questions.length)
-        if assigned_group.present? 
-          group_array << assigned_group.id
-        end
-      end
     end
     
     render "widgets"

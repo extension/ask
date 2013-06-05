@@ -150,7 +150,6 @@ class Question < ActiveRecord::Base
   scope :tagged_with_any, lambda { |tag_list|
     joins(:tags).where("tags.name IN (#{tag_list.map{|t| "'#{Tag.normalizename(t)}'"}.join(',')})").group("questions.id")
   }
-  scope :featured, conditions: {featured: true}
   scope :by_location, lambda {|location| {:conditions => {:location_id => location.id}}}
   scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
   scope :answered, where(:status_state => STATUS_RESOLVED)
