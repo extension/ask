@@ -55,7 +55,28 @@
 
     <% if @question.tags.size > 0 %>
       <% @question.tags.each do |tag| %>
-        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
+        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span>
+          <%  if tag.name == "front page" %>
+            
+            <!-- Button to trigger modal -->
+            <a href="#frontpage" data-toggle="modal"><span class="label label-inverse" >What's this?</span></a>
+
+            <!-- Modal -->
+            <div id="frontpage" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="frontpageLabel" aria-hidden="true">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="frontpageLabel">What is the "front page" tag?</h3>
+              </div>
+              <div class="modal-body">
+                <p>The "front page" tag will be used to feature questions on the front page of www.extension.org. A curation team chooses which questions should be featured and they add the "front page" tag accordingly. </p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">Close</button>
+              </div>
+            </div>
+            
+          <% end %>
+          </p>
       <% end %>
     <% else %>
 
