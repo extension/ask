@@ -164,30 +164,6 @@
     <% end %>
   </aside>
   
-  <% if (Settings.app_location == 'localdev') || (Settings.app_location == 'dev') %>
-  <% if @question.is_private == false && @question.status_state == Question::STATUS_RESOLVED %>
-    <aside class="nobg dontprintme related_questions">
-  	  <h4>Highlight this Question</h4>
-  	  <%= form_tag(feature_expert_question_path(:id => @question.id), :id => 'feature_question', :remote => true) do %>
-  	    <p>
-          <label>
-            <%= check_box_tag :feature_question_option, "1", @question.featured == true %> Include in AaE featured questions
-  			    <span>(Featured questions are displayed on the home page of extension.org. Featured questions should be interesting, insightful, compelling, etc.)</span>
-          </label>
-        </p>
-  	  <% end %>
-    </aside>
-  <% end %>
-  <% end %>
-  
 </div>
 <br class="clearing" />
 </div>
-
-
-<script class="code" type="text/javascript">
-  $("#feature_question_option").click(function () {
-    $("#feature_question").submit();
-  });
-</script>
-
