@@ -492,13 +492,13 @@ class Question < ActiveRecord::Base
   
   def set_tag(tag)
     if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return false
+      return nil
     else 
       if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
         begin
           self.tags << tag
         rescue
-          return false
+          return nil
         end  
         return tag
       end

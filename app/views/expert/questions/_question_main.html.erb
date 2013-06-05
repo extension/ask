@@ -147,8 +147,8 @@
 				$("#tag_picker").val('');
 				return false;
       })  
-      .fail(function() {
-        alert("error");
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        alert("Request failed: " + errorThrown);
         $("#tag_picker").autocomplete("close");
   			$("#tag_picker").val('');
   			return false;

@@ -564,11 +564,10 @@ class Expert::QuestionsController < ApplicationController
     @tag = @question.set_tag(params[:tag])
     @current_tags = @question.tags.collect{|t| t.name}.join(', ')
     QuestionEvent.log_tag_change(@question, current_user, @current_tags, @previous_tags) if @previous_tags != @current_tags
-    if @tag.name == "front page"
+    if @tag.nil?
+      render :json => { :success => false }
+    elsif @tag.name == "front page"
       @question.touch
-    end
-    if @tag == false
-      render :nothing => true
     end
   end
   
