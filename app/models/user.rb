@@ -95,6 +95,7 @@ class User < ActiveRecord::Base
   scope :group_membership_for, lambda { |group_id| joins(:group_connections => :group).where("group_connections.group_id = #{group_id}")}
   scope :from_location, lambda{ |location| joins(:location).where("locations.id = #{location.id}")}
   scope :from_county, lambda{ |county| joins(:county).where("counties.id = #{county.id}")}
+  scope :needs_search_update, lambda{ where(needs_search_update: true)}
 
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql

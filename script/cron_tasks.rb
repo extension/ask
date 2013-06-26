@@ -43,6 +43,14 @@ class CronTasks < Thor
       puts "Created notification for daily handling reminder emails"
     end
 
+    def flag_accounts_for_search_update
+      User.needs_search_update.all.each do |u|
+        # merely updating the account should trigger solr
+        u.update_attributes({needs_search_update: false})
+      end
+      Sunspot.commit
+    end
+
   end
 
 
@@ -61,8 +69,13 @@ class CronTasks < Thor
     create_daily_summary_notification
     create_daily_handling_reminder_notification
   end
-  
-  
+
+  desc "hourly", "All hourly cron tasks"
+  method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
+  def hourly
+    load_rails(options[:environment])
+    flag_accounts_for_search_update
+  end 
 
 end
 
