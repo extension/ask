@@ -144,7 +144,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_internal_comment
-    InternalMailer.aae_internal_comment(user: self.notifiable.recipient, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_internal_comment(user: self.notifiable.question.assignee, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.question.assignee.nil? || self.notifiable.question.assignee.email.nil?)
   end
   
   def process_aae_assignment_group
