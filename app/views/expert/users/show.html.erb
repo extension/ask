@@ -117,16 +117,16 @@
   </aside>
 
   <aside>
-      <h3>Group Membership (<%= @my_groups.count %>)</h3>
+      <h3>Group Membership (<%= @user_groups.count %>)</h3>
     <% if current_user.id == @user.id %>
       <p><%= link_to "Groups home", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>      
     <% end %>
     
     <ul class="groups">
-      <% if @my_groups.size == 0 %>
+      <% if @user_groups.size == 0 %>
         <li class="group_list_item">Not currently a member or leader of a group.</li>
       <% else %>
-        <% @my_groups.each do |group| %>  
+        <% @user_groups.each do |group| %>  
           <li class="group_list_item">
             <span class="<%= !group.group_active? ? "inactive_group" : "active" %>">
               <%= link_expert_group_avatar(group, :thumb) %> 

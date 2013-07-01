@@ -18,7 +18,7 @@ class Expert::UsersController < ApplicationController
     @question_list = "assigned"
     @questions = @user.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.open_questions.length
-    @my_groups = @user.group_memberships
+    @user_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count 
   end
   
@@ -52,7 +52,7 @@ class Expert::UsersController < ApplicationController
     @question_list = "answered"
     @questions = @user.answered_questions.page(params[:page]).order('resolved_at DESC')
     @question_count = @user.answered_questions.length
-    @my_groups = @user.group_memberships
+    @user_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
@@ -66,7 +66,7 @@ class Expert::UsersController < ApplicationController
     @question_list = "watched"
     @questions = @user.watched_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.watched_questions.length
-    @my_groups = @user.group_memberships
+    @user_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
@@ -80,7 +80,7 @@ class Expert::UsersController < ApplicationController
     @question_list = "rejected"
     @questions = @user.rejected_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.rejected_questions.length
-    @my_groups = @user.group_memberships
+    @user_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
@@ -98,7 +98,7 @@ class Expert::UsersController < ApplicationController
       flash[:error] = "The user specified does not exist as an expert in AaE."
       return redirect_to expert_home_url 
     end
-    @my_groups = @user.group_memberships
+    @user_groups = @user.group_memberships
   end
   
   def history
