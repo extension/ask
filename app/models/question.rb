@@ -126,6 +126,8 @@ class Question < ActiveRecord::Base
   
   PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = "This question has been reassigned to you because a new comment has been posted to your response. Please " +
   "reply using the link below or close the question out if no reply is needed. Thank You."
+  PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = "This question has been assigned to you because a new comment has been posted to an expert's response or open question who has marked aae vacation status. Please " +
+  "reply using the link below or close the question out if no reply is needed. Thank You."
   
   DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
   
@@ -318,7 +320,7 @@ class Question < ActiveRecord::Base
     
     # don't bother doing anything if this is assignment to the person already assigned unless it's 
     # a question that's been responded to by the public after it's been resolved that then gets 
-    # assigned to whomever the question was last assigned to.
+    # assigned to whomever the question was last assigned to (unless that person is on vacation)
     return true if self.assignee && user.id == assignee.id && public_reopen == false
     
     if(self.assignee.present? && (assigned_by != self.assignee))
@@ -341,7 +343,9 @@ class Question < ActiveRecord::Base
     end
     
     Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
-    if(is_reassign and public_reopen == false)
+    
+    # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded) 
+    if(is_reassign && public_reopen == false)
       Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
     end
       
