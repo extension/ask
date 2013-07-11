@@ -39,7 +39,7 @@ class ResponsesController < ApplicationController
         question.assign_to(assignee, User.system_user, comment, true, response)
       else
         QuestionEvent.log_public_response(question, submitter.id)
-        if question.assignee.away == true
+        if question.assignee.present? && question.assignee.away == true 
           assigned_group = question.assigned_group
           if assigned_group.present? && assigned_group.leaders.active.length > 0
             assignee = question.pick_user_from_list(assigned_group.leaders.active)
