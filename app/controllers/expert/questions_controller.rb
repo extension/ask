@@ -385,6 +385,8 @@ class Expert::QuestionsController < ApplicationController
     @original_group = @question.original_group
     if !@question.assignee || @question.assignee.id != current_user.id
       @question.assign_to(current_user, current_user, "Clicked \"I'm working on this\"")
+    else
+      QuestionEvent.log_working_on(@question, current_user)
     end
     
     @question.working_on_this = Time.now + 2.hour

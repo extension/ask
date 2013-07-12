@@ -170,6 +170,10 @@ class QuestionEvent < ActiveRecord::Base
       :submitter_id => submitter_id})  
   end
   
+  def self.log_working_on(question, initiated_by)
+    return self.log_event({:question => question, :initiated_by_id => initiated_by.id, :event_state => WORKING_ON})
+  end
+  
   def self.log_make_public(question, initiated_by)
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
