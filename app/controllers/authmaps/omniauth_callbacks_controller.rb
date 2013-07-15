@@ -47,8 +47,7 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
           flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
         end
       else
-        redirect_to retired_url
-        return
+        return redirect_to users_retired_url
       end
       sign_in_and_redirect @user, :event => :authentication
     else

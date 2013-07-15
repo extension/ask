@@ -8,7 +8,7 @@
 class ApplicationController < ActionController::Base
   helper_method :current_location
   helper_method :current_county
-  before_filter :set_time_zone_from_user, :set_last_active_at_for_user
+  before_filter :set_time_zone_from_user, :set_last_active_at_for_user, :check_retired
 
   protect_from_forgery
   layout "public"
@@ -107,7 +107,13 @@ class ApplicationController < ActionController::Base
     end
     return true
   end
-
+  
+  def check_retired
+    if current_user && current_user.retired
+      return sign_out current_user
+    end
+  end
+  
   def questions_based_on_pref_filter(filter_pref)
     
     condition_array = Array.new
