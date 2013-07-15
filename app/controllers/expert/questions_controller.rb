@@ -429,7 +429,7 @@ class Expert::QuestionsController < ApplicationController
       end
       
       if (current_user != @question.assignee)
-        @question.assign_to(current_user, current_user, nil)
+        @question.assign_to(current_user, current_user, nil, false, nil, true)
       end
       
       @related_question ? contributing_question = @related_question : contributing_question = nil
