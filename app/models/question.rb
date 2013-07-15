@@ -315,7 +315,7 @@ class Question < ActiveRecord::Base
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.
-  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil)
+  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false)
     raise ArgumentError unless user and user.instance_of?(User)  
     
     # don't bother doing anything if this is assignment to the person already assigned unless it's 
@@ -342,7 +342,10 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
+    # if this is being assigned to an expert who is resolving the question, do not notify that expert, the question will be resolved
+    if !resolving_assign
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
+    end
     
     # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded) 
     if(is_reassign && public_reopen == false)
