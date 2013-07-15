@@ -20,6 +20,10 @@ Aae::Application.routes.draw do
   end
 
   resources :comments, :only => [:create, :update, :destroy, :show]
+  
+  # retired url
+  match "users/retired" => "users#retired", :via => [:get]
+  
   resources :users
   resources :groups do
     member do

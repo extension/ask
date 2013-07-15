@@ -19,4 +19,7 @@ class UsersController < ApplicationController
     @open_questions = @user.open_questions.public_visible.limit(10)
   end
   
+  def retired
+  end
+  
 end
