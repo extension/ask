@@ -138,7 +138,7 @@
   <h3>My Groups</h3>
   
   <% if @my_groups.size == 0 %>
-    <h3>You are not a member any groups.</h3>
+    <h3>You are not a member of any groups.</h3>
     <p><%= link_to 'Explore Groups', expert_groups_path(), :class => "btn btn-primary" %>
   <% else %>
     <p><%= link_to "Explore Groups", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>
