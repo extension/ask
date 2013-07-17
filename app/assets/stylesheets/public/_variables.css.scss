@@ -1,0 +1,41 @@
+// Place all the mixin styles here.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@mixin boxshadow {
+    -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.6);
+    -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.6);
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.6);
+}
+
+@mixin rounded5 {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+	border-radius: 5px;
+}
+
+@mixin rounded10 {
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+	border-radius: 10px;
+}
+
+@mixin rounded16 {
+    -moz-border-radius:16px;
+    -webkit-border-radius:16px;
+	border-radius: 16px;
+}
+
+@mixin rounded3 {
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+	border-radius:3px;
+}
+
+@mixin wordwrap {
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}

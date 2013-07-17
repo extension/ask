@@ -1,19 +1,12 @@
-<div id="main" class="span8">
 
-  <ul class="nav nav-tabs">
-    <li class="active"><%= link_to 'Answered', root_path() %></li>
-    <li><%= link_to 'Unanswered', home_unanswered_path() %></li>
-  </ul>
-  
-  
-  
+<div class="span7">  
   <div id="home_question_list">
     <%= render :partial => 'list_of_questions', :locals => {:questions => @answered_questions, :listview => 'answered'} %>
   </div>
 
 </div>
 
-<div class="span4">
+<div class="span4 offset1">
   
   <aside id="recent_photo_questions">
     <%= render :partial => 'recent_photo_questions', :locals => {:questions => @recent_photo_questions } %>
