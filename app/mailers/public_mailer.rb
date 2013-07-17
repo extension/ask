@@ -81,7 +81,7 @@ class PublicMailer < ActionMailer::Base
 
     @subject = "Tell us about your Ask an Expert experience (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
-    @title = "Ask an Expert Evaulation"
+    @title = "Ask an Expert Evaluation"
 
     if(!@user.email.blank?)
       if(@will_cache_email)
