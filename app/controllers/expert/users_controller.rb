@@ -85,6 +85,19 @@ class Expert::UsersController < ApplicationController
     render :action => 'show'
   end
   
+  def submitted
+    @user = User.find_by_id(params[:id])
+    
+    if !@user.present?
+      flash[:error] = "User does not exist with this id or email."
+      return redirect_to expert_home_url
+    end
+    
+    @question_list = "submitted"
+    @questions = @user.submitted_questions.page(params[:page]).order('created_at DESC')
+    @question_count = @user.submitted_questions.length
+  end
+  
   def tags
     @tag = Tag.find_by_id(params[:tag_id])
     @user = User.exid_holder.find_by_id(params[:user_id])

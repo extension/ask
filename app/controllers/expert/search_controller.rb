@@ -28,6 +28,18 @@ class Expert::SearchController < ApplicationController
       @experts = User.where(id: id_number, kind: 'User').page(1)
       @groups = Group.where(id: id_number).page(1)
     else
+      if (params[:q] =~ /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i) 
+        @user_email = true 
+        if user = User.find_by_email(params[:q].strip) 
+          @user_email_id = user.id 
+        else
+          @user_email_id = nil
+        end
+      else  
+        @user_email = false
+        @user_email_id = nil
+      end
+      
       questions = Question.search do
                     fulltext(params[:q])
                      without(:status_state, Question::STATUS_REJECTED)

@@ -7,6 +7,12 @@
   <% if !@number_passed %>
     <li><%= link_to "See what's tagged '#{params[:q]}'", expert_home_tags_path(:name => params[:q]) %></li>
   <% end %>
+
+  <% if @user_email == true && @user_email_id.present? %>
+    <li><%= link_to "Questions from '#{params[:q]}'", expert_user_submitted_path(:id => @user_email_id) %></li>
+  <% elsif @user_email == true %>
+    <li><%= "No questions found from '#{params[:q]}'" %></li> 
+  <% end %>
 </ul>
 
 <span class="search_section_anchor" id="question_results"></span>

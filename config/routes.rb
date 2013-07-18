@@ -99,6 +99,7 @@ Aae::Application.routes.draw do
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "users/:id/edit_attributes" => "users#edit_attributes", :via => [:get, :put], :as => 'edit_attributes'
+    match "users/:id/submitted" => "users#submitted", :via => [:get], :as => 'user_submitted'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
@@ -139,7 +140,6 @@ Aae::Application.routes.draw do
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions" => "questions#index"
-    match "questions/:id/submitted" => "questions#submitted", :via => [:get], :as => 'user_submitted'
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
     match "questions/add_history_comment" => "questions#add_history_comment", :via => [:post]

@@ -50,18 +50,9 @@ class Expert::QuestionsController < ApplicationController
     @status = params[:status_state]
     # @sampletext = params[:sample] if params[:sample]
     current_user.signature.present? ? @signature = current_user.signature : @signature = "-#{current_user.public_name}"
-    @image_count = 3
-    
-    
+    @image_count = 3    
   end
-  
-  def submitted
-    @user = User.find_by_id(params[:id])
-    @question_list = "submitted"
-    @questions = @user.submitted_questions.page(params[:page]).order('created_at DESC')
-    @question_count = @user.submitted_questions.length
-  end
-  
+
   def assign_options
     @user = User.find_by_id(params[:expert_id])
     @question = Question.find_by_id(params[:id])
