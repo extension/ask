@@ -122,8 +122,6 @@ class Webmail::ExamplesController < ApplicationController
     mail = InternalMailer.aae_question_activity(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-
-  
   
   protected
   

@@ -173,6 +173,11 @@ class Question < ActiveRecord::Base
   def response_list
     self.responses.map(&:body).join(' ')
   end
+  
+  # get resolvers for a question
+  def resolver_list
+    self.responses.map{|r| r.resolver}
+  end
 
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
