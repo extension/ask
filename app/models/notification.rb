@@ -51,7 +51,8 @@ class Notification < ActiveRecord::Base
   #AAE_PUBLIC_NOREPLY_QUESTION = 2003 # public sent a new question to the no-reply address
   AAE_PUBLIC_EVALUATION_REQUEST = 2004 # request that the question submitter complete an evaluation
   AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT = 2010  # notification of submission, also "The Year We Make Contact"
-  AAE_PUBLIC_COMMENT = 2011
+  AAE_PUBLIC_COMMENT_REPLY = 2011
+  AAE_PUBLIC_COMMENT = 2012
 
   ##########################################
   
@@ -93,6 +94,8 @@ class Notification < ActiveRecord::Base
       process_aae_public_submission_acknowledgement
     when AAE_PUBLIC_COMMENT_REPLY
       process_aae_public_comment_reply
+    when AAE_PUBLIC_COMMENT
+      process_aae_public_comment
     when AAE_QUESTION_ACTIVITY
       process_aae_question_activity
     when AAE_EXPERT_TAG_EDIT
@@ -170,12 +173,21 @@ class Notification < ActiveRecord::Base
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
   
-  # send notifications to public parent comment poster (if exists)
+  # send comment notification to public parent comment poster (if exists) 
   def process_aae_public_comment_reply
-    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless self.notifiable.parent.user.nil? or self.notifiable.parent.user.email.nil?
+    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless self.notifiable.parent.user.nil? || self.notifiable.parent.user.email.nil?
   end
   
-  # send notifications to:
+  # send comment notification to submitter of question
+  def process_aae_public_comment
+    question_submitter = self.notifiable.question.submitter
+    question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
+    if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter)  
+      PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
+    end
+  end
+  
+  # send comment notifications to:
   # those watching the question (signed up to be notified of activity)
   # all resolvers of the question
   def process_aae_expert_public_comment

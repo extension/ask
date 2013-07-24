@@ -44,6 +44,8 @@ class Comment < ActiveRecord::Base
     if self.is_reply?
       Notification.create(notifiable: self, notification_type: Notification::AAE_PUBLIC_COMMENT_REPLY, created_by: self.user.id, recipient_id: 1, delivery_time: 1.minute.from_now)
     end
+    Notification.create(notifiable: self, notification_type: Notification::AAE_PUBLIC_COMMENT, created_by: self.user.id, recipient_id: 1, delivery_time: 1.minute.from_now)
     Notification.create(notifiable: self, notification_type: Notification::AAE_EXPERT_PUBLIC_COMMENT, created_by: self.user.id, recipient_id: 1, delivery_time: 1.minute.from_now)
+    
   end
 end
