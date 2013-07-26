@@ -24,6 +24,6 @@ class SettingsController < ApplicationController
       end
     end
   end
-
+  
 end
 

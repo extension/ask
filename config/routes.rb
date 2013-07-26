@@ -24,7 +24,12 @@ Aae::Application.routes.draw do
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
   
-  resources :users
+  resources :users do
+    member do
+      post 'comment_notification_subscription'
+    end  
+  end
+  
   resources :groups do
     member do
       get 'ask'

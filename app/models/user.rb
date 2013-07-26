@@ -232,6 +232,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def get_pref(pref_name)
+    return self.preferences.find(:first, conditions: {name: pref_name})
+  end
+  
   def log_create_group(group)
     GroupEvent.log_group_creation(group, self, self)
   end

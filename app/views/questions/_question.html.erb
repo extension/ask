@@ -131,7 +131,7 @@
       </div>
     <% end %>
 
-    <% if @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
+    <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
 	    <div id="submitter_followup">
 	      <p class="additional_comment_toggle btn btn-primary btn-large">Post a response to the expert</p>
 	    </div>
@@ -165,6 +165,18 @@
 
 
 <%= render :partial => 'comments' %>
+
+<% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) || (current_user and current_user.id == @question.submitter_id) %>
+  <div>
+	<h3>
+	<% if @comment_notification_pref == true %>
+	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_user.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post %>
+	<% else %>
+	  You have unsubscribed from public comments. <br /><%= button_to 'Subscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_user.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post %>
+	<% end %>
+ 	</h3>
+  </div>
+<% end %>
 
 </div>
 
