@@ -94,6 +94,13 @@ class WidgetsController < ApplicationController
       @question_list = question_group_scope.public_visible_answered.order('resolved_at DESC').limit(question_limit)
     end
     
+    if @question_list.length == 0
+      @title = "eXtension Latest Resolved Questions"
+      @path_to_questions = root_url
+      @tag = Tag.find_by_name("front page")
+      @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
+    end
+    
     render "widgets"
   end
   
