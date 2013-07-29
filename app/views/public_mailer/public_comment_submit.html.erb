@@ -15,7 +15,7 @@
   <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Add a comment on the question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
 </tr>
 
-<p>You can subscribe/unsubscribe from comment notifications for this question on the question page <%= link_to 'here.', submitter_view_url(:fingerprint => @question.question_fingerprint) %></p>
+<p>You can subscribe/unsubscribe from comment notifications for this question on the question page <%= link_to 'here.', submitter_view_url(:fingerprint => @question.question_fingerprint, :anchor => 'comment_notification_pref') %></p>
 
 
 
