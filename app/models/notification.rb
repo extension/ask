@@ -181,9 +181,12 @@ class Notification < ActiveRecord::Base
   # send comment notification to submitter of question
   def process_aae_public_comment
     question_submitter = self.notifiable.question.submitter
-    question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
-    if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter)  
-      PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
+    # make sure the question submitter has not opted out of receiving comment notifications
+    if self.notifiable.question.opted_into_comment_notifications?(question_submitter)
+      question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
+      if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter)  
+        PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
+      end
     end
   end
   

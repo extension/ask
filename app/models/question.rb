@@ -640,7 +640,21 @@ class Question < ActiveRecord::Base
   end
 
   def question_activity_preference_list
-    list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+    list = Preference.where(name: Preference::NOTIFICATION_ACTIVITY, question_id: self.id )
+  end
+  
+  def question_comment_notification_list
+    return Preference.where(name: Preference::NOTIFICATION_COMMENTS, question_id: self.id, value: true)
+  end
+  
+  # if the pref for notification_comments does not exist or it has a value of true, then they are opted into comment notifications, otherwise, 
+  # the pref exists, and the value is set to false indicating they have opted out.
+  def opted_into_comment_notifications?(user_id)
+    if Preference.where(name: Preference::NOTIFICATION_COMMENTS, question_id: self.id, value: false, prefable_type: 'User', prefable_id: user_id).present?
+      return false
+    else
+      return true
+    end
   end
   
   def rejected?
