@@ -175,7 +175,7 @@ class Notification < ActiveRecord::Base
   
   # send comment notification to public parent comment poster (if exists) 
   def process_aae_public_comment_reply
-    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless self.notifiable.parent.user.nil? || self.notifiable.parent.user.email.nil?
+    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless (self.notifiable.parent.user.nil? || self.notifiable.parent.user.email.nil? || self.notifiable.parent.user == self.notifiable.user)
   end
   
   # send comment notification to submitter of question

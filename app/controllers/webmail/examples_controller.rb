@@ -123,6 +123,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def aae_comment
+    mail = InternalMailer.aae_comment(user: User.first, question: Question.last, comment: Comment.last, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def internal_aae_question_activity
     mail = InternalMailer.aae_question_activity(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
