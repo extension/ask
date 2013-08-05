@@ -184,7 +184,8 @@ class Notification < ActiveRecord::Base
     # make sure the question submitter has not opted out of receiving comment notifications
     if self.notifiable.question.opted_into_comment_notifications?(question_submitter)
       question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
-      if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter)  
+      # don't want double emails going out to question watchers and parent comment submitters or an email going to the submitter of the comment
+      if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter) && !(question_submitter.id == self.created_by)
         PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
       end
     end
@@ -195,10 +196,13 @@ class Notification < ActiveRecord::Base
   # all resolvers of the question
   def process_aae_expert_public_comment
     question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
-    question_watchers.each{|watcher| InternalMailer.aae_question_activity(user: watcher, question: self.notifiable.question).deliver unless (watcher.id == self.created_by)}
+    # send emails to the watchers that were not the submitter of the parent comment (already handled in reply notification) and 
+    # who did not post the comment themselves or who did not submit the question (already handled in submission notification)
+    question_watchers.each{|watcher| InternalMailer.aae_question_activity(user: watcher, question: self.notifiable.question).deliver unless (watcher.id == self.created_by || watcher == self.notifiable.question.submitter || (self.notifiable.is_reply? && watcher == self.notifiable.parent.user))}
     # make sure we don't have a double email to the intersection of question watchers and question resolvers
     resolver_list = self.notifiable.question.resolver_list - question_watchers
-    resolver_list.each{|expert| InternalMailer.aae_comment(user: expert, question: self.notifiable.question, comment: self.notifiable).deliver unless (expert.id == self.created_by)}
+    # don't deliver email unless the expert did not post the comment, or the expert authored the parent comment (already handled in reply notification)
+    resolver_list.each{|expert| InternalMailer.aae_comment(user: expert, question: self.notifiable.question, comment: self.notifiable).deliver unless (expert.id == self.created_by || (self.notifiable.is_reply? && expert == self.notifiable.parent.user)}
   end
   
   def process_aae_question_activity
