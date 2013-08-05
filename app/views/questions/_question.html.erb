@@ -170,9 +170,9 @@
   <div>
 	<h3 id='comment_notification_pref'>
 	<% if @comment_notification_pref == true %>
-	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_user.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post %>
+	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post %>
 	<% else %>
-	  You have unsubscribed from public comments. <br /><%= button_to 'Subscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_user.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post %>
+	  You have unsubscribed from public comments. <br /><%= button_to 'Subscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post %>
 	<% end %>
  	</h3>
   </div>
