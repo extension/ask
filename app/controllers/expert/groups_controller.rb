@@ -20,6 +20,14 @@ class Expert::GroupsController < ApplicationController
     @groups = Group.page(params[:page]).order(:name)
   end
   
+  def email_csv
+    @group = Group.find_by_id(params[:id])
+    @group_members = @group.joined
+    response.headers['Content-Type'] = 'text/csv; charset=iso-8859-1; header=present'
+    response.headers['Content-Disposition'] = 'attachment; filename="' + @group.name.gsub(' ', '_') + '_Member_Emails.csv"'    
+    render :layout => false
+  end
+  
   def about
     @group = Group.find(params[:id])
     if !@group 

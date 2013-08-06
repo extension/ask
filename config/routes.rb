@@ -89,6 +89,9 @@ Aae::Application.routes.draw do
         post 'new'
         get 'all'
       end
+      member do
+        get 'email_csv'
+      end
     end
     
     match "/" => "home#dashboard"
