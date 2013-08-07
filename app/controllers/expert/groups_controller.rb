@@ -23,9 +23,9 @@ class Expert::GroupsController < ApplicationController
   def email_csv
     @group = Group.find_by_id(params[:id])
     @group_members = @group.joined
-    response.headers['Content-Type'] = 'text/csv; charset=iso-8859-1; header=present'
-    response.headers['Content-Disposition'] = 'attachment; filename="' + @group.name.gsub(' ', '_') + '_Member_Emails.csv"'    
-    render :layout => false
+    respond_to do |format|
+      format.csv { send_data User.to_csv(@group_members, ["first_name", "last_name", "email"]), :filename => "#{@group.name.gsub(' ', '_')}_Member_Emails.csv" }
+    end
   end
   
   def about
