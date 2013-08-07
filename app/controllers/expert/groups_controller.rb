@@ -20,6 +20,14 @@ class Expert::GroupsController < ApplicationController
     @groups = Group.page(params[:page]).order(:name)
   end
   
+  def email_csv
+    @group = Group.find_by_id(params[:id])
+    @group_members = @group.joined
+    respond_to do |format|
+      format.csv { send_data User.to_csv(@group_members, ["first_name", "last_name", "email"]), :filename => "#{@group.name.gsub(' ', '_')}_Member_Emails.csv" }
+    end
+  end
+  
   def about
     @group = Group.find(params[:id])
     if !@group 

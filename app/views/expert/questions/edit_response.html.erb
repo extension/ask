@@ -6,7 +6,7 @@
     
     <h1>Edit Question</h1>
     <h3>Editing guidelines</h3>
-    <p>Please correct grammatical and spelling errors or factual inaccuracies.</p>
+    <p>Please correct grammatical and spelling errors only. Submitters are not notified of edits. Factual errors should be handled with a new response. (The response will notify the submitter.)</p>
     <div id="edit_response" class="formy">
       
 	  <%= form_for @response, :url => update_response_expert_question_path(:id => @question.id, :response_id => @response.id) do |f| %>

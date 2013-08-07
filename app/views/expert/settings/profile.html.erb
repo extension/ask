@@ -42,7 +42,7 @@
   </fieldset>
   
   <fieldset>
-    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p><%= f.label :avatar, 'Profile Avatar' %> Avatars are formatted to fit a square. Uploaded images must be at least 100 x 100px. Recommended size is 250 x 250px.</p>
     <p class="clearing">
       <%= get_avatar_for_user(@user) %>
       <% if @user.avatar.present? %>
