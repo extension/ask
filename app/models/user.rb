@@ -175,6 +175,16 @@ class User < ActiveRecord::Base
     end
     return DEFAULT_NAME
   end
+  
+  def self.to_csv(users, fields, options = {})
+    fields = self.column_names if fields.blank?
+    CSV.generate(options) do |csv| 
+      csv << fields
+      users.each do |user|
+        csv << user.attributes.values_at(*fields)
+      end
+    end
+  end
 
   def tag_fulltext
     self.tags.map(&:name).join(' ')
