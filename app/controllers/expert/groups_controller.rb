@@ -29,7 +29,7 @@ class Expert::GroupsController < ApplicationController
   end
   
   def about
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
     if !@group 
       return record_not_found
     end
@@ -38,7 +38,7 @@ class Expert::GroupsController < ApplicationController
   end
   
   def leaders
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
     if !@group 
       return record_not_found
     end
@@ -47,7 +47,7 @@ class Expert::GroupsController < ApplicationController
   end
   
   def show
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
     if !@group 
       return record_not_found
     end
@@ -60,7 +60,10 @@ class Expert::GroupsController < ApplicationController
   end
   
   def answered
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
+    if !@group 
+      return record_not_found
+    end
     @question_list = "Answered"
     @questions = @group.answered_questions.page(params[:page]).order('resolved_at DESC')
     @question_count = @group.answered_questions.length
@@ -70,7 +73,10 @@ class Expert::GroupsController < ApplicationController
   end
   
   def members
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
+    if !@group 
+      return record_not_found
+    end
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @group_members.map(&:id)})
   end

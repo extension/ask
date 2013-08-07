@@ -117,10 +117,10 @@ Aae::Application.routes.draw do
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "groups/:id/about" => "groups#about", :via => [:get, :put], :as => 'about_group'
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
-    match "groups/:id/join" => "groups#join", :via => [:get, :put, :post], :as => 'group_join'
-    match "groups/:id/leave" => "groups#leave", :via => [:get, :put, :post], :as => 'group_leave'
-    match "groups/:id/lead" => "groups#lead", :via => [:get, :put, :post], :as => 'group_lead'
-    match "groups/:id/unlead" => "groups#unlead", :via => [:get, :put, :post], :as => 'group_unlead'
+    match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
+    match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
+    match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
+    match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
