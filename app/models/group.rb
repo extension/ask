@@ -57,9 +57,9 @@ class Group < ActiveRecord::Base
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
-    # strip '+' characters because it's causing a repitition search error
+    # strip '+' and '?' characters because it's causing a repetition search error
     # strip parens '()' to keep it from messing up mysql query
-    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').strip
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
     if sanitizedsearchterm == ''
       return {:conditions => 'false'}
     end
