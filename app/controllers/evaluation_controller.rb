@@ -10,6 +10,7 @@ class EvaluationController < ApplicationController
   before_filter :require_exid, only: [:example]
 
   before_filter :set_evaluator, except: [:view,:authorize]
+  before_filter :set_format, :only => [:view]
 
   def view
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
