@@ -8,6 +8,8 @@
 require 'valid_email'
 class User < ActiveRecord::Base
   extend YearMonth
+  include TagUtilities
+  
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
@@ -219,17 +221,6 @@ class User < ActiveRecord::Base
   def previously_assigned(question)
     find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
     !find_question.blank?
-  end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return false
-    else
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
   end
 
   def update_vacated_aae

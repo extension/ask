@@ -9,6 +9,8 @@ class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
   include CacheTools
+  include TagUtilities
+  
   rakismet_attrs :author_email => :email, :content => :body
   has_paper_trail :on => [:update], :only => [:title, :body]
 
@@ -501,22 +503,7 @@ class Question < ActiveRecord::Base
 
     return submitter_name
   end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return nil
-    else 
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        begin
-          self.tags << tag
-        rescue
-          return nil
-        end  
-        return tag
-      end
-    end
-  end
-  
+
   # get the event of the last response given for a question
   def last_response
     question_event = self.question_events.find(:first, :conditions => "event_state = #{QuestionEvent::RESOLVED} OR event_state = #{QuestionEvent::NO_ANSWER}", :order => "created_at DESC")

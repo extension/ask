@@ -155,7 +155,7 @@ class Expert::GroupsController < ApplicationController
   def add_tag
     @group = Group.find_by_id(params[:id])
     @tag = @group.set_tag(params[:tag])
-    if @tag == false
+    if @tag.blank?
       render :nothing => true
     end
   end

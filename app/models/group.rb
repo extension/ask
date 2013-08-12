@@ -1,4 +1,7 @@
 class Group < ActiveRecord::Base
+  
+  include TagUtilities
+  
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :question_events
@@ -161,17 +164,6 @@ class Group < ActiveRecord::Base
   
   def question_wrangler_group?
     self.id == QUESTION_WRANGLER_GROUP_ID
-  end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return false
-    else 
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
   end
   
   def include_in_daily_summary?
