@@ -194,4 +194,11 @@ class ApplicationController < ActionController::Base
     request.format = 'html'
   end
   
+  def check_format
+    respond_to do |format|
+      format.html {}
+      format.any { record_not_found }
+    end
+  end
+  
 end
