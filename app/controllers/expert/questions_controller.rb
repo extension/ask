@@ -6,8 +6,8 @@
 
 class Expert::QuestionsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :authenticate_user!, :require_exid
+  before_filter :set_format, :only => [:show]
   
   def index
     @locations = Location.order('fipsid ASC')
