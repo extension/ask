@@ -10,13 +10,15 @@ class GroupsController < ApplicationController
   before_filter :set_format, :only => [:ask]
   
   def show
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
+    return record_not_found if @group.blank?
     @group_tags = @group.tags
     @open_questions = @group.questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
   end
   
   def ask
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
+    return record_not_found if @group.blank?
     params[:fingerprint] = @group.widget_fingerprint
     @question = Question.new
     
@@ -97,7 +99,8 @@ class GroupsController < ApplicationController
 
   # convenience method to redirect to a widget page for the group
   def widget
-    @group = Group.find(params[:id])
+    @group = Group.find_by_id(params[:id])
+    return record_not_found if @group.blank?
     return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
   end  
   
