@@ -338,7 +338,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
-    self.working_on_this = nil
+    self.working_on_this = nil 
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
@@ -378,7 +378,7 @@ class Question < ActiveRecord::Base
     
     # update and log
     current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => group, :assignee => nil)
+    self.update_attributes(:assigned_group => group, :assignee => nil, :working_on_this => nil)
     QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
