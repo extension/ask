@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130628152223) do
+ActiveRecord::Schema.define(:version => 20130820204706) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -582,6 +582,7 @@ ActiveRecord::Schema.define(:version => 20130628152223) do
     t.string   "ip_address"
     t.datetime "created_at"
     t.text     "object_changes"
+    t.text     "reason"
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"

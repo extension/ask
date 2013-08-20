@@ -16,6 +16,7 @@
     	  <th>Modified</th>
     	  <th>Edited by</th>
     	  <th>Actions</th>
+          <th>Reason</th>
     	</tr>
     </thead>
 
@@ -35,6 +36,7 @@
 	      <td>
           <%= link_to "Compare to previous", diff_with_previous_response_revision_expert_question_path(:id => @question.id, :response_id => @response.id, :version_id => version.id), :class => 'btn' %>
 	      </td>	
+	      <td><%= version.reason %></td>
 	    </tr>	
     <% end %>
 <% end %>

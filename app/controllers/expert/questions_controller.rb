@@ -146,6 +146,7 @@ class Expert::QuestionsController < ApplicationController
   def update_response
     @response = Response.find_by_id(params[:response_id])
     @question = Question.find_by_id(params[:id])
+    
     return record_not_found if !@response.present? || !@question.present?
     
     if @response.update_attributes(params[:response])

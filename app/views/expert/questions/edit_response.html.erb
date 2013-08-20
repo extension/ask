@@ -16,6 +16,11 @@
           <%= f.label :body, 'Response' %>
           <%= f.text_area :body, :rows => 12, :class => "xl required wysiwyg" %>
         </p>
+       
+        <p>
+	     <%= label_tag :reason, 'Reason' %>
+	     <%= text_area_tag :reason, nil, { rows: 5 } %>
+	    </p>
   	  </fieldset>
 
 	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
