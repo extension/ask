@@ -110,3 +110,7 @@ div.rejected {padding:1em; @include rounded10; margin-bottom:2em; background:#F5
 .filter_string {margin:.5em 0;}
 #helper {border:2px solid #ccc;}
 #helper span {background:yellow; padding:.1em .4em; color:#666;}
+
+#areyousure {padding:1em; @include rounded10; margin-bottom:2em; background:#FFFFA5 !important; border:3px solid #999; }
+#areyousure h3 {font-size:1.6em; color:#000; margin-bottom:1em;}
+#areyousure p {font-size:1.2em; color:#000;}

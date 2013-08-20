@@ -9,6 +9,8 @@ class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
   include CacheTools
+  include TagUtilities
+  
   rakismet_attrs :author_email => :email, :content => :body
   has_paper_trail :on => [:update], :only => [:title, :body]
 
@@ -336,7 +338,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
-    self.working_on_this = nil
+    self.working_on_this = nil 
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
@@ -376,7 +378,7 @@ class Question < ActiveRecord::Base
     
     # update and log
     current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => group, :assignee => nil)
+    self.update_attributes(:assigned_group => group, :assignee => nil, :working_on_this => nil)
     QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
@@ -501,22 +503,7 @@ class Question < ActiveRecord::Base
 
     return submitter_name
   end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return nil
-    else 
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        begin
-          self.tags << tag
-        rescue
-          return nil
-        end  
-        return tag
-      end
-    end
-  end
-  
+
   # get the event of the last response given for a question
   def last_response
     question_event = self.question_events.find(:first, :conditions => "event_state = #{QuestionEvent::RESOLVED} OR event_state = #{QuestionEvent::NO_ANSWER}", :order => "created_at DESC")

@@ -8,7 +8,7 @@ class QuestionsController < ApplicationController
   before_filter :set_submitter, only: [:show]
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
-  before_filter :set_format, :only => [:show]
+  before_filter :set_format, :only => [:show, :submitter_view]
   
   def show
     @question = Question.find_by_id(params[:id])
@@ -41,7 +41,7 @@ class QuestionsController < ApplicationController
       @private_view = false
     end
 
-    if(current_user and current_user.id == @question.submitter.id)
+    if(current_user and current_user.id == @question.submitter_id)
       setup_images_for_edit
       @private_view = false
       @viewer = current_user

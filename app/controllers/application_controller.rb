@@ -193,5 +193,5 @@ class ApplicationController < ActionController::Base
   def set_format
     request.format = 'html'
   end
-  
+    
 end

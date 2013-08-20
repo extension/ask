@@ -125,13 +125,13 @@ class AjaxController < ApplicationController
       when "group"    then @object = Group.find_by_id(params[:object_id])
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
-    location = Location.find(params[:requested_location])
-    @object.expertise_counties.where("location_id = ?", params[:requested_location]).each do |c|
+    location = Location.find_by_id(params[:requested_location])
+    @object.expertise_counties.where("location_id = ?", location.id).each do |c|
       @object.expertise_counties.delete(c)
     end
     
     # when adding location, start out with the all county selection
-    @object.expertise_counties << location.get_all_county
+    @object.expertise_counties << location.get_all_county unless @object.expertise_counties.include?(location.get_all_county)
     
     if !@object.expertise_locations.include?(location)
       @object.expertise_locations << location

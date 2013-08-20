@@ -40,7 +40,7 @@ class Expert::SettingsController < ApplicationController
     change_hash[:tags] = {:old => previous_tags, :new => current_tags}
     UserEvent.log_updated_tags(@user, current_user, change_hash) if previous_tags != current_tags
     
-    if @tag == false
+    if @tag.blank?
       render :nothing => true
     end
   end

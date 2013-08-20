@@ -12,6 +12,21 @@
   </div>
   
   <div id="reassign_actions">
+    
+    <% if @question.status_state == Question::STATUS_REJECTED || @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_CLOSED %>
+      <div id="areyousure">
+        <% if params[:visit_source].present? && params[:visit_source] == "email_reassign_link" %>
+          <h3>Please review the question page before reassigning</h3>
+          <p><strong>This question DOES NOT currently need an answer.</strong> It's been answered, rejected or closed since you received your email notification.</p>
+          <p>Please review the <%= link_to "question page", expert_question_url(@question) %> before assigning to another expert. Thanks!</p>
+        <% else %>
+          <h3>Are you sure this question needs to be reopened and reassigned?</h3>
+          <p><strong>It DOES NOT currently need an answer.</strong> (It's been answered, rejected or closed.)</p>
+          <p>Please review the <%= link_to "question page", expert_question_url(@question) %> before reassigning. Thanks!</p>
+        <% end %>
+      </div>
+    <% end %>
+    
     <% if (@question.assignee != current_user) || 
       (((@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER)) && (@question.assignee == current_user)) %>
       <p><%= link_to "Assign to me", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>

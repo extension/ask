@@ -8,6 +8,8 @@
 require 'valid_email'
 class User < ActiveRecord::Base
   extend YearMonth
+  include TagUtilities
+  
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
@@ -100,10 +102,10 @@ class User < ActiveRecord::Base
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
-    # strip '+' characters because it's causing a repitition search error
+    # strip '+' and '?' characters because it's causing a repetition search error
     # strip parens '()' to keep it from messing up mysql query
     # strip brackets
-    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').strip
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
 
     if sanitizedsearchterm == ''
       return {:conditions => 'false'}
@@ -220,17 +222,6 @@ class User < ActiveRecord::Base
     find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
     !find_question.blank?
   end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| Tag.normalizename(t.name)}.include?(Tag.normalizename(tag))
-      return false
-    else
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
-  end
 
   def update_vacated_aae
     if self.away_changed?
@@ -251,11 +242,12 @@ class User < ActiveRecord::Base
   end
   
   def join_group(group, connection_type)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+    if (connection = GroupConnection.where(user_id: self.id, group_id: group.id).first)
       connection.destroy
     end
 
-    self.group_connections.create(group: group, connection_type: connection_type)
+    group_connection = self.group_connections.create(group: group, connection_type: connection_type)
+    return if !group_connection.valid?
 
     if connection_type == 'leader'
       GroupEvent.log_added_as_leader(group, self, self)
