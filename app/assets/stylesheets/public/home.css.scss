@@ -52,22 +52,38 @@ ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
 
 #user_actions {top:0;}
 
+@media screen and (min-width: 767px) {
+  .brand img {width:360px;}
+}
+
 @media screen and (max-width: 767px) {
-  body {padding:0;}
+  body {padding:0; border:1px solid red;}
   .container {padding-top:0;}
 }
 
 
 @media screen and (max-width: 979px) {
+  body {border:4px solid lime;}
 	#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
-	#search_field {width:20em}
+/*  #search_field {width:20em}*/
 }	
+@media screen and (min-width: 979px) and (max-width: 1200px) {
+  .navbar .form-search {position:relative;top:-40px;}
+}
+
 @media screen and (min-width: 979px) {
+  body {border:4px solid orange;}
+  .brand img {width:360px;}
+  
+  
+  
   #publicbar .brand {font-size:2.5em;}
 	.navbar #publicbar .container {width: 940px; padding:2em;}
 	#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 }
 @media screen and (min-width: 1200px) {
+  .brand img {width:auto;}
+  body {border:4px solid blue;}
 	.navbar #publicbar .container {width: 1170px; padding:2em 0;}
 }
 @media screen and (max-width: 420px) {
@@ -76,7 +92,7 @@ ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
   .navavatar .avatar_with_badge img {height:20px;width:20px;}
 }
 @media screen and (max-width: 480px) {
-  #search_field {width:80%;}
+/*  #search_field {width:80%;}*/
   #extension_logo img {width:120px; height:auto;}
   #ask_an_expert_logo img {width:120px; height:auto;}
   #question_wrapper {padding:1em 0 !important;}
