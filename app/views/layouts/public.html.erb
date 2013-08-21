@@ -47,12 +47,12 @@
   
   <% if current_user %>
     <% if current_user.has_exid? %>
-      <div id="expert_navbar" class="navbar navbar-inverse app-navbar">
-        <div id="expert_navbar-inner" class="navbar-inner">
+      <div id="expert_navbar" class="navbar navbar-inverse app-navbar clearfix">
+        <div id="expert_navbar-inner" class="navbar-inner clearfix">
 
 
             <ul class="navavatar loggedin pull-right">
-              <li><%= link_expert_user_avatar(current_user, :mini) %></li>
+              <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
               <li class="username">
                 <%= link_to expert_user_path(current_user.id) do %>
                   <span class="hidecompact420"><%= current_user.name %></span>

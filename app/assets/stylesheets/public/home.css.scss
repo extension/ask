@@ -6,9 +6,7 @@ h3.stylized {
 	line-height: 120%;
 	margin-top:0px;
 }
-
-
-/*#expert_navbar {border:4px solid lime;}*/
+/*#expert_navbar {border:1px solid yellow !important; }*/
 
 #expert_navbar-inner {border-bottom: 2px solid #000 !important; padding-top:.5em; padding-bottom:.75em;
   padding-left:40px; padding-right:40px;
@@ -19,7 +17,7 @@ h3.stylized {
 #expert_navbar-inner.navbar-inner {min-height:35px; height:35px;}
 
 
-ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
+ul.navavatar.loggedin li.username {padding-left:10px;padding-right:0;}
 
 
 #expert_navbar-inner.navbar-inner {
@@ -31,7 +29,7 @@ ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
 }
 #expert_navbar-inner a.brand {color:#fff !important;}
 
-ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
+ul.navavatar li {float:left; list-style:none; margin:0;padding:0; height:40px; line-height:40px;}
 
 .avatar_with_badge {
   position:relative; 
@@ -45,9 +43,9 @@ ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
   border: 0;
 }
 
-.navavatar {float:right; padding-bottom:1.1em;}
+.navavatar {float:right; /*border:1px solid lime;*/}
 .navavatar a {color:#999;}
-.navavatar img {border:#888 1px solid;}
+.navavatar img {border:#888 1px solid; width:32px;}
 .navavatar a:hover {color:#fff !important; text-decoration:none;}
 
 #user_actions {top:0;}
@@ -63,7 +61,7 @@ ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
 
 
 @media screen and (max-width: 979px) {
-  body {border:4px solid lime;}
+/*  body {border:4px solid lime;}*/
 	#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 /*  #search_field {width:20em}*/
 }	
@@ -72,24 +70,21 @@ ul.navavatar li {float:left; list-style:none; margin:0;padding:0;}
 }
 
 @media screen and (min-width: 979px) {
-  body {border:4px solid orange;}
+/*  body {border:4px solid orange;}*/
   .brand img {width:360px;}
-  
-  
-  
   #publicbar .brand {font-size:2.5em;}
 	.navbar #publicbar .container {width: 940px; padding:2em;}
 	#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 }
 @media screen and (min-width: 1200px) {
+/*  body {border:4px solid blue;}*/
   .brand img {width:auto;}
-  body {border:4px solid blue;}
 	.navbar #publicbar .container {width: 1170px; padding:2em 0;}
 }
 @media screen and (max-width: 420px) {
   .navavatar.loggedin.publicuser {display:block;float:none;}
   .hidecompact420 {display:none;}
-  .navavatar .avatar_with_badge img {height:20px;width:20px;}
+/*  .navavatar .avatar_with_badge img {height:20px;width:20px;}*/
 }
 @media screen and (max-width: 480px) {
 /*  #search_field {width:80%;}*/
