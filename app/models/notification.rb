@@ -41,6 +41,7 @@ class Notification < ActiveRecord::Base
   AAE_EXPERT_VACATION_EDIT = 1014
   AAE_EXPERT_HANDLING_REMINDER = 1015
   AAE_EXPERT_PUBLIC_COMMENT = 1016
+  AAE_EXPERT_RESPONSE_EDIT = 1017
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -106,6 +107,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_handling_reminder
     when AAE_EXPERT_PUBLIC_COMMENT
       process_aae_expert_public_comment
+    when AAE_EXPERT_RESPONSE_EDIT
+      process aae_expert_response_edit
     else
       # nothing
     end
@@ -189,6 +192,11 @@ class Notification < ActiveRecord::Base
         PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
       end
     end
+  end
+  
+  def process_aae_expert_response_edit
+    recipient = User.find_by_id(self.recipient_id)
+    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
   end
   
   # send comment notifications to:
