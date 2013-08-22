@@ -6,7 +6,7 @@
     
     <h1>Edit Question</h1>
     <h3>Editing guidelines</h3>
-    <p>Please correct grammatical and spelling errors only. Submitters are not notified of edits. Factual errors should be handled with a new response. (The response will notify the submitter.)</p>
+    <p>You can correct grammatical, spelling or factual errors. If it is a factual edit or an edit that changes the nature of the response, please click the 'Notify Question Submitter of this Change' checkbox below so the question submitter will get an e-mail notification that this edit has occurred. For all minor, spelling, grammatical, etc. edits, please do not check the box to notify the submitter. The author of the response will be notified on every edit.</p>
     <div id="edit_response" class="formy">
       
 	  <%= form_for @response, :url => update_response_expert_question_path(:id => @question.id, :response_id => @response.id) do |f| %>
