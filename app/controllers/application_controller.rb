@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   
   # additional tracking information for papertrail
   def info_for_paper_trail
-    { :ip_address => request.remote_ip, :reason => params[:reason], :notify_submitter => params[:notify_submitter] }
+    { :ip_address => request.remote_ip, :reason => params[:reason], :notify_submitter => params[:notify_submitter].present? ? params[:notify_submitter] : false }
   end
   
   # turn off paper trail on the create action. we have it configured for updates only, but somehow papertrail is detecting an update on body and title (thus generating a new revision) on create

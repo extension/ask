@@ -54,6 +54,7 @@ class Notification < ActiveRecord::Base
   AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT = 2010  # notification of submission, also "The Year We Make Contact"
   AAE_PUBLIC_COMMENT_REPLY = 2011
   AAE_PUBLIC_COMMENT = 2012
+  AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER = 2013
 
   ##########################################
   
@@ -109,6 +110,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_public_comment
     when AAE_EXPERT_RESPONSE_EDIT
       process aae_expert_response_edit
+    when AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER
+      process aae_expert_response_edit_to_submitter
     else
       # nothing
     end
@@ -197,6 +200,11 @@ class Notification < ActiveRecord::Base
   def process_aae_expert_response_edit
     recipient = User.find_by_id(self.recipient_id)
     InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
+  end
+  
+  def aae_expert_response_edit_to_submitter
+    recipient = User.find_by_id(self.recipient_id)
+    PublicMailer.expert_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless (recipient.blank? || recipient.email.blank?)
   end
   
   # send comment notifications to:

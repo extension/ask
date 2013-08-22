@@ -157,6 +157,34 @@ class PublicMailer < ActionMailer::Base
     # the email if we got it
     return_email
   end
+  
+  def expert_response_edit(options = {})
+    @user = options[:user]
+    @question = options[:question]
+    @response = options[:response]
+    
+    @subject = "An expert has edited a response to your Ask an Expert question (Question:#{@question.id})"
+    @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "An Expert Has Edited a Response To Your Question"
+    
+    if(!@user.email.blank?)
+      if(@will_cache_email)
+        # create a cached mail object that can be used for "view this in a browser" within
+        # the rendered email.
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+      end
+
+      return_email = mail(to: @user.email, subject: @subject)
+
+      if(@mailer_cache)
+        # now that we have the rendered email - update the cached mail object
+        @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+      end
+    end
+    
+    # the email if we got it
+    return_email 
+  end
 
   def ssl_root_url
     if(Settings.app_location != 'localdev')

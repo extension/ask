@@ -90,6 +90,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
   
+  def public_expert_response_edit
+    mail = PublicMailer.expert_response_edit(user: current_user, question: Question.last, response: Response.last, cache_email: false)
+    return render_mail(mail)
+  end
+  
   def public_expert_response
     mail = PublicMailer.public_expert_response(user: User.first, question: Question.answered.last, expert: User.offset(rand(User.count)).first, cache_email: false)
     return render_mail(mail)

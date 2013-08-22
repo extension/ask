@@ -583,7 +583,7 @@ ActiveRecord::Schema.define(:version => 20130820204706) do
     t.datetime "created_at"
     t.text     "object_changes"
     t.text     "reason"
-    t.boolean  "notify_submitter", :default => false
+    t.boolean  "notify_submitter", :default => false, :null => false
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
