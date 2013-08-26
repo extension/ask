@@ -399,7 +399,7 @@ class Question < ActiveRecord::Base
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change, 
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     if group.individual_assignment == true
-      auto_assign([previously_assigned_user])
+      auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
