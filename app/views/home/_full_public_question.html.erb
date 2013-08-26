@@ -1,6 +1,6 @@
 <div class="incoming_question">
   <%= link_to question_path(question.id) do %>
-    <h3><%= format_text_for_display(question.title) -%></h3>
+    <h1><%= format_text_for_display(question.title) -%></h1>
     <p class="question_body"><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
     
     <% if question.responses.size > 0 %>
@@ -40,9 +40,7 @@
     
   <% end %>
   
-  
-  
-    <p>
+    <p class="infobar">
       <% if question.location.present? %>
         <% if question.county.present? %>
           <span class="tag tag-geography"><%= "#{question.county.name}" %></span>
@@ -59,7 +57,7 @@
           <% end %>
         <% end %>
       <% end %>
-        <span class="smallish"><%= time_ago_in_words(question.created_at) %> ago</span>
+        <span class="smallish muted"><%= time_ago_in_words(question.created_at) %> ago</span>
 
 
     <% if current_user && current_user.has_exid? %>

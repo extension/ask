@@ -1,3 +1,5 @@
+<h1 class="title"><%= listview.capitalize %></h1>
+
 <% questions.each do |question| %>
   <%= render :partial => 'full_public_question', :locals => {:question => question} %>
 <% end %>
