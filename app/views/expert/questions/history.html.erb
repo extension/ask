@@ -17,6 +17,7 @@
     	  <th>Edited by</th>
     	  <th>Items Modified</th>
     	  <th>Actions</th>
+          <th>Reason</th>
     	</tr>
     </thead>
     <% @question.versions.reverse.each do |version| %>	
@@ -36,6 +37,7 @@
 	      <td>
 	        <%= link_to "Compare to Previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id), :class => 'btn' %>
     	  </td>	
+          <td><%= version.reason %></td>
 	    </tr>	
 	<% end %>
 <% end %>

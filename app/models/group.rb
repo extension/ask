@@ -143,20 +143,32 @@ class Group < ActiveRecord::Base
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end
   
-  def self.get_wrangler_assignees(question_location = nil, question_county = nil)
+  def self.get_wrangler_assignees(question_location = nil, question_county = nil, assignees_to_exclude = nil)
     assignees = nil
     wrangler_group = self.question_wrangler_group
     
     if question_county.present?
-      assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.with_expertise_county(question_county.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
+      end
     end
     
     if assignees.blank? && question_location.present?
-      assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.with_expertise_location(question_location.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
+      end
     end
     
     if assignees.blank?
-      assignees = wrangler_group.assignees.active.route_from_anywhere
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.active.route_from_anywhere.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.active.route_from_anywhere
+      end
     end
     
     return assignees
