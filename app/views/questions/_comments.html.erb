@@ -1,25 +1,23 @@
 <% if !@question.is_private %>
+  <h2 id="responses" class="subhead_style bordered">
+    <%= @question.comments.size %> <%= @question.comments.size == 1 ? "Comment" : "Comments"%>
+  </h2>
   
-  <% if @question.comments.present? %>
-    <h3><%= @question.comments.size > 1 ? "#{@question.comments.size} Comments" : "1 Comment"%> <span class="comments_form_toggle cursor link">Add a Comment</span></h3>
-  <% else %>
-    <h3>No Comments <span class="comments_form_toggle cursor link">Add a Comment</span></h3>
-  <% end %>
+  <p><span class="comments_form_toggle btn">Add a Comment</span></p>
 
-  <div id="comments_form" class="commentfield_container">
+  <div id="comments_form" class="commentfield_container clearfix">
   <% if current_user %>
     <%= form_tag(comments_path, :id => 'comment-form', :remote => true) do %>
       <div class="commentfield">
-      <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 2,class: 'wysiwyg'} %>
+      <%= text_area_tag 'comment[content]', nil, {:cols => nil, :rows => 2, class: 'wysiwyg'} %>
       <%= hidden_field_tag 'comment[question_id]', @question.id %>
-      <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn'} %>
+      <%= submit_tag "Post", {:id => 'comment-submit', :class => 'btn btn-primary'} %>
       <% if current_user && current_user.has_exid? %>
         <p class="current_commenter left"><%= link_public_user_avatar(current_user, :thumb) %></p>
       <% elsif current_user %>
         <p class="current_commenter left"><strong><%= current_user.public_name %></strong></p>
       <% end %>
       </div>
-      <br class="clearing" />
     <% end %>
   <% else %>
       <div class="sign_in_prompt" >
@@ -28,8 +26,6 @@
       </div>
       
   <% end %>
-  
-  <br class="clearing" />
   </div>
 <% end %>
 

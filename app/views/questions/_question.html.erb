@@ -75,7 +75,7 @@
   <%- end -%>
 
   <% if @question_responses.size > 0 %>
-    <h2 id="responses" class="subhead_style bordered">Responses</h2>
+    <h2 id="responses" class="subhead_style bordered"><%= @question_responses.size %> <%= @question_responses.size == 1 ? "Response" : "Responses" %></h2>
     <% @question_responses.each do |response| %>
       <div class="response_block">
         <div class="response">
