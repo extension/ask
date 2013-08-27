@@ -14,7 +14,7 @@
   
   <% if question.images.size > 0 %>
     
-    <div class="images_wrapper">
+    <div class="images_wrapper clearfix">
       <% question.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>  
           <div class="question_image_wrapper">

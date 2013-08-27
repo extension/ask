@@ -45,6 +45,7 @@
 .tag-topic a {background:#C2E5EC; color:#1F5983;}
 .tag-topic a:hover {background:#2C1946; color:#fff;}
 
+.incoming_question a:hover {text-decoration:none;}
 h3.stylized {
   font-family: 'Sanchez', serif !important;
 	font-size: 22px;
@@ -88,8 +89,66 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 }
 
 
+.subhead_style {
+  font-family: 'Sanchez', serif;
+  line-height: 120%;
+  margin: 0px;
+  width: 100%;
+  color: #f07b05;
+  padding: 10px 0;
+}
+.bordered {
+  position:relative;
+  border-top: 1px dotted #CCC;
+  border-bottom: 1px dotted #CCC;
+}
+.bordered:before {
+	content:"";
+	position: absolute;
+	top:1px;
+	bottom:1px;
+	left:0px;
+	right:0px;
+ 	border-top:1px dotted #CCC;
+	border-bottom:1px dotted #CCC;
+} 
+.bordered:after {
+	content:"";
+	position: absolute;
+	top:3px;
+	bottom:3px;
+	left:0px;
+	right:0px;
+ 	border-top:1px dotted #CCC;
+	border-bottom:1px dotted #CCC;
+}
 
+.response_block {margin-bottom:2em; border-bottom:1px solid #bbb;  background:#F7F7F7; padding:1.5em 1.5em 1.5em;
+  border-left: 3px solid #F76F1F;
+  }
+.response_block div.response {font-size:17px;; line-height:1.6em; font-family: Georgia, serif; word-wrap:break-word; color:#000;}
+.response_block div.signature {font-size:1.1em; line-height:1.4em; font-family: Georgia, serif;}
+.response_block {margin-bottom:2em;}
+.response_images {padding:1em; margin-bottom:1em;}
+.response_images a.image_wrapper {padding:1px; margin-right:1em;float:left; border:1px solid #ddd;}
+.response_block .author {padding: 0 0 0 1em;}
 
+.question_body {font-size:20px; line-height:1.6em; font-family: Georgia, serif;}
+/*h3.subhead_style {font-size: 22px;}*/
+
+.question_image_wrapper {padding:2px; border:1px solid #ddd; display:block; float:left; margin-right:10px; background:#fff;}
+.delete_question_image_wrapper {float:left;}
+/*.images_wrapper {border:1px solid red;}*/
+.size50x50 {width:50px !important; height:50px !important;}
+.size80x80 {width:80px !important; height:80px !important;}
+.size100w {width:100px !important;}
+.size150w {width:150px !important; height: 150px;}
+.size180w {width:180px !important; height: 180px;}
+#extension_icon_512 {width:64px;height:64px;display:block; margin-right:2em; border:1px solid #ddd; padding:2px;}
+#extension_icon_512 img {width:64px;height:64px;display:block;}
+#responses {margin:1em 0; font-size:30px;}
+
+.muted_link {color:#747474;}
 
 @media screen and (min-width: 767px) {
   .brand img {width:360px;}
