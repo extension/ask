@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130820204706) do
+ActiveRecord::Schema.define(:version => 20130828184953) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -241,10 +241,10 @@ ActiveRecord::Schema.define(:version => 20130820204706) do
     t.integer  "created_by",                                      :null => false
     t.boolean  "is_test",                      :default => false
     t.string   "widget_fingerprint"
-    t.boolean  "widget_upload_capable"
-    t.boolean  "widget_show_location"
-    t.boolean  "widget_show_title"
-    t.boolean  "widget_enable_tags"
+    t.boolean  "widget_upload_capable",        :default => false
+    t.boolean  "widget_show_location",         :default => false
+    t.boolean  "widget_show_title",            :default => false
+    t.boolean  "widget_enable_tags",           :default => false
     t.integer  "widget_location_id"
     t.integer  "widget_county_id"
     t.integer  "old_widget_id"
