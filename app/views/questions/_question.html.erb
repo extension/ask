@@ -168,13 +168,13 @@
 
 <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) || (current_user and current_user.id == @question.submitter_id) %>
   <div>
-	<h3 id='comment_notification_pref'>
+	<p id='comment_notification_pref'>
 	<% if @comment_notification_pref == true %>
-	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post %>
+	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post, :class => "btn" %>
 	<% else %>
 	  You have unsubscribed from public comments. <br /><%= button_to 'Subscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post %>
 	<% end %>
- 	</h3>
+ 	</p>
   </div>
 <% end %>
 

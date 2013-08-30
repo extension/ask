@@ -6,7 +6,7 @@
   <% else %>
   
     <%- if @question.errors.any? -%>
-    <div id="form_errors">
+    <div class="alert alert-error">
       <h3>We ran into an issue trying to submit your question:</h3>
       <ul>
         <%- @question.errors.full_messages.each do |msg| -%>

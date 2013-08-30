@@ -12,7 +12,8 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find(params[:id])
     @group_tags = @group.tags
-    @open_questions = @group.questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
+    @open_questions_col_one = @group.questions.public_visible.find(:all, :limit => 5, :order => 'created_at DESC')
+    @open_questions_col_two = @group.questions.public_visible.find(:all, :limit => 5, :offset => 5, :order => 'created_at DESC')
   end
   
   def ask

@@ -1,37 +1,48 @@
-<div id="main" class="span8">
-  <div class="groupmasthead">
-    <%= link_public_group_avatar(@group) %>
-    
-    <h1>
-      <%= @group.name %> 
-      <% if current_user && current_user.has_exid? %>
-        <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
-      <% end %>
-    </h1>
+<div class="span12">
+  <% if current_user && current_user.has_exid? %>
+  <p class="pull-right">
+    <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
+  </p>
+  <% end %>
+  
+  <div id="groupmasthead">  
+    <h1><%= link_public_group_avatar(@group) %> <%= @group.name %></h1>
     
     <% if  @group.description? %>
       <div class="aboutme">
         <%= format_text_for_display(@group.description) %>
       </div>
     <% end %>
-    
-    <% if @group.widget_active %>
-      <p><%= link_to "Ask a question to this group", ask_group_path(@group.id), :class => "btn large btn-primary" %></p>
-    <% end %>
   </div>
+</div>
+
+<% if @group.widget_active %>
+  <div class="tagline span12">
+    <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large pull-right hidden-phone" %>
   
-  <% if @open_questions.size == 0 %>
-    <h3>This group does not currently have any public questions.</h3>
+    <div><%= link_to('Ask a question to this group', ask_group_path(@group.id), :class => "moreaboutpitch hidden-phone") %> <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large visible-phone" %></div>
+</div>
+<% end %>
+
+<div class="span12">
+  <% if @open_questions_col_one.size == 0 %>
+    <h2>This group does not currently have any public questions.</h2>
   <% else %>
-  <h3>Questions asked to this group</h3>
-    <% @open_questions.each do |q| %> 
+    <h1 class="subhead_style">Questions asked to this group</h2>
+  <% end %>
+</div>
+  
+<div class="span6">
+  <% if @open_questions_col_one.size > 0 %>
+    <% @open_questions_col_one.each do |q| %>
+      <div class="incoming_question">
       <%= link_to question_path(q.id) do %>
                   
-          <h3><%= format_text_for_display(q.title) -%></h3>
-          <p><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
+          <h1 class="article_title"><%= format_text_for_display(q.title) -%></h1>
+          <p class="question_body"><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
 
       <% end %>
-      
+      </div>
       <p>
         <% if q.location.present? %>
           <% if q.county.present? %>
@@ -47,14 +58,40 @@
           <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
         <% end %>
       <% end %>
-       Posted <%= time_ago_in_words(q.created_at) %> ago
+       <span class="smallish muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
     <% end %>
 	</p>
   <% end %>
-  
-  
 </div>
 
-<div id="secondary" class="span4">
-  
+<div class="span6">
+  <% if @open_questions_col_two.size > 0 %>
+    <% @open_questions_col_two.each do |q| %>
+      <div class="incoming_question">
+      <%= link_to question_path(q.id) do %>
+                  
+          <h1 class="article_title"><%= format_text_for_display(q.title) -%></h1>
+          <p class="question_body"><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
+
+      <% end %>
+      </div>
+      <p>
+        <% if q.location.present? %>
+          <% if q.county.present? %>
+            <span class="tag tag-geography"><%= "#{q.county.name}" %></span>
+          <% end %>
+          <% if q.location.present? %>
+            <span class="tag tag-geography"><%= q.location.name %></span>
+          <% end %>
+        <% end %>
+
+      <% if q.tags.size > 0 %>
+        <% q.tags.each do |tag| %>
+          <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
+        <% end %>
+      <% end %>
+       <span class="smallish muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
+    <% end %>
+	</p>
+  <% end %>
 </div>
