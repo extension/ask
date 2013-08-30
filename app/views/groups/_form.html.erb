@@ -5,12 +5,12 @@
   <fieldset>
     <p>
       <%= f.label :title, 'Give your question a title' %>
-      <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "xl required"} %>
+      <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "span6 required"} %>
     </p>
 
     <p>
       <%= f.label :body, 'Question' %>
-      <%= f.text_area :body, :rows => 6, :class => "xl required wysiwyg" %>
+      <%= f.text_area :body, :rows => 6, :class => "span6 required wysiwyg" %>
     </p>
 
     <%- if !current_user or !current_user.email.present? -%>
@@ -61,11 +61,11 @@
     </fieldset>
   <% end %>
   
+  <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary btn-orange btn-large" %></p>
+  
   <%- if current_user and current_user.email.present? -%>
     <p>Your answer will be sent to <%= current_user.email %></p>
   <% end %>
-  
-  <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary" %></p>
 <% end %>
 
 <script class="code" type="text/javascript">

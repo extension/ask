@@ -894,6 +894,10 @@ label {font-weight:bold;}
 .sponsor_carousel {height:144px; padding:0;margin:0;}
 .rotator_sponsorlogo {height:140px !important; text-align:center; list-style:none; padding:0;margin:0;}
 
+.btn-orange {background: #fa6218;color:#fff;}
+.btn-orange:hover {background: #CD4011;color:#fff;}
+
+
 /* ==========================================================================
    Responsive overrides (tablet/small screen)
    ========================================================================== */
@@ -1071,7 +1075,7 @@ ul.nav {
 }
 
 @media (max-width: 480px) {
-
+  footer ul {clear:both; padding-top:20px;}
 .brand img {
 	width:95px;
 }
