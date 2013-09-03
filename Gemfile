@@ -125,9 +125,6 @@ gem 'rakismet'
 # memcached
 gem 'dalli'
 
-# monitoring
-gem 'newrelic_rpm'
-
 group :development do
   # require the powder gem
   gem 'powder'
