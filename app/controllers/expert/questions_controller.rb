@@ -6,8 +6,8 @@
 
 class Expert::QuestionsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :authenticate_user!, :require_exid
+  before_filter :set_format, :only => [:show]
   
   def index
     @locations = Location.order('fipsid ASC')
@@ -146,10 +146,15 @@ class Expert::QuestionsController < ApplicationController
   def update_response
     @response = Response.find_by_id(params[:response_id])
     @question = Question.find_by_id(params[:id])
+    
     return record_not_found if !@response.present? || !@question.present?
     
     if @response.update_attributes(params[:response])
       flash[:notice] = "Your changes have been saved. Thanks for making the response better!"
+      # send notification to question submitter if editing expert opted to notify the submitter on edit
+      if params[:notify_submitter].present? && params[:notify_submitter] == '1'
+        Notification.create(notifiable: @response, created_by: current_user.id, recipient_id: @question.submitter.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER, delivery_time: 1.minute.from_now)
+      end
       QuestionEvent.log_response_edit_by_expert(@question, current_user, @response)
       redirect_to expert_question_url(@question)
     else

@@ -41,7 +41,7 @@ class QuestionsController < ApplicationController
       @private_view = false
     end
 
-    if(current_user and current_user.id == @question.submitter.id)
+    if(current_user and current_user.id == @question.submitter_id)
       setup_images_for_edit
       @private_view = false
       @viewer = current_user

@@ -260,7 +260,7 @@ class Question < ActiveRecord::Base
   end
 
     
-  def auto_assign
+  def auto_assign(assignees_to_exclude = nil)
     assignee = nil
     system_user = User.system_user
     
@@ -274,38 +274,50 @@ class Question < ActiveRecord::Base
         return
       end
       
-      if group.assignees.length > 0
+      if assignees_to_exclude.present?
+        group_assignees = group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        group_assignees = group.assignees
+      end
+      
+      if group_assignees.length > 0
         if (group.ignore_county_routing == true) && self.location.present?
-          assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
+          assignee = pick_user_from_list(group_assignees.with_expertise_location(self.location.id))
         else
           if self.county.present?
-            assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
+            assignee = pick_user_from_list(group_assignees.with_expertise_county(self.county.id))
           end
           if !assignee && self.location.present?
-            assignee = pick_user_from_list(group.assignees.with_expertise_location_all_counties(self.location.id))
+            assignee = pick_user_from_list(group_assignees.with_expertise_location_all_counties(self.location.id))
           end
         end
         
         if !assignee 
-          assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
+          assignee = pick_user_from_list(group_assignees.active.route_from_anywhere)
         end
         # still aint got no one? assign to a group leader
         if !assignee
-          if group.leaders.active.length > 0
-            assignee = pick_user_from_list(group.leaders.active)
+          if assignees_to_exclude.present?
+            group_leaders = group.leaders.active.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+          else
+            group_leaders = group.leaders.active
+          end
+          
+          if group_leaders.length > 0
+            assignee = pick_user_from_list(group_leaders)
           # still aint got no one? really?? Wrangle that bad boy.
           else
-            assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+            assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
           end
         end
       # if individual assignment is turned on for the group and there are no active assignees, wrangle it
       else
-        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
       # the group is not receiving questions from outside their defined locations.
-      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
     end
     
     if assignee
@@ -338,7 +350,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
-    self.working_on_this = nil
+    self.working_on_this = nil 
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
@@ -378,7 +390,7 @@ class Question < ActiveRecord::Base
     
     # update and log
     current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => group, :assignee => nil)
+    self.update_attributes(:assigned_group => group, :assignee => nil, :working_on_this => nil)
     QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
@@ -387,7 +399,7 @@ class Question < ActiveRecord::Base
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change, 
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     if group.individual_assignment == true
-      auto_assign
+      auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )

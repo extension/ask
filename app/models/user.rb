@@ -242,11 +242,12 @@ class User < ActiveRecord::Base
   end
   
   def join_group(group, connection_type)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+    if (connection = GroupConnection.where(user_id: self.id, group_id: group.id).first)
       connection.destroy
     end
 
-    self.group_connections.create(group: group, connection_type: connection_type)
+    group_connection = self.group_connections.create(group: group, connection_type: connection_type)
+    return if !group_connection.valid?
 
     if connection_type == 'leader'
       GroupEvent.log_added_as_leader(group, self, self)

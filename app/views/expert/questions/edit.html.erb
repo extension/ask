@@ -23,6 +23,11 @@
           </p>
     	  </fieldset>
 
+          <p>
+	       <%= label_tag :reason, 'Reason' %>
+	       <%= text_area_tag :reason, nil, { rows: 5 } %>
+	      </p>
+
     	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
     	<% end %>
     	
