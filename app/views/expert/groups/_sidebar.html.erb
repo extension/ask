@@ -53,7 +53,7 @@
       <% if member.leader_of_group(@group) %>
       <strong><i class="icon-user"></i> Leader</strong>
       <% end %>
-      <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span>
+      <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span>
     </p>
   <% end %>
   </div>
