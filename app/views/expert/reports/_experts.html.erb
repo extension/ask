@@ -51,7 +51,7 @@
         <%= member_touched_count ? expert_question_list_link(member_touched_count, {id: member.id, filter: 'touched', year: @year_month}) : 0%></span> 
       <% end %>
     </td>
-    <td><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
+    <td><span class="downplay">Last active: <%= get_last_active_time(member) %></span></td>
     <td><%= link_to('Full report',expert_expert_report_path(member.id)) %></td>
     </tr>
 

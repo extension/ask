@@ -57,7 +57,7 @@
         <% end %>
       </td>
       <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %> <%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
-      <td><span class="downplay">last active <%= time_ago_in_words(member.last_active_at) %> ago</span></td>
+      <td><span class="downplay">last active <%= get_last_active_time(member) %></span></td>
       <td><% if member.send_incoming_notification?(@group) %>Notified on every question<% end %></td>
       <td><% if member.send_daily_summary?(@group) %>Receives daily summary<% end %></td>
   </tr>

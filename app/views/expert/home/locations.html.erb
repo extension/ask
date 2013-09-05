@@ -18,7 +18,7 @@
       <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
     <% if @experts.size > 0 %>
       <% @experts.each do |member| %>
-        <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></p>
+        <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span></p>
         
       <% end %>
       <p><%= link_to "view all", expert_users_by_location_path() %></p>

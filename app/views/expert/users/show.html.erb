@@ -79,7 +79,7 @@
     <% end %>
     
     <% if current_user.id != @user.id %>
-      <p class="downplay">Last active: <%= @user.last_active_at.present? ? "#{time_ago_in_words(@user.last_active_at)} ago" : "No Activity to Date" %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
+      <p class="downplay">Last active: <%= get_last_active_time(@user) %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
     <% end %>
     
     <% if @handling_event_count[:handled] > 0 %>

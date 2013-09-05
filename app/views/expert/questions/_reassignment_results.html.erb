@@ -66,7 +66,7 @@
             <% else %>
               <p><span class="handling_rate none">No current handling rate</span></p>
             <% end %>
-            <span class="downplay">last active <%= time_ago_in_words(expert.last_active_at) %> ago</span>
+            <span class="downplay">last active <%= get_last_active_time(expert) %></span>
             </div>
             
             <div class="span8">

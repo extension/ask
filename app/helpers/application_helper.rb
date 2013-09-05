@@ -39,6 +39,18 @@ module ApplicationHelper
     end
   end
   
+  def get_last_active_time(user)
+    if user.last_active_at.present?
+      if user.last_active_at.to_s == Date.today.to_s
+        return 'today'
+      else
+        return time_ago_in_words(user.last_active_at) + ' ago'
+      end
+    else
+      return 'No activity to date'
+    end
+  end
+  
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning] || flash[:success]
     return_string = ''
