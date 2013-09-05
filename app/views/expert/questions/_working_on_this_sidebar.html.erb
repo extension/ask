@@ -19,7 +19,7 @@
     <% if !@question.is_being_worked_on? %>
       <div id="working_on_this">
         <h3>This question is <%= time_ago_in_words(@question.created_at) %> old. Can you answer it?</h3>
-        <p>It is assigned to <strong><%= @question.assignee.name %>, <%= @question.assignee.last_active_at.present? ? "who was last active #{time_ago_in_words(@question.assignee.last_active_at)} ago" : "who has not been active in a looooong time" %></strong>, but they have not indicated they are working on it. You are welcome to go ahead and answer it.</p>
+        <p>It is assigned to <strong><%= @question.assignee.name %>, <%= @question.assignee.last_active_at.present? ? "who was last active #{ get_last_active_time(@question.assignee)}" : "who has not been active in a looooong time" %></strong>, but they have not indicated they are working on it. You are welcome to go ahead and answer it.</p>
         <p><span class="btn btn-primary take_question">Assign to me and indicate I'm working on it</span></p>
       </div>
     <% end %>

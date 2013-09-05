@@ -2,7 +2,7 @@
  
   <% @experts.each do |expert| %>
     <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %> 
-      <p class="downplay">Last active: <%= expert.last_active_at.present? ? "#{time_ago_in_words(expert.last_active_at)} ago" : "No activity to date" %></p>
+      <p class="downplay">Last active: <%= get_last_active_time(expert) %></p>
     </p>  
   <% end %>
   
