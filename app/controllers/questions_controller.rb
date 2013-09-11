@@ -296,7 +296,7 @@ class QuestionsController < ApplicationController
 
     @question = Question.new
     @question.is_private = true
-    @question.title = 'Account Review Request'
+    @question.title = Question::ACCOUNT_REVIEW_REQUEST_TITLE
     @question.body = review_text
     @question.submitter = @submitter
     @question.assigned_group = Group.support_group
