@@ -84,6 +84,8 @@ class Question < ActiveRecord::Base
     boolean :is_private
   end  
   
+  ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
+  
   # status numbers (for status_state)     
   STATUS_SUBMITTED = 1
   STATUS_RESOLVED = 2

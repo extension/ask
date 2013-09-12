@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 source 'https://systems.extension.org/rubygems/'
 
-gem 'rails', "3.2.12"
+gem 'rails', "3.2.14"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -124,9 +124,6 @@ gem 'rakismet'
 
 # memcached
 gem 'dalli'
-
-# monitoring
-gem 'newrelic_rpm'
 
 group :development do
   # require the powder gem
