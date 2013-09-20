@@ -180,7 +180,7 @@ class Question < ActiveRecord::Base
   
   # get resolvers for a question
   def resolver_list
-    self.responses.map{|r| r.resolver}.uniq
+    self.responses.map{|r| r.resolver unless r.resolver.nil?}.uniq
   end
 
   # return a list of similar articles using sunspot
