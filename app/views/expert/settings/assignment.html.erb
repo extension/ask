@@ -1,26 +1,26 @@
 <h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
 
-<h1>Answering</h1>
+<h2>Settings > Answering</h2>
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
 
 <%= form_for @user, :url => expert_settings_assignment_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <div class="info right">
-    <h3>More info...</h3>
     <h4>How else are questions assigned?</h4>
     <p>Experts can manually assign questions to any group or individual.</p>
   </div>
   
+  
   <fieldset>
     <div>
-      <h3>Vacation Status</h3>
+      <h3>Away Status</h3>
       <div class="radio_options">
       <p>
         <label>
           <%= f.check_box :away %>
-          Mark me as away
-          <span>(When your "vacation status" is turned on, AaE questions can not be assigned to you.)</span>
+          Mark me as away (on vacation, unavailable, inactive, etc.)
+          <span>(When your "away status" is turned on, AaE questions cannot be assigned to you.)</span>
         </label>
       </p>
       </div>
@@ -62,15 +62,31 @@
     </div>
     
     <h3>Email Signature</h3>
-    <p class="bio">
+    <div class="bio">
       <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
-      <%= f.text_area :signature, "rows" => 3 %>
-    </p>
-    
+      <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg' %>
+    </div>
+    <p><%= f.submit "Save Answering Settings", :class => "btn btn-large btn-primary" %></p>
   </fieldset>
   
-  <fieldset>
-    <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
-  </fieldset>
     
 <% end %>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+    
+    var promptSave = true;
+    
+    $('input:not(:button,:submit),textarea,select').change(function () {  
+      window.onbeforeunload = function () {
+        if (promptSave != null) return "You have unsaved changes on this page!";
+      }
+    });
+    $('input:submit').click(function(e) {
+      promptSave = null;
+    });
+
+    
+</script>

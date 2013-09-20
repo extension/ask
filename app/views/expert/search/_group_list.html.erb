@@ -1,7 +1,7 @@
 <div class="span12">
 
   <% @groups.each do |group| %>
-    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %></p>
+    <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %> <%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
   <% end %>
 
 </div>

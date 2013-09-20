@@ -1,40 +1,68 @@
+<p id="aaeid">Question #<%= @question.id %> - <small><%= link_to (@question.is_private ? "No Public URL" : "Public URL"), question_path(@question.id) %></small> | <small><%= link_to "Revisions", history_expert_question_path(@question.id) %></small> | <small><a id="notify_me_link" class="cursor">Watch</a></small></p>
+
+<div id="notificationprefs" style="display:none;">
+  <%= render :partial => 'activity_notification' %>
+</div>
+
+
+<p id="aaeid">
+  <% if @question.is_private %>
+    <% if @question.is_private_reason == Question::PRIVACY_REASON_REJECTED %>
+      Rejected questions are not publicly viewable | 
+    <% elsif @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+      <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:privacy => "private") %></span>
+    <% elsif  @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+      <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:privacy => "switched_to_private") %></span> <span class="cursor make_public_link">change</span> |
+    <% else %>
+      <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:privacy => "private") %></span>
+    <% end %>
+  <% else %>
+    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:privacy => "public") %></span> <span class="cursor make_private_link">change</span> |
+  <% end %>
+
+ <%= link_to "Edit", edit_expert_question_path(@question.id) %>  | <%= link_to "Reassign", reassign_expert_question_path(@question.id) %>
+ 
+ <% if  @question.status_state != Question::STATUS_RESOLVED && 
+   @question.status_state != Question::STATUS_NO_ANSWER &&
+  @question.status_state != Question::STATUS_REJECTED && 
+  @question.status_state != Question::STATUS_CLOSED %>
+ | <%= link_to raw("Close&hellip;"), close_out_expert_question_path(@question.id) %> | <%= link_to raw("Reject&hellip;"), reject_expert_question_path(@question.id) %>
+ <% end %>
+ 
+</p>
 
 
 <% if @question.is_private %>
-  <aside id="private_question">
-  
-  <% if @question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
-    <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %></h5>
-    <div id="privacy_edit">
-      <p><small>It was marked private by the submitter. It can't be made public.</small></p>
-    </div>
+  <% if @question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
+
+    <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+      <div id="make_public_edit" style="display:none;">
+        <aside id="public_question">
+        <h3>This question was submitted as a public question, but an expert switched it to private.</h3>
+        <p class="btn btn-primary make_public">Make this question public again</p>
+        </aside>
+      </div>
+    <% end %>
+
   <% end %>
-  
-  <% if @question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
-    <h5 class="lock"><%= link_to "This question is private", question_path(@question.id) %> <span class="btn make_public_link">edit</span></h5>
-    <div id="make_public_edit" style="display:none;">
-      <p>The submitter choose to make this question public, but an expert switched it to a private.</p>
-      <p class="btn btn-primary make_public">Make this question public again</p>
-    </div>
-  <% end %>
-  </aside>
-  
 <% else %>
 
-  <aside id="public_question">
-  
-    <h3 class="public"><%= link_to "This question is public", question_path(@question.id) %> <span class="btn make_private_link">edit</span></h3>
   
     <div id="make_private_edit" style="display:none;">
-      <p>The submitter choose to make this question public, but it can be converted to a private question.</p>
+      <aside id="public_question">
+      <h3>This question was submitted as a public question, but it can be switched to private.</h3>
       <p class="btn btn-primary make_private">Make this question private</p>
+      </aside>
     </div>
-  </aside>
+  
   
 <% end %>
 
 
 <script class="code" type="text/javascript">
+  $("#notify_me_link").click(function () {
+    $("#notificationprefs").toggle();
+  });
   
   $(".make_private_link").click(function () {
     $("#make_private_edit").toggle();

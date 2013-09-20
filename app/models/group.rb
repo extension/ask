@@ -1,8 +1,11 @@
 class Group < ActiveRecord::Base
+  
+  include TagUtilities
+  
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :question_events
-  has_many :questions
+  has_many :questions, :class_name => "Question", :foreign_key => "assigned_group_id"
   has_many :group_locations
   has_many :group_counties
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
@@ -15,7 +18,7 @@ class Group < ActiveRecord::Base
   has_many :joined, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0"
   has_many :members, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'member' and users.retired = 0"
   has_many :leaders, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'leader' and users.retired = 0"
-  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0"
+  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0 and users.auto_route = 1"
   # these are not relevant right now, but we might use some of this in the future
   # has_many :invited, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'invited' and users.retired = 0"
   # has_many :interest, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'interest' and users.retired = 0"
@@ -33,24 +36,42 @@ class Group < ActiveRecord::Base
   
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED}"
 
-  scope :public_visible, where(is_test: false).where(active: true)
-  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("group_counties.county_id = #{county_id}")}
-  scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("group_locations.location_id = #{location_id}")}
+  validates :name, :presence => {:message => "Group name can't be blank"}
+  validates :name, 
+    :uniqueness => {:message => "The name \"%{value}\" is being used by another group.", :case_sensitive => false}, 
+    :unless => Proc.new { |a| a.name.blank? }
+  
+  scope :public_visible, where(is_test: false, widget_active: true, group_active: true)
+  scope :assignable, conditions: {is_test: false, group_active: true}
+
+  scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
+  scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("group_locations.location_id = #{location_id}")}
+  scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
   scope :tagged_with, lambda {|tag_id| includes(:taggings => :tag).where("tags.id = '#{tag_id}'").where("taggings.taggable_type = 'Group'")}
-  scope :patternsearch, lambda {|searchterm|
+  
+  scope :route_outside_locations, where(assignment_outside_locations: true)
+  
+  scope :order_by_assignee_count, joins(:assignees).group('groups.id').order('COUNT(users.id) DESC')
+  
+  scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
-    # strip '+' characters because it's causing a repitition search error
+    # strip '+' and '?' characters because it's causing a repetition search error
     # strip parens '()' to keep it from messing up mysql query
-    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
     if sanitizedsearchterm == ''
-      return []
+      return {:conditions => 'false'}
     end
-    where("name rlike ?", sanitizedsearchterm)
+    
+    if type.nil?
+      where("name rlike ?", sanitizedsearchterm)
+    elsif type == 'prefix'
+      where("name rlike ?", "^#{sanitizedsearchterm}")
+    end
   }
   
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
@@ -77,8 +98,8 @@ class Group < ActiveRecord::Base
   #  'invited' => 'Group Invitation'}
     
   QUESTION_WRANGLER_GROUP_ID = 38
+  EXTENSION_SUPPORT_ID = 1278
   ORPHAN_GROUP_ID = 1
-  ORPHAN_GROUP_NAME = 'Orphan Group'
     
   # hardcoded for widget layout difference
   BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'
@@ -102,7 +123,7 @@ class Group < ActiveRecord::Base
   end
   
   def group_members_with_self_first(current_user, limit)
-    group_members = self.joined.where("user_id != ?", current_user.id).limit(limit)
+    group_members = self.joined.where("user_id != ?", current_user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit)
     if (current_user.leader_of_group(self) || current_user.member_of_group(self))
       group_members = group_members.unshift(current_user)
     end
@@ -122,20 +143,32 @@ class Group < ActiveRecord::Base
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end
   
-  def self.get_wrangler_assignees(question_location = nil, question_county = nil)
+  def self.get_wrangler_assignees(question_location = nil, question_county = nil, assignees_to_exclude = nil)
     assignees = nil
     wrangler_group = self.question_wrangler_group
     
     if question_county.present?
-      assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.with_expertise_county(question_county.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
+      end
     end
     
     if assignees.blank? && question_location.present?
-      assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.with_expertise_location(question_location.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
+      end
     end
     
     if assignees.blank?
-      assignees = wrangler_group.assignees.active.route_from_anywhere
+      if assignees_to_exclude.present?
+        assignees = wrangler_group.assignees.active.route_from_anywhere.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        assignees = wrangler_group.assignees.active.route_from_anywhere
+      end
     end
     
     return assignees
@@ -145,24 +178,13 @@ class Group < ActiveRecord::Base
     self.id == QUESTION_WRANGLER_GROUP_ID
   end
   
-  def set_tag(tag)
-    if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
-      return false
-    else 
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
-  end
-  
   def include_in_daily_summary?
     self.open_questions.where("last_assigned_at < '#{Settings.aae_escalation_delta.hours.ago}'").empty? ? false : true
   end
   
   def incoming_notification_list(users_to_exclude=[])
     list = []
-    self.members.each{|member| list.push(member) if member.send_incoming_notification?(self.id)}
+    self.assignees.each{|assignee| list.push(assignee) if assignee.send_incoming_notification?(self.id)}
     if !users_to_exclude.nil?
       list = list - users_to_exclude
     end

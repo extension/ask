@@ -22,6 +22,8 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :changed_group, class_name: 'Group'
 
   after_create :create_question_event_notification
+  
+  serialize :updated_question_values
 
   # #'s 3 and 4 were the old marked spam and marked non spam question events from darmok, these were 
   # just pulled instead of renumbering all these so to not disturb the other status numbers being pulled over from the other sytem
@@ -39,6 +41,12 @@ class QuestionEvent < ActiveRecord::Base
   INTERNAL_COMMENT = 14
   ASSIGNED_TO_GROUP = 15
   CHANGED_GROUP = 16
+  CHANGED_LOCATION = 17
+  EXPERT_EDIT_QUESTION = 18
+  EXPERT_EDIT_RESPONSE = 19
+  CHANGED_TO_PUBLIC = 20
+  CHANGED_TO_PRIVATE = 21
+  CHANGED_FEATURED = 22
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -53,12 +61,20 @@ class QuestionEvent < ActiveRecord::Base
                             CLOSED => 'closed',
                             INTERNAL_COMMENT => 'commented',
                             ASSIGNED_TO_GROUP => 'assigned to group',
-                            CHANGED_GROUP => 'group changed' }
+                            CHANGED_GROUP => 'group changed',
+                            CHANGED_LOCATION => 'location changed',
+                            EXPERT_EDIT_QUESTION => 'expert edit of question',
+                            EXPERT_EDIT_RESPONSE => 'expert edit of response',
+                            CHANGED_TO_PUBLIC => 'changed to public by',
+                            CHANGED_TO_PRIVATE => 'changed to private by',
+                            CHANGED_FEATURED => 'changed featured by'
+                          }
 
-  scope :latest, {:order => "created_at desc", :limit => 1}
-  scope :latest_handling, {:conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})",:order => "created_at desc", :limit => 1}
-  scope :handling_events, :conditions => "event_state IN (#{ASSIGNED_TO},#{ASSIGNED_TO_GROUP},#{RESOLVED},#{REJECTED},#{NO_ANSWER})"
+  HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
 
+
+  scope :latest, order("#{self.table_name}.created_at desc")
+  scope :handling_events, where("event_state IN (#{HANDLING_EVENTS.join(',')})")
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
@@ -106,6 +122,14 @@ class QuestionEvent < ActiveRecord::Base
     end
   end
   
+  def self.log_featured_changed(question, initiated_by)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :updated_question_values => {:old_value => !question.featured, :new_value => question.featured},
+                           :event_state => CHANGED_FEATURED
+    })
+  end
+  
   def self.log_tag_change(question, initiated_by, tags, previous_tags)
     return self.log_event({:question => question, 
                            :initiated_by_id => initiated_by.id,
@@ -113,6 +137,14 @@ class QuestionEvent < ActiveRecord::Base
                            :previous_tags => previous_tags,
                            :event_state => TAG_CHANGE
                            })
+  end
+  
+  def self.log_location_change(question, initiated_by, event_hash)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :updated_question_values => event_hash,
+                           :event_state => CHANGED_LOCATION
+                           })  
   end
   
   def self.log_reopen(question, recipient, initiated_by, assignment_comment)
@@ -136,6 +168,42 @@ class QuestionEvent < ActiveRecord::Base
       :initiated_by_id => User.system_user_id,
       :event_state => PUBLIC_RESPONSE,
       :submitter_id => submitter_id})  
+  end
+  
+  def self.log_working_on(question, initiated_by)
+    return self.log_event({:question => question, :initiated_by_id => initiated_by.id, :event_state => WORKING_ON})
+  end
+  
+  def self.log_make_public(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => CHANGED_TO_PUBLIC
+    })
+  end
+  
+  def self.log_make_private(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => CHANGED_TO_PRIVATE
+    })
+  end
+  
+  def self.log_question_edit_by_expert(question, initiated_by)
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => EXPERT_EDIT_QUESTION
+    })
+  end
+  
+  def self.log_response_edit_by_expert(question, initiated_by, response)
+    # kick off notification to expert (author of edited response) when their response is edited if a different expert edited it
+    Notification.create(notifiable: response, created_by: initiated_by.id, recipient_id: response.resolver.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT, delivery_time: 1.minute.from_now) unless initiated_by == response.resolver
+    
+    return self.log_event({:question => question,
+      :initiated_by_id => initiated_by.id,
+      :event_state => EXPERT_EDIT_RESPONSE,
+      :additional_data => response.id
+    })
   end
   
   def self.log_reopen_to_group(question, group, initiated_by, assignment_comment)
@@ -186,7 +254,7 @@ class QuestionEvent < ActiveRecord::Base
     # if we want to keep track of this for a group context (user is being tracked here), we'll need to add more columns to the schema for groups
     
     # get last event
-    last_event = question.question_events.latest[0]
+    last_event = question.question_events.latest.first
     if last_event.present?
       create_attributes[:duration_since_last] = (time_of_this_event - last_event.created_at).to_i
       create_attributes[:previous_recipient_id] = last_event.recipient_id
@@ -194,8 +262,7 @@ class QuestionEvent < ActiveRecord::Base
       create_attributes[:previous_event_id] = last_event.id
       # if not a handling event, get the last handling event
       if(!last_event.is_handling_event?)
-        if(last_handling_events = question.question_events.latest_handling && !last_handling_events.blank?)
-          last_handling_event = last_handling_events[0]
+        if(last_handling_event = question.question_events.handling_events.latest.first)
           create_attributes[:previous_handling_event_id] = last_handling_event.id          
           create_attributes[:duration_since_last_handling_event] = (time_of_this_event - last_handling_event.created_at).to_i
           create_attributes[:previous_handling_event_state] = last_handling_event.event_state
@@ -216,7 +283,7 @@ class QuestionEvent < ActiveRecord::Base
   end
   
   def is_handling_event?
-    return ((self.event_state == ASSIGNED_TO) || (self.event_state == ASSIGNED_TO_GROUP) || (self.event_state == RESOLVED) || (self.event_state==REJECTED) || (self.event_state==NO_ANSWER))
+    HANDLING_EVENTS.include?(self.event_state)
   end
   
   # NOTE THAT THE RECIPIENT_ID (AND PREVIOUS_RECIPIENT_ID AND PREVIOUS_HANDLING_RECIPIENT_ID) CAN BE NULL HERE DUE TO ASSIGNMENT TO GROUPS IN WHICH THE RECIPIENT_GROUP_ID IS SET
@@ -244,6 +311,5 @@ class QuestionEvent < ActiveRecord::Base
   def response=(response)
     write_attribute(:response, self.cleanup_html(response))
   end
-
     
 end

@@ -1,6 +1,6 @@
 <% if @question.assigned_group %>
   <h4>Grouped with</h4>
-  <p><%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Group options</span>
+  <p><%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>  <span class="associated_group_picker_toggle cursor btn">Regroup</span>
   </p>
 <% else %>
   <p><strong>This question is groupless :(</strong> <span class="associated_group_picker_toggle cursor btn">Change group</span></p>
@@ -28,14 +28,14 @@
       data: {group_id: <%= Group::ORPHAN_GROUP_ID %>}
     })
     .done(function() {
-			$("#tag_picker").autocomplete("close");
-			$("#tag_picker").val('');
+			$("#group_picker").autocomplete("close");
+			$("#group_picker").val('');
 			return false;
     })  
     .fail(function() {
       alert("error");
-      $("#tag_picker").autocomplete("close");
-			$("#tag_picker").val('');
+      $("#group_picker").autocomplete("close");
+			$("#group_picker").val('');
 			return false;
     })
   });
@@ -53,25 +53,27 @@
         data: {group_id: group_id}
       })
       .done(function() {
-				$("#tag_picker").autocomplete("close");
-				$("#tag_picker").val('');
+				$("#group_picker").autocomplete("close");
+				$("#group_picker").val('');
 				return false;
       })  
       .fail(function() {
         alert("error");
-        $("#tag_picker").autocomplete("close");
-  			$("#tag_picker").val('');
+        $("#group_picker").autocomplete("close");
+  			$("#group_picker").val('');
   			return false;
       })
 		}
 
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
 		$("#group_picker").autocomplete({
       source: "/ajax/groups",
 			minLength: 2,
 			select: function(e, ui) {
 			  change_group(ui.item.id);
 			}
+		});
 		});
 
 </script>

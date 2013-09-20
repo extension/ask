@@ -104,7 +104,7 @@
     <% if @group.widget_upload_capable? %>
       <p>
       <label>Image (optional)</label>
-      <p><em>You can upload .jpg .png or .gif. Max size of 2MB each.</em></p>
+      <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
       <%= f.fields_for :images do |image_form| %>
           <p>
             <%= image_form.file_field :attachment %>
@@ -142,10 +142,13 @@
 
         $("#question_location_id").change(function() {
           var location_id = $('select#question_location_id :selected').val();
-          if(location == "") location="0";
-          jQuery.get('/widget/get_counties/' + location_id, function(data){
-              $("#county_list").html(data);
-          })
+          if(location_id == "") {
+            $("#county_list").html("");
+          } else {
+            jQuery.get('/widget/get_counties/' + location_id, function(data){
+                $("#county_list").html(data);
+            })
+          }
           return false;
         });
       });

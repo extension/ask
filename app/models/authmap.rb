@@ -31,6 +31,12 @@ class Authmap < ActiveRecord::Base
     user_screen_name = omniauth_auth_hash['uid']
     user_provider = omniauth_auth_hash['provider']
     
+    # if it's an eXtension ID login, check and make sure they haven't logged in before the account has been populated by the account sync script
+    if user_provider == 'people'
+      user = User.find_by_email_and_kind(omniauth_auth_hash['info']['email'], 'User')
+      return raise "The eXtension account being accessed has not yet been synced with AaE. Please try again in a few minutes. At most, it should take 15 minutes to complete." if user.nil?  
+    end
+    
     if authmap = Authmap.where({:authname => user_screen_name, :source => user_provider}).first
       return authmap.user
     end
@@ -48,12 +54,10 @@ class Authmap < ActiveRecord::Base
     new_user.email = omniauth_auth_hash['info']['email'] if omniauth_auth_hash['info']['email'].present?
     new_user.public_name = omniauth_auth_hash['info']['name'] if omniauth_auth_hash['info']['name'].present?
     new_user.authmaps << self.new(:authname => user_screen_name, :source => user_provider)
-    if user_provider == 'people' 
-      new_user.kind = 'User' 
-    else
-      new_user.kind = 'PublicUser'
-    end
-
+    # the only kind of new user that can be created by logging in is a public user. the eXtension ID created account (People account), gets 
+    # created by the People sync script, and eXtension ID holders are not allowed to login here unless their account exists here (ie. the sync script has created it here already)
+    new_user.kind = 'PublicUser'
+    
     new_user.save
     return new_user
   end

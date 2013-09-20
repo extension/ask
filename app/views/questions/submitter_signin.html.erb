@@ -1,20 +1,23 @@
 <% @title_tag = "Ask an Expert Question - Sign in"%>
 
-<div id="public_aae">
-    <div id="signin">
-        <h1>You've reached an Ask an Expert Question page</h1>
-        <h2 class="aae_protected_signin">This submitter edit page is locked to protect the privacy of the person who submitted the question. You can view and edit  this question by entering the email address used to submit it.</h2>
-        
-        <%= form_tag(authorize_submitter_path(:fingerprint => @question.question_fingerprint)) do %>
-            <p>
-                <label for="email_address">Email used to submit question:</label>
-    	        <%= text_field_tag("email_address")%>
-    	        
-                <%= submit_tag 'View page', :class => "submit"  %>
-            </p>
-        <% end %>
-        
-        <p class="aae_pitch">Have another question? <%= link_to 'Ask one of our Experts', ask_path %></p>
-        
-    </div>
+<div id="main" class="span8">
+  <div id="signin">
+    <h1>This Ask an Expert page is private <%- if(current_user and current_user.has_exid?) -%> 
+      <%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" -%><%- end -%></h1>
+    <p class="aae_protected_signin">This page is locked to protect the privacy of the person who submitted the question. You can view and edit  this question by entering the email address used to submit it.</p>
+    
+    <%= form_tag(authorize_submitter_path(:fingerprint => @question.question_fingerprint), :class => "form-stacked no_m_t well") do %>
+      
+      <fieldset>
+        <p>
+          <label for="email_address">Email used to submit question:</label>
+          <%= text_field_tag("email_address")%>
+        </p>
+      </fieldset>
+      
+      <p>
+        <%= submit_tag 'View page', :class => "submit",:class => "btn btn-primary"  %>
+      </p>
+    <% end %>
+  </div>
 </div>

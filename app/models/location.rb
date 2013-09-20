@@ -6,12 +6,14 @@
 #  see LICENSE file
 
 class Location < ActiveRecord::Base
-  extend CacheTools
+  include CacheTools
   has_many :user_locations
   has_many :users, :through => :user_locations
   has_many :group_locations
   has_many :groups, :through => :group_locations
   has_many :counties
+  has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
+  has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
 
   def self.find_by_geoip(ipaddress = Settings.request_ip_address,cache_options = {})
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
@@ -48,6 +50,10 @@ class Location < ActiveRecord::Base
     else
       return nil
     end
+  end
+  
+  def get_all_county
+    return County.find_by_location_id_and_name(self.id, 'All')
   end
 
 

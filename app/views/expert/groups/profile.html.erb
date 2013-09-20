@@ -1,38 +1,30 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h3>Settings > General</h3>
+<h2>Settings > General</h2>
 
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
 <div class="form_group">
 
-<%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+  <%- if @group.errors.any? -%>
+    <div id="error_feedback">
+      <h2>We weren't able to save your changes.</h2>
+      <h3>Please fix the items below and let's give it another try:</h3>
+      <ul>
+        <%- @group.errors.each do |attribute, message| -%>
+          <li><span><%= message %></span></li>
+        <%- end -%>
+      </ul>
+    </div>
+  <%- end -%>
 
-  <fieldset>
-    <p>
-      <%= f.label :name, 'Group Name' %>
-      <%= f.text_field :name,  :class => "xl" %>
-    </p>
-    
-    <p>
-      <%= f.label :description do %>
-      About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
-      <% end %>
-      <%= f.text_area :description, :rows => "2",  :class => "xl" %>
-    </p>
-    
-    <p>
-        <label>        
-          <%= check_box_tag 'is_test', '1', @group.is_test? %>  This is a test group
-			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
-        </label>
-    </p>
-  </fieldset>
+
+<%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
   
   <fieldset>
-    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p><%= f.label :avatar, 'Profile Avatar' %> Avatars are formatted to fit a square. Uploaded images must be at least 100 x 100px. Recommended size is 250 x 250px.</p>
     <p class="clearing">
       <%= get_avatar_for_group(@group) %>
       <% if @group.avatar.present? %>
@@ -46,6 +38,34 @@
       <%= f.file_field :avatar %>
     </p>
   </fieldset>
+  
+  <fieldset>
+    <p>
+      <%= f.label :name, 'Group Name' %>
+      <%= f.text_field :name,  :class => "" %>
+    </p>
+    
+    <p>
+      <%= f.label :description do %>
+      About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
+      <% end %>
+      <%= f.text_area :description, :rows => "4",  :class => "l wysiwyg" %>
+    </p>
+    
+    <p>
+        <label>        
+          <%= f.check_box 'group_active' %>  This group is active
+			    <span>(Inactivate groups cannot be assigned questions. The group's Ask form and widgets are disabled. Groups with no members will set to inactive.)</span>
+        </label>
+    </p>
+
+    <p>
+        <label>        
+          <%= f.check_box 'is_test' %>  This is a test group
+			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
+        </label>
+    </p>
+  </fieldset>
       
   <fieldset>
     <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
@@ -54,3 +74,9 @@
 <% end %>
 
 </div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>

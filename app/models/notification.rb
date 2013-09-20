@@ -37,6 +37,11 @@ class Notification < ActiveRecord::Base
   #AAE_WIDGET_BROADCAST = 1010 # broadcast email sent to all widget assignees
   AAE_ASSIGNMENT_GROUP = 1011 
   AAE_QUESTION_ACTIVITY = 1012
+  AAE_EXPERT_TAG_EDIT = 1013
+  AAE_EXPERT_VACATION_EDIT = 1014
+  AAE_EXPERT_HANDLING_REMINDER = 1015
+  AAE_EXPERT_PUBLIC_COMMENT = 1016
+  AAE_EXPERT_RESPONSE_EDIT = 1017
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -48,7 +53,8 @@ class Notification < ActiveRecord::Base
   AAE_PUBLIC_EVALUATION_REQUEST = 2004 # request that the question submitter complete an evaluation
   AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT = 2010  # notification of submission, also "The Year We Make Contact"
   AAE_PUBLIC_COMMENT_REPLY = 2011
-
+  AAE_PUBLIC_COMMENT = 2012
+  AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER = 2013
 
   ##########################################
   
@@ -90,8 +96,22 @@ class Notification < ActiveRecord::Base
       process_aae_public_submission_acknowledgement
     when AAE_PUBLIC_COMMENT_REPLY
       process_aae_public_comment_reply
+    when AAE_PUBLIC_COMMENT
+      process_aae_public_comment
     when AAE_QUESTION_ACTIVITY
       process_aae_question_activity
+    when AAE_EXPERT_TAG_EDIT
+      process_aae_expert_tag_edit
+    when AAE_EXPERT_VACATION_EDIT
+      process_aae_expert_vacation_edit
+    when AAE_EXPERT_HANDLING_REMINDER
+      process_aae_expert_handling_reminder
+    when AAE_EXPERT_PUBLIC_COMMENT
+      process_aae_expert_public_comment
+    when AAE_EXPERT_RESPONSE_EDIT
+      process_aae_expert_response_edit
+    when AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER
+      process_aae_expert_response_edit_to_submitter
     else
       # nothing
     end
@@ -135,7 +155,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_internal_comment
-    InternalMailer.aae_internal_comment(user: self.notifiable.recipient, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
+    InternalMailer.aae_internal_comment(user: self.notifiable.question.assignee, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.question.assignee.nil? || self.notifiable.question.assignee.email.nil?)
   end
   
   def process_aae_assignment_group
@@ -159,12 +179,62 @@ class Notification < ActiveRecord::Base
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
   
+  # send comment notification to public parent comment poster (if exists) 
   def process_aae_public_comment_reply
-    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless self.notifiable.parent.user.nil? or self.notifiable.parent.user.email.nil?
+    PublicMailer.public_comment_reply(user: self.notifiable.parent.user, comment: self.notifiable).deliver unless (self.notifiable.parent.user.nil? || self.notifiable.parent.user.email.nil? || self.notifiable.parent.user == self.notifiable.user)
+  end
+  
+  # send comment notification to submitter of question
+  def process_aae_public_comment
+    question_submitter = self.notifiable.question.submitter
+    # make sure the question submitter has not opted out of receiving comment notifications
+    if self.notifiable.question.opted_into_comment_notifications?(question_submitter)
+      question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
+      # don't want double emails going out to question watchers and parent comment submitters or an email going to the submitter of the comment
+      if !(self.notifiable.is_reply? && question_submitter == self.notifiable.parent.user) && !question_watchers.include?(question_submitter) && !(question_submitter.id == self.created_by)
+        PublicMailer.public_comment_submit(user: question_submitter, comment: self.notifiable).deliver unless question_submitter.nil? || question_submitter.email.nil?
+      end
+    end
+  end
+  
+  def process_aae_expert_response_edit
+    recipient = User.find_by_id(self.recipient_id)
+    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
+  end
+  
+  def process_aae_expert_response_edit_to_submitter
+    recipient = User.find_by_id(self.recipient_id)
+    PublicMailer.expert_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless (recipient.blank? || recipient.email.blank?)
+  end
+  
+  # send comment notifications to:
+  # those watching the question (signed up to be notified of activity)
+  # all resolvers of the question
+  def process_aae_expert_public_comment
+    question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
+    # send emails to the watchers that were not the submitter of the parent comment (already handled in reply notification) and 
+    # who did not post the comment themselves or who did not submit the question (already handled in submission notification)
+    question_watchers.each{|watcher| InternalMailer.aae_question_activity(user: watcher, question: self.notifiable.question).deliver unless (watcher.id == self.created_by || watcher == self.notifiable.question.submitter || (self.notifiable.is_reply? && watcher == self.notifiable.parent.user))}
+    # make sure we don't have a double email to the intersection of question watchers and question resolvers
+    resolver_list = self.notifiable.question.resolver_list - question_watchers
+    # don't deliver email unless the expert did not post the comment, or the expert authored the parent comment (already handled in reply notification)
+    resolver_list.each{|expert| InternalMailer.aae_comment(user: expert, question: self.notifiable.question, comment: self.notifiable).deliver unless (expert.id == self.created_by || (self.notifiable.is_reply? && expert == self.notifiable.parent.user))}
   end
   
   def process_aae_question_activity
     self.notifiable.question_activity_preference_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
+  end
+  
+  def process_aae_expert_tag_edit
+    InternalMailer.aae_expert_tag_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+
+  def process_aae_expert_vacation_edit
+    InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+  
+  def process_aae_expert_handling_reminder
+    Question.submitted.where("last_assigned_at < ?", 3.days.ago).each{|question| InternalMailer.aae_expert_handling_reminder(user: question.assignee, question: question).deliver unless (question.assignee.nil? || question.assignee.away?)}
   end
   
   def queue_delayed_notifications

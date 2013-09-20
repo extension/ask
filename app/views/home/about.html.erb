@@ -1,11 +1,14 @@
 <div class="about">
-<h1>Welcome to Ask an Expert</h1>
+  <h1>Welcome to Ask an Expert</h1>
 
-<p>Ask an Expert has always offered one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States. The latest version expands that one-to-one relationship via the ability to make questions and answers publicly available, on an opt-in basis.</p>
+  <p>Ask an Expert has always offered one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States. The latest version expands that one-to-one relationship via the ability to make questions and answers publicly available, on an opt-in basis.</p>
 
 
-<% if !current_user %>
-  <p>If you are a part of Cooperative Extension, please <%= link_to("sign in and tour the new site", new_user_session_path(:redirect_to => expert_home_url) )%>.</p>
-<% end %>
-
+  <% if !current_user %>
+    <p>If you are a part of Cooperative Extension, please <%= link_to("sign in and tour the new site", new_user_session_path(:redirect_to => expert_home_url) )%>.</p>
+  <% end %>
+  
+  <br />
+  <h2>Contact Us</h2>
+  <h2><%= link_to("Ask a Question about Ask an Expert", ask_group_path(Group::EXTENSION_SUPPORT_ID), :class => "btn") %></h2>
 </div>

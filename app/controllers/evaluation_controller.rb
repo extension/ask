@@ -6,7 +6,11 @@
 #  see LICENSE file
 
 class EvaluationController < ApplicationController
+  before_filter :authenticate_user!, only: [:example]
+  before_filter :require_exid, only: [:example]
+
   before_filter :set_evaluator, except: [:view,:authorize]
+  before_filter :set_format, :only => [:view]
 
   def view
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
@@ -51,11 +55,8 @@ class EvaluationController < ApplicationController
     end
   end
 
-
-  def demographics_test
-  end
-
   def example
+    @question = Question.last
     @page_title = 'Example Evaluation Questions'
     @question_testing = true
     return render(template: 'evaluation/question')

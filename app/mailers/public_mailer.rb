@@ -15,8 +15,9 @@ class PublicMailer < ActionMailer::Base
     @user = options[:user]
     @expert = options[:expert]
     @question = options[:question]
-    @subject = "[eXtension Question:#{@question.id}] Your question has been responded to by one of our experts."
+    @subject = "Your Ask an Expert question has an answer (Question:#{@question.id})"
     @response = @question.responses.last
+    @title = "Your Question Has a Response"
     
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     
@@ -31,10 +32,7 @@ class PublicMailer < ActionMailer::Base
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
       
-      return_email = mail(to: @user.email, subject: @subject)
-      if !@bonnie_plants_from.blank?
-        return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-      end
+      return_email = @bonnie_plants_from.blank? ? mail(to: @user.email, subject: @subject) : mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
       
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
@@ -49,8 +47,9 @@ class PublicMailer < ActionMailer::Base
   def public_submission_acknowledgement(options = {})
       @user = options[:user]
       @question = options[:question]
-      @subject = "[eXtension Question:#{@question.id}] Thank you for your question submission."
+      @subject = "Thank you for your Ask an Expert question (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+      @title = "Your Question Has Been Submitted"
       
       if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
         @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
@@ -63,10 +62,7 @@ class PublicMailer < ActionMailer::Base
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        return_email = mail(to: @user.email, subject: @subject)
-        if !@bonnie_plants_from.blank?
-          return_email = mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
-        end
+        return_email = @bonnie_plants_from.blank? ? mail(to: @user.email, subject: @subject) : mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
         
         if(@mailer_cache)
           # now that we have the rendered email - update the cached mail object
@@ -83,8 +79,9 @@ class PublicMailer < ActionMailer::Base
     @question = options[:question]
     @example_survey = options[:example_survey]
 
-    @subject = "[eXtension Question:#{@question.id}] Tell us about your experience."
+    @subject = "Tell us about your Ask an Expert experience (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Ask an Expert Evaluation"
 
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -110,8 +107,9 @@ class PublicMailer < ActionMailer::Base
     @comment = options[:comment]
     @question = @comment.question
     
-    @subject = "[eXtension Question:#{@question.id}] Someone has replied to your comment."
+    @subject = "Someone has replied to your Ask an Expert comment (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Someone Posted a Reply To Your Comment"
 
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -130,6 +128,62 @@ class PublicMailer < ActionMailer::Base
     
     # the email if we got it
     return_email
+  end
+  
+  def public_comment_submit(options = {})
+    @user = options[:user]
+    @comment = options[:comment]
+    @question = @comment.question
+    
+    @subject = "Someone has posted a comment to your Ask an Expert question (Question:#{@question.id})"
+    @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "Someone Posted a Comment To Your Question"
+
+    if(!@user.email.blank?)
+      if(@will_cache_email)
+        # create a cached mail object that can be used for "view this in a browser" within
+        # the rendered email.
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+      end
+
+      return_email = mail(to: @user.email, subject: @subject)
+
+      if(@mailer_cache)
+        # now that we have the rendered email - update the cached mail object
+        @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+      end
+    end
+    
+    # the email if we got it
+    return_email
+  end
+  
+  def expert_response_edit(options = {})
+    @user = options[:user]
+    @question = options[:question]
+    @response = options[:response]
+    
+    @subject = "An expert has edited a response to your Ask an Expert question (Question:#{@question.id})"
+    @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+    @title = "An Expert Has Edited a Response To Your Question"
+    
+    if(!@user.email.blank?)
+      if(@will_cache_email)
+        # create a cached mail object that can be used for "view this in a browser" within
+        # the rendered email.
+        @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+      end
+
+      return_email = mail(to: @user.email, subject: @subject)
+
+      if(@mailer_cache)
+        # now that we have the rendered email - update the cached mail object
+        @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+      end
+    end
+    
+    # the email if we got it
+    return_email 
   end
 
   def ssl_root_url

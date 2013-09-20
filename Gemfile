@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
-source 'http://systems.extension.org/rubygems/'
+source 'https://systems.extension.org/rubygems/'
 
-gem 'rails', "3.2.9"
+gem 'rails', "3.2.14"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -11,6 +11,7 @@ group :assets do
   gem 'sass-rails', "~> 3.2.4"
   gem 'coffee-rails', "~> 3.2.2"
   gem 'uglifier', '>= 1.0.3'
+  gem 'jqtools-rails'
 end
 
 # xml parsing
@@ -21,6 +22,8 @@ gem 'jquery-rails'
 
 # bootstrap in sass in rails
 gem 'anjlab-bootstrap-rails', :require => 'bootstrap-rails'
+# wysihtml5 + bootstrap + asset pipeline
+gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
 # storage
 gem 'mysql2'
@@ -38,7 +41,7 @@ gem 'geoip'
 # Deploy with Capistrano
 gem 'capistrano'
 
-
+gem 'sitemap_generator'
 
 # authentication
 gem 'devise', "~> 1.5.1"
@@ -56,6 +59,15 @@ gem "feedzirra", "0.1.2"
 
 # pagination
 gem 'kaminari'
+
+# revision history
+gem 'paper_trail', '~> 2'
+
+# diffs 
+gem 'diffy'
+
+# email validation
+gem 'valid_email'
 
 # server settings
 gem "rails_config"
@@ -109,9 +121,6 @@ gem "thor"
 
 # anti-spam test
 gem 'rakismet'
-
-# scout performance monitoring
-gem 'scout_rails'
 
 # memcached
 gem 'dalli'

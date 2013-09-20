@@ -37,6 +37,19 @@ class CronTasks < Thor
       Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
+    
+    def create_daily_handling_reminder_notification
+      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
+      puts "Created notification for daily handling reminder emails"
+    end
+
+    def flag_accounts_for_search_update
+      User.needs_search_update.all.each do |u|
+        # merely updating the account should trigger solr
+        u.update_attributes({needs_search_update: false})
+      end
+      Sunspot.commit
+    end
 
   end
 
@@ -52,11 +65,17 @@ class CronTasks < Thor
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    #create_evaluation_notifications
+    create_evaluation_notifications
     create_daily_summary_notification
+    create_daily_handling_reminder_notification
   end
-  
-  
+
+  desc "hourly", "All hourly cron tasks"
+  method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
+  def hourly
+    load_rails(options[:environment])
+    flag_accounts_for_search_update
+  end 
 
 end
 

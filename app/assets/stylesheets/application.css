@@ -12,6 +12,6 @@
  *= require twitter/bootstrap
  *= require vendor
  *= require twitter/bootstrap-responsive
- *= require autocomplete
- *= require_tree .
+ *= require bootstrap-wysihtml5
+ *= require_tree ./all
 */

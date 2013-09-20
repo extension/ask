@@ -12,6 +12,14 @@
   <% else %>
     <div class="bigtag"></div>
     <h1>Everything tagged '<%= @tag.name %>'</h1>
+    
+    <h2>
+      <% if @unanswered_questions_count %>
+        <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :tag_id => @tag.id)%>
+      <% else %>
+
+      <% end %>
+    </h2>
   
     <br class="clearing" />
     <div class="span5">
@@ -19,7 +27,7 @@
         <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
       <% if @experts.size > 0 %>
         <% @experts.each do |member| %>
-          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= time_ago_in_words(member.last_active_at) %> ago</span></p>
+          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span></p>
         <% end %>
         <p><%= link_to "view all", expert_users_by_tag_path() %></p>
       <% else %>
@@ -28,19 +36,33 @@
       </div>
     </div>
   
-    <div class="span5">
+  
+    <div class="span6">
       <div class="location_section">
         <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
       <% if @groups.size > 0 %>
-        <% @groups.each do |group| %>
-          <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+        <% @groups.each do |group| %>      
+          <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+            <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+            <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+            <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+            <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+            <p class="downplay">
+            <% if group.assignment_outside_locations == true %>
+              Accepts questions from anywhere.
+            <% else %>
+              Questions must match this group's locations
+            <% end %>
+            </p>
+          </div>
         <% end %>
         <p><%= link_to "view all", expert_groups_by_tag_path() %></p>
       <% else %>
-        <p>There are no groups in this location</p>
+        <p>There are no groups with this tag</p>
       <% end %>
       </div>
     </div>
+
 
     <div class="location_section">
       <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
@@ -55,5 +77,7 @@
       <% end %>
     </div>
   <% end %>
+  
+  <p><%= link_to "View a list of all tags", expert_home_managetags_path() %></p>
 
 </div>

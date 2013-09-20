@@ -1,29 +1,34 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h3>Settings > Tags</h3>
+<h2>Settings > Tags</h2>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
 <div class="explanation">
-  <p><strong>Group tags tell others what kind of questions your Group wants to answer.</strong> Specifically, tags are used to make matches when reassigning questions. In addition to general terms (such as '<em>horticulture</em>' and '<em>trees</em>'), it's a great idea to include tags that are specific and granular (such as '<em>maples</em>' or '<em>japanese maples</em>.')</p>
+  <div class="bigtag"></div>
+  <h3>Group tags tell others what kind of questions your Group wants to answer.</h3>
+  <p>Specifically, tags are used to make matches when reassigning questions. In addition to general terms (<span class="tag tag-topic"><%= link_to "horticulture", expert_home_tags_path("horticulture") %></span> or <span class="tag tag-topic"><%= link_to "apples", expert_home_tags_path("apples") %></span>), it's a great idea to include tags that are specific and granular (<span class="tag tag-topic"><%= link_to "spiders", expert_home_tags_path("spiders") %></span>, <span class="tag tag-topic"><%= link_to "4H", expert_home_tags_path("4H") %></span> or <span class="tag tag-topic"><%= link_to "tomatoes", expert_home_tags_path("tomatoes") %></span>)</p>
+  <br class="clearing" />
 </div>
 
+<div class="formy">
+<h2>Add Tags to this Group</h2>
+<h3>It's easy! Just type and select a tag.</h3>
 <div class="ui-widget">
-	<label for="tag_picker">Add Tags</label>
 	<input id="tag_picker" placeholder="Type and select a tag" />
 </div>
 
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @group_tags.size > 0 %>
   <% @group_tags.each do |tag| %>
-    <p id="tag_<%= tag.id %>"><span class="label"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span> <span class="removetag">[x]</span></p>
+    <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> <span class="removetag">[x]</span></p>
   <% end %>
 <% else %>
   <p id="needs_tags"><span class="label label-inverse">needs tags</span></p>
 <% end %>
 </div>
-
+</div>
 <script class="code" type="text/javascript">
 
 		function add_tag(tag) {
@@ -47,6 +52,7 @@
 		}
     
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
 		$("#tag_picker").autocomplete({
 			source: "/ajax/tags",
 			minLength: 2,
@@ -55,8 +61,19 @@
 			}
 		}).keypress(function(e) {
       if (e.keyCode === 13) {
-        add_tag(this.value);
+        if ($.trim(this.value) != "") {
+          add_tag(this.value);
+        } else {
+          $("#tag_picker").val('');
+  				return false;
+        }
       }
+    }).data( "autocomplete" )._renderItem = function( ul, item ) {
+        return $( "<li></li>" )
+        .data( "item.autocomplete", item )
+        .append( "<a>"+ item.label + " <strong>(" + item.tag_count + ")</strong></a>" )
+        .appendTo( ul );
+      };
     });
     
     // remove tags

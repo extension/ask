@@ -1,21 +1,20 @@
 <h1><%= link_to @user.name, expert_user_path(@user) %></h1>
 
-<h1>Groups</h1>
+<h2>Group Notifications</h2>
 
 <% if current_user.id == @user.id %>
   <%= render :partial => 'expert/settings/settings_navigation' %>
+  <div class="explanation">
+    <p><strong>You are currently a member of these groups.</strong> This is also where you set your notification preferences for each group. To leave a group, visit the group's homepage and click the 'Leave Group' button.</p>
+  </div>
 <% end %>
-
-<div class="explanation">
-  <p><strong>You are currently a member of these groups.</strong> This is also where you set your notification preferences for each group. To leave a group, visit the group's homepage and click the 'Leave Group' button.</p>
-</div>
 
 <% @page_title = @user.name + " - Groups" %>
 
 
 <div id="main" class="span12">
   
-  <% if @my_groups.size == 0 %>
+  <% if @user_groups.size == 0 %>
     <% if current_user.id == @user.id %>
       <h2>You currently are not a member or leader of any groups.</h2>
     <% else %>
@@ -24,11 +23,11 @@
   <% else %>
     
   <table class="table table-bordered">
-    <% @my_groups.each do |group| %>
+    <% @user_groups.each do |group| %>
       <tr>
-        <td class="large_groups">
+        <td class="large_groups <%= !group.group_active? ? "inactive_group" : "active" %>">
           <%= link_expert_group_avatar(group, :medium) %> 
-          <h3><%= link_to group.name, expert_group_path(group.id) %></h3>
+          <h3><%= link_to group.name, expert_group_path(group.id) %> <%= !group.group_active? ? "(Inactive)" : "" %></h3>
           <% if @user.leader_of_group(group)%>
             <h4><strong>Leader <i class="icon-user"></i></strong></h4>
           <% end %>
@@ -49,7 +48,7 @@
         <% end %>
       </tr>
     <% end %>
-      
+    </table>
       
       
   <% end %>

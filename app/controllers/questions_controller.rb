@@ -8,9 +8,11 @@ class QuestionsController < ApplicationController
   before_filter :set_submitter, only: [:show]
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
-
+  before_filter :set_format, :only => [:show, :submitter_view]
+  
   def show
     @question = Question.find_by_id(params[:id])
+    return record_not_found if !@question
     @question_responses = @question.responses
     
     ga_tracking = []
@@ -39,14 +41,18 @@ class QuestionsController < ApplicationController
       @private_view = false
     end
 
-    if(current_user and current_user.id == @question.submitter.id)
+    if(current_user and current_user.id == @question.submitter_id)
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
-    elsif (@authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id)
+      comment_pref = current_user.get_pref(Preference::NOTIFICATION_COMMENTS)
+      @comment_notification_pref = (comment_pref.present? && comment_pref.value == false) ? false : true
+    elsif (@authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id))
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
+      comment_pref = @authenticated_submitter.get_pref(Preference::NOTIFICATION_COMMENTS)
+      @comment_notification_pref = (comment_pref.present? && comment_pref.value == false) ? false : true
     end
     
     if( @viewer)
@@ -62,6 +68,7 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
     if @question.present?
+      flash.keep
       session[:question_id] = @question.id
       if(current_user and current_user.id == @question.submitter_id)
         redirect_to question_url(@question)
@@ -120,12 +127,20 @@ class QuestionsController < ApplicationController
   
   # TODO: incorporate title into this.
   def create
-    if request.post?
+    if request.post?  
+      
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+      if params[:question].blank?
+        @status_message = "The question form is not complete. Please fill out all fields."  
+        return render(:template => '/widget/status', :layout => false)
+      end
+      
       @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
         @status_message = "Unknown widget specified."
         return render(:template => '/widget/status', :layout => false)
       end
+      
       begin
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
@@ -146,7 +161,7 @@ class QuestionsController < ApplicationController
           if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
             @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
             if !@submitter.valid?
-              @argument_errors = ("Errors occured when saving:<br />" + @submitter.errors.full_messages.join('<br />'))
+              @argument_errors = ("Errors occured when saving: " + @submitter.errors.full_messages.join(' '))
               raise ArgumentError
             end
           end
@@ -155,12 +170,15 @@ class QuestionsController < ApplicationController
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.original_group_id = @group.id
-        @question.group_name = @group.name
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
+        
+        # record the original location and county
+        @question.original_location = @question.location
+        @question.original_county = @question.county
 
         if !@group.widget_public_option
           @question.is_private = true
@@ -177,53 +195,15 @@ class QuestionsController < ApplicationController
           @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
         end
 
-        # if the person overrode location/county - set those session values
-
-        # TODO: Need to update this
-        # # location and county - separate from params[:submitted_question], but probably shouldn't be
-        #         if(params[:location_id] and location = Location.find_by_id(params[:location_id].strip.to_i))
-        #           @question.location = location
-        #           # change session if different
-        #           if(!session[:location_and_county].blank?)
-        #             if(session[:location_and_county][:location_id] != location.id)
-        #               session[:location_and_county] = {:location_id => location.id}
-        #             end
-        #           else
-        #             session[:location_and_county] = {:location_id => location.id}
-        #           end
-        #           if(params[:county_id] and county = County.find_by_id_and_location_id(params[:county_id].strip.to_i, location.id))
-        #             @question.county = county
-        #             if(!session[:location_and_county][:county_id].blank?)
-        #               if(session[:location_and_county][:county_id] != county.id)
-        #                 session[:location_and_county][:county_id] = county.id
-        #               end
-        #             else
-        #               session[:location_and_county][:county_id] = county.id
-        #             end
-        #           end
-        #         elsif(@group.location_id)
-        #           @question.location_id = @group.location_id
-        #           if(@group.county_id)
-        #             @question.county_id = @group.county_id
-        #           end
-        #         end
-
         # validate question
         if !@question.valid?
-          @argument_errors = ("Errors occured when saving:<br />" + @question.errors.full_messages.join('<br />'))
+          @argument_errors = ("Errors occured when saving: " + @question.errors.full_messages.join(' '))
           raise ArgumentError
         end
 
         if @question.save
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
-          #TODO: keep???
-          # tags
-          # if(@group.widget_enable_tags?)
-          #             if(!params[:tag_list])
-          #               @question.tag_myself_with_shared_tags(@widget.system_sharedtags_displaylist)
-          #             end
-          #           end
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
           return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
         else
@@ -233,6 +213,12 @@ class QuestionsController < ApplicationController
       rescue ArgumentError => ae
         flash[:warning] = @argument_errors
         @host_name = request.host_with_port
+        
+        if @question.blank?
+          @question = Question.new
+          @question.images.build
+        end
+        
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
@@ -241,6 +227,12 @@ class QuestionsController < ApplicationController
       rescue Exception => e
         flash[:notice] = 'An internal error has occured. Please check back later.'
         @host_name = request.host_with_port
+        
+        if @question.blank?
+          @question = Question.new
+          @question.images.build
+        end
+        
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
@@ -285,8 +277,9 @@ class QuestionsController < ApplicationController
 
       #{additional_information}
       Please vouch for the account at:
-
-      https://people.extension.org/colleagues/showuser/#{params[:idstring]}
+      <a href="https://people.extension.org/people/#{params[:idstring]}">
+      https://people.extension.org/people/#{params[:idstring]}
+      </a>
 
       Accounts not vouched with 14 days will automatically be retired. If you are a people
       administrator, please go ahead and retire the account if it cannot be vouched for.
@@ -303,7 +296,7 @@ class QuestionsController < ApplicationController
 
     @question = Question.new
     @question.is_private = true
-    @question.title = 'Account Review Request'
+    @question.title = Question::ACCOUNT_REVIEW_REQUEST_TITLE
     @question.body = review_text
     @question.submitter = @submitter
     @question.assigned_group = Group.support_group
@@ -313,8 +306,6 @@ class QuestionsController < ApplicationController
     @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
     @question.status = Question::SUBMITTED_TEXT
     @question.status_state = Question::STATUS_SUBMITTED
-    # TODO: review - this make no sense to me - jayoung
-    @question.group_name = @question.assigned_group.name
     if(@question.save)
       returninformation = {'question_id' => @question.id, 'success' => true}
       return render :json => returninformation.to_json, :status => :ok

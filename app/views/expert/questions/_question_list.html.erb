@@ -6,7 +6,7 @@
   
   <%= paginate questions %>
   <% questions.each do |question| %>
-    <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
+    <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true, :highlight_unanswered => true} %>
   <% end %>
   <%= paginate questions %>
 <% end %>

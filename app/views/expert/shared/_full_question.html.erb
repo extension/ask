@@ -1,13 +1,16 @@
+<% highlight_unanswered = local_assigns[:highlight_unanswered].nil? ? false : highlight_unanswered %>
 <% suppress_single_badges = local_assigns[:suppress_single_badges].nil? ? false : suppress_single_badges %>
 <% hide_groups = local_assigns[:hide_groups].nil? ? false : hide_groups %>
 <% hide_assignee = local_assigns[:hide_assignee].nil? ? false : hide_assignee %>
 
-<div class="incoming_question">
+<div class="incoming_question <%= question.is_being_worked_on? ? 'being_worked_on' : '' %>">
   
   <div class="row-fluid">
     
     <div class="span8">
-      
+      <% if question.is_being_worked_on? %>
+        <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
+      <% end %>
       <%= link_to expert_question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
         <p><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
@@ -15,26 +18,48 @@
       
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
-      <% question.images.each do |image| %>
-        <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-
-          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
-
-          <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-header">
-              <p>
-                <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-              <p>
-            </div>
-            <div class="modal-body">
-              <%= image_tag image.url() %>
-            </div>
-          </div>
-        <% else %>
-          <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
-        <% end %>
+      <% if question.status_state == Question::STATUS_REJECTED %>
+        <p class="rejected"><span class="label label-important">Rejected</span> <%= wrap_text(question.current_response) %></p>
+      <% elsif question.status_state == Question::STATUS_NO_ANSWER %>
+        <p>A canned response was used to answer this question</p>
+      <% elsif question.status_state == Question::STATUS_CLOSED %>
+        <p><span class="label">Closed</span> because <%= wrap_text(question.current_response) %></p>
+      <% elsif question.status_state == Question::STATUS_RESOLVED %>
+        <p><span class="label">Resolved</span></p>
+      <% elsif highlight_unanswered %>
+        <p><span class="needs_an_answer">Needs an answer</span></p>
       <% end %>
+
+      <% if question.images.size > 0 %>
+
+        <div class="images_wrapper">  
+        <% question.images.each do |image| %>
+          <% if image.persisted? %>
+            <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+            <div class="question_image_wrapper">
+              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size150w" %></a>
+            </div>
+
+            <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-header">
+                <p>
+                  <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+                  <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+                <p>
+              </div>
+              <div class="modal-body">
+                <%= image_tag image.url() %>
+              </div>
+            </div>
+            <% else %>
+             <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+            <% end %>
+          <% end %>
+        <% end %>  
+        <br class="clearing" />
+      </div>
+
+    <% end %>
       
     </div> <!-- end .span8 -->
     
@@ -42,7 +67,7 @@
       <div class="expert">
         <% if !hide_assignee %>
           <% if question.assignee_id.present? %>
-            <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
+            <%= link_expert_user_avatar(question.assignee, :thumb, current_user.id == question.assignee.id ? true : false) %> <%= link_expert_user(question.assignee) %> 
   	      <% else %>
   	        <p><strong>This question does not have an assignee.</strong></p>
           <% end %>

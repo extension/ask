@@ -2,16 +2,19 @@
   
   <h2>Ask a Question</h2>
     
-  <% if !@group.active? %>
+  <% if !@group.widget_active? %>
     <h3>This group is not accepting questions at the current time</h3>
   <% else %>
   
     <%- if @question.errors.any? -%>
+    <div id="form_errors">
+      <h3>We ran into an issue trying to submit your question:</h3>
       <ul>
         <%- @question.errors.full_messages.each do |msg| -%>
           <li><%= msg %></li>
         <%- end -%>
       </ul>
+    </div>
     <%- end -%>
   
     <%= render(:partial => 'groups/form') %>
@@ -22,7 +25,7 @@
 <div id="secondary" class="span4">
   <% if request.fullpath == "/ask" %>
     <aside>
-    <h3>Ask an Expert is site where you can get expert answers and help from Cooperative Extension/University staff and volunteers from across the United States.</h3>
+    <h3>Ask an Expert is a site where you can get expert answers and help from Cooperative Extension/University staff and volunteers from across the United States.</h3>
     </aside>
   <% else %>
     
@@ -37,7 +40,7 @@
 
     <% if  @group.description? %>
       <h3>About this group</h3>
-      <p><%= format_text_for_display(@group.description).html_safe %></p>
+      <p><%= format_text_for_display(@group.description) %></p>
     <% end %>
     
   <% end %>

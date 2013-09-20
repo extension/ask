@@ -6,13 +6,13 @@ Aae::Application.routes.draw do
   devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
-
+  
   resources :questions do
     collection do
       post 'account_review_request'
     end
   end
-
+  
   resources :responses, :only => [:create] do
     member do
       post 'remove_image'
@@ -20,7 +20,16 @@ Aae::Application.routes.draw do
   end
 
   resources :comments, :only => [:create, :update, :destroy, :show]
-  resources :users
+  
+  # retired url
+  match "users/retired" => "users#retired", :via => [:get]
+  
+  resources :users do
+    member do
+      post 'comment_notification_subscription'
+    end  
+  end
+  
   resources :groups do
     member do
       get 'ask'
@@ -29,10 +38,8 @@ Aae::Application.routes.draw do
     end
   end
 
-
-
   namespace :expert do
-    resources :questions, :only => [:show] do
+    resources :questions, :only => [:show, :edit, :update] do
       member do
         post 'assign'
         post 'assign_to_group'
@@ -43,6 +50,7 @@ Aae::Application.routes.draw do
         post 'assign_to_wrangler'
         post 'make_private'
         post 'make_public'
+        post 'change_location'
         get  'reject'
         post 'reject'
         get  'reassign'
@@ -51,11 +59,23 @@ Aae::Application.routes.draw do
         get  'close_out'
         post 'close_out'
         post 'activity_notification_prefs'
-        
+        get  'history'
+        post 'restore_revision'
+        get 'diff_with_previous'
+        get 'edit_response'
+        put 'update_response'
+        get 'response_history'
+        get 'diff_with_previous_response_revision'
+        post 'restore_response_revision'
+        post 'working_on_this'
+        post 'feature'
       end
     end
 
     resources :users, :except => [:destroy] do
+      member do
+        get 'history'
+      end
       collection do
         get 'tags'
         post 'save_listview_filter'
@@ -67,12 +87,27 @@ Aae::Application.routes.draw do
       collection do
         get 'questions_by_tag'
         post 'new'
+        get 'all'
+      end
+      member do
+        get 'email_csv'
       end
     end
     
+    match "/" => "home#dashboard"
+    match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
+    match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
+    match "reports/expert_list", to: "reports#expert_list", :via => [:get], :as => 'reports_expert_list'
+    match "reports/question_list", to: "reports#question_list", :via => [:get], :as => 'reports_question_list'
+    # match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
+    match "reports/:action", to: "reports", :via => [:get]
+    
     match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
+    match "users/:id/watched" => "users#watched", :via => [:get], :as => 'user_watched'
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
+    match "users/:id/edit_attributes" => "users#edit_attributes", :via => [:get, :put], :as => 'edit_attributes'
+    match "users/:id/submitted" => "users#submitted", :via => [:get], :as => 'user_submitted'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
@@ -80,11 +115,12 @@ Aae::Application.routes.draw do
     match "groups/:id/tags" => "groups#tags", :via => [:get, :put], :as => 'group_tags'
     match "groups/:id/widget" => "groups#widget", :via => [:get, :put, :post], :as => 'group_widget'
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
+    match "groups/:id/about" => "groups#about", :via => [:get, :put], :as => 'about_group'
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
-    match "groups/:id/join" => "groups#join", :via => [:get, :put, :post], :as => 'group_join'
-    match "groups/:id/leave" => "groups#leave", :via => [:get, :put, :post], :as => 'group_leave'
-    match "groups/:id/lead" => "groups#lead", :via => [:get, :put, :post], :as => 'group_lead'
-    match "groups/:id/unlead" => "groups#unlead", :via => [:get, :put, :post], :as => 'group_unlead'
+    match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
+    match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
+    match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
+    match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
     match "settings/profile" => "settings#profile", :via => [:get, :put]
     match "settings/location" => "settings#location", :via => [:get, :put]
@@ -95,14 +131,23 @@ Aae::Application.routes.draw do
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
+    match "home/users/locations/:id" => "home#users_by_location", :as => 'users_by_location'
+    match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
+    match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
+    match "home/users/counties/:id" => "home#users_by_county", :as => 'users_by_county' 
+    match "home/groups/counties/:id" => "home#groups_by_county", :as => 'groups_by_county'
+    match "home/questions/counties/:id" => "home#questions_by_county", :as => 'questions_by_county'
     match "home/experts" => "home#experts"
     match "home/answered" => "home#answered"
+    match "home/unanswered" => "home#unanswered"
+    match "home/dashboard" => "home#dashboard"
+    match "home/managetags" => "home#managetags"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
     match 'home/get_counties/:location_id' => 'home#get_counties', :via => :get
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
-    match "questions/:id/submitted" => "questions#submitted", :via => [:get], :as => 'user_submitted'
+    match "questions" => "questions#index"
     match "questions/add_tag" => "questions#add_tag", :via => [:post]
     match "questions/remove_tag" => "questions#remove_tag", :via => [:post]
     match "questions/add_history_comment" => "questions#add_history_comment", :via => [:post]
@@ -121,18 +166,25 @@ Aae::Application.routes.draw do
   # public search
   match "search/all" => "search#all", :via => [:get]
   
+  # widgets for resolved questions
+  match "widgets/front_porch" => "widgets#front_porch", :via => [:get]
+  match "widgets/answered" => "widgets#answered", :via => [:get]
+  
   # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
   match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'
   match "questions/authorize_submitter" => "questions#authorize_submitter", :via => :post, :as => 'authorize_submitter'
   
   match "home/about" => "home#about", :via => :get
+  match "home/unanswered" => "home#unanswered", :via => :get
   match "home/change_yolo" => "home#change_yolo", :via => [:post]
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
   match "home/private_page" => "home#private_page", :via => :get
   match "home/county_options_list/:location_id" => "home#county_options_list", :via => :get
   match "settings/profile" => "settings#profile", :via => [:get, :put], :as => 'nonexid_profile_edit'
-
+  
+  match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
+  
   match "ask" => "groups#ask", :id => "38" #id for QW group
 
   match "ajax/tags" => "ajax#tags", :via => [:get]
@@ -174,7 +226,8 @@ Aae::Application.routes.draw do
     match "/:mailer_cache_id/logo" => "webmail#logo", :as => 'webmail_logo'
     match "/view/:hashvalue" => "webmail#view", :as => 'webmail_view'
   end
-
+  
+  match "webmail/examples", to: "webmail/examples#index", :via => [:get], :as => 'webmail_index'
   # webmail example routing
   namespace "webmail" do
     namespace "examples" do
@@ -191,11 +244,17 @@ Aae::Application.routes.draw do
   match "evaluation/example" => "evaluation#example", via: [:get], :as => 'example_evaluation'
   match "evaluation/thanks" => "evaluation#thanks", via: [:get], :as => 'evaluation_thanks'
   
+  # feeds
+  match "feeds/answered_questions", :via => :get, :defaults => { :format => 'xml' }
+  
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
-  # reports placeholder
-  match "reports", to: "home#reports", via: :get, as: 'reports'
+  # reports
+  match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
+  match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
+  match "reports/:action", to: "reports", :via => [:get]
+
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]

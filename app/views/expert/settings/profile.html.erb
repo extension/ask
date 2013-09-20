@@ -1,5 +1,5 @@
 <h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
-<h1>General</h1>
+<h2>Settings > General</h2>
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
 
@@ -7,8 +7,15 @@
 
   <% if @user.has_exid? %>
     <div id="extension_people_data">
-      <h3><%= @user.name %> <small id="people_edit"><%= link_to("Your name, email and timezone can be edited in people.extension.org", "http://www.extension.org/people/profile/edit") %></small></h3>
+      <h3><%= @user.name %> <small id="people_edit"><%= link_to("Your name, email, primary location and timezone can be edited in people.extension.org", "http://www.extension.org/people/profile/edit") %></small></h3>
       <p><%= @user.email %></p>
+      <% if @user.location %>
+        <p><% if @user.county %>
+          <%= @user.county.name %>
+          <% end %>
+          <%= @user.location.name %></p>
+      <% end %>
+      
       <%- if @user.has_time_zone? -%>
         <p><%= @user.time_zone %></p>
       <%- else -%>
@@ -24,7 +31,7 @@
       <%= f.label :bio do %>
       About Me <span>(This description displays on your <%= link_to "Expert Profile", expert_user_path(current_user.id) %> and <%= link_to "Public Profile", user_path(@user.id) %>)</span>
       <% end %>
-      <%= f.text_area :bio, :rows => "2", :class => "l" %>
+      <%= f.text_area :bio, :rows => "4", :class => "l wysiwyg" %>
     </p>
     
     <p class="bio">
@@ -35,7 +42,7 @@
   </fieldset>
   
   <fieldset>
-    <p><%= f.label :avatar, 'Profile Avatar' %></p>
+    <p><%= f.label :avatar, 'Profile Avatar' %> Avatars are formatted to fit a square. Uploaded images must be at least 100 x 100px. Recommended size is 250 x 250px.</p>
     <p class="clearing">
       <%= get_avatar_for_user(@user) %>
       <% if @user.avatar.present? %>
@@ -57,3 +64,9 @@
 <% end %>
 
 </div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>

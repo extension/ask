@@ -1,85 +1,140 @@
-<h2 class="title"><%= format_text_for_display(@question.title) -%></h2>
-
-<div id="question">
-<p class="question_body"><%= format_text_for_display(@question.body) %></p>
-
-  <% @question.images.each do |image| %>
-    <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-    <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
-    
-    <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-      <p>
-        <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-        <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-      <p>
-        </div>
-      <div class="modal-body">
-        <%= image_tag image.url() %>
-      </div>
-    </div>
-    <% else %>
-      <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
-    <% end %>
-  <% end %>
 
 
-<p>Asked 
-  <% if @original_group.present? %>
-    to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
-  <% end %>
-	      
-  <%= time_ago_in_words(@question.created_at) %> ago 
-  
-  <% if @question.submitter %>
-    by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
-  <% end %>
-</p>
+<div >
+  <div class="main_question">
+    <h1 class="title"><%= format_text_for_display(@question.title) -%></h1>
+<div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
-  <p>
-    <% if @question.location.present? %>
-      <% if @question.county.present? %>
-        <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
-      <% end %>
-      <% if @question.location.present? %>
-        <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
-      <% end %>
-    <% else %>
-      <span class="label label-inverse"><%= link_to "No Location" %></span>
-    <% end %>
-  </p>
-</div>
+  <% if @question.images.size > 0 %>
 
-<% if @question_responses.size > 0 %>
-  <h3 class="h3">Responses</h3>
-  <% @question_responses.each do |response| %>
-    <div class="response_block">
-      <div class="response"><%= format_text_for_display(response.body) %></div>
-      <div class="signature"><%= format_text_for_display(response.signature) %></div>
-      
-      <div id="response_images">
-      <% response.images.each do |image| %>
+    <div class="images_wrapper">  
+    <% @question.images.each do |image| %>
+      <% if image.persisted? %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-
-        <a class="image_wrapper" data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb) %></a>
+        <div class="question_image_wrapper">
+          <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+        </div>
 
         <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
-          <p>
-            <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-            <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-          <p>
-            </div>
+            <p>
+              <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+              <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+            <p>
+          </div>
           <div class="modal-body">
             <%= image_tag image.url() %>
           </div>
         </div>
         <% else %>
-          <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+         <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
-        <br class="clearing" />
+    <% end %>  
+    <br class="clearing" />
+    </div>
+
+  <% end %>
+
+  <div id="question_location">
+    <%= render :partial => 'question_location' %>
+  </div>
+  
+   
+  
+
+    <div id="tag_interface">
+    <div id="tag_picker_wrapper">
+      <div class="ui-widget">
+        <label for="tag_picker">Add Tags <small>(Tags are viewable on public questions)</small></label>
+    	  <input id="tag_picker" placeholder="Type a word and select it..." /> 
       </div>
+    </div>
+
+    <div id="tags">
+
+    <% if @question.tags.size > 0 %>
+      <% @question.tags.each do |tag| %>
+        <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span>
+          <%  if tag.name == "front page" %>
+            
+            <!-- Button to trigger modal -->
+            <a href="#frontpage" data-toggle="modal"><span class="label label-inverse" >What's this?</span></a>
+
+            <!-- Modal -->
+            <div id="frontpage" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="frontpageLabel" aria-hidden="true">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="frontpageLabel">What is the "front page" tag?</h3>
+              </div>
+              <div class="modal-body">
+                <p>The "front page" tag will be used to feature questions on the front page of www.extension.org. A curation team chooses which questions should be featured and they add the "front page" tag accordingly. </p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">Close</button>
+              </div>
+            </div>
+            
+          <% end %>
+          </p>
+      <% end %>
+    <% else %>
+
+    <% end %>
+
+    </div>
+    </div>
+   
+    
+
+</div>    
+</div>
+  
+  
+  
+  
+<% if @question_responses.size > 0 %>
+  
+  <div class="title_block">
+    <h2>Answers &amp; Replies</h2>
+    <p>Answers from experts and replies from the submitter</p>
+  </div>
+  
+  <% @question_responses.each do |response| %>
+    <div class="response_block">
+      <div class="response"><%= format_text_for_display(response.body) %></div>
+      <div class="signature"><%= format_text_for_display(response.signature) %></div>
+
+      <% if response.images.size > 0 %>
+
+        <div class="images_wrapper">  
+        <% response.images.each do |image| %>
+          <% if image.persisted? %>
+            <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+            <div class="question_image_wrapper">
+              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+            </div>
+
+            <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-header">
+                <p>
+                  <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+                  <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+                <p>
+              </div>
+              <div class="modal-body">
+                <%= image_tag image.url() %>
+              </div>
+            </div>
+            <% else %>
+             <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+            <% end %>
+          <% end %>
+        <% end %>  
+        <br class="clearing" />
+        </div>
+
+      <% end %>
       
       <div class="author">
         <% if response.resolver_id %>
@@ -90,6 +145,7 @@
           <p>Anonymous Guest</p>
         <% end %>
         <p><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
+        <p><%= link_to 'edit', edit_response_expert_question_path(:id => @question.id, :response_id => response.id) %> | <%= link_to 'revision history', response_history_expert_question_path(:id => @question.id, :response_id => response.id) %></p>
       </div>
     </div>
   <% end %>
@@ -98,3 +154,64 @@
 
 
 
+<script class="code" type="text/javascript">
+
+		function add_tag(tag) {
+		  $.ajax({
+        type: "POST",
+        url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
+        cache: false,
+        data: {tag: tag}
+      })
+      .done(function() {
+				$("#tag_picker").autocomplete("close");
+				$("#tag_picker").val('');
+				return false;
+      })  
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        alert("Request failed: " + errorThrown);
+        $("#tag_picker").autocomplete("close");
+  			$("#tag_picker").val('');
+  			return false;
+      })
+		}
+
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
+		$("#tag_picker").autocomplete({
+			source: "/ajax/tags",
+			minLength: 2,
+			select: function(e, ui) {
+			  add_tag(ui.item.name);
+			}
+		}).keypress(function(e) {
+      if (e.keyCode === 13) {
+        if ($.trim(this.value) != "") {
+          add_tag(this.value);
+        } else {
+          $("#tag_picker").val('');
+  				return false;
+        }
+      }
+    }).data( "autocomplete" )._renderItem = function( ul, item ) {
+      return $( "<li></li>" )
+      .data( "item.autocomplete", item )
+      .append( "<a>"+ item.label + " <strong>(" + item.tag_count + ")</strong></a>" )
+      .appendTo( ul );
+    };
+    });
+    // remove tags
+     $("#tags").on("click", ".removetag", function(){
+       var tag = $(this).closest(".tagwrapper");
+       $.ajax({
+         type: "POST",
+           url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
+           cache: false,
+           data: {tag_id: tag.attr("id").replace('tag_', '')}
+       })
+       .done(function() {
+         tag.fadeOut(500);
+       })
+     });
+
+</script>

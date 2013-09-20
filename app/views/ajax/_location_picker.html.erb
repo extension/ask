@@ -59,6 +59,7 @@
    }  
   
   // Pick individual counties
+  $(document).ready(function(){
   $(".countyfield:not(.ui-autocomplete-input)").live("focus", function (event) { // http://stackoverflow.com/a/6193792/823202
     inputField = $(this);
     $(this).autocomplete({
@@ -86,7 +87,7 @@
         }
     });
   });
-  
+  });
  
   // Add all counties
   $("#loc_wrapper").on("click", ".add_all_counties", function(){

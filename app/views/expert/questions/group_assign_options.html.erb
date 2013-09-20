@@ -4,22 +4,67 @@
   <h1>Assign to <%= link_expert_group(@group) %></h1>
 
   <h2><%= link_expert_group_avatar(@group) %></h2>
-
-  <%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
-    <p>
-      <label>Include a comment
-      <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :class => "l"} %>
-      </label>
-    <p>
-    
-    <p>
-      <%= submit_tag "Assign to #{@group.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
-    </p>
+  
+  <% if (@group.assignment_outside_locations == true) || 
+    ((@group.assignment_outside_locations == false) && (@question.location.present?) && (@group.expertise_locations.include?(@question.location))) %>
+    <%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
+      <p>
+        <label>Include a comment
+        <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :class => "l"} %>
+        </label>
+      <p>
+      <p>
+        <%= submit_tag "Assign to #{@group.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
+      </p>
+    <% end %>
+  <% else %>
+    <div id="cant_assign">
+      <p><strong><%= @group.name %></strong> only accepts questions that match their defined locations.</p>
+      <p>You can't assign this question to them, but you can <%= link_to "assign it directly to an individual expert", reassign_expert_question_path(@question.id) %> or <%= link_to "find another group", reassign_expert_question_path(@question.id) %>.</p>
+      <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>. This question is currently set to <strong><%= @question.location.present? ? @question.location.name : "No Location" %></strong>.</p>
+      
+      <p><%= link_to "See other reassignment matches", reassign_expert_question_path(@question.id), :class => "btn" %></p>
+    </div>
   <% end %>
+
   
   <div id="reassign_question">
     <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
-    <p class="question_body"><%= format_text_for_display(@question.body) %></p>
+    <div class="question_body"><%= format_text_for_display(@question.body) %></div>
+  
+
+    <p>Asked 
+      <% if @original_group.present? %>
+        to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
+      <% end %>
+
+      <%= time_ago_in_words(@question.created_at) %> ago 
+
+      <% if @question.submitter %>
+        by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
+      <% end %>
+    </p>
+
+    <p>
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= link_to "#{@question.county.name}", expert_view_county_path(@question.county.id) %></span>
+        <% end %>
+        <% if @question.location.present? %>
+          <span class="tag tag-geography"><%= link_to @question.location.name, expert_view_location_path(@question.location.id) %></span>
+        <% end %>
+      <% else %>
+        <span class="label label-inverse"><%= link_to "No Location" %></span>
+      <% end %>
+    </p>
+
+    <div id="tags">
+      <% if @question.tags.size > 0 %>
+        <% @question.tags.each do |tag| %>
+          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 
 </div>
@@ -27,28 +72,37 @@
 
 <div id="secondary" class="span6">
   <h4>About <%= @group.name %></h4>
+  
+  <p class="downplay">
+    <% if @group.assignment_outside_locations == true %>
+      Great news! This group accepts questions from anywhere.
+    <% else %>
+      Questions must match this group's locations
+    <% end %>
+  </p>
     
   <% if @group.tags.size > 0 %>
-    <h4>Tags</h4>
+    <h5>Tags</h5>
     <p class="tags">  
       <% @group.tags.each do |tag| %>
-      <span class="tag tag-topic"><%= tag.name %></span>
+        <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
       <% end %>
     </p>
+    <br class="clearing" />
   <% else %>
     <p class="subtle">This group hasn't added any tags</p>
   <% end %>
   
   <% if @group.expertise_locations.size > 0 %>
-    <h4>Locations</h4>
+    <h5 class="clearing">Locations</h5>
     <% @group.expertise_locations.each do |l| %>
       <div class="location">
         
-        <h4><span class="tag tag-geography"><%= l.name %></span></h4>
+        <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
           <% if @group.expertise_counties.where("location_id = ?", l.id).size > 0 %>
             <ul>
               <% @group.expertise_counties.where("location_id = ?", l.id).each do |c| %>
-                <li><span class="tag tag-geography"><%= c.name %></span></li>
+                <li><span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span></li>
               <% end %>
             </ul>
           <% else %>

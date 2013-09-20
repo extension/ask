@@ -5,45 +5,61 @@
 # see LICENSE file
 
 class AjaxController < ApplicationController
+  include ActionView::Helpers::NumberHelper
   def tags
     if params[:term]
-      search_term = params[:term]
-      tags = Tag.where("name like '%#{params[:term]}%'").limit(12)
+      search_term = Tag.normalizename(params[:term])
+      tags = Tag.used_at_least_once.where("name like ?", "%#{search_term}%").limit(12)
     else
-      tags = Tag.order('created_at DESC').limit(12)
+      tags = Tag.used_at_least_once.order('created_at DESC').limit(12)
     end
     list = []
     tags.each do |t|
-      list <<  Hash[ id: t.id, label: t.name, name: t.name] if t.name != search_term
+      list <<  Hash[ id: t.id, label: t.name, name: t.name, tag_count: "#{number_with_delimiter(t.tag_count, :delimiter => ',')}"] if t.name != search_term
     end
-    list.unshift(Hash[id: nil, label: search_term, name: search_term])
+    
+    tag_count_description = "not used yet"
+    
+    param_tag = Tag.used_at_least_once.find_by_name(search_term)
+    if param_tag
+      tag_count_description = number_with_delimiter(param_tag.tag_count, :delimiter => ',')
+    end
+    
+    list.unshift(Hash[id: nil, label: search_term, name: search_term, tag_count: tag_count_description])
     render json: list
   end
 
   def experts
     if params[:term]
       search_term = params[:term]
-      groups = Group.patternsearch(params[:term]).limit(9)
-      experts = User.exid_holder.active.not_retired.not_blocked.patternsearch(params[:term]).limit(18 - groups.length)
+      
+      groups_starting_with = Group.where(group_active: true).pattern_search(params[:term], "prefix").limit(9)
+      groups_including = Group.where(group_active: true).pattern_search(params[:term]).limit(9)
+      groups = (groups_starting_with + groups_including).uniq.take(9)
+      
+      experts_starting_with = User.exid_holder.active.not_blocked.pattern_search(params[:term], "prefix").limit(18 - groups.length)
+      experts_including = User.exid_holder.active.not_blocked.pattern_search(params[:term]).limit(18 - groups.length)
+      experts = (experts_starting_with + experts_including).uniq.take(9)
     else
-      groups = Group.order('created_at DESC').limit(6)
-      experts = User.exid_holder.active.not_retired.not_blocked.order('created_at DESC').limit(6)
+      groups = Group.where(group_active: true).order('created_at DESC').limit(6)
+      experts = User.exid_holder.active.not_blocked.order('created_at DESC').limit(6)
     end
 
     combined_array = groups + experts
 
-    list = combined_array.map {|e| Hash[ id: e.id, label: e.name, name: e.name, class_type: e.class.name]}
+    list = combined_array.map {|e| Hash[ id: e.id, label: e.class.name == "User" ? ("#{view_context.get_avatar_for_user(e, :thumb).html_safe}" + " #{e.name} #{e.title.present? ? '<br />' + e.title : ''}<br />" + (e.county.present? ? "#{e.county.name}, " : "") + (e.location.present? ? "#{e.location.name}" : "")) : ("#{view_context.get_avatar_for_group(e, :thumb, true).html_safe}" + " #{e.name}"), name: e.name, value: e.name, class_type: e.class.name]}
     render json: list
   end
 
   def groups
     if params[:term]
       search_term = params[:term]
-      groups_including = Group.where("name like '%#{params[:term]}%'").limit(12)
-      groups_starting_with = Group.where("name like '#{params[:term]}%'").limit(12)
+      
+      groups_starting_with = Group.where(group_active: true).pattern_search(params[:term], "prefix").limit(12)
+      groups_including = Group.where(group_active: true).pattern_search(params[:term]).limit(12)
       groups = (groups_starting_with + groups_including).uniq.take(12)
     else
-      groups = Group.order('created_at DESC').limit(12)
+      groups = Group.where(group_active: true).order('created_at DESC').limit(12)
     end
     list = groups.map {|g| Hash[ id: g.id, label: g.name, name: g.name]}
     render json: list
@@ -87,6 +103,12 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     @county = County.find(params[:requested_county])
+    all_county = @county.location.get_all_county
+    
+    # if they're selecting a specific county, then take away the 'all county' selection
+    if @object.expertise_counties.include?(all_county)
+      @object.expertise_counties.delete(all_county)
+    end
 
     if !@object.expertise_counties.include?(@county)
       @object.expertise_counties << @county
@@ -103,13 +125,16 @@ class AjaxController < ApplicationController
       when "group"    then @object = Group.find_by_id(params[:object_id])
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
-    location = Location.find(params[:requested_location])
-    @object.expertise_counties.where("location_id = ?", params[:requested_location]).each do |c|
+    location = Location.find_by_id(params[:requested_location])
+    @object.expertise_counties.where("location_id = ?", location.id).each do |c|
       @object.expertise_counties.delete(c)
     end
+    
+    # when adding location, start out with the all county selection
+    @object.expertise_counties << location.get_all_county unless @object.expertise_counties.include?(location.get_all_county)
+    
     if !@object.expertise_locations.include?(location)
       @object.expertise_locations << location
-      @object.save
     end
   end
 
@@ -133,7 +158,12 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     county = County.find(params[:county_id])
+    location = county.location
     @object.expertise_counties.delete(county)
+    # if they just removed the last county from this location, add the all county county to it
+    if @object.expertise_counties.where("counties.location_id = ?", location.id).count == 0
+      @object.expertise_counties << location.get_all_county
+    end
   end
 
 end

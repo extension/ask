@@ -20,12 +20,14 @@ class Preference < ActiveRecord::Base
    'notification.question.incoming' => false,
    'notification.question.daily_summary' => false,
    'notification.question.activity' => false,
+   'notification.question.comments' => false
   }
   
   NOTIFICATION_ASSIGNED_TO_ME = 'notification.question.assigned_to_me'
   NOTIFICATION_INCOMING = 'notification.question.incoming'
   NOTIFICATION_DAILY_SUMMARY = 'notification.question.daily_summary'
   NOTIFICATION_ACTIVITY = 'notification.question.activity'
+  NOTIFICATION_COMMENTS = 'notification.question.comments'
   
   def set_datatype
     if(self.value.nil?)
@@ -84,7 +86,7 @@ class Preference < ActiveRecord::Base
   end
     
   def self.create_or_update(prefable,name,value,group_id=nil,question_id=nil)
-    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(group_id: group_id).first)
+    if(preference = where(prefable_id: prefable.id).where(prefable_type: prefable.class.name).where(name: name).where(question_id: question_id).where(group_id: group_id).first)
       preference.update_attribute(:value, value)
     else
       preference = self.create(prefable: prefable, name: name, value: value, group_id: group_id, question_id: question_id)

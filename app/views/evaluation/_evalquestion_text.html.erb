@@ -1,0 +1,18 @@
+<%- if local_assigns.has_key?(:question_testing) and question_testing 
+      question_id = 0
+    else
+      question_id = question.id
+    end 
+-%>
+<div class="well eval_question">
+<%= form_tag(answer_evaluation_path, {remote: true, id: "answer_form_for_evaluation_question_#{evaluation_question.id}"}) do -%>
+  <%= hidden_field_tag('question_id', question_id) %>
+  <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
+  <legend><%= evaluation_question.prompt %></legend>
+  <div class="control-group">
+    <div class="controls">
+      <%= text_area_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable'}) %>
+    </div>
+  </div>
+<%- end -%>
+</div>

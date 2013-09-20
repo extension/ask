@@ -8,13 +8,36 @@
 class Question < ActiveRecord::Base
   include MarkupScrubber
   include Rakismet::Model
+  include CacheTools
+  include TagUtilities
+  
   rakismet_attrs :author_email => :email, :content => :body
+  has_paper_trail :on => [:update], :only => [:title, :body]
 
 
   class Question::Image < Asset
     has_attached_file :attachment, 
-                      :styles => { :medium => "300x300>", :thumb => "100x100>" }, 
-                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :styles => Proc.new { |attachment| attachment.instance.styles }
+                        attr_accessible :attachment
+    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
+    def dynamic_style_format_symbol
+        URI.escape(@dynamic_style_format).to_sym
+      end
+
+      def styles
+        unless @dynamic_style_format.blank?
+          { dynamic_style_format_symbol => @dynamic_style_format }
+        else
+          { :medium => "300x300>", :thumb => "100x100>" }
+        end
+      end
+
+      def dynamic_attachment_url(format)
+        @dynamic_style_format = format
+        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+        attachment.url(dynamic_style_format_symbol)
+      end
   end
 
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
@@ -22,6 +45,8 @@ class Question < ActiveRecord::Base
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
   belongs_to :location
   belongs_to :county
+  belongs_to :original_location, :class_name => "Location", :foreign_key => "original_location_id"
+  belongs_to :original_county, :class_name => "County", :foreign_key => "original_county_id"
   belongs_to :widget 
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
@@ -58,6 +83,8 @@ class Question < ActiveRecord::Base
     integer :status_state
     boolean :is_private
   end  
+  
+  ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
   
   # status numbers (for status_state)     
   STATUS_SUBMITTED = 1
@@ -103,17 +130,39 @@ class Question < ActiveRecord::Base
   
   PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = "This question has been reassigned to you because a new comment has been posted to your response. Please " +
   "reply using the link below or close the question out if no reply is needed. Thank You."
+  PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = "This question has been assigned to you because a new comment has been posted to an expert's response or open question who has marked aae vacation status. Please " +
+  "reply using the link below or close the question out if no reply is needed. Thank You."
   
   DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
   
+  AAE_V2_TRANSITION = '2012-12-03 12:00:00 UTC'
+  EVALUATION_ELIGIBLE = '2013-03-15 00:00:00 UTC' # beware the ides of March
+
   scope :public_visible, conditions: { is_private: false }
+  scope :private, conditions: { is_private: true }
+  scope :switched_to_private, conditions: { is_private: true, :is_private_reason => PRIVACY_REASON_EXPERT}
+  scope :public_visible_answered, conditions: { is_private: false, :status_state => STATUS_RESOLVED }
+  scope :public_visible_unanswered, conditions: { is_private: false, :status_state => STATUS_SUBMITTED }
+  scope :public_visible_with_images_answered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_RESOLVED}"
+  scope :public_visible_with_images_unanswered, :include => :images, :conditions => "assets.id IS NOT NULL AND is_private = false AND status_state = #{STATUS_SUBMITTED}"
   scope :from_group, lambda {|group_id| {:conditions => {:assigned_group_id => group_id}}}
   scope :tagged_with, lambda {|tag_id| 
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'Question'"}
   }
+  # both tagged_with_all and tagged_with_any are expecting arrays of tag strings
+  scope :tagged_with_all, lambda{|tag_list|
+    joins(:tags).where("tags.name IN (#{tag_list.map{|t| "'#{Tag.normalizename(t)}'"}.join(',')})").group("questions.id").having("COUNT(questions.id) = #{tag_list.size}")
+  }
+  scope :tagged_with_any, lambda { |tag_list|
+    joins(:tags).where("tags.name IN (#{tag_list.map{|t| "'#{Tag.normalizename(t)}'"}.join(',')})").group("questions.id")
+  }
+  scope :by_location, lambda {|location| {:conditions => {:location_id => location.id}}}
+  scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
-
+  scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
+  # special scope for returning an empty AR association
+  scope :none, where('1 = 0')
 
   # check for spam - given the process flow, not sure
   # this is a candidate for delayed job
@@ -124,10 +173,14 @@ class Question < ActiveRecord::Base
     true
   end
 
-
   # for purposes of solr search
   def response_list
     self.responses.map(&:body).join(' ')
+  end
+  
+  # get resolvers for a question
+  def resolver_list
+    self.responses.map{|r| r.resolver}.uniq.compact
   end
 
   # return a list of similar articles using sunspot
@@ -169,7 +222,7 @@ class Question < ActiveRecord::Base
   def auto_assign_by_preference
     return true if self.spam?
     if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
-      reject_msg = "This question was a duplicate of incoming question ##{existing_question.id}"
+      reject_msg = "This question is a duplicate of question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
     end
@@ -179,11 +232,22 @@ class Question < ActiveRecord::Base
     end
   end
   
+  def is_being_worked_on?
+    if !self.working_on_this.nil?
+      if self.working_on_this > Time.zone.now
+        return true
+      else
+        return false
+      end
+    end
+    return false
+  end
+  
   def title
     if self[:title].present?
       return self[:title]
     else 
-      return self.html_to_text(self[:body]).truncate(80, separator: ' ')
+      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ')
     end
   end
 
@@ -198,12 +262,12 @@ class Question < ActiveRecord::Base
   end
 
     
-  def auto_assign
+  def auto_assign(assignees_to_exclude = nil)
     assignee = nil
     system_user = User.system_user
     
     group = self.assigned_group
-    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location)) && group.assignees.length > 0
+    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location))
       # if group individual assignment is not turned on for a group, then we log that it was assigned to the group.
       # the group designation has already been taken care of with the saving of the question, and when we don't have an individual assignment, but a group designation,
       # it is considered assigned to the group and not an individual.
@@ -211,29 +275,51 @@ class Question < ActiveRecord::Base
         QuestionEvent.log_group_assignment(self, group, system_user, nil)    
         return
       end
-      if self.county.present?
-        assignee = pick_user_from_list(group.assignees.with_expertise_county(self.county.id))
+      
+      if assignees_to_exclude.present?
+        group_assignees = group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+      else
+        group_assignees = group.assignees
       end
-      if !assignee && self.location.present?
-        assignee = pick_user_from_list(group.assignees.with_expertise_location(self.location.id))
-      end
-      if !assignee 
-        group_assignee_ids = group.assignees.collect{|ga| ga.id}
-        assignee = pick_user_from_list(group.assignees.active.route_from_anywhere)
-      end
-      # still aint got no one? assign to a group leader
-      if !assignee
-        if group.leaders.active.length > 0
-          assignee = pick_user_from_list(group.leaders.active)
-        # still aint got no one? really?? Wrangle that bad boy.
+      
+      if group_assignees.length > 0
+        if (group.ignore_county_routing == true) && self.location.present?
+          assignee = pick_user_from_list(group_assignees.with_expertise_location(self.location.id))
         else
-          assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+          if self.county.present?
+            assignee = pick_user_from_list(group_assignees.with_expertise_county(self.county.id))
+          end
+          if !assignee && self.location.present?
+            assignee = pick_user_from_list(group_assignees.with_expertise_location_all_counties(self.location.id))
+          end
         end
+        
+        if !assignee 
+          assignee = pick_user_from_list(group_assignees.active.route_from_anywhere)
+        end
+        # still aint got no one? assign to a group leader
+        if !assignee
+          if assignees_to_exclude.present?
+            group_leaders = group.leaders.active.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
+          else
+            group_leaders = group.leaders.active
+          end
+          
+          if group_leaders.length > 0
+            assignee = pick_user_from_list(group_leaders)
+          # still aint got no one? really?? Wrangle that bad boy.
+          else
+            assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
+          end
+        end
+      # if individual assignment is turned on for the group and there are no active assignees, wrangle it
+      else
+        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and 
       # the group is not receiving questions from outside their defined locations.
-      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
+      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
     end
     
     if assignee
@@ -250,12 +336,12 @@ class Question < ActiveRecord::Base
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.
-  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil)
+  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false)
     raise ArgumentError unless user and user.instance_of?(User)  
-
+    
     # don't bother doing anything if this is assignment to the person already assigned unless it's 
     # a question that's been responded to by the public after it's been resolved that then gets 
-    # assigned to whomever the question was last assigned to.
+    # assigned to whomever the question was last assigned to (unless that person is on vacation)
     return true if self.assignee && user.id == assignee.id && public_reopen == false
     
     if(self.assignee.present? && (assigned_by != self.assignee))
@@ -266,6 +352,7 @@ class Question < ActiveRecord::Base
     end
 
     # update and log
+    self.working_on_this = nil 
     self.update_attribute(:assignee, user)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
@@ -276,8 +363,13 @@ class Question < ActiveRecord::Base
       asker_comment = nil
     end
     
-    Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? #individual assignment notification
-    if(is_reassign and public_reopen == false)
+    # if this is being assigned to an expert who is resolving the question, do not notify that expert, the question will be resolved
+    if !resolving_assign
+      Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
+    end
+    
+    # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded) 
+    if(is_reassign && public_reopen == false)
       Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
     end
       
@@ -300,7 +392,7 @@ class Question < ActiveRecord::Base
     
     # update and log
     current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => group, :assignee => nil)
+    self.update_attributes(:assigned_group => group, :assignee => nil, :working_on_this => nil)
     QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
@@ -309,7 +401,7 @@ class Question < ActiveRecord::Base
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change, 
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     if group.individual_assignment == true
-      auto_assign
+      auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
@@ -340,7 +432,6 @@ class Question < ActiveRecord::Base
 
     case q_status
       when STATUS_RESOLVED    
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         response_attributes = {:resolver => resolver, 
                                :question => self, 
                                :body => response,
@@ -348,11 +439,15 @@ class Question < ActiveRecord::Base
                                :contributing_question => contributing_question, 
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
-        @response = Response.new(response_attributes)
-        @response.save
-        QuestionEvent.log_resolution(self)    
+        @response = Response.new(response_attributes) 
+        if @response.valid?
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)  
+          @response.save
+          QuestionEvent.log_resolution(self)    
+        else
+          raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
+        end
       when STATUS_NO_ANSWER
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"))  
         response_attributes = {:resolver => resolver, 
                                :question => self, 
                                :body => response,
@@ -361,10 +456,15 @@ class Question < ActiveRecord::Base
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
-        @response.save
-        QuestionEvent.log_no_answer(self)  
+        if @response.valid?
+          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)  
+          @response.save
+          QuestionEvent.log_no_answer(self)  
+        else
+          raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
+        end
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED)
+        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED, :working_on_this => nil)
         QuestionEvent.log_rejection(self)
     end
   end
@@ -373,9 +473,7 @@ class Question < ActiveRecord::Base
   def assign_to_question_wrangler(assigned_by)
     assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
     comment = WRANGLER_REASSIGN_COMMENT
-
     assign_to(assignee, assigned_by, comment)
-    self.assigned_group = Group.question_wrangler_group
     self.save
     return assignee
   end
@@ -392,15 +490,17 @@ class Question < ActiveRecord::Base
   def self.convert_to_string(status_number)
     case status_number
     when STATUS_SUBMITTED
-      return 'submitted'
+      'submitted'
     when STATUS_RESOLVED
-      return 'resolved'
+      'resolved'
     when STATUS_NO_ANSWER
-      return 'no answer'
+      'no answer'
     when STATUS_REJECTED
-      return 'rejected'
+      'rejected'
+    when STATUS_CLOSED
+      'closed'
     else
-      return nil
+      nil
     end
   end
   
@@ -417,18 +517,7 @@ class Question < ActiveRecord::Base
 
     return submitter_name
   end
-  
-  def set_tag(tag)
-    if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
-      return false
-    else 
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
-  end
-  
+
   # get the event of the last response given for a question
   def last_response
     question_event = self.question_events.find(:first, :conditions => "event_state = #{QuestionEvent::RESOLVED} OR event_state = #{QuestionEvent::NO_ANSWER}", :order => "created_at DESC")
@@ -439,7 +528,7 @@ class Question < ActiveRecord::Base
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
-    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
+    images.each {|i| self.errors[:base] << "Image is not correct file type (.jpg, .png, or .gif allowed)" if !allowable_types.include?(i.attachment_content_type)}
   end
    
   def index_me
@@ -505,13 +594,13 @@ class Question < ActiveRecord::Base
   end
   
   def notify_submitter
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
     end
   end
   
   def send_global_widget_notifications
-    if(!self.spam?)
+    if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     end
   end
@@ -528,14 +617,169 @@ class Question < ActiveRecord::Base
   end
 
   def self.evaluation_pool(days_closed = Settings.days_closed_for_evaluation)
-    with_scope do
-      self.answered.where(evaluation_sent: false).where('DATE(resolved_at) = ?',Date.today - days_closed)
+    # we need to count every non rejected question with at least one response
+    self.answered
+        .where("questions.created_at >= ?",Time.parse(EVALUATION_ELIGIBLE))
+        .where(evaluation_sent: false)
+        .where('DATE(resolved_at) <= ?',Date.today - days_closed)
+  end
+
+  def response_time(initial_only = false)
+    response_count = self.responses.expert.count
+    followup_response_count = self.responses.expert_after_public.count
+    if(response_count == 1 or initial_only)
+      self.initial_response_time
+    elsif(response_count > 1)
+      if(followup_response_count >= 1)
+        self.responses.expert_after_public.average(:time_since_last).round
+      else
+        self.initial_response_time
+      end
+    else
+      nil
     end
   end
 
   def question_activity_preference_list
-    list = Preference.where(name: 'notification.question.activity',question_id: self.id )
+    list = Preference.where(name: Preference::NOTIFICATION_ACTIVITY, question_id: self.id )
   end
   
+  def question_comment_notification_list
+    return Preference.where(name: Preference::NOTIFICATION_COMMENTS, question_id: self.id, value: true)
+  end
+  
+  # if the pref for notification_comments does not exist or it has a value of true, then they are opted into comment notifications, otherwise, 
+  # the pref exists, and the value is set to false indicating they have opted out.
+  def opted_into_comment_notifications?(user_id)
+    if Preference.where(name: Preference::NOTIFICATION_COMMENTS, question_id: self.id, value: false, prefable_type: 'User', prefable_id: user_id).present?
+      return false
+    else
+      return true
+    end
+  end
+  
+  def rejected?
+    return self.status_state == STATUS_REJECTED
+  end
+
+  # Reports Stuff
+  def self.answered_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    with_scope do
+      question_id_records = self.joins(:question_events)
+      .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month).pluck(:question_id)
+    
+      if question_id_records.length > 0
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.resolved_response_list_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.resolved_response_initiators_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("DISTINCT(question_events.initiated_by_id)").joins(:question_events)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.asked_list_for_year_month(year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.where("DATE_FORMAT(questions.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.resolved_questions_by_in_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = self.joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      
+      if question_id_records.count > 0    
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_in_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+  
+  def self.resolved_questions_by_in_state_responders_outside_location(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = self.joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("questions.location_id IS NULL OR questions.location_id <> ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      
+      if question_id_records.count > 0    
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_in_state_responders_outside_location(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id = ?", location.id)
+        .where("questions.location_id IS NULL OR questions.location_id <> ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
+    
+  def self.resolved_questions_by_outside_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      question_id_records = Question.joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?", year_month)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}").pluck(:question_id)
+      if question_id_records.count > 0  
+        return Question.where("id IN (#{question_id_records.join(',')})")
+      else
+        return Question.none
+      end
+    end
+  end
+  
+  def self.responses_by_outside_state_responders(location, year_month)
+    with_scope do
+      year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+      self.select("question_events.*").joins(:question_events => :initiator)
+        .where("users.location_id IS NULL OR users.location_id <> ?", location.id)
+        .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+        .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+    end
+  end
     
 end

@@ -6,6 +6,9 @@ require "bundler/capistrano"
 require "delayed/recipes"
 require './config/boot'
 require 'airbrake/capistrano'
+
+TRUE_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'yes','YES','y','Y']
+FALSE_VALUES = [false, 0, '0', 'f', 'F', 'false', 'FALSE','no','NO','n','N']
  
 set :application, "aae"
 set :repository,  "git@github.com:extension/aae.git"
@@ -19,35 +22,32 @@ set :bundle_flags, ''
 set :bundle_dir, ''
 set :rails_env, "production" #added for delayed job  
 
-before "deploy", "deploy:web:disable"
-after "deploy:update_code", "deploy:update_maint_msg"
-after "deploy:update_code", "deploy:link_and_copy_configs"
-after "deploy:update_code", "deploy:cleanup"
-after "deploy", "deploy:web:enable"
+before "deploy", "deploy:checks:git_push"
+if(TRUE_VALUES.include?(ENV['MIGRATE']))
+  before "deploy", "deploy:web:disable"
+  after "deploy:update_code", "deploy:update_maint_msg"
+  after "deploy:update_code", "deploy:link_and_copy_configs"
+  after "deploy:update_code", "deploy:cleanup"
+  after "deploy:update_code", "deploy:migrate"
+  after "deploy", "deploy:web:enable"
+else
+  before "deploy", "deploy:checks:git_migrations"
+  after "deploy:update_code", "deploy:update_maint_msg"
+  after "deploy:update_code", "deploy:link_and_copy_configs"
+  after "deploy:update_code", "deploy:cleanup"
+end
+
 # delayed job
-after "deploy:stop",    "delayed_job:stop"
-after "deploy:start",   "delayed_job:start"
+before "deploy", "delayed_job:stop"
+after "deploy:link_and_copy_configs", "delayed_job:start"
 after "deploy:restart", "delayed_job:restart"
 
 namespace :deploy do
-  
-  desc "Deploy the #{application} application with migrations"
-  task :default, :roles => :app do
-        
-    # Invoke deployment with migrations
-    deploy.migrations
-  end
   
   # Override default restart task
   desc "Restart passenger"
   task :restart, :roles => :app do
     run "touch #{current_path}/tmp/restart.txt"
-  end
-  
-  # bundle installation in the system-wide gemset
-  desc "runs bundle update"
-  task :bundle_install do
-    run "cd #{release_path} && bundle install"
   end
     
   desc "Update maintenance mode page/graphics (valid after an update code invocation)"
@@ -61,9 +61,9 @@ namespace :deploy do
     rm -rf #{release_path}/config/database.yml && 
     ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml &&
     ln -nfs #{shared_path}/config/settings.local.yml #{release_path}/config/settings.local.yml &&
-    ln -nfs #{shared_path}/config/scout_rails.yml #{release_path}/config/scout_rails.yml &&
     ln -nfs #{shared_path}/config/sunspot.yml #{release_path}/config/sunspot.yml &&
-    ln -nfs #{shared_path}/config/robots.txt #{release_path}/public/robots.txt 
+    ln -nfs #{shared_path}/config/robots.txt #{release_path}/public/robots.txt &&
+    ln -nfs #{shared_path}/sitemaps #{release_path}/public/sitemaps   
     CMD
   end
   
@@ -85,7 +85,36 @@ namespace :deploy do
       invoke_command "rm -f #{shared_path}/system/maintenancemode"
     end
     
-  end  
+  end
+  
+  namespace :checks do
+    desc "check to see if the local branch is ahead of the upstream tracking branch"
+    task :git_push, :roles => :app do
+      branch_status = `git status --branch --porcelain`.split("\n")[0]
+
+      if(branch_status =~ %r{^## (\w+)\.\.\.([\w|/]+) \[(\w+) (\d+)\]})
+        if($3 == 'ahead')
+          logger.important "Your local #{$1} branch is ahead of #{$2} by #{$4} commits. You probably want to push these before deploying."
+          $stdout.puts "Do you want to continue deployment? (Y/N)"
+          unless (TRUE_VALUES.include?($stdin.gets.strip))
+            logger.important "Stopping deployment by request!"
+            exit(0)
+          end
+        end
+      end         
+    end
+
+    desc "check to see if there are migrations in origin/branch "
+    task :git_migrations, :roles => :app do
+      diff_stat = `git --no-pager diff --shortstat #{current_revision} #{branch} db/migrate`.strip
+
+      if(!diff_stat.empty?)
+        diff_files = `git --no-pager diff --summary #{current_revision} #{branch} db/migrate`
+        logger.info "Your local #{branch} branch has migration changes and you did not specify MIGRATE=true for this deployment"
+        logger.info "#{diff_files}"
+      end         
+    end    
+  end
 end
 
 namespace :db do

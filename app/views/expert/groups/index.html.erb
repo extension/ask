@@ -1,30 +1,87 @@
-<div id="main" class="span8">
-  <h1>My Groups</h1>
+<h1>Explore Groups</h1>
+
+<div class="explanation">
+  <p>Groups provide an easy way for experts to organize their question answering efforts. Questions are submitted to groups via the group's dedicated Ask an Expert Form (hosted at ask.extension.org), or through an embedded Ask an Expert widget on an external page. Groups can be organized around topics or geography.</p>
+  <p><%= link_to "Create a new group", new_expert_group_path, :class => "btn" %> <small><%= link_to "Listing of all groups", all_expert_groups_path() %></small></p>
+</div>
+
+<div class="span6">
+  
+  <h2>My Groups</h2>
+  <p><%= link_to 'Manage your group notifications', expert_user_groups_path(current_user) %></p>
   <% if @my_groups.size == 0 %>
     <p>You currently are not a member any groups.</p>
   <% else %>
-    <% @my_groups.each do |group| %>  
-      <div><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></div>
+    <% @my_groups.each do |group| %>
+      <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+        <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+        <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+        <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+        <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+        <p class="downplay">
+        <% if group.assignment_outside_locations == true %>
+          Accepts questions from anywhere.
+        <% else %>
+          Questions must match this group's locations
+        <% end %>
+        </p>
+      </div>
     <% end %>
   <% end %>
-  
-  
-  
-  <h1>Groups</h1>
-  <h4>All Groups</h4>
-  <%= paginate @groups %>
+</div>  
 
-  <% @groups.each do |group| %>
-    <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
+
+<div class="span5">
+  <h2>Groups near you...</h2>
+  
+  <% if current_county.present? %>
+    <h3>In <%= current_county.name %></h3>
+    <% if @groups_near_my_county.size > 0 %>
+      <% @groups_near_my_county.each do |group| %>
+        <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+          <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+          <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+          <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+          <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+          <p class="downplay">
+          <% if group.assignment_outside_locations == true %>
+            Accepts questions from anywhere.
+          <% else %>
+            Questions must match this group's locations
+          <% end %>
+          </p>
+        </div>
+      <% end %>
+    <% else %>
+      <p>We don't have any groups for this county. You could create a new group or edit the location of an existing group.</p>
+    <% end %>
+  <% else %>
+   <h3>We currently cannot detect your county for group recommendations.</h3>
   <% end %>
-
-  <%= paginate @groups %>
-
+  
+  <% if current_location.present? %>
+    <h3>In <%= current_location.name %></h3>
+    <% if @groups_near_my_state.size > 0 %>
+      <% @groups_near_my_state.each do |group| %>
+      <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+        <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+        <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+        <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+        <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+        <p class="downplay">
+        <% if group.assignment_outside_locations == true %>
+          Accepts questions from anywhere.
+        <% else %>
+          Questions must match this group's locations
+        <% end %>
+        </p>
+      </div>
+      <% end %>
+    <% else %>
+      <p>We don't have any groups for this state. You could create a new group or edit the location of an existing group.</p>
+    <% end %>
+  <% else %>
+    <h3>We currently cannot detect your location for group recommendations.</h3>
+  <% end %>
 </div>
 
-<div id="secondary" class="span4">
-
-  <aside>
-    <p><%= link_to "Create a new group", new_expert_group_path, :class => "btn" %>
-  </aside>  
-</div>

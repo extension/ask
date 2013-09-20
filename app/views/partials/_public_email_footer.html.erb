@@ -1,0 +1,37 @@
+<tr>
+  <td class="thank_you">Thank you for using Ask an Expert.</td>
+</tr>
+
+<tr>
+  <td class="thank_you"><%= link_to("Find your local Extension institution", "http://www.extension.org/main/partners")%>.</td>
+</tr>
+
+<tr>
+  <td class="footer">
+    <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
+      <tr>
+        <td class="bgcolor">
+          <p>This message for informational purposes only. It is not intended to be a substitute for personalized professional advice. For specific local information, contact your local county Cooperative Extension office or other qualified professionals. eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other third parties through eXtension is solely at the user’s own risk. All eXtension content and communication is subject to the <%= link_to("Terms of Use", "http://www.extension.org/main/termsofuse") %> which may be revised at any time.</p>
+        </td>
+      </tr>
+      <tr class="options">
+        <td>
+          <%- if @mailer_cache -%>
+            <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
+          <%- else -%>
+            <a href="">View in a browser</a> 
+          <%- end -%>
+        </td>
+      </tr>
+      <tr><td>&nbsp;</td></tr>
+    </table>
+  </td>
+</tr>
+</table>
+</td>
+</tr>
+
+</table>
+</div>  
+</body>
+</html>

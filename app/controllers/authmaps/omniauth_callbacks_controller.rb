@@ -6,7 +6,7 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
       if @user.retired == false
         flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Twitter"
       else
-        redirect_to retired_url
+        return redirect_to users_retired_url
       end
       
       sign_in_and_redirect @user, :event => :authentication
@@ -22,7 +22,7 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
       if @user.retired == false
         flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Facebook"
       else
-        redirect_to retired_url
+        return redirect_to users_retired_url
       end
       sign_in_and_redirect @user, :event => :authentication
     else
@@ -32,13 +32,22 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
   end
   
   def people
-    @user = Authmap.find_for_people_openid(env["omniauth.auth"], current_user)
+    begin
+      @user = Authmap.find_for_people_openid(env["omniauth.auth"], current_user)
+    rescue Exception => e
+      flash[:error] = "Error Authenticating: #{e}"  
+      return redirect_to new_user_session_url
+    end
+    
     if @user.persisted?
       if @user.retired == false
-        flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
+        if params[:redirect_to].present? && (params[:redirect_to].include? '/expert/')
+          # don't indicate a successful login because the user never clicked a "sign in" button
+        else
+          flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "eXtension"
+        end
       else
-        redirect_to retired_url
-        return
+        return redirect_to users_retired_url
       end
       sign_in_and_redirect @user, :event => :authentication
     else
@@ -53,7 +62,7 @@ class Authmaps::OmniauthCallbacksController < Devise::OmniauthCallbacksControlle
       if @user.retired == false
         flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Google"
       else
-        redirect_to retired_url
+        return redirect_to users_retired_url
       end
       sign_in_and_redirect @user, :event => :authentication
     else

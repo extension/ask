@@ -1,0 +1,9 @@
+<div id="main" class="span12">
+
+  <%= render :partial => 'filter' %>
+  
+  <div id="filtered_question_list"> 
+    <%= render :partial => 'list_of_questions', :locals => {:questions => @recent_questions } %>
+  </div>
+  
+</div>

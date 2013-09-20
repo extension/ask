@@ -1,0 +1,62 @@
+<%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]), {:multipart => true, id: "response_form"}) do %>
+
+  <p><%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 8}) %></p>
+  <p>If we can't answer this question, use the <a id="canned_response" class="cursor">canned response</a> to suggest their local office.</p>
+            
+  <div id="add_images">
+    <h3>Images (optional)</h3>
+    <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+    <% (1..@image_count).each do |counter| %>
+      <p>
+        <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
+      </p>
+    <% end %>
+  </div>
+            
+  <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'wysiwyg'} %></p>
+            
+  <p class="save_it"><%= submit_tag 'Send Response', :class => "btn btn-primary btn-large" %></p>
+            
+  <p>All responses include <a id="disclaimer_switch" class="cursor">this disclaimer</a></p>
+  <p id="disclaimer" style="display:none;"><%= Question::EXPERT_DISCLAIMER %></p>
+<% end %>
+
+
+<script class="code" type="text/javascript">
+  
+  $(document).ready(function(){
+    <% if params[:canned_response] == "true" %>
+      insertCannedResponse();
+    <% end %>
+  });
+  
+  function insertCannedResponse() {
+    $("#current_response").val("<%= Question::DECLINE_ANSWER %>");
+    var wysihtml5EditorForResponse = $("#current_response").data("wysihtml5").editor;
+    wysihtml5EditorForResponse.setValue('<%= Question::DECLINE_ANSWER %>');
+    
+    $('<input>').attr({
+        type: 'hidden',
+        value: '<%= Question::STATUS_NO_ANSWER %>',
+        name: 'status_state'
+    }).appendTo('#response_form');
+  }
+
+  $("#canned_response").click(function () {
+    insertCannedResponse();
+  });
+  
+  $("#disclaimer_switch").click(function () {
+    $("#disclaimer").toggle();
+  });
+
+  var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+  if (!isiDevice)
+  {
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+  }
+
+</script>

@@ -54,18 +54,50 @@ module QuestionsHelper
       end
       message += "</span>"
       return message.html_safe
+    when QuestionEvent::CHANGED_LOCATION
+      old_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:old].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:old]}</span>"
+      old_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:old].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:old]}</span>"
+      new_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:new].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:new]}</span>"
+      new_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:new].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:new]}</span>"
+      
+      message = "Location edited by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      message += "<span class=\"history_of_tags\">Changed from "
+            
+      if q_event.updated_question_values[:changed_location][:old] == ''
+        old_location = "<span class=\"tag tag-geography\">No Location</span>"
+        old_county = ""
+      end
+      
+      if q_event.updated_question_values[:changed_location][:new] == ''
+        new_location = "<span class=\"tag tag-geography\">No Location</span>"
+        new_county = ""
+      end
+      
+      message += "#{old_county} #{old_location} to #{new_county} #{new_location}"
+      message += "</span>"
+      return message.html_safe
+    when QuestionEvent::CHANGED_FEATURED
+      return "Question featured changed from #{q_event.updated_question_values[:old_value]} to #{q_event.updated_question_values[:new_value]} by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::WORKING_ON
       return "Question worked on by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::EDIT_QUESTION
       return "Question edited by <strong>Submitter</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+    when QuestionEvent::EXPERT_EDIT_QUESTION
+      return "Question edited by expert <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> see #{link_to 'revision history', history_expert_question_path(q_event.question) } for more information".html_safe
+    when QuestionEvent::EXPERT_EDIT_RESPONSE
+      return "Question response edited by expert <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>. See #{link_to('response history', response_history_expert_question_path(:id => q_event.question.id, :response_id => q_event.additional_data.strip))} page".html_safe
     when QuestionEvent::REOPEN
       return "Question reopened by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CLOSED
       return "Question closed by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::PUBLIC_RESPONSE
-      return "Comment posted by <strong>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+      return "Comment posted by <strong>Submitter</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+    when QuestionEvent::CHANGED_TO_PUBLIC
+      return "Question made public by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+    when QuestionEvent::CHANGED_TO_PRIVATE
+      return "Question made private by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::INTERNAL_COMMENT 
-      comment_msg = "Comment posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      comment_msg = "Note posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       comment_msg = comment_msg + " <span class=\"comment\">#{format_text_for_display(q_event.response)}</span>" if q_event.response
       return comment_msg.html_safe
     else

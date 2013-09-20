@@ -1,114 +1,59 @@
-<!DOCTYPE html>
+<%= render :partial => 'partials/public_email_header' %>
 
-<html style="margin: 0; padding: 0;">
+<tr>
+  <td class="content padding">
+    <h3>An Expert Added a Note to Your Question</h3>
+    
+    <p class="comment"><strong>Note:</strong> <%= @internal_comment %></p>
+    <p class="meta">This note can be viewed in the <%= link_to("question's history", expert_question_url(@question, :anchor => "history")) -%>.</p>
+    
+    <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question.id), :class => "action" %> as soon as possible. Thanks for your help!</p>
 
-<head>
-  <title>New comment on a question assigned to you</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <%= render(partial: 'partials/mail_styles') %>
-  <%= stylesheet_link_tag("#{ssl_root_url}email/mobile.css") %>
-</head>
-<body>
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+  </td>
+</tr>
 
-<div id="wrapper">
-  <table cellpadding="0" cellspacing="0" border="0" align="center" width="599">
-  <%- if Settings.app_location != 'production' -%>
-    <tr class="demotagline">
-      <td>This is a DEMO email from an Ask an Expert Test site. Please feel free to ignore this test email.</td>
-    </tr>
-  <%- end -%>
-  <tr>
-    <th align="left" class="bgcolor">
-      <%- logo_url = @mailer_cache.blank? ? "#{ssl_root_url}assets/logo_small.png" : "#{ssl_webmail_logo}" -%>
-      <h1 id="ask_logo"><%= image_tag(logo_url, alt: "Ask") %></h1>      
-    </th>
-  </tr>
-  
-  <tr class="tagline">
-    <td>An Expert Posted an Internal Comment on a Question Assigned to You</td>
-  </tr>
-  <tr class="options">
-    <td>
-      <%- if @mailer_cache -%>
-        <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-      <%- else -%>
-        <a href="">View in a browser</a> 
-      <%- end -%>
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="500">
-          <tr>
-            <td id="reminder_title">
-              An expert posted an internal comment on a question assigned to you:
-              <p>"<%= @internal_comment %>"</p>
-            </td>
-          </tr>
-          <tr>
-            <td id="callout">
-              <table cellpadding="0" cellspacing="0" border="0" align="left">
-                <tr>
-                  <td><%= image_tag("#{ssl_root_url}assets/magnifying_glass.png", size: "60x60") %></td>
-                  <td class="callout"><%= link_to("View Comment on the Question", expert_question_url(@question)) -%></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td id="question_meta">  
-                
-                      
-                      <% if !@question.is_private %>
-                        <p class="meta">Submitted as a public question <%= time_ago_in_words(@question.created_at) %> ago</p>
-                      <% else %>
-                        <p class="meta">Submitted <%= time_ago_in_words(@question.created_at) %> ago</p>
-                      <% end %>
-                  </td>
-                </tr>
-                
-              </table>
-            </td>
-          </tr>
-          
-          <tr>
-            <td id="subheader">
-              Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_path(@question.id), :class => "action" %> to someone who can as soon as possible. Thanks for your help!
-            </td>
-          </tr>
-          <tr>
-            <td class="meta_details">*** PLEASE DO NOT REPLY TO THIS MESSAGE ***</td>
-          </tr>
+<tr>
+  <td class="content padding question_block">
+    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
+    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
+    <p class="meta">Submitted <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
+    <% if !@question.is_private %>
+      <p class="tag">
+        <span class="tag tag-public">Public</span>
+      </p>
+    <% end %>
+    <p class="tag">
+      <% if @question.location.present? %>
+        <% if @question.county.present? %>
+          <span class="tag tag-geography"><%= @question.county.name %></span>
+        <% end %>
+          <span class="tag tag-geography"><%= @question.location.name %></span>
+      <% else %>
+          <span class="tag tag-geography">No Location</span>
+      <% end %>
+    </p>
+        
+    <% if @question.tags.size > 0 %>
+      <p class="tag">
+        <% @question.tags.each do |tag| %>
+          <span class="tag tag-topic"><%= tag.name %></span>
+        <% end %>
+      </p>
+    <% else %>
+      <p class="actions">This question needs tags. <%= link_to("Can you help tag it?", expert_question_url(@question), :class => "action") -%></p>
+    <% end %>
+  </td>
+</tr>
 
-        </table>
-      
-      
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="footer">
-      <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
-        <tr>
-          <td class="bgcolor">
-            <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. You can change your notification settings in <%= link_to "your preferences", expert_settings_assignment_url() %>.</p>
-          </td>
-        </tr>
-        <tr class="options">
-          <td>
-            <%- if @mailer_cache -%>
-              <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
-            <%- else -%>
-              <a href="">View in a browser</a> 
-            <%- end -%>
-              <%= link_to "Change your email settings", expert_settings_assignment_url() %>
-          </td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-      </table>
-    </td>
-  </tr>
-</table>
-</div>  
-</body>
-</html>
+<tr>
+  <td class="content padding">
+    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>    
+  </td>
+</tr>
+
+<tr>
+  <td class="meta_details"><strong>Please don't reply to this email.</strong> <%= link_to("Send a reply from the question page", expert_question_url(@question)) -%>.</td>
+</tr>
+
+<%= render :partial => 'partials/internal_email_footer' %>

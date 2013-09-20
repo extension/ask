@@ -1,0 +1,4 @@
+<h1>Groups in '<%= @location.name %>' (<%= @group_total_count %>)</h1>
+<h3><%= link_to "View everything in '#{@location.name}'", expert_view_location_path(:id => @location.id) %></h3>
+
+<%= render partial: 'expert/home/group_list' %>

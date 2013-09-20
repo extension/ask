@@ -14,13 +14,15 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require twitter/bootstrap/transition
+//= require twitter/bootstrap/button
 //= require twitter/bootstrap/collapse
 //= require twitter/bootstrap/dropdown
 //= require twitter/bootstrap/tooltip
 //= require twitter/bootstrap/popover
 //= require twitter/bootstrap/modal
-//= require rangeinput.js
+//= require bootstrap-wysihtml5
 //= require alerts.js
 //= require jquery.validate
 //= require submittable
 //= require bootstrap_hacks
+//= require rangeinput/rangeinput.js

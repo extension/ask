@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121206182214) do
+ActiveRecord::Schema.define(:version => 20130828184953) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -126,7 +126,6 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.integer  "evaluation_question_id", :null => false
     t.integer  "user_id",                :null => false
     t.integer  "question_id",            :null => false
-    t.string   "responsetype"
     t.text     "response"
     t.integer  "value"
     t.datetime "created_at",             :null => false
@@ -151,7 +150,6 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.text     "responses"
     t.integer  "range_start"
     t.integer  "range_end"
-    t.integer  "creator_id"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
   end
@@ -237,16 +235,16 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.string   "name",                                            :null => false
     t.text     "description"
     t.boolean  "widget_public_option",         :default => false
-    t.boolean  "active",                       :default => true
+    t.boolean  "widget_active",                :default => true
     t.boolean  "assignment_outside_locations", :default => true
     t.boolean  "individual_assignment",        :default => true
     t.integer  "created_by",                                      :null => false
     t.boolean  "is_test",                      :default => false
     t.string   "widget_fingerprint"
-    t.boolean  "widget_upload_capable"
-    t.boolean  "widget_show_location"
-    t.boolean  "widget_show_title"
-    t.boolean  "widget_enable_tags"
+    t.boolean  "widget_upload_capable",        :default => false
+    t.boolean  "widget_show_location",         :default => false
+    t.boolean  "widget_show_title",            :default => false
+    t.boolean  "widget_enable_tags",           :default => false
     t.integer  "widget_location_id"
     t.integer  "widget_county_id"
     t.integer  "old_widget_id"
@@ -259,6 +257,8 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.boolean  "group_active",                 :default => true,  :null => false
+    t.boolean  "ignore_county_routing",        :default => false
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
@@ -314,6 +314,18 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.datetime "updated_at",                                         :null => false
   end
 
+  create_table "old_evaluation_answers", :force => true do |t|
+    t.integer  "evaluation_question_id", :null => false
+    t.integer  "user_id",                :null => false
+    t.integer  "question_id",            :null => false
+    t.text     "response"
+    t.integer  "value"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  add_index "old_evaluation_answers", ["evaluation_question_id", "user_id", "question_id"], :name => "eq_u_q_ndx", :unique => true
+
   create_table "preferences", :force => true do |t|
     t.integer  "prefable_id"
     t.integer  "group_id"
@@ -355,6 +367,7 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.integer  "changed_group_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
+    t.text     "updated_question_values"
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
@@ -401,7 +414,6 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.string   "user_ip",                  :default => "",    :null => false
     t.string   "user_agent",               :default => "",    :null => false
     t.string   "referrer",                 :default => "",    :null => false
-    t.string   "group_name"
     t.integer  "status_state",                                :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
@@ -412,6 +424,11 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.boolean  "evaluation_sent",          :default => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.integer  "original_location_id"
+    t.integer  "original_county_id"
+    t.datetime "working_on_this"
+    t.boolean  "featured",                 :default => false, :null => false
+    t.datetime "featured_at"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -421,7 +438,6 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
-  add_index "questions", ["group_name"], :name => "group_name_idx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
@@ -452,9 +468,14 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.string   "referrer"
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.boolean  "is_expert"
+    t.boolean  "previous_expert"
+    t.integer  "time_since_submission"
+    t.integer  "time_since_last"
   end
 
   add_index "responses", ["contributing_question_id"], :name => "idx_contributing_question"
+  add_index "responses", ["is_expert", "previous_expert"], :name => "resonse_type_ndx"
   add_index "responses", ["question_id"], :name => "idx_question_id"
   add_index "responses", ["resolver_id"], :name => "idx_resolver_id"
   add_index "responses", ["submitter_id"], :name => "idx_submitter_id"
@@ -482,6 +503,18 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
   end
 
   add_index "user_counties", ["user_id", "county_id"], :name => "fk_counties_users", :unique => true
+
+  create_table "user_events", :force => true do |t|
+    t.integer  "user_id",                 :null => false
+    t.integer  "created_by",              :null => false
+    t.integer  "event_code",              :null => false
+    t.string   "description",             :null => false
+    t.text     "updated_user_attributes"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "user_events", ["user_id"], :name => "user_event_user_id"
 
   create_table "user_locations", :force => true do |t|
     t.integer "location_id", :default => 0, :null => false
@@ -530,13 +563,41 @@ ActiveRecord::Schema.define(:version => 20121206182214) do
     t.datetime "created_at",                                                      :null => false
     t.datetime "updated_at",                                                      :null => false
     t.date     "last_active_at"
+    t.boolean  "needs_search_update"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"
   add_index "users", ["email"], :name => "email"
   add_index "users", ["login"], :name => "login"
+  add_index "users", ["needs_search_update"], :name => "search_update_flag_ndx"
   add_index "users", ["retired"], :name => "retired"
   add_index "users", ["routing_instructions"], :name => "routing_instructions"
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",                           :null => false
+    t.integer  "item_id",                             :null => false
+    t.string   "event",                               :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.string   "ip_address"
+    t.datetime "created_at"
+    t.text     "object_changes"
+    t.text     "reason"
+    t.boolean  "notify_submitter", :default => false, :null => false
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+
+  create_table "widget_logs", :force => true do |t|
+    t.string   "referrer_host"
+    t.string   "referrer_url"
+    t.string   "base_widget_url"
+    t.string   "widget_url"
+    t.string   "widget_fingerprint"
+    t.integer  "load_count",         :default => 0, :null => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
 
   create_table "yo_los", :force => true do |t|
     t.integer  "user_id",              :default => 0

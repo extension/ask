@@ -23,8 +23,24 @@ module EvaluationHelper
   end
 
 
+  def is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,user,response)
+    if(!user)
+      false
+    else
+      answer_value = evaluation_question.answer_value_for_user_and_question(user,question)
+      if(!answer_value)
+        false
+      elsif(answer_value == response)
+        true
+      else
+        false
+      end
+    end
+  end
+
   def scale_value_for_evalquestion_question_user(evaluation_question,question,user)
-    evaluation_question.answer_value_for_user_and_question(user,question) || 3
+    default_value = [evaluation_question.range_start,evaluation_question.range_end].median.to_i
+    evaluation_question.answer_value_for_user_and_question(user,question) || default_value
   end
 
   def open_value_for_evalquestion_question_user(evaluation_question,question,user)

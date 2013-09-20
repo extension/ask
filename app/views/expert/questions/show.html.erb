@@ -1,157 +1,166 @@
-<% @page_title = "\"#{@question.title}\"" %>
+<% @page_title = raw("\"#{@question.title.gsub(/[[:space:]]/, ' ')}\"") %>
 
-<div id="main" class="span8">
-  <div id="question_wrapper">
-    <p id="aaeid">Question #<%= @question.id %> - <%= link_to "View question", question_path(@question.id) %></p>
+
+<div id="show_question_wrapper">
   
-    <%= render :partial => 'question_main' %>
+  <div id="show_question_header">
+    <div id="working_on_this_banner">
+      <%= render :partial => 'working_on_this_banner' %>
+    </div>
 
-    <h3>Comments</h3>
+    <div id="privacy_status" class="dontprintme">
+      <%= render :partial => 'privacy_status' %>
+    </div>
+
+    <div id="main_question_meta">
+      <p>Asked 
+        <% if @original_group.present? %>
+          to <%= link_to @original_group.name, expert_group_path(@original_group.id) %> 
+        <% end %>
+
+        <%= time_ago_in_words(@question.created_at) %> ago 
+
+        <% if @question.submitter %>
+          by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %> who has <%= link_to "submitted  #{@question.submitter.submitted_questions.length} questions", expert_user_submitted_path(@question.submitter) %>.
+        <% end %>
+      </p>
+    </div>
+
+    <% if @question.status_state == Question::STATUS_REJECTED %>
+      <div class="dontprintme rejected">
+        <h3 class="rejected">This Question Has Been Rejected</h3>
+        <h3><strong>Reason:</strong> <%= wrap_text(@question.current_response) %></h3>
+        <p>
+      	  <% if @question.current_resolver_id == User.system_user_id %>
+      	    System
+      	  <% else %>
+      	    <%= link_to expert_user_path(@question.current_resolver_id) do %>
+              <%= link_expert_user_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+            <% end %>
+
+      	  <% end %>
+      	</p>
+
+        <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn" %></p>
+      </div>
+    <% end%>
+  </div>
+  
+  
+  
+<div id="main" class="span8">
+    <% if @question.status_state != Question::STATUS_REJECTED %>
+    <p class="response_count">
+      <% if @question.status_state == Question::STATUS_RESOLVED %>
+    	  <strong>Answered</strong> with <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %>
+    	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
+    	  <strong>Answered</strong> with a canned response - <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %>
+    	<% elsif @question.status_state == Question::STATUS_CLOSED %>
+    	  <strong>0 responses.</strong> Closed by
+    	    <% if @question.current_resolver_id == User.system_user_id %>
+            System:
+          <% else %>
+            <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>:
+          <% end %>
+          "<%= wrap_text(@question.current_response) %>"
+    	<% else %>
+    	  <strong>Needs a response</strong>
+    	<% end %>
+      <% if @question.comments.size > 0 %> - <%= @question.comments.size == 1 ? "1 Comment" : "#{@question.comments.size} Comments"%><% end %>
+    </p>
+    <% end %>
+
+    <%= render :partial => 'question_main' %>
+    
+    
+    <div id="inline_question_actions">
+      <% if @question.status_state == Question::STATUS_REJECTED %>
+      <% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
+  	   <h3>A canned response was used to answer this question</h3>
+  	   <div class="question_actions">
+         <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+       </div>
+
+  	<% elsif @question.status_state == Question::STATUS_CLOSED %>
+  	   	<h3>This question has been closed</h3>
+        <p>
+          <strong>Closed by: </strong> 
+          <% if @question.current_resolver_id == User.system_user_id %>
+            System
+          <% else %>
+            <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
+          <% end %>
+        </p>
+        <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
+        <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+
+  	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
+  	    <h3>This question has been resolved</h3>
+  	    <div class="question_actions last">
+          <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+        </div>
+
+  	<% else %>
+  	  <% if @question.is_being_worked_on? && current_user != @question.assignee %>
+  	    <div class="question_actions">
+  	      <h3>Heads Up: Answer in Progress</h3>
+  	      <p><%= @question.assignee.name %> is working on this question right now.</p>
+  	    </div>
+  	  <% else %>
+        
+        
+        
+        <div id="answer_form">
+          <div class="title_block">
+            <h2>Send an Answer</h2>
+            <% if @question.title == Question::ACCOUNT_REVIEW_REQUEST_TITLE %>
+              <p>NOTE: If you respond to this account review request, the person submitting the account access request will get an e-mail notification with your response.</p>
+            <% end %>
+          </div>
+        
+          
+          <%= render :partial => 'answer_form' %>
+        </div>
+      <% end %>
+       <% end %>
+    </div>
+    
+    
+    <% if @question.comments.size > 0 %>
+    <div class="title_block">
+      <h2>Comments</h2>
+      <p>Comments can be posted on public questions and appear below Expert answers and replies.</p>
+    </div>
     <div id="comment-list">
 	  <%= render :partial => '/comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
-	</div>
-	   
+	  </div>
+	  <% end %>
+	  
+	  
     <div id="history">
       <%= render :partial => 'history' %>
     </div>
   </div>
-</div>
+
 
 <div id="secondary" class="span4">
-
-<!-- <p><span class="notifylink"><i class="icon-envelope"></i> <%= link_to "Notify me when this question has activity" %></span></p> -->
-
-<div id="notificationprefs">
-  <%= render :partial => 'activity_notification' %>
-</div>
   
-  
-  <div id="privacy_status">
-    <%= render :partial => 'privacy_status' %>
+  <div id="question_assignment">
+    <%= render :partial => 'question_assignment' %>
   </div>
   
-
-  <aside>
-    <% if @question.status_state == Question::STATUS_REJECTED %>
-      <h3>This question has been rejected</h3>
-      <p>
-    	  <% if @question.current_resolver_id == User.system_user_id %>
-    	    System
-    	  <% else %>
-    	    <%= link_to expert_user_path(@question.current_resolver_id) do %>
-            <%= link_expert_user_avatar(@question.current_resolver, :thumb) %> <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
-          <% end %>
-    	    
-    	  <% end %>
-    	</p>
-      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-        
-	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
-	   <h3>A canned response was used to answer this question</h3>
-	   <div class="question_actions">
-       <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-     </div>
-	   
-	<% elsif @question.status_state == Question::STATUS_CLOSED %>
-	   	<h3>This question has been closed</h3>
-      <p>
-        <strong>Closed by: </strong> 
-        <% if @question.current_resolver_id == User.system_user_id %>
-          System
-        <% else %>
-          <%= link_to @question.current_resolver.name, expert_user_path(@question.current_resolver_id) %>
-        <% end %>
-      </p>
-      <p><strong>Comment:</strong> <%= wrap_text(@question.current_response) %></p>
-      <p><%= button_to 'Reactivate Question', reactivate_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-      
-	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
-	    <h3>This question has been resolved</h3>
-	    <div class="question_actions last">
-        <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
-      </div>
-	    
-	<% else %>
-      
-      <div class="question_actions">
-
-          <span><%= link_to "Send an Answer", answer_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
-
-        <% if @last_question_response.present? && ((@last_question_response.event_state == QuestionEvent::NO_ANSWER) || (@last_question_response.event_state == QuestionEvent::RESOLVED)) %>
-          <span><%= link_to "Close", close_out_expert_question_path(@question.id), :class => "btn btn-primary" %></span>
-        <% end %>
-  
-        <span><%= link_to "Reject", reject_expert_question_path(@question.id), :class => "btn" %></span>
-      </div>
-      
-     <% end %>
-  </aside>
-  
-
-  
-  <% if @question.status_state != Question::STATUS_REJECTED %>
-    <aside>
-      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
-        <h3>Last response by</h3>
-      <% else %>
-        <h3>Assigned to</h3>
+  <% if @question.submitter.present? && @question.submitter.submitted_questions.length > 1 %>
+  <aside class="nobg dontprintme related_questions">
+    <h4>Other Questions From This Person</h4>
+    <% @question.submitter.submitted_questions.each do |question,score| %>
+      <% if question.id != @question.id %>
+      <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
       <% end %>
-  
-      <% if @question.assignee.present? %>
-        <%= link_to expert_user_path(@question.assignee_id) do %>
-          <%= link_expert_user_avatar(@question.assignee, :thumb) %> <%= link_expert_user(@question.assignee) %>
-        <% end %>
-      <% elsif @question.assigned_group.present? %>
-        <%= link_to expert_group_path(@question.assigned_group.id) do %>
-          <%= link_expert_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, expert_group_path(@question.assigned_group.id) %>
-        <% end %>
-      <% end %>
-      
-      <%= link_to "Reassign", reassign_expert_question_path(@question.id), :class => "btn" %> 
-    </aside>
-    
-    <% if !@question.assignee.blank? %>
-      <aside class="">
-        <div id="associated_group">
-          <%= render :partial => 'associated_group' %>
-        </div>      
-      </aside>
     <% end %>
-    
-    <aside>
-      <div id="tag_picker_wrapper">
-        <div class="ui-widget">
-          <label for="tag_picker">Add Tags</label>
-      	  <input id="tag_picker" placeholder="Type and select a tag" /> 
-        </div>
-      </div>
-
-      <div id="tags">
-
-      <% if @question.tags.size > 0 %>
-        <% @question.tags.each do |tag| %>
-          <% if @question.assigned_group %>
-            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span></p>
-          <% else %>
-            <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span> <span class="btn removetag">x</span></p>
-          <% end %>
-        <% end %>
-      <% else %>
-
-      <% end %>
-
-      </div>
-
-      <p><small>(All tags are viewable if the question is public)</small></p>
-    </aside>
-    
+  </aside>
   <% end %>
   
-  
-  
-  
-  <aside class="nobg">
+  <aside class="nobg dontprintme related_questions">
     <h4>Related Questions</h4>
     <% @question.similar_questions.each do |question,score| %>
       <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
@@ -159,54 +168,5 @@
   </aside>
   
 </div>
-
-<script class="code" type="text/javascript">  
-  
-		function add_tag(tag) {
-		  $.ajax({
-        type: "POST",
-        url: "<%= expert_questions_add_tag_path(:id => @question.id) %>",
-        cache: false,
-        data: {tag: tag}
-      })
-      .done(function() {
-				$("#tag_picker").autocomplete("close");
-				$("#tag_picker").val('');
-				return false;
-      })  
-      .fail(function() {
-        alert("error");
-        $("#tag_picker").autocomplete("close");
-  			$("#tag_picker").val('');
-  			return false;
-      })
-		}
-
-    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
-		$("#tag_picker").autocomplete({
-			source: "/ajax/tags",
-			minLength: 2,
-			select: function(e, ui) {
-			  add_tag(ui.item.name);
-			}
-		}).keypress(function(e) {
-      if (e.keyCode === 13) {
-        add_tag(this.value);
-      }
-    });
-
-    // remove tags
-     $("#tags").on("click", ".removetag", function(){
-       var tag = $(this).closest("p");
-       $.ajax({
-         type: "POST",
-           url: "<%= expert_questions_remove_tag_path(:id => @question.id) %>",
-           cache: false,
-           data: {tag_id: tag.attr("id").replace('tag_', '')}
-       })
-       .done(function() {
-         tag.fadeOut(500);
-       })
-     });
-
-</script>
+<br class="clearing" />
+</div>

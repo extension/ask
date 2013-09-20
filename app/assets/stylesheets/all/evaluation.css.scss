@@ -1,0 +1,33 @@
+.slider_ranges {
+  display: block;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.slider_ranges p {
+  font-size:1.2em;
+  line-height:1.2em
+}
+
+.center_slider {
+  display: block;
+  width: 100%;
+  margin: 0px auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.range_start {
+  background: transparent url(/assets/down_arrow_32px.png) left 50% no-repeat; padding-left:36px; clear:left; height:36px;
+}
+.range_end {
+  background: transparent url(/assets/up_arrow_32px.png) right 50% no-repeat; padding-right:36px; clear:left; height:36px;
+}
+
+#evaluation_form {padding-bottom:6em;}
+#evaluation_form legend {line-height:1.3em;}
+#demographic_block {padding:1em 0 2em;}
+/*h1 {color:red;}*/
+
+.eval_question {background: #fff;}
+.eval_question small {display:block;}

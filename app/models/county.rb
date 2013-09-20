@@ -6,20 +6,26 @@
 #  see LICENSE file
 
 class County < ActiveRecord::Base
-  extend CacheTools
+  include CacheTools
 
   has_many :user_counties
   has_many :users, :through => :user_counties
   has_many :group_counties
   has_many :groups, :through => :group_counties
   belongs_to :location
+  has_many :users_with_origin, :class_name => "User", :foreign_key => "county_id"
+  has_many :questions_with_origin, :class_name => "Question", :foreign_key => "county_id"
 
   def name
     if self.censusclass == "C7"
       # return self.name + " (Non-county incorporation)"
       return self[:name]
     else
-      return self[:name] + " County"
+      if self[:name] == 'All'
+        return "Entire state"
+      else
+        return self[:name] + " County"
+      end
     end
   end
 
@@ -27,11 +33,19 @@ class County < ActiveRecord::Base
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
     Rails.cache.fetch(cache_key,cache_options) do
       if(geoname = GeoName.find_by_geoip(ipaddress))
-        self.find_by_name(geoname.county)
+        if(location = Location.find_by_abbreviation(geoname.state_abbreviation))
+          location.counties.where(name: geoname.county).first 
+        else
+          nil
+        end
       else
         nil
       end
     end
+  end
+  
+  def is_all_county?
+    return self.name == 'All' && self.countycode == 0
   end
 
 end

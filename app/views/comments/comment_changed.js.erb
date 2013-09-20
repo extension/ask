@@ -1,3 +1,8 @@
 $("#comment-list").html("<%= escape_javascript(render partial: 'comments/comment_list', locals: {comment_list: @comments, parent_comment: @parent_comment}) %>");
+// use the clearing of the textarea comment_content in the case that the wysihtml5 is degraded to just the textarea
 $("textarea#comment_content").val('');
+$("#comments_form").hide();
+// clear out textarea in wysihtml5
+editor.setValue('');
+
 

@@ -1,6 +1,19 @@
-<p>
-  <% if !question.is_private %>
-    <span class="label label-warning"><%= link_to "Public", question_path(question.id) %></span>
+<p class="question_meta_data">
+  <% if question.is_private %>
+    <% if question.is_private_reason != Question::PRIVACY_REASON_REJECTED %>
+      <% if question.is_private_reason == Question::PRIVACY_REASON_SUBMITTER %>
+        <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:privacy => "private") %></span>
+      <% end %>
+
+      <% if question.is_private_reason == Question::PRIVACY_REASON_EXPERT %>
+        <span class="tag tag-public"><%= link_to "Switched to Private", expert_questions_path(:privacy => "switched_to_private") %></span>
+      <% end %>
+    <% else %>
+      
+      <span class="tag tag-private"><%= link_to "Private", expert_questions_path(:privacy => "private") %></span>
+    <% end %>
+  <% else %>
+    <span class="tag tag-public"><%= link_to "Public", expert_questions_path(:privacy => "public") %></span>
   <% end %>
   
   <% if question.location.present? %>
@@ -24,5 +37,16 @@
     <span class="label label-inverse"><%= link_to "needs tags", expert_question_path(question.id) %></span>
   <% end %>
   
-  <%= time_ago_in_words(question.created_at) %> ago
+  <small>
+    <% if question.resolved_at %>
+    Resolved <%= time_ago_in_words(question.resolved_at) %> ago.
+    <% end %>
+    
+    Submitted  <abbr title="<%= humane_date(question.created_at) %>"><%= time_ago_in_words(question.created_at) %></abbr> ago.
+  
+    <% if (question.created_at != question.last_assigned_at) && !question.last_assigned_at.nil? && !question.resolved_at? %>
+      Reassigned <%= time_ago_in_words(question.last_assigned_at) %> ago.
+    <% end %>
+  </small>
 </p>
+

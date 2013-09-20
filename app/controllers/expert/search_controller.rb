@@ -16,34 +16,60 @@ class Expert::SearchController < ApplicationController
       flash[:error] = "Empty/invalid search terms"
       return redirect_to expert_home_url
     end
-  
-    @list_title = "Search for '#{params[:q]}'"
     
-    questions = Question.search do
-                  fulltext(params[:q])
-                  without(:status_state, Question::STATUS_REJECTED)
-                  paginate :page => 1, :per_page => 10
+    @list_title = "Search Results for '#{params[:q]}'"
+    @number_passed = false
+    
+    # special "id of question, expert or group check"
+    if(params[:q].to_i > 0)
+      @number_passed = true
+      id_number = params[:q].to_i
+      @questions = Question.where(id: id_number).page(1)
+      @experts = User.where(id: id_number, kind: 'User').page(1)
+      @groups = Group.where(id: id_number).page(1)
+    else
+      # check to see if what was entered looks like an email address. 
+      # if so, we'll also use it to look up questions submitted from said email address
+      if (params[:q] =~ /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i) 
+        @user_email = true 
+        if user = User.find_by_email(params[:q].strip) 
+          @user_email_id = user.id 
+        else
+          @user_email_id = nil
+        end
+      else  
+        @user_email = false
+        @user_email_id = nil
+      end
+      
+      questions = Question.search do
+                    fulltext(params[:q])
+                     without(:status_state, Question::STATUS_REJECTED)
+                    paginate :page => 1, :per_page => 10
+                  end
+      @questions = questions.results
+    
+      experts = User.search do
+                fulltext(params[:q]) do
+                  fields(:name)
+                  fields(:bio)
+                  fields(:login)
                 end
-    @questions = questions.results
-    
-    experts = User.search do
-              fulltext(params[:q]) do
-                fields(:name)
-                fields(:bio)
+                with :is_blocked, false
+                with :retired, false
+                with :kind, 'User'
+                order_by :last_active_at, :desc
+                paginate :page => 1, :per_page => 10
               end
-              with :is_blocked, false
-              with :retired, false
-              with :kind, 'User'
-              order_by :last_active_at, :desc
-              paginate :page => 1, :per_page => 10
-            end
-    @experts = experts.results
+      @experts = experts.results
     
-    groups = Group.search do
-               fulltext(params[:q])
-               paginate :page => 1, :per_page => 10
-             end
-    @groups = groups.results
+      groups = Group.search do
+                 fulltext(params[:q])
+                 paginate :page => 1, :per_page => 10
+               end
+      @groups = groups.results
+    end
+    
     render :action => 'index'
   end
   

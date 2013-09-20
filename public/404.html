@@ -1,26 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The page you were looking for doesn't exist (404)</title>
-  <style type="text/css">
-    body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
-    div.dialog {
-      width: 25em;
-      padding: 0 4em;
-      margin: 4em auto 0 auto;
-      border: 1px solid #ccc;
-      border-right-color: #999;
-      border-bottom-color: #999;
-    }
-    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
-  </style>
-</head>
+  <title>Ask an Expert - 404</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"></meta>
 
+  <style type="text/css" media="all">
+  <!--
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #666 url(/images/hex_pattern.png) repeat;
+  }
+  
+  header h1 {
+      padding:0;
+      height: 71px;
+      width:280px;
+      margin:.5em .5em 1.5em 0;
+      float:left;
+  }
+
+  header img {float:left;}
+  #extension_logo img {width:200px; height:94px;}
+  #branding {background: #f47B28; width:100%;}
+  #extension_logo img {width:200px; height:94px; margin-right:1em; background:#fff;}
+  #ask_an_expert_logo img {width:200px; height:auto;}
+  .clearing {clear:both;}
+  #maintenance {background: #f47B28;width:35em;margin:3em auto;padding:1.2em;
+    -webkit-box-shadow: 2px 2px 3px #444;
+    -moz-box-shadow: 2px 2px 3px #444;
+    box-shadow: 2px 2px 3px #444;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;}
+  h2 {margin:0 0 .5em;padding:0;font-weight:normal;}
+  p {line-height:1.5em;}
+  .message_body {background:#f4f4f4; padding:2.5em 2em 1em; color:#333;}
+  #branding {margin:0 0 .25em; }
+  #ask_an_expert_logo {vertical-align:middle; float:left; padding:20px 0;}
+  #ask_an_expert_logo img {width:200px; vertical-align:middle;}
+  -->
+  </style>
+  
+</head>
 <body>
-  <!-- This file lives in public/404.html -->
-  <div class="dialog">
-    <h1>The page you were looking for doesn't exist.</h1>
-    <p>You may have mistyped the address or the page may have moved.</p>
+  
+  <div id="maintenance">
+    <header>
+      <div id="branding">
+        <span id="extension_logo"><img alt="eXtension" src="/images/extension_logo_hires.png" /></span> <span id="ask_an_expert_logo"><img alt="Ask an Expert" src="/images/ask_an_expert.png" /></span>
+      <br class="clearing" />
+      </div>
+    </header>
+        
+    <div class="message_body">
+      <h2 class="clearing">Unfortunately you're trying to view a page that doesn't exist.</h2>
+      <p>The page address may have been typed incorrectly or the page may have been removed. At any rate, your best bet is heading back to the <a href="/">home page<a/></p>
+      <p>- eXtension Engineering</p>
+    </div>
   </div>
 </body>
 </html>

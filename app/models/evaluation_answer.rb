@@ -5,6 +5,8 @@
 # see LICENSE file
 
 class EvaluationAnswer < ActiveRecord::Base
+  include MarkupScrubber
+
   belongs_to :evaluation_question
   belongs_to :user
   belongs_to :question
@@ -17,5 +19,9 @@ class EvaluationAnswer < ActiveRecord::Base
     if(self.changed? and !self.changes[:response].blank? and !self.changes[:response][0].blank?)
       self.evaluation_logs.create(changed_answers: {original: self.changes[:response][0], new: self.changes[:response][1]})
     end
+  end
+
+  def response=(response_text)
+    write_attribute(:response, self.html_to_text(response_text))
   end
 end

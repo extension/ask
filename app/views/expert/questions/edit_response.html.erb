@@ -1,0 +1,52 @@
+<% @page_title = "Edit Response ##{@response.id}"%>
+
+<div id="main" class="span8">
+  <div id="question_wrapper">
+    <p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
+    
+    <h1>Edit Question</h1>
+    <h3>Editing guidelines</h3>
+    <p>You can correct grammatical, spelling or factual errors. If it is a factual edit or an edit that changes the nature of the response, please click the 'Notify Question Submitter of this Change' checkbox below so the question submitter will get an e-mail notification that this edit has occurred. For all minor, spelling, grammatical, etc. edits, please do not check the box to notify the submitter. The author of the response will be notified on every edit.</p>
+    <div id="edit_response" class="formy">
+      
+	  <%= form_for @response, :url => update_response_expert_question_path(:id => @question.id, :response_id => @response.id) do |f| %>
+	  
+	    <fieldset>  
+        <p>
+          <%= f.label :body, 'Response' %>
+          <%= f.text_area :body, :rows => 12, :class => "xl required wysiwyg" %>
+        </p>
+       
+        <p>
+	     <%= label_tag :reason, 'Reason' %>
+	     <%= text_area_tag :reason, nil, { rows: 5 } %>
+	    </p>
+	
+	    <p>
+		  <label><%= check_box_tag :notify_submitter %> Notify Question Submitter of this Change</label>
+		  <p>Note: A notification to the submitter should be sent if there are any factual changes in the response or changes that would affect the nature of it that a submitter would like to know. All other changes (ie. grammer, spelling, minor changes etc.) do not need submitter notification but the author of the original response will be automatically notified on every change.</p>
+		</p>
+  	  </fieldset>
+
+	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
+	<% end %>
+</div>
+
+</div>
+
+<script class="code" type="text/javascript">
+  $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
+
+  });
+
+</script>

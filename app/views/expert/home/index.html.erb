@@ -1,10 +1,175 @@
-<div id="main" class="span12">
+<% @page_title = "Dashboard" %>
+
+<h1>Expert Dashboard</h1>
+
+<div id="dashboard">
   
-<%= render :partial => 'filter', :locals => {:listview => 'incoming'} %>  
   
-  <h1>Incoming Questions</h1>
-  <div id="filtered_question_list">  
-    <%= render :partial => 'list_of_questions', :locals => {:questions => @recent_questions, :listview => 'incoming'} %>
+  <div class="span6 simple_border">
+  <div id="oldest_question" class="formy">
+    
+    <div id="user_masthead">
+      <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
+
+      <h1>
+        <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>
+      </h1>
+    
+    
+    <% if @oldest_assigned_question %>
+      <% if @questions_assigned_to_expert_count > 1 %>
+        <h3>You have <%= @questions_assigned_to_expert_count %> Questions Assigned</h3>
+        <%= link_to expert_question_path(@oldest_assigned_question) do %>
+          <h4>The oldest was submitted <%= time_ago_in_words(@oldest_assigned_question.created_at) %> ago.</h4>
+        <%- end -%>
+      <% else %>
+        <h3>You have <%= @questions_assigned_to_expert_count %> Question Assigned</h3>
+        <%= link_to expert_question_path(@oldest_assigned_question) do %>
+          <h4>Your question is <%= time_ago_in_words(@oldest_assigned_question.created_at) %> old.</h4>
+        <%- end -%>
+      <% end %>
+
+  <% else %>
+    <p class="coffeetime"><i class="coffee"></i> You don't have any questions assigned to you. Time for some coffee!</p>
+  <% end %>
+    </div>
+    
+    <br class="clearing" />
+    <h3>Your Monthly Activity <small><%= link_to('View your metrics',expert_expert_report_path(@user.id)) %></small></h3>
+    
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Answered</th>
+          <th>Assigned</th>
+          <th>Questions Touched </th>
+        </tr>
+      </thead>
+      <tbody>
+
+          <tr>
+            <td>
+              <span class='bignumber'>
+              <%= expert_question_list_link(@answered.length, {id: @user.id, filter: 'answered', year_month: @year_month}) %>
+              </span>
+            </td>
+            <td>
+              <span class='bignumber'>
+              <%= expert_question_list_link(@assigned.length, {id: @user.id, filter: 'assigned', year_month: @year_month}) %>
+              </span>
+            </td>
+            <td>
+              <span class='bignumber'>
+              <%= expert_question_list_link(@touched.length, {id: @user.id, filter: 'touched', year_month: @year_month}) %>
+              </span>
+            </td>
+          </tr>
+
+      </tbody>
+    </table>
+
   </div>
   
+  <div class="expert_dashboard_tags">
+    
+    <% if @user.expertise_locations.size > 0 %>
+      <% @user.expertise_locations.each do |l| %>
+        <% @unanswered_questions_count = Question.where("location_id = ?", l.id).submitted.not_rejected.count %>
+      
+        <% if @unanswered_questions_count > 0 %>
+          <div class="group_in_group_list active">
+            <h4>
+              <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span> 
+              <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id)%></strong>
+              <span>- <%= link_to "activity report", expert_reports_home_path(:location_id => l.id) %></span>
+            </h4>
+            <br class="clearing" />
+          </div>
+          
+          <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
+            <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
+              <% @unanswered_questions_count = Question.where("county_id = ?", c.id).submitted.not_rejected.count %>
+              <% if @unanswered_questions_count > 0 %>
+                <div class="group_in_group_list active">
+                  <h4>
+                    <span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span>
+                    <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id, :county_id => c.id)%></strong>
+                  </h4>
+                  <br class="clearing" />
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+          
+      <% end %>
+    <% end %> 
+  <% else %>
+    <h4>Help improve your question assignments</h4>
+    <p><%= link_to 'Add locations to your profile', expert_settings_location_path(), :class => "btn btn-primary" %>
+  <% end %>
+
+  <% if @user.tags.size > 0 %>
+    <% @user.tags.used_at_least_once.each do |tag| %>
+      <% @unanswered_questions_count = Question.submitted.tagged_with(tag.id).count %>
+      <% if @unanswered_questions_count > 0 %>
+        <div class="group_in_group_list active">
+          <h4>
+            <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> 
+            <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :tag_id => tag.id)%></strong>
+          </h4>
+          <br class="clearing" />
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <h4>Help improve your question assignments</h4>
+    <p><%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => "btn btn-primary" %>
+  <% end %>
+  
+  </div>
+  
+</div>
+
+
+<div class="span6">
+  
+
+  <div class="expert_dashboard_tags simple_border">
+  <h3>My Groups</h3>
+  
+  <% if @my_groups.size == 0 %>
+    <h3>You are not a member of any groups.</h3>
+    <p><%= link_to 'Explore Groups', expert_groups_path(), :class => "btn btn-primary" %>
+  <% else %>
+    <p><%= link_to "Explore Groups", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>
+    <% @my_groups.each do |group| %>
+      <% if group.group_active %>
+        <div class="group_in_group_list active <%= group.open_questions.length > 0 ? '' : 'downplay' %>">
+          <p class="group_list_avatar"><%= link_expert_group_avatar(group, :mini) %></p>
+          <h4>
+            <%= link_to group.name, expert_group_path(group.id) %> 
+            <% if group.open_questions.length > 0 %>
+              <strong><%= link_to "#{group.open_questions.length} unanswered", expert_questions_path(:status => "unanswered", :group_id => group.id)%></strong>
+            <% end %>
+          </h4>
+          <br class="clearing" />
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+  </div>
+  
+  <div id="last_30_days" class="formy">
+    <h2>Ask an Expert Overview</h2>
+    <h3><%= link_to "#{@all_unanswered_questions_count} Questions Need an Answer", expert_questions_path(:status => "unanswered") %></h3>
+    <h3><%= @date.strftime("%B, %Y") %> at a Glance</h3>
+    <h4><span><%= number_with_delimiter(@questions_asked.size, :delimiter => ',') %></span> Questions Asked</h4>
+    <h4><span><%= number_with_delimiter(@questions_answered.size, :delimiter => ',') %></span> Questions Answered</h4>
+    <p><%= link_to "View Reports", expert_reports_home_path() %></p>
+  </div>
+  
+</div>
+
+  
+<br class="clearing" />
 </div>

@@ -1,0 +1,60 @@
+<div id="location_filter">
+  <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status"} %>
+  <%= select_tag "privacy", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "privacy"} %>
+  <br class="clearing" />
+  <div id="location_picker">
+	<%= select_tag "location_id", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_id"} %>
+  </div>
+  
+  <div id="county_list">
+    <% if @location_pref.present? %>
+      <%= render :partial => 'expert/home/counties', :locals => {:location_obj => Location.find_by_id(@location_pref)} %>  
+    <% end %>
+  </div>
+
+  <%= select_tag "group_id", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_id"} %>
+	
+  <%= select_tag "tag_id", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_id"} %>
+  
+  <span id="clearfilter" class="cursor downplay btn">clear filter</span>
+    
+  <br class="clearing" />
+</div>
+
+
+
+<script class="code" type="text/javascript">
+  
+  $("#clearfilter").click(function () {
+    jQuery.post("/expert/users/save_listview_filter", {});
+    window.location = '<%= expert_questions_path() %>';
+    return false;
+  });
+  
+  var loadtimeParameters = {
+    <% request.GET.except(:page).each do |key,value| %>
+      "<%= key %>": "<%= value %>",
+    <% end %>
+  };
+  
+  $("select").change(function() {
+    var option_name = $(this).attr("name");
+    var option_value = $(this).children(":selected").val();
+    loadtimeParameters[option_name] = option_value;
+    newParams = $.param(loadtimeParameters);
+    var data = {};
+    data[option_name] = option_value;
+    $.ajax({
+         url: "/expert/users/save_listview_filter",
+         type: "POST",
+         cache: false,
+         data: data
+     })
+     .done(function() {
+        window.location = '<%= expert_questions_path() %>' + "?" + newParams;
+ 			  return false;
+     });
+  });
+
+ 
+</script>

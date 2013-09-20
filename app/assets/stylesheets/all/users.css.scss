@@ -1,0 +1,33 @@
+// Place all the styles related to the questions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "_variables";
+
+#secondary aside {padding:1em; @include rounded10; background:#eee; margin-bottom:2em;}
+
+#secondary .expert aside {padding:0; background:none; margin-bottom:2em;}
+.expert aside p {background:#eee; padding:.5em; @include rounded10;}
+
+.expert aside a {color:#666;}
+
+
+
+.groupmasthead {border:1px solid #ddd; background:#eee; padding:2em; margin-bottom:3em;}
+
+.groups {margin:0;padding:1em;}
+.groups li {margin-bottom:1em; list-style:none;}
+
+.assignment_prefs {padding-left:2em;}
+.user_assignment_prefs {background:#fff; padding:1em; margin-bottom:2em;}
+
+.show_location h3 .tag {padding:.1em .35em; font-size:1em !important;}
+.location_block h3 .tag {padding:.1em .35em; font-size:1em !important;}
+
+#sign_in_block {padding:2em; background:#fff; margin:2em 0 4em;}
+#sign_in_block h2 {color:#333; margin-bottom:1em; font-weight:normal;}
+#sign_in_block img {border:1px solid #ddd; padding:2px; float:left; margin-right:1em;}
+#sign_in a:hover {text-decoration:none;}
+#sign_in h4 {font-weight:normal; color:#777;}
+.sign_in_group {padding:1em; margin-bottom:1em; background:#fff;}
+.sign_in_group img {margin-right:1em;}

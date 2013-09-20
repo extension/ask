@@ -5,12 +5,12 @@
   <fieldset>
     <p>
       <%= f.label :title, 'Give your question a title' %>
-      <%= f.text_field :title, {:type => "text", :class => "xl required"} %>
+      <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "xl required"} %>
     </p>
 
     <p>
       <%= f.label :body, 'Question' %>
-      <%= f.text_area :body, :rows => 6, :class => "xl required" %>
+      <%= f.text_area :body, :rows => 6, :class => "xl required wysiwyg" %>
     </p>
 
     <%- if !current_user or !current_user.email.present? -%>
@@ -53,6 +53,7 @@
     <fieldset>
       <p>
         <label>Image (optional)</label>
+        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
         <%= f.fields_for :images do |image_form| %>
           <%= image_form.file_field :attachment  %>
         <% end %>
@@ -69,13 +70,26 @@
 
 <script class="code" type="text/javascript">
   $(document).ready(function () {
+    
+    // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
+    var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
+
+    if (!isiDevice)
+    {
+      $('.wysiwyg').each(function(i, elem) {
+        $(elem).wysihtml5({image: false});
+      });
+    }
 
     $("#question_location_id").change(function() {
       var location_id = $('select#question_location_id :selected').val();
-      if(location == "") location="0";
-      jQuery.get('/widget/get_counties/' + location_id, function(data){
-          $("#county_list").html(data);
-      })
+      if(location_id == "") {
+        $("#county_list").html("");
+      } else {
+        jQuery.get('/widget/get_counties/' + location_id, function(data){
+            $("#county_list").html(data);
+        })
+      }
       return false;
     });
   });

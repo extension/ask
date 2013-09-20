@@ -5,9 +5,14 @@
 #  BSD(-compatible)
 #  see LICENSE file
 
+require 'valid_email'
 class User < ActiveRecord::Base
+  extend YearMonth
+  include TagUtilities
+  
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
+  SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
 
   has_many :authmaps
   has_many :comments
@@ -28,13 +33,17 @@ class User < ActiveRecord::Base
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
+  has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
   has_many :question_viewlogs
   has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
+  has_many :user_events
+  belongs_to :location
+  belongs_to :county
 
   # sunspot/solr search
-  searchable :if => proc { |user| user.has_exid? == true } do
+  searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
     text :name
     text :bio
     text :login
@@ -56,9 +65,8 @@ class User < ActiveRecord::Base
 
   # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
   # does not pass email information back.
-  validates :email, :presence => true, unless: Proc.new { |u| u.first_authmap_twitter? }
-  validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, allow_blank: true
-
+  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
+  
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
 
@@ -66,43 +74,65 @@ class User < ActiveRecord::Base
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'User'"}
   }
 
-  scope :with_expertise_county, lambda {|county_id| includes(:expertise_counties).where("user_counties.county_id = #{county_id}") }
-  scope :with_expertise_location, lambda {|location_id| includes(:expertise_locations).where("user_locations.location_id = #{location_id}") }
+  scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("user_counties.county_id = #{county_id}") }
+  scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("user_locations.location_id = #{location_id}") }
+  scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :question_wranglers, conditions: { is_question_wrangler: true }
-  scope :active, conditions: { away: false }
+  scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
-  scope :exid_holder, conditions: { kind: 'User' }
+  scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_retired, conditions: { retired: false }
   scope :not_blocked, conditions: { is_blocked: false }
-  
+  scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
+  scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
+  # special scope for returning an empty AR association
+  scope :none, where('1 = 0')
   
   scope :tagged_with_any, lambda { |tag_array|
     tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
     joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
   }
+  
+  scope :group_membership_for, lambda { |group_id| joins(:group_connections => :group).where("group_connections.group_id = #{group_id}")}
+  scope :from_location, lambda{ |location| joins(:location).where("locations.id = #{location.id}")}
+  scope :from_county, lambda{ |county| joins(:county).where("counties.id = #{county.id}")}
+  scope :needs_search_update, lambda{ where(needs_search_update: true)}
 
-  scope :patternsearch, lambda {|searchterm|
+  scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql
     # remove any '\' characters because it's WAAAAY too close to the return key
-    # strip '+' characters because it's causing a repitition search error
+    # strip '+' and '?' characters because it's causing a repetition search error
     # strip parens '()' to keep it from messing up mysql query
-    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').strip
+    # strip brackets
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
 
     if sanitizedsearchterm == ''
-      return []
+      return {:conditions => 'false'}
     end
 
     # in the format wordone wordtwo?
     words = sanitizedsearchterm.split(%r{\s*,\s*|\s+})
-    if(words.length > 1)
-      findvalues = {
-       :firstword => words[0],
-       :secondword => words[1]
-      }
+    if(words.length > 1 && !words[0].blank? && !words[1].blank?)
+      if type.nil?
+        findvalues = {
+         :firstword => words[0],
+         :secondword => words[1]
+        }
+      elsif type == "prefix"
+        findvalues = {
+         :firstword => "^#{words[0]}",
+         :secondword => "^#{words[1]}"
+        }
+      end
+      
       conditions = ["((first_name rlike :firstword AND last_name rlike :secondword) OR (first_name rlike :secondword AND last_name rlike :firstword))",findvalues]
     else
-      conditions = ["(first_name rlike ? OR last_name rlike ?)", sanitizedsearchterm, sanitizedsearchterm]
+      if type.nil?
+        conditions = ["(first_name rlike ? OR last_name rlike ? OR login rlike ?)", sanitizedsearchterm, sanitizedsearchterm, sanitizedsearchterm]
+      elsif type == "prefix"
+        conditions = ["(first_name rlike ? OR last_name rlike ? OR login rlike ?)", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}", "^#{sanitizedsearchterm}"]
+      end
     end
     {:conditions => conditions}
   }
@@ -113,7 +143,22 @@ class User < ActiveRecord::Base
     twitter_authmap = self.authmaps.detect{|am| am.source == 'twitter'}
     twitter_authmap.present? && (self.authmaps.length == 1 || (self.authmaps.order(:created_at).first.id == twitter_authmap.id))
   end
-
+  
+  
+  def self.by_question_event_count(event_state,options = {})
+    with_scope do
+      (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
+        
+      qe_scope = self.exid_holder.not_retired
+      .select("users.*, 
+               COUNT(DISTINCT IF(question_events.event_state = #{event_state}, question_id, NULL)) AS resolved_count")
+      .joins("LEFT JOIN question_events on question_events.initiated_by_id = users.id")
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth]).group("initiated_by_id")
+        
+      qe_scope = qe_scope.limit(options[:limit]) if options[:limit].present?
+      qe_scope.order("resolved_count DESC")
+    end
+  end
 
   def name
     if (self.first_name.present? && self.last_name.present?)
@@ -131,6 +176,16 @@ class User < ActiveRecord::Base
       return self[:first_name].capitalize + " " + self[:last_name][0,1].capitalize + "."
     end
     return DEFAULT_NAME
+  end
+  
+  def self.to_csv(users, fields, options = {})
+    fields = self.column_names if fields.blank?
+    CSV.generate(options) do |csv| 
+      csv << fields
+      users.each do |user|
+        csv << user.attributes.values_at(*fields)
+      end
+    end
   end
 
   def tag_fulltext
@@ -162,16 +217,10 @@ class User < ActiveRecord::Base
   def retired?
     return self.retired
   end
-
-  def set_tag(tag)
-    if self.tags.collect{|t| t.name}.include?(Tag.normalizename(tag))
-      return false
-    else
-      if(tag = Tag.find_or_create_by_name(Tag.normalizename(tag)))
-        self.tags << tag
-        return tag
-      end
-    end
+    
+  def previously_assigned(question)
+    find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
+    !find_question.blank?
   end
 
   def update_vacated_aae
@@ -184,16 +233,21 @@ class User < ActiveRecord::Base
     end
   end
   
+  def get_pref(pref_name)
+    return self.preferences.find(:first, conditions: {name: pref_name})
+  end
+  
   def log_create_group(group)
     GroupEvent.log_group_creation(group, self, self)
   end
   
   def join_group(group, connection_type)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('group_id = ?',group.id).first)
+    if (connection = GroupConnection.where(user_id: self.id, group_id: group.id).first)
       connection.destroy
     end
 
-    self.group_connections.create(group: group, connection_type: connection_type)
+    group_connection = self.group_connections.create(group: group, connection_type: connection_type)
+    return if !group_connection.valid?
 
     if connection_type == 'leader'
       GroupEvent.log_added_as_leader(group, self, self)
@@ -390,6 +444,61 @@ class User < ActiveRecord::Base
     ((active_evaluation_questions & my_evaluation_questions_for_this_question).size > 0)
   end
 
+  # reporting
+
+  def earliest_assigned_at
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
+  end
+
+  def assigned_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def assigned_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+
+  def assigned_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.recipient_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+  end
+
+  def answered_count_by_year
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def answered_count_by_year_month
+    QuestionEvent.where("event_state = #{QuestionEvent::RESOLVED}").where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+
+  def answered_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
+    .where("question_events.initiated_by_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+  end
+  
+  def touched_count_by_year
+    QuestionEvent.where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+  end
+
+  def touched_count_by_year_month
+    QuestionEvent.where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+  end
+  
+  def touched_list_for_year_month(year_month)
+    year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
+    Question.select("DISTINCT(questions.id), questions.*")
+    .joins(:question_events)
+    .where("question_events.initiated_by_id = ?",self.id)
+    .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
+  end
 
 
 

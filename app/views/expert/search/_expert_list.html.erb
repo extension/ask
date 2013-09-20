@@ -1,7 +1,9 @@
 <div class="span12">
  
   <% @experts.each do |expert| %>
-    <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %> <span class="downplay">Last active: <%= time_ago_in_words(expert.last_active_at) %> ago</span></p>  
+    <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %> 
+      <p class="downplay">Last active: <%= get_last_active_time(expert) %></p>
+    </p>  
   <% end %>
   
 </div>

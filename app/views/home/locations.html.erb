@@ -1,58 +1,61 @@
 <div id="main" class="span8">
+  
+  <p><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location"}) %></p>
+  
   <div class="map"></div>
-<h1><%= @location.name %></h1>
+  <h1><%= @location.name %></h1>
+  
+  <div class="span5">
+    <div class="location_section">
+      <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
+    <% if @experts.size > 0 %>
+      <% @experts.each do |member| %>
+        <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
+      <% end %>
+    <% else %>
+      <p>There are no experts in this location</p>
+    <% end %>
+    </div>
+  </div>
+  
+  <div class="span6">
+    <div class="location_section">
+      <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
+    <% if @groups.size > 0 %>
+      <% @groups.each do |group| %>
+        <div class="group_in_group_list active">
+          <p class="group_list_avatar"><%= link_public_group_avatar(group, :thumb) %></p>
+          <h4><%= link_to group.name, group_path(group.id) %></h4>
+          <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>  
+          <p class="downplay">
+          <% if group.assignment_outside_locations == true %>
+            Accepts questions from anywhere.
+          <% else %>
+            Questions must match this group's locations
+          <% end %>
+          </p>
+        </div>
+      <% end %>
+    <% else %>
+      <p>There are no groups in this location</p>
+    <% end %>
+    </div>
+  </div>
+  
+  <div class="location_section clearing">
+    <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
+    <% if @questions.size > 0 %>
+      <% @questions.each do |question| %>
+        <%= render :partial => 'full_public_question', :locals => {:question => question} %>
+      <% end %>
+      <p><%= link_to "view all", expert_questions_by_location_path() %></p>
+    <% else %>
+      <p>There are no questions in this location</p>
+    <% end %>
+  </div>
 
-<div class="tag_summary">
-  <h2>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h2>
-<% if @questions.size > 0 %>
-  <table>
-    <tr>
-      <th>Status</th>
-      <th>Question</th>  
-    </tr>
-  <% @questions.each do |question| %>
-    <tr>
-      <td><%= question.status %></td>
-      <td>
-        <% # ToDo: Override title method in question to take care of this instead of repeating this logic. %>
-        <% if question.title.present? %>
-          <%= format_text_for_display(question.title) %>
-        <% else %>
-          <%= link_to format_text_for_display(question.body.truncate(80, separator: ' ')), question_path(question) %>
-        <% end %>
-      </td>
-    </tr>
-  <% end %>
-  </table>
-  <p>view all</p>
-<% else %>
-  <p>There are no public questions in this location</p>
-<% end %>
-</div>
 
-<div class="tag_summary">
-  <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
-<% if @experts.size > 0 %>
-  <% @experts.each do |member| %>
-    <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
-  <% end %>
-  <p>view all</p> 
-<% else %>
-  <p>There are no experts in this location</p>
-<% end %>
-</div>
 
-<div class="tag_summary">
-  <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
-<% if @groups.size > 0 %>
-  <% @groups.each do |group| %>
-    <p><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, group_path(group.id) %></p>
-  <% end %>
-  <p>view all</p> 
-<% else %>
-  <p>There are no groups in this location</p>
-<% end %>
-</div>
 </div>
 
 <div id="secondary" class="span4">
@@ -62,3 +65,11 @@
   <% end %>
   </ul>
 </div>
+
+
+<script type="text/javascript">
+  $("#location_id").change(function() {
+    var location_id = $('select#location_id :selected').val();
+    window.location = '/home/locations/' + location_id
+  });
+</script>

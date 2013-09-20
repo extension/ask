@@ -1,0 +1,33 @@
+<%= paginate @experts %>
+<% if @experts.size > 0 %>
+
+  
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Handling Rate</th>
+        <th>Handling Rate</th>
+        <th>Last Active</th>
+      </tr>
+    </thead>
+    <tbody>
+
+  <% @experts.each do |member| %>
+    <tr>
+        <td>
+          <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> 
+        </td>
+        <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %></p></td>
+        <td><p class="reasssign"><%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
+        <td><span class="downplay">last active <%= get_last_active_time(member) %></span></td>
+    </tr>
+  <% end %>
+    </tbody>
+  </table>
+
+
+<% else %>
+  <p>There are no experts with this tag</p>
+<% end %>
+<%= paginate @experts %>

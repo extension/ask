@@ -1,6 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
-Aae::Application.config.session_store :cookie_store, key: '_aae_session', :expire_after => 6.months
+Aae::Application.config.session_store :cookie_store, key: '_aae_session', :expire_after => 1.week
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

@@ -3,33 +3,61 @@
 <div id="main" class="span8">
   
   <div id="user_masthead">
-    <%= link_expert_user_avatar(@user) %>
-    <h1><span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= link_to "Public Profile", user_path(@user.id), :class => "btn" %></h1>
+    <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
+    
+    <h1>
+      <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>
+    </h1>
+    <% if @user.title.present? %>
+      <h3 class="expert_title"><%= @user.title %></h3>
+    <% end %>
+    <p><%= link_to "Public Profile", user_path(@user.id), :class => "btn btn-small" %></p>
     
     <% if @user.away %>
       <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
     <% end %>
     
-    <p>
-      <strong>About me:</strong>
+    <div class="aboutme">
       <% if @user.bio %>
-        <%= @user.bio %>
+        <%= format_text_for_display(@user.bio) %>
       <% else %>
-        This person hasn't added a description yet...
-      <% end  %>
-
-    <% if current_user.id == @user.id %>
-    <%= link_to 'edit', expert_settings_profile_path() %>
+        <% if current_user.id == @user.id %>
+          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_settings_profile_path() %></p>
+        <% else %>
+          <p>This person hasn't added a description yet...</p>
+        <% end %>
+      <% end  %>    
+    </div>
+    
+    <% if @user.tags.size > 0 %>
+      <p class="tags">  
+        <% @user.tags.each do |tag| %>
+          <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
+        <% end %>
+        <% if current_user.id == @user.id %><%= link_to 'edit tags', expert_settings_tags_path(), :class => "downplay" %><% end %>
+      </p>
+    <% else %>
+      <% if current_user.id == @user.id %>
+      <div id="add_tags_callout">
+        <h4>Improve your question assignments<h4>
+          <%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => 'btn-primary btn' %>
+      </div>
+      <% else %>
+        <p><span class="unlinked tag tag-topic">No tags selected</span></p>
+      <% end %>
+        
     <% end %>
-    </p>
+    
   </div>
   
   
   <ul class="nav nav-tabs">
     <li><%= link_to "Currently Assigned (#{@user.open_questions.size})", expert_user_path(@user) %></li>
     <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_user_answered_path(@user) %></li>
+    <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
     <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_user_rejected_path(@user) %></li>
     <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+    <li><%= link_to 'History/Logs', history_expert_user_path(@user) %></li>
   </ul>
   
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
@@ -46,14 +74,38 @@
   <% end %>
   
   <aside>
-  
-    <p class="downplay">Last active: <%= time_ago_in_words(@user.last_active_at) %> ago</p>
+    <% if @user.retired %>
+      <h4>This account has been retired</h4>
+    <% end %>
+    
+    <% if current_user.id != @user.id %>
+      <p class="downplay">Last active: <%= get_last_active_time(@user) %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
+    <% end %>
+    
     <% if @handling_event_count[:handled] > 0 %>
        <p class="downplay"><span id="handling_rate" rel="popover" data-content="How likely will this person handle an assigned question? A high handling rate means they are likely to handle it. A low rate means someone else usually has to step in. There's a 24-hour grace period after a question is assigned. No penalties are recorded during the grace period." data-original-title="Handling Rate">Handling rate: <span class="handling_rate"><%= number_to_percentage(@handling_event_count[:ratio]*100, :precision => 0) %></span></span></p>
     <% else %>
        <p class="downplay">This person hasn't handled any questions in the last 6 months.</p>
     <% end%>
-  </aside>
+    
+    <p class="downplay">
+      <% if @user.auto_route %>
+      Accepts automatic assignments
+        <% if @user.routing_instructions == "anywhere" %>
+          and questions can come from anywhere.
+        <% elsif @user.routing_instructions == "locations_only" %>
+          but questions must match this expert's states.
+        <% else %>
+          but questions must match this expert's counties.
+        <% end %>
+      <% else %>
+      Doesn't accept automatic assignments. Questions must be directly assigned to this expert.
+      <% end %>
+    </p>
+    
+    <p class="downplay"><%= link_to('Participation Metrics',expert_expert_report_path(@user.id)) %></p>
+    <p><%= link_to("People Profile","https://people.extension.org/people/#{@user.id}") %></p>
+ </aside>
   
   <script type="text/javascript">
     $('#handling_rate').popover({
@@ -65,43 +117,35 @@
     <%= render :partial => 'location_summary' %>
   </aside>
 
-
   <aside>
-    <% if @user.tags.size > 0 %>
-      <p class="tags">  
-        <% @user.tags.each do |tag| %>
-        <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
-        <% end %>
-      </p>
-      <% if current_user.id == @user.id %>
-        <p><%= link_to 'edit', expert_settings_tags_path() %></p>
-      <% end %>
-      <br class="clearing" />
-      
-    <% else %>
-    
-      <% if current_user.id == @user.id %>
-        <h4>Help improve your question assignments<h4>
-          <%= link_to 'Add tags to your profile', expert_settings_tags_path(), :class => 'btn-primary btn' %>
-      <% else %>
-        <p>No tags selected</p>
-      <% end %>
-        
+      <h3>Group Membership (<%= @user_groups.count %>)</h3>
+    <% if current_user.id == @user.id %>
+      <p><%= link_to "Groups home", expert_groups_path %> | <%= link_to 'Manage notifications', expert_user_groups_path(current_user) %></p>      
     <% end %>
-  </aside>
-
-  <aside>
-    <h3>Group Membership <%= link_to "(#{@my_groups.count})", expert_user_groups_path() %></h3>
+    
     <ul class="groups">
-      <% if @my_groups.size == 0 %>
-        <li>You currently are not a member or leader of a group.</li>
+      <% if @user_groups.size == 0 %>
+        <li class="group_list_item">Not currently a member or leader of a group.</li>
       <% else %>
-        <% @my_groups.each do |group| %>  
-          <li><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></li>
+        <% @user_groups.each do |group| %>  
+          <li class="group_list_item">
+            <span class="<%= !group.group_active? ? "inactive_group" : "active" %>">
+              <%= link_expert_group_avatar(group, :thumb) %> 
+              <span class="group_info">
+                <strong><%= link_to group.name, expert_group_path(group.id) %></strong> <%= !group.group_active? ? "- Inactive Group" : "" %>
+                <% if @user.send_incoming_notification?(group) %>
+                   <span>Notified on every question</span>
+                <% end %>
+                <% if @user.send_daily_summary?(group) %>
+                   <span>Receives daily summary</span>
+                <% end %>
+              </span>
+            </span>
+          </li>
         <% end %>
       <% end %>
-      <%= link_to "View groups", expert_user_groups_path() %>
     </ul>
+    <br class="clearing" />
   </aside>
   
 

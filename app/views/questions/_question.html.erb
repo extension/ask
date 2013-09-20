@@ -1,0 +1,248 @@
+<% @page_title = raw("#{@question.title.gsub(/[[:space:]]/, ' ')}") %>
+<% @page_type = "article" %>
+<% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
+
+<div id="main" class="span8">
+  <div itemscope itemtype="http://www.schema.org/Article">
+    
+    <h1 class="title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
+
+    <div id="question">
+
+    <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>  
+      
+    <% if @question.images.size > 0 %>
+
+      <div class="images_wrapper">  
+      <% @question.images.each do |image| %>
+        <% if image.persisted? %>
+          <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+          <div class="question_image_wrapper">
+            <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+          </div>
+
+          <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+              <p>
+                <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+                <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+              <p>
+            </div>
+            <div class="modal-body">
+              <%= image_tag image.url() %>
+            </div>
+          </div>
+          <% else %>
+           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+          <% end %>
+        <% end %>
+      <% end %>  
+      <br class="clearing" />
+    </div>
+
+  <% end %>
+  
+  
+    <p><small>Asked <%= time_ago_in_words(@question.created_at) %> ago</small></p>
+
+      <p>
+        <% if @question.location.present? %>
+          <% if @question.county.present? %>
+            <span class="tag tag-geography"><%= "#{@question.county.name}" %></span>
+          <% end %>
+          <% if @question.location.present? %>
+            <span class="tag tag-geography"><%= @question.location.name %></span>
+          <% end %>
+        <% end %>
+
+        <% if @question.tags.size > 0 %>
+          <% @question.tags.each do |tag| %>
+            <% if tag.name != "front page" %>
+              <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </p>
+    </div>
+    
+  </div>
+  
+
+  <%- if current_user and current_user.id == @question.submitter_id -%>
+    <%= render :partial => 'question_edit' %>
+  <%- elsif @authenticated_submitter.present? and @authenticated_submitter.id == @question.submitter_id -%>
+    <%= render :partial => 'question_edit' %>
+  <%- end -%>
+
+  <% if @question_responses.size > 0 %>
+    <h3 class="h3">Responses</h3>
+    <% @question_responses.each do |response| %>
+      <div class="response_block">
+        <div class="response">
+          <%= format_text_for_display(response.body) %>
+        </div>
+        
+        
+        
+        <% if response.images.size > 0 %>
+
+          <div class="images_wrapper">  
+          <% response.images.each do |image| %>
+            <% if image.persisted? %>
+              <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+              
+              <div class="delete_question_image_wrapper">
+              <div class="question_image_wrapper">
+                <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+              </div>
+              <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
+                <%= button_to "Delete image", remove_image_response_path(:id => response.id, :image_id => image.id), :class => "btn btn-mini image_delete" %>
+              <% end %>
+              </div>
+              <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                  <p>
+                    <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
+                    <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
+                  <p>
+                </div>
+                <div class="modal-body">
+                  <%= image_tag image.url() %>
+                </div>
+              </div>
+              <% else %>
+               <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+              <% end %>
+            <% end %>
+          <% end %>  
+          <br class="clearing" />
+          </div>
+
+        <% end %>
+        
+        <div class="author" itemprop="author">
+          <% if response.resolver_id %>
+            <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to link_public_user(response.resolver) %>
+          <% else %>
+            <p>Anonymous Guest</p>
+          <% end %>
+          <p><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
+	    <div id="submitter_followup">
+	      <p class="additional_comment_toggle btn btn-primary btn-large">Post a response to the expert</p>
+	    </div>
+	    <div id="additional_comment" class="formy">
+	      <h2>Post a Response to the Expert</h2>
+	      <%= form_for @response do |r_form| %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg' %>
+	        <%= hidden_field_tag :question_id, @question.id %>
+          <h3>You can include up to 3 images</h3>
+	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+	        
+	        <%= r_form.fields_for :images do |image_form| %>
+			      <p><%= image_form.file_field :attachment %></p>
+          <% end %>
+          
+          <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
+          <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
+        <% end %>
+	    </div>
+    <% end %>
+
+  <% end %>
+
+  <% if @question_responses.size < 1 %>
+    <div class="not_answered">
+      <h3>This Question is Waiting for an eXtension Answer</h3>
+      <p><strong>What's an eXtension Answer?</strong> Your questions are answered by Cooperative Extension and University staff and volunteers from across the United States. That means the answer given here will be objective, research-based and credible.</p>
+    </div>
+  <% end %>
+
+
+
+<%= render :partial => 'comments' %>
+
+<% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) || (current_user and current_user.id == @question.submitter_id) %>
+  <div>
+	<h3 id='comment_notification_pref'>
+	<% if @comment_notification_pref == true %>
+	  You are subscribed to public comments. <br /><%= button_to 'Unsubscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post %>
+	<% else %>
+	  You have unsubscribed from public comments. <br /><%= button_to 'Subscribe', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post %>
+	<% end %>
+ 	</h3>
+  </div>
+<% end %>
+
+</div>
+
+<div id="secondary" class="span4">
+  <% if current_user && current_user.has_exid? %>
+      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
+  <% end %>
+  
+  <% if @question.status_state == Question::STATUS_REJECTED %>
+    <aside class="public_rejected">
+      <h3>This question has been rejected</h3>
+      <p><strong>Rejection comment:</strong> <%= wrap_text(@question.current_response) %></p>
+    </aside>
+  <% elsif @question.status_state != Question::STATUS_REJECTED %>
+    <aside>
+      
+      <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
+          <h5>Answered by</h5>
+        <% else %>
+          <h5>Assigned to</h5>
+        <% end %>
+        
+        
+        <% if @question.assignee.present? %>
+          <%= link_public_user_avatar(@question.assignee, :thumb) %> <%= link_to link_public_user(@question.assignee) %>
+        <% elsif @question.assigned_group.present? %>
+          <%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
+        <% end %>
+        
+        <% if @question_responses.size > 0 and @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
+    	      <a href="#submitter_followup"><p class="additional_comment_toggle btn">Reply to the expert</p></a>
+    	  <% end %>
+      
+    <% if !@question.assignee.blank? %>
+      <% if @question.assigned_group %>
+        <h5>This question is grouped with</h5>
+        <p><%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
+      <% end %>
+    <% end %>
+    
+    <p>Ask an Expert is made up of groups and individual experts.</p>
+    <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn" %></p>
+  </aside>
+  <% end %>
+    
+  <% if @question.public_similar_questions.count > 0 %>
+  <aside>
+    <h4>Related Questions</h4>
+    <% @question.public_similar_questions.each do |question,score| %>
+      <p><%= link_to(format_text_for_display(question.title), question_path(question.id)) %></p>
+    <% end %>
+  </aside>
+  <% end %>
+  
+</div>
+
+<script class="code" type="text/javascript">
+  
+  $("#additional_comment").hide();
+  
+  $(".additional_comment_toggle").click(function () {
+    $("#additional_comment").toggle();
+  });
+
+
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({image: false});
+    });
+</script>

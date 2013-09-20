@@ -3,21 +3,30 @@
 <head>
   <title><%= (@page_title) ? @page_title + " - Ask an Expert - eXtension" : "Ask an Expert - eXtension" %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/javascripts/html5.js"></script><![endif]-->
   <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= stylesheet_link_tag    "application-print", :media => "print" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
   <%= render(:partial => 'home/google_analytics') %>
 </head>
 <body id="expert" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
   
-  <div id="fixed_fixer"></div>
+  <% if Settings.app_location == 'dev' %>
+    <div id="app_location" class="demo">
+      <p>This is the <strong>AaE <%= Settings.app_location.upcase %></strong> site. Feel free to test/play. Note: The data on this site is regularly deleted/refreshed, and all notifications are turned off. Visit <%= link_to("Ask an Expert", "http://ask.extension.org") -%>.</p>
+    </div>
+  <% end %>
+
+
+  <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   
-  <div class="navbar navbar-inverse navbar-fixed-top <%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>">
+  <div class="navbar navbar-inverse app-navbar">
         <div class="navbar-inner">
           <div class="container">
             <% if current_user %>
               <ul class="navavatar loggedin">
-                <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
+                <li><%= link_expert_user_avatar(current_user, :thumb, highlight_badge = true) %></li>
                 <li class="username hidecompact420">
                   <%= link_to expert_user_path(current_user.id) do %>
                     <span><%= current_user.name %></span>
@@ -25,14 +34,16 @@
                 </li>
 
                 <li>
-                  <ul class="nav" id="user_actions">
+                  <ul class="nav pull-right" id="user_actions">
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
                       <ul class="dropdown-menu">
-                        <li><%= link_to "My profile", expert_user_path(current_user.id) %></li>
-                        <li><%= link_to "My groups", expert_user_groups_path(current_user) %></li>
-                        <li><%= link_to "My settings", expert_settings_profile_path() %></li>
+                        <li><%= link_to "My Dashboard", expert_home_path() %></li>
+                        <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
+                        <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
+                        <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
                         <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+                        <li><%= link_to "AaE How-Tos", "http://create.extension.org/node/95420" %></li>
                       </ul>
                     </li>
                   </ul>
@@ -52,22 +63,25 @@
               <span class="icon-bar"></span>
             </a>
             <%= link_to expert_home_path(), :class => "brand home" do %>
-              AaE <span class="hidecompact480">Experts</span>
+            <%= image_tag("eX_logo_white_160x.png", :size => "80x30") %>
+              AaE <span class="hidecompact480"></span>
             <% end %>
-            <div class="nav-collapse">
+            <div id="collapsed_nav_options" class="nav-collapse collapse">
               <ul class="nav">
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "index") %>><%= link_to "Unanswered", expert_home_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'home', :action => "answered") %>><%= link_to "Answered", expert_home_answered_path %></li>
-                <li <%= "class='active'" if current_page?(:controller => 'groups', :action => "index") %>><%= link_to "Groups", expert_groups_path %></li>
+                <li><%= link_to "Dashboard", expert_home_path %></li>
+                <li><%= build_url_based_on_pref_filters("unanswered") %></li>
+                <li><%= build_url_based_on_pref_filters("answered") %></li>
+                <li><%= link_to "Reports", expert_reports_home_path %></li>
               </ul>
               <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform"}) do %>
                 <p id="search">
-                  <%= text_field_tag 'q', params[:q], :size => 12, :class => "input-small", :placeholder => "Search", :id => "search_field" %>
+                  <%= text_field_tag 'q', params[:q], :class => "input-xlarge", :placeholder => "Search experts, questions, groups", :id => "search_field" %>
                   <span id="icon-search" class="btn btn-inverse"><i class="icon-search icon-white"></i></span>
                 </p>
               <% end %>
-              <p><%= link_to("AaE Public", root_path(), :class => "brand") %></p>
-              <span class="help_link"><%= link_to("Help", "http://about.extension.org/ask/") %></span>
+              
+              
+              <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
             </div><!--/.nav-collapse -->
             
             
@@ -80,25 +94,38 @@
       </div>
       
 <div class="container-fluid">
-  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <div id="app_location" class="demo">
-      
-      <p>You are viewing the <strong>AaE 2.0 <%= Settings.app_location.upcase %></strong> site. The data on this site is regularly deleted for development purposes. <strong>Feel free to test and play</strong>: No notifications, responses or assignments are sent to anyone. <%= link_to("Visit Ask 2.0 Production", "http://ask.extension.org") -%>. Visit the <%= link_to("AaE 2.0 Help page", "http://about.extension.org/ask/") %>.</p>
-    </div>
-  <% end %>
   
   <% if current_user.away %>
-    <div id="on_vacation"><i class="icon-exclamation-sign"></i> Your availability is set to "Away." Questions can not be assigned to you. <%= link_to 'Edit your settings', expert_settings_assignment_path() %></div>
+    <div id="on_vacation"><i class="icon-exclamation-sign"></i> Your availability is set to "Away." Questions cannot be assigned to you. <%= link_to 'Edit your settings', expert_settings_assignment_path() %></div>
+  <% end %>
+    
+  <% if current_user.tags.size < 1 %>
+    <div id="tags_prompt">Hi there! We know you've got expertise. Why not tell us about it by adding some tags? That helps the rest of us know what kind of questions you want to answer. Please add a few in your <%= link_to 'settings', expert_settings_tags_path() %>. Thanks!</div>
   <% end %>
   
-  <div class="row-fluid">
-    <div id="content_wrapper">
-      <%= yield %>
+  <%- if @override_rows.present? and @override_rows -%>
+    <%= yield %>
+  <%- else -%>
+    <div class="row-fluid">
+      <div id="content_wrapper">
+        <%= yield %>
+      </div>
     </div>
-  </div>
+  <%- end -%>
   
 
 </div>
+
+<br class="clearing" />
+
+<footer class="footer">
+    <ul>
+        <li><%= link_to "Help / Contact Us", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></li>
+        <li><%= link_to "AaE How-Tos", "http://create.extension.org/node/95420" %></li>
+        <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
+        <li><%= link_to("Terms of Use","http://www.extension.org/main/termsofuse")%></li>
+    </ul>
+</footer>
 
 <script class="code" type="text/javascript">
   $('#icon-search').click(function() {

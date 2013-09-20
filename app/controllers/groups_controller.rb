@@ -7,10 +7,12 @@
 class GroupsController < ApplicationController
   layout 'public'
   
+  before_filter :set_format, :only => [:ask]
+  
   def show
     @group = Group.find(params[:id])
     @group_tags = @group.tags
-    @open_questions = @group.open_questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
+    @open_questions = @group.questions.public_visible.find(:all, :limit => 10, :order => 'created_at DESC')
   end
   
   def ask
@@ -23,9 +25,19 @@ class GroupsController < ApplicationController
       @question.images.build
     end
     
-   
     if request.post?
-      @question = Question.new(params[:question])
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+      if params[:question].blank?
+        flash[:error] = "The question form is not complete. Please fill out all fields."  
+        return redirect_to root_url
+      end
+        
+      begin
+        @question = Question.new(params[:question])
+      rescue
+        flash[:error] = "Invalid Parameters."
+        return redirect_to root_url
+      end
       
       if current_user and current_user.email.present?
         @submitter = current_user
@@ -46,12 +58,15 @@ class GroupsController < ApplicationController
       @question.submitter = @submitter
       @question.assigned_group = @group
       @question.original_group_id = @group.id
-      @question.group_name = @group.name
       @question.user_ip = request.remote_ip
       @question.user_agent = request.env['HTTP_USER_AGENT']
       @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
       @question.status = Question::SUBMITTED_TEXT
       @question.status_state = Question::STATUS_SUBMITTED
+      
+      # record the original location and county
+      @question.original_location = @question.location
+      @question.original_county = @question.county
       
       if !@group.widget_public_option
         @question.is_private = true

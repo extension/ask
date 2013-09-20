@@ -9,6 +9,9 @@ module ApplicationHelper
   # TODO: Need to fix this
   def format_text_for_display(content)
     #return word_wrap(simple_format(auto_link(content, :all, :target => "_blank")))
+    if content
+      content = content.gsub(/[[:space:]]/, ' ')
+    end
     return simple_format(content)
   end
 
@@ -20,6 +23,34 @@ module ApplicationHelper
      end
   end
 
+  def build_url_based_on_pref_filters(question_status)
+    if current_user.filter_preference
+      if question_status == "unanswered"
+        return (link_to "Needs an Answer", expert_questions_path({status: "unanswered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+      else
+        return (link_to "Answered", expert_questions_path({status: "answered"}.merge(get_question_filter_params(current_user.filter_preference.setting[:question_filter]))))
+      end
+    else
+      if question_status == "unanswered"
+        return (link_to "Needs an Answer", expert_questions_path({status: "unanswered"}))
+      else
+        return (link_to "Answered", expert_questions_path({status: "answered"}))
+      end
+    end
+  end
+  
+  def get_last_active_time(user)
+    if user.last_active_at.present?
+      if user.last_active_at.to_s == Date.today.to_s
+        return 'today'
+      else
+        return time_ago_in_words(user.last_active_at) + ' ago'
+      end
+    else
+      return 'No activity to date'
+    end
+  end
+  
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning] || flash[:success]
     return_string = ''
@@ -37,7 +68,7 @@ module ApplicationHelper
   end
 
   def link_public_user(user)
-    return link_to(user.public_name, user_path(user.id), {:title => user.public_name}).html_safe
+    return link_to(user.public_name, user_path(user.id), {:title => user.public_name, :rel => "author"}).html_safe
   end
 
   def expert_user(user)
@@ -45,19 +76,19 @@ module ApplicationHelper
   end
 
   def link_expert_user(user)
-    return link_to(user.name, expert_user_path(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
+    return link_to(user.name, expert_user_url(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
   
   def link_expert_group(group)
-    return link_to(group.name, expert_group_path(group.id), {:title => group.name}).html_safe
+    return link_to(group.name, expert_group_url(group.id), {:title => group.name}).html_safe
   end
 
   def link_public_user_avatar(user, image_size = :medium)
-    return link_to(get_avatar_for_user(user, image_size, false), user_path(user.id), {:title => user.public_name}).html_safe
+    return link_to(get_avatar_for_user(user, image_size, false), user_path(user.id), {:title => user.public_name, :rel => "author", :class => "#{image_size}"}).html_safe
   end
 
-  def link_expert_user_avatar(user, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+  def link_expert_user_avatar(user, image_size = :medium, highlight_badge = false)
+    return link_to(get_avatar_for_user(user, image_size), expert_user_path(user.id), {:title => user.name, :class => "#{image_size} " + (highlight_badge ? "highlight" : "")}).html_safe
   end
 
   def link_public_group_avatar(group, image_size = :medium)
@@ -65,7 +96,7 @@ module ApplicationHelper
   end
 
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
-    return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
+    return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress" : "suppress")}).html_safe
   end
   
   def link_expert_group_avatar_group_label(group, image_size = :medium, suppress_single = false)
@@ -83,10 +114,10 @@ module ApplicationHelper
     show_badge = show_badge ? (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") : ""
 
     if group.avatar.present?
-      return_string = raw("<span class=\"avatar_with_badge\">") + image_tag(group.avatar.url(image_size), :size => image_size_in_px, :class => "#{image_size}" ) + group_label + show_badge + raw("</span>")
+      return_string = raw("<span class=\"avatar_with_badge #{image_size}\">") + image_tag(group.avatar.url(image_size), :size => image_size_in_px, :class => "#{image_size}" ) + group_label + show_badge + raw("</span>")
     else
       # if no avatar, assign a random image
-      return_string =  raw("<span class=\"avatar_with_badge\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px, :class => "#{image_size}") + group_label + show_badge + raw("</span>")
+      return_string =  raw("<span class=\"avatar_with_badge #{image_size}\">") + image_tag("group_avatar_placeholder_0#{(group.id % Settings.group_avatar_count) + 1}.png", :size => image_size_in_px, :class => "#{image_size}") + group_label + show_badge + raw("</span>")
     end
     return return_string
   end
@@ -109,5 +140,30 @@ module ApplicationHelper
 
     return return_string
   end
-
+  
+  private 
+  
+  def get_question_filter_params(question_filter_settings)
+    return_params = Hash.new
+    
+    question_filter_settings.each do |key, value|
+      case key
+        when :groups
+          return_params.merge!({group_id: value.first}) if value.present?
+        when :locations
+          return_params.merge!({location_id: value.first}) if value.present? 
+        when :counties
+          return_params.merge!({county_id: value.first}) if value.present?
+        when :tags
+          return_params.merge!({tag_id: value.first}) if value.present?
+        when :privacy
+          return_params.merge!({privacy: value.first}) if value.present?
+        when :status
+          # return_params.merge!({status: value.first}) if value.present?
+      end
+    end
+    
+    return return_params
+  end
+  
 end

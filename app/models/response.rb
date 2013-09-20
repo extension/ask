@@ -7,6 +7,8 @@
 
 class Response < ActiveRecord::Base
   include MarkupScrubber
+  has_paper_trail :on => [:update], :only => [:body]
+  
   belongs_to :question
   belongs_to :resolver, :class_name => "User", :foreign_key => "resolver_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
@@ -16,15 +18,22 @@ class Response < ActiveRecord::Base
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   
+  before_save :set_public_flag
+  after_create :set_timings
   after_save :check_first_response, :index_parent_question
   
   validates :body, :presence => true
   validate :validate_attachments
-  
+
+  scope :latest, order('created_at DESC')
+  scope :expert, where(is_expert: true)
+  scope :expert_after_public, where(is_expert: true).where(previous_expert: false)
+  scope :non_expert, where(is_expert: false)
+
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
     images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
-    images.each {|i| self.errors[:base] << "Image is not correct file type" if !allowable_types.include?(i.attachment_content_type)}
+    images.each {|i| self.errors[:base] << "Image is not correct file type (.jpg, .png, or .gif allowed)" if !allowable_types.include?(i.attachment_content_type)}
   end
 
   # attr_writer override for body to scrub html
@@ -33,10 +42,56 @@ class Response < ActiveRecord::Base
   end
   
   class Response::Image < Asset
-    has_attached_file :attachment, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+    has_attached_file :attachment, 
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :styles => Proc.new { |attachment| attachment.instance.styles }
+                        attr_accessible :attachment
+    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
+    def dynamic_style_format_symbol
+      URI.escape(@dynamic_style_format).to_sym
+    end
+
+    def styles
+      unless @dynamic_style_format.blank?
+        { dynamic_style_format_symbol => @dynamic_style_format }
+      else
+        { :medium => "300x300>", :thumb => "100x100>" }
+      end
+    end
+
+    def dynamic_attachment_url(format)
+      @dynamic_style_format = format
+      attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+      attachment.url(dynamic_style_format_symbol)
+    end
   end
-  
+
+  def set_timings
+    question_submitted_at = self.question.created_at
+    update_attribs = {}
+    update_attribs[:time_since_submission] = (self.created_at - question_submitted_at)
+
+    if(last_response = self.question.responses.where('id != ?',self.id).where('created_at <= ?',self.created_at).latest.first)
+      update_attribs[:time_since_last] = (self.created_at - last_response.created_at)
+      update_attribs[:previous_expert] = last_response.is_expert?    
+    else
+      # first response - set time_since_last to time_since_submission and previous_expert false to ease calculations
+      update_attribs[:time_since_last] = (self.created_at - question_submitted_at)
+      update_attribs[:previous_expert] = false
+    end         
+    self.update_attributes(update_attribs)
+  end
+
   private
+
+  def set_public_flag
+    if(self.resolver_id.blank?)
+      self.is_expert = false
+    else
+      self.is_expert = true
+    end
+    true
+  end
 
   def check_first_response
     if(self.question.initial_response_id.blank?)
