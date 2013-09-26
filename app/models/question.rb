@@ -353,7 +353,7 @@ class Question < ActiveRecord::Base
 
     # update and log
     self.working_on_this = nil 
-    self.update_attribute(:assignee, user)  
+    self.update_column(:assignee_id, user.id)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
