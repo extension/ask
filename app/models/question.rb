@@ -543,7 +543,14 @@ class Question < ActiveRecord::Base
 
   def generate_fingerprint
     create_time = Time.now.to_s
-    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
+    # a few questions have gotten through validation with no email address submitted, and caused an app error here. this shouldn't happen under normal circumstances. 
+    # make sure we catch it.
+    begin
+      self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
+    rescue
+      errors.add(:base, 'An error occurred while saving your question. Make sure an email address has been submitted and try again.')
+      return false
+    end 
   end
   
   def set_last_opened
