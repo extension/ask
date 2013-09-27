@@ -3,7 +3,6 @@ set :default_stage, "dev"
 require 'capistrano/ext/multistage'
 require 'capatross'
 require "bundler/capistrano"
-require "delayed/recipes"
 require './config/boot'
 require 'airbrake/capistrano'
 
@@ -18,8 +17,7 @@ set :use_sudo, false
 set :keep_releases, 5
 ssh_options[:forward_agent] = true
 set :port, 24
-set :bundle_flags, ''
-set :bundle_dir, ''
+set :bundle_flags, '--deployment --binstubs'
 set :rails_env, "production" #added for delayed job  
 
 before "deploy", "deploy:checks:git_push"
@@ -31,16 +29,17 @@ if(TRUE_VALUES.include?(ENV['MIGRATE']))
   after "deploy:update_code", "deploy:migrate"
   after "deploy", "deploy:web:enable"
 else
+  before "deploy", "delayed_job:stop"
   before "deploy", "deploy:checks:git_migrations"
   after "deploy:update_code", "deploy:update_maint_msg"
   after "deploy:update_code", "deploy:link_and_copy_configs"
   after "deploy:update_code", "deploy:cleanup"
+  after "deploy", "delayed_job:start"
 end
 
-# delayed job
-before "deploy", "delayed_job:stop"
-after "deploy:link_and_copy_configs", "delayed_job:start"
-after "deploy:restart", "delayed_job:restart"
+# delayed job - stop when app is manually put into maintenance mode and when there are migrations to run
+before "deploy:web:disable", "delayed_job:stop"
+before "deploy:web:enable", "delayed_job:start"
 
 namespace :deploy do
   
@@ -114,6 +113,32 @@ namespace :deploy do
         logger.info "#{diff_files}"
       end         
     end    
+  end
+end
+
+namespace :delayed_job do
+  desc "stops delayed_job"
+  task :stop, :roles => :app do
+    # check status
+    started = false
+    invoke_command '/sbin/status delayed_job' do |channel,stream,data|
+      started = (data =~ %r{start})
+    end
+    if(started)
+      invoke_command 'stop delayed_job', via: 'sudo'
+    end
+  end
+
+  desc "starts delayed_job"
+  task :start, :roles => :app do
+    # check status
+    started = false
+    invoke_command '/sbin/status delayed_job' do |channel,stream,data|
+      started = (data =~ %r{start})
+    end
+    if(!started)
+      invoke_command '/sbin/start delayed_job', via: 'sudo'
+    end
   end
 end
 

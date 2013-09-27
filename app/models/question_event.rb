@@ -247,7 +247,7 @@ class QuestionEvent < ActiveRecord::Base
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]
     if create_attributes[:event_state] == ASSIGNED_TO || create_attributes[:event_state] == ASSIGNED_TO_GROUP
-      question.update_attribute(:last_assigned_at, time_of_this_event)
+      question.update_column(:last_assigned_at, time_of_this_event)
     end
 
     # gathering of previous events for metrics gathering for things like duration and handling rate, 

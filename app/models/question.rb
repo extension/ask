@@ -180,7 +180,7 @@ class Question < ActiveRecord::Base
   
   # get resolvers for a question
   def resolver_list
-    self.responses.map{|r| r.resolver}
+    self.responses.map{|r| r.resolver}.uniq.compact
   end
 
   # return a list of similar articles using sunspot
@@ -353,7 +353,7 @@ class Question < ActiveRecord::Base
 
     # update and log
     self.working_on_this = nil 
-    self.update_attribute(:assignee, user)  
+    self.update_column(:assignee_id, user.id)  
     
     QuestionEvent.log_assignment(self,user,assigned_by,comment)    
     # if this is a reopen reassignment due to the public user commenting on the sq                                  
@@ -543,7 +543,14 @@ class Question < ActiveRecord::Base
 
   def generate_fingerprint
     create_time = Time.now.to_s
-    self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
+    # a few questions have gotten through validation with no email address submitted, and caused an app error here. this shouldn't happen under normal circumstances. 
+    # make sure we catch it.
+    begin
+      self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
+    rescue
+      errors.add(:base, 'An error occurred while saving your question. Make sure an email address has been submitted and try again.')
+      return false
+    end 
   end
   
   def set_last_opened
