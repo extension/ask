@@ -42,6 +42,11 @@ class CronTasks < Thor
       Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
     end
+    
+    def clean_up_mailer_caches
+      MailerCache.delete_all(["created_at < ?", 2.months.ago])
+      puts "Cleaned up Mailer Caches more than 2 months old"
+    end
 
     def flag_accounts_for_search_update
       User.needs_search_update.all.each do |u|
@@ -68,6 +73,7 @@ class CronTasks < Thor
     create_evaluation_notifications
     create_daily_summary_notification
     create_daily_handling_reminder_notification
+    clean_up_mailer_caches
   end
 
   desc "hourly", "All hourly cron tasks"
