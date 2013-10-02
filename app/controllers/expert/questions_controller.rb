@@ -152,7 +152,7 @@ class Expert::QuestionsController < ApplicationController
     if @response.update_attributes(params[:response])
       flash[:notice] = "Your changes have been saved. Thanks for making the response better!"
       # send notification to question submitter if editing expert opted to notify the submitter on edit
-      if params[:notify_submitter].present? && params[:notify_submitter] == '1'
+      if @response.is_expert && params[:notify_submitter].present? && params[:notify_submitter] == '1'
         Notification.create(notifiable: @response, created_by: current_user.id, recipient_id: @question.submitter.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER, delivery_time: 1.minute.from_now)
       end
       QuestionEvent.log_response_edit_by_expert(@question, current_user, @response)
