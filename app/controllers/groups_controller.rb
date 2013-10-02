@@ -42,8 +42,8 @@ class GroupsController < ApplicationController
       if current_user and current_user.email.present?
         @submitter = current_user
       else
-        if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-          @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
+          @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
           if !@submitter.valid?
             # TODO: to be sure there's a better way to combine errors?
             @submitter.errors.each do |attribute,message|
