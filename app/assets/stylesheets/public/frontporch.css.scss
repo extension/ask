@@ -967,6 +967,8 @@ label {font-weight:bold;}
 
 @media (max-width: 767px) {
 
+
+
 .navbar {
 	background: #FF7B00;
 	margin:0 -26px;
@@ -996,6 +998,12 @@ ul.nav {
 	margin:0 -26px;
 /*  padding:0 26px;*/
 }
+
+
+.brand {
+width:300px;
+}
+
 
 .nav-collapse .nav > li > a {
     color: #FFF;
@@ -1080,8 +1088,24 @@ ul.nav {
 @media (max-width: 480px) {
   footer ul {clear:both; padding-top:20px;}
 .brand img {
-	width:95px;
+	width:220px;
+/*  margin-left: -20px;*/
+	margin-top: -5px;
 }
+.brand {
+  float:none !important;
+  margin-top: -5px !important;
+  width:220px;
+  margin-left:auto !important;
+	margin-right:auto !important;
+/*  outline:1px lime solid;*/
+  padding:10px !important;
+/*  height:60px !important;*/
+  background:#fff;
+}
+
+.mobile-menu-btn  {float:left !important; margin-left: -20px !important; /*margin-right:20px !important;*/}
+.mobile-menu-search-btn {margin-right:-20px !important;}
 
 .navbar .btn-navbar {
   margin:5px 2px 0;
