@@ -33,12 +33,22 @@ class User < ActiveRecord::Base
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
+  has_many :current_resolver_questions, :class_name => "Question", :foreign_key => "current_resolver_id"
   has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
   has_many :question_viewlogs
+  has_many :created_groups, :class_name => "Group", :foreign_key => "created_by"
   has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
   has_many :user_events
+  has_many :activity_logs
+  has_many :created_group_events, :class_name => "GroupEvent", :foreign_key => "created_by"
+  has_many :recipient_group_events, :class_name => "GroupEvent", :foreign_key => "recipient_id"
+  has_many :mailer_caches, :class_name => "MailerCache", :foreign_key => "user_id"
+  has_many :created_notifications, :class_name => "Notification", :foreign_key => "created_by"
+  has_many :recipient_notifications, :class_name => "Notification", :foreign_key => "recipient_id"
+  
+  
   belongs_to :location
   belongs_to :county
 
@@ -499,7 +509,77 @@ class User < ActiveRecord::Base
     .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
-
+  
+  # this instance method used to merge two user accounts into one account, particularly used 
+  # when merging two accounts created for the same user resulting from a user using 
+  # more than one method of authentication (eg. twitter, eXtension, etc.)
+  def merge_account_with(user_id)
+    user_to_merge_with = User.find_by_id(user_id)
+    # we're keeping the first user account created and merging the later one with it 
+    # along with destroying the later account when the merging is complete
+    if user_to_merge_with.created_at > self.created_at 
+      user_to_keep = self
+      user_to_remove = user_to_merge_with
+    else
+      user_to_keep = user_to_merge_with
+      user_to_remove = self
+    end
+    
+    User.reflect_on_all_associations.each do |association_to_user|
+      # make sure we have the field we need to use for the user for the associated tables
+      if !association_to_user.options[:foreign_key].blank?
+        key_of_user = association_to_user.options[:foreign_key]
+      else
+        key_of_user = nil
+      end
+      
+      additional_conditions = ''
+      
+      case association_to_user.macro 
+      when :has_many || :has_one
+        # in the case of :has_one, I think it's pretty rare to see the :through and :as options get used,  
+        # but I'm going to cover it along with :has_many anyways
+        
+        # operate on the 'through' table if it's has_many :through
+        if !association_to_user.options[:through].blank?
+          model_to_use = association_to_user.options[:through].to_s.singularize.camelize.constantize
+          key_of_user = "user_id" if key_of_user.blank?
+        # the association name in the associated table will be different if we have options[:as] (polymorphic association)
+        # and we'll need to update all records with options[:as]_id in the associated table
+        elsif !association_to_user.options[:as].blank?
+          # get the class name of the associated table and the user key (eg. prefable_id)
+          key_of_user = "#{association_to_user.options[:as]}_id"
+          model_to_use = association_to_user.klass
+          # need to get the type on a polymorphic association (eg. prefable_type)
+          additional_conditions = " AND #{association_to_user.options[:as]}_type = 'User'"
+        else
+          # the code below also works for the :class_name option b/c klass is pulling the target model
+          key_of_user = "user_id" if key_of_user.blank?
+          model_to_use = association_to_user.klass
+        end
+        
+        model_to_use.where("#{key_of_user} = #{user_to_remove.id}" + "#{additional_conditions}").update_all(key_of_user.to_sym => user_to_keep.id)
+      when :has_and_belongs_to_many
+        join_table = association_to_user.options[:join_table]
+        if !association_to_user.options[:foreign_key].blank?
+          key_of_user = association_to_user.options[:foreign_key]
+        else
+          key_of_user = 'user'
+        end
+        # do raw sql here to update a join table without having to instantiate the objects and do AR (delete old and add new) operations 
+        # that triggers callbacks.
+        connection.execute("UPDATE #{join_table} SET #{key_of_user} = #{user_to_keep.id} WHERE #{key_of_user} = #{user_to_remove.id}")
+      end
+    end
+    
+    # if the user record from eXtension authentication is the user record to be removed, 
+    # then transfer the darmok_id to the remaining user account b/c that's needed for sync with people.
+    if !user_to_remove.darmok_id.blank?
+      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id)
+    end
+    
+    user_to_remove.destroy
+  end
 
 
 end
