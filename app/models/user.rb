@@ -29,6 +29,8 @@ class User < ActiveRecord::Base
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
+  has_many :submitted_question_events, :class_name => 'QuestionEvent', :foreign_key => 'submitter_id'
+  has_many :recipient_question_events, :class_name => 'QuestionEvent', :foreign_key => 'recipient_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
@@ -47,6 +49,12 @@ class User < ActiveRecord::Base
   has_many :mailer_caches, :class_name => "MailerCache", :foreign_key => "user_id"
   has_many :created_notifications, :class_name => "Notification", :foreign_key => "created_by"
   has_many :recipient_notifications, :class_name => "Notification", :foreign_key => "recipient_id"
+  has_many :previous_recipient_question_events, :class_name => "QuestionEvent", :foreign_key => "previous_recipient_id"
+  has_many :previous_initiator_question_events, :class_name => "QuestionEvent", :foreign_key => "previous_initiator_id"
+  has_many :previous_handling_recipient_question_events, :class_name => "QuestionEvent", :foreign_key => "previous_handling_recipient_id"
+  has_many :previous_handling_initiator_question_events, :class_name => "QuestionEvent", :foreign_key => "previous_handling_initiator_id"
+  has_many :submitted_responses, :class_name => "Response", :foreign_key => "submitter_id"
+  has_many :resolved_responses, :class_name => "Response", :foreign_key => "resolver_id"
   
   
   belongs_to :location
