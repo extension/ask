@@ -241,7 +241,11 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   #expert_navbar-inner {padding:.5em 6px .75em 15px;}
   #expert_navbar-inner a.brand {font-weight:normal !important;}
   #expert_navbar {background: #333;margin:0 0;padding:0 0;}
-  .article_title {font-size:24px;}
+
+  .title {font-size:28px;}
+  .article_title {font-size:18px;}
+  .subhead_style {font-size: 24px !important;}
+  .question_body {font-size:1.1em; line-height:1.3em;}
 }
 
 
@@ -282,13 +286,12 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   #ask_an_expert_logo img {width:120px; height:auto;}
   #question_wrapper {padding:1em 0 !important;}
   h2.title {line-height:1.4em; margin:.5em 0 .85em; font-size:1.2em}
-  .question_body {font-size:1.1em; line-height:1.3em;}
+
   #publicbar {padding:0;}
   #expertbar {padding:0;}
   #expertbar .container {padding:0;}
   #publicbar .container h1 {margin:0;}
   .brand {padding-left:20px;}
-  .title {font-size:28px;}
-  .article_title {font-size:18px;}
+
 }
 
