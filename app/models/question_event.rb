@@ -197,7 +197,9 @@ class QuestionEvent < ActiveRecord::Base
   
   def self.log_response_edit_by_expert(question, initiated_by, response)
     # kick off notification to expert (author of edited response) when their response is edited if a different expert edited it
-    Notification.create(notifiable: response, created_by: initiated_by.id, recipient_id: response.resolver.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT, delivery_time: 1.minute.from_now) unless initiated_by == response.resolver
+    if response.is_expert?
+      Notification.create(notifiable: response, created_by: initiated_by.id, recipient_id: response.resolver.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT, delivery_time: 1.minute.from_now) unless initiated_by == response.resolver
+    end 
     
     return self.log_event({:question => question,
       :initiated_by_id => initiated_by.id,
