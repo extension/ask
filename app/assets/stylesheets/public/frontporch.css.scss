@@ -264,7 +264,7 @@ ul.nav {
 .navbar .form-search .btn {
 	background: #fa6218;
 	color:#FFF;
-	border:1px solid #d65506;
+/*  border:1px solid #d65506;*/
 	-webkit-border-radius: 15px;
 	-moz-border-radius: 15px;
 	border-radius: 15px !important;
@@ -283,17 +283,17 @@ ul.nav {
   color: #ffffff;
   margin:20px 5px 0;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #FF964A;
+/*  background-color: #FF964A;
   background-image: -moz-linear-gradient(top, #FF9E58, #FF7100);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FF9E58), to(#FF7100));
   background-image: -webkit-linear-gradient(top, #FF9E58, #FF7100);
   background-image: -o-linear-gradient(top, #FF9E58, #FF7100);
   background-image: linear-gradient(to bottom, #FF9E58, #FF7100);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF9E58', endColorstr='#FFFF7100', GradientType=0);
-  border-color: #f46c22;
+*/  background-repeat: repeat-x;
+/*  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF9E58', endColorstr='#FFFF7100', GradientType=0);*/
+/*  border-color: #f46c22;
   *background-color: #FF964A;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+*/  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
 
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
@@ -306,7 +306,7 @@ ul.nav {
 .navbar .btn-navbar.active,
 .navbar .btn-navbar.disabled,
 .navbar .btn-navbar[disabled] {
-  color: #ffffff;
+/*  color: #ffffff;
   background-color: #FF964A;
   background-image: -moz-linear-gradient(top, #FF7100, #FF9E58);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FF7100), to(#FF9E58));
@@ -316,10 +316,10 @@ ul.nav {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF7100', endColorstr='#FFFF9E58', GradientType=0);  
   *background-color: #FF964A;
-}
+*/}
 .navbar .btn-navbar:active,
 .navbar .btn-navbar.active {
-  background-color: #999;
+/*  background-color: #999;*/
 }
 
 .carousel-caption {
@@ -901,6 +901,8 @@ label {font-weight:bold;}
 .btn-orange:hover {background: #CD4011;color:#fff;}
 
 
+
+
 /* ==========================================================================
    Responsive overrides (tablet/small screen)
    ========================================================================== */
@@ -967,7 +969,10 @@ label {font-weight:bold;}
 
 @media (max-width: 767px) {
 
-
+  .form-search {
+    width:80% !important;
+    border:0 !important;
+  }
 
 .navbar {
 	background: #FF7B00;
@@ -1032,13 +1037,21 @@ width:300px;
     color: #F8F8F8;
 }
 
-.search-collapse,
-.search-collapse.collapse {
-	overflow: hidden;
+.mobile-nav-collapse {
+  overflow: hidden;
 	height: 0;
 	background: #FF964A;
 	margin:0 -26px;
 	padding:0 26px;
+}
+
+.search-collapse,
+.search-collapse.collapse {
+/*  overflow: hidden;*/
+/*  height: 0;*/
+	background: #FF964A;
+  margin:0 -26px;
+  padding:0 26px;
 }
 
 .navbar .navbar-inner {
@@ -1086,26 +1099,49 @@ width:300px;
 }
 
 @media (max-width: 480px) {
+  
+  .mobile-menu-btn, .mobile-menu-search-btn  {
+    opacity:0.7;
+    }
+  
   footer ul {clear:both; padding-top:20px;}
 .brand img {
 	width:220px;
 /*  margin-left: -20px;*/
-	margin-top: -5px;
+/*  margin-top: -5px;*/
 }
 .brand {
   float:none !important;
-  margin-top: -5px !important;
+/*  margin-top: -5px !important;*/
   width:220px;
   margin-left:auto !important;
 	margin-right:auto !important;
 /*  outline:1px lime solid;*/
-  padding:10px !important;
+/*  padding:15px 10px  0 !important;*/
 /*  height:60px !important;*/
   background:#fff;
 }
 
-.mobile-menu-btn  {float:left !important; margin-left: -20px !important; /*margin-right:20px !important;*/}
-.mobile-menu-search-btn {margin-right:-20px !important;}
+.navbar {
+  background:#fff; border-bottom:10px solid #FF7B00; border-top:10px solid #FF7B00 !important; 
+  margin-top:5px; 
+/*  outline:5px solid red !important;*/
+}
+.navbar-inner {
+/*  outline:1px solid lime; */
+  padding-bottom:0;
+/*  margin-left: -26px;*/
+/*  margin-right: -26px;*/
+  }
+.mobile-menu-btn  {float:left !important; 
+  margin-right: 10px !important;
+  margin-bottom:10px !important;
+  margin-left:-15px !important;
+  }
+.mobile-menu-search-btn {
+  margin-right:-15px !important;
+  margin-bottom:10px !important;
+  }
 
 .navbar .btn-navbar {
   margin:5px 2px 0;
