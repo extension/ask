@@ -238,7 +238,9 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 
 @media screen and (max-width: 767px) {
   body {padding:0;}
-/*  body {border:1px solid red;}*/
+  .flash_notification_wrapper {
+    margin-left:-26px; margin-right:-26px;
+  }
   #expert_navbar.navbar {margin-bottom:0;}
   .container {padding-top:0;}
   #expert_navbar-inner {padding:.5em 6px .75em 15px;}
@@ -285,6 +287,14 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 }
 @media screen and (max-width: 480px) {
 /*  #search_field {width:80%;}*/
+  .flash_notification_wrapper {
+/*    border:1px solid lime;
+    padding:10px;
+    margin-top:4px; */
+    margin-left:-26px; margin-right:-26px;}
+/*  .flash_notification_wrapper p {width:100%;}*/
+/*  #flash_notification {left:-26px;right:0;}*/
+  #flash_notification p {padding: 1em; font-size:18px;}
   #extension_logo img {width:120px; height:auto;}
   #ask_an_expert_logo img {width:120px; height:auto;}
   #question_wrapper {padding:1em 0 !important;}
