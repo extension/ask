@@ -76,7 +76,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   -moz-border-radius: 0px;
   -o-border-radius: 0px;
 }
-#expert_navbar-inner a.brand {color:#fff !important;}
+#expert_navbar-inner a.brand {color:#ccc !important;}
 
 
 
@@ -225,7 +225,10 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 
 
 @media screen and (min-width: 767px) {
+/*  .global-nav-mobile-shim {height:50px; outline:1px solid lime;}*/
   .brand img {width:360px;}
+  .global-nav-mobile {display:none;}
+/*  .global-nav {position:fixed; top:0;}*/
 }
 
 @media screen and (min-width: 767px) and (max-width: 979px) {
@@ -275,7 +278,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   .brand img {width:auto;}
 	.navbar #publicbar .container {width: 1170px; padding:2em 0;}
 }
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 450px) {
   .navavatar.loggedin.publicuser {display:block;float:none;}
   .hidecompact420 {display:none;}
 /*  .navavatar .avatar_with_badge img {height:20px;width:20px;}*/
@@ -292,6 +295,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   #expertbar .container {padding:0;}
   #publicbar .container h1 {margin:0;}
   .brand {padding-left:20px;}
+  #expert_navbar-inner a.brand {font-size:15px;}
 
 }
 
