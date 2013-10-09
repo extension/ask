@@ -520,12 +520,23 @@ class User < ActiveRecord::Base
   
   # this instance method used to merge two user accounts into one account, particularly used 
   # when merging two accounts created for the same user resulting from a user using 
-  # more than one method of authentication (eg. twitter, eXtension, etc.)
+  # more than one method of authentication (eg. twitter, eXtension, etc.).
+  # this is meant to be run in the console.
   def merge_account_with(user_id)
+    if self.id == user_id 
+      puts 'Cannot merge an account with itself.'
+      return
+    end
+    
     user_to_merge_with = User.find_by_id(user_id)
+    if user_to_merge_with.blank?
+      puts 'User to merge with does not exist'
+      return
+    end
+    
     # we're keeping the first user account created and merging the later one with it 
     # along with destroying the later account when the merging is complete
-    if user_to_merge_with.created_at > self.created_at 
+    if user_to_merge_with.created_at >= self.created_at 
       user_to_keep = self
       user_to_remove = user_to_merge_with
     else
