@@ -545,16 +545,22 @@ class User < ActiveRecord::Base
       
       case association_to_user.macro 
       when :has_many || :has_one
-        # in the case of :has_one, I think it's pretty rare to see the :through and :as options get used,  
+        # in the case of :has_one, I think it's pretty rare to see the :as option get used,  
         # but I'm going to cover it along with :has_many anyways
         
-        # operate on the 'through' table if it's has_many :through
-        if !association_to_user.options[:through].blank?
-          model_to_use = association_to_user.options[:through].to_s.singularize.camelize.constantize
-          key_of_user = "user_id" if key_of_user.blank?
-        # the association name in the associated table will be different if we have options[:as] (polymorphic association)
-        # and we'll need to update all records with options[:as]_id in the associated table
-        elsif !association_to_user.options[:as].blank?
+        # we are not including the 'through' relationships
+        # we are relying on the 'through' table to be a separate association defined on the user model, and since this 'through' table is 
+        # the table that holds the user association, it would be a duplicate pass through for a through relationship, so we skip the 'through' relationships here.
+                
+        # for example: 
+        # has_many :taggings, :as => :taggable, dependent: :destroy
+        # has_many :tags, :through => :taggings
+        # the taggings association will cycle through this loop and do the options[:as] condition, 
+        # the tags association is through taggings, and since it's part of that same association as taggings, 
+        # and taggings has already been processed (or will be), the taggings table is the only table needing updating.
+        next if !association_to_user.options[:through].blank?
+        
+        if !association_to_user.options[:as].blank?
           # get the class name of the associated table and the user key (eg. prefable_id)
           key_of_user = "#{association_to_user.options[:as]}_id"
           model_to_use = association_to_user.klass
