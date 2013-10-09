@@ -522,7 +522,7 @@ class User < ActiveRecord::Base
   # when merging two accounts created for the same user resulting from a user using 
   # more than one method of authentication (eg. twitter, eXtension, etc.).
   # right now, this is meant to be run in the console.
-  def merge_account_with(user_id)
+  def merge_account_with(user_id, respect_email_consistency = false)
     if self.id == user_id 
       puts 'Cannot merge an account with itself.'
       return
@@ -531,6 +531,11 @@ class User < ActiveRecord::Base
     user_to_merge_with = User.find_by_id(user_id)
     if user_to_merge_with.blank?
       puts 'User to merge with does not exist'
+      return
+    end
+    
+    if respect_email_consistency == true && self.email.strip != user_to_merge_with.email.strip
+      puts 'User to merge with does not have the same email address as user. This is an error because respect_email_consistency is on'
       return
     end
     
@@ -598,9 +603,9 @@ class User < ActiveRecord::Base
     end
     
     # if the user record from eXtension authentication is the user record to be removed, 
-    # then transfer the darmok_id to the remaining user account b/c that's needed for sync with people.
-    if !user_to_remove.darmok_id.blank?
-      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id)
+    # then transfer the darmok_id to the remaining user account if the darmok id doesn't exist for it, b/c that's needed for sync with people.
+    if user_to_remove.darmok_id.present? && user_to_keep.darmok_id.blank?
+      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id) 
     end
     
     user_to_remove.destroy
