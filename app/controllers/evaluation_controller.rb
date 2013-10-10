@@ -15,7 +15,6 @@ class EvaluationController < ApplicationController
     @page_title = 'Evaluation Questions'
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     if @question.present?
-      session[:question_id] = @question.id
       @evaluator = @question.submitter
       session[:evaluator_id] = @evaluator.id
     else
@@ -32,23 +31,36 @@ class EvaluationController < ApplicationController
   end
 
   def answer_demographic
-    @demographic_question = DemographicQuestion.find(params[:demographic_question_id])
-    @demographic_question.create_or_update_answers(user: @evaluator, params: params)
-    return render :json => {'success'=> true}.to_json, :status => :ok
+    if(session[:evaluator_id] and @evaluator = User.find_by_id(session[:evaluator_id]))
+      @demographic_question = DemographicQuestion.find(params[:demographic_question_id])
+      @demographic_question.create_or_update_answers(user: @evaluator, params: params)
+      return render :json => {'success'=> true}.to_json, :status => :ok
+    else
+      # silent failure
+      return render :json => {'success'=> false}.to_json, :status => :ok
+    end
   end
 
   def answer_evaluation
-    # params[:question_id] is a 'test mode'
+    # params[:question_id] == 0 is a 'test mode'
     if(params[:question_id].to_i != 0)
       @question = Question.find(params[:question_id])
-      @evaluation_question = EvaluationQuestion.find(params[:evaluation_question_id])
-      @evaluation_question.create_or_update_answers(user: @evaluator, question: @question, params: params)
+      if(session[:evaluator_id] and @evaluator = User.find_by_id(session[:evaluator_id]) and @evaluator = @question.submitter)
+        @evaluation_question = EvaluationQuestion.find(params[:evaluation_question_id])
+        @evaluation_question.create_or_update_answers(user: @evaluator, question: @question, params: params)
+        return render :json => {'success'=> true}.to_json, :status => :ok
+      else
+        # silent failure
+        return render :json => {'success'=> false}.to_json, :status => :ok
+      end
+    else
+      return render :json => {'success'=> true}.to_json, :status => :ok
     end
-    return render :json => {'success'=> true}.to_json, :status => :ok
   end
 
   def thanks
     flash[:success] = "Thank you for your response and helping us make Ask an Expert better!"
+    session[:evaluator_id] = nil
     return redirect_to(root_path)
   end
 
