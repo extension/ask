@@ -8,6 +8,8 @@ class Notification < ActiveRecord::Base
   belongs_to :notifiable, :polymorphic => true
   serialize :additional_data
   after_create :queue_delayed_notifications
+  belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
+  belongs_to :recipient, :class_name => "User", :foreign_key => "recipient_id"
   
   
   ###############################
