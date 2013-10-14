@@ -23,7 +23,9 @@
   <meta name="twitter:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>">
   <meta name="twitter:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>">
   <meta property="twitter:description" content="<%= @page_meta_description ? @page_meta_description : "One-to-one answers from experts from universities across America." %>"/>
-  
+  <!--[if IE 8]>
+    <%= stylesheet_link_tag    "ie8", :media => "all" %>
+  <![endif]-->
   <%= stylesheet_link_tag    "public", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
