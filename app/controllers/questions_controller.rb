@@ -150,16 +150,16 @@ class QuestionsController < ApplicationController
           @submitter = current_user
         else
           # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
-          @email_confirmation = params[:email_confirmation] ? params[:email_confirmation].strip : params[:question][:submitter_email]
+          @email_confirmation = params[:email_confirmation].present? ? params[:email_confirmation].strip : params[:question][:submitter_email].strip
 
           # make sure email and confirmation email match up
-          if params[:question][:submitter_email] != @email_confirmation
+          if params[:question][:submitter_email].strip != @email_confirmation.strip
             @argument_errors = "Email address does not match the confirmation email address."
             raise ArgumentError
           end
           
-          if !(@submitter = User.find_by_email(params[:question][:submitter_email]))
-            @submitter = User.new({:email => params[:question][:submitter_email], :kind => 'PublicUser'})
+          if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
+            @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
             if !@submitter.valid?
               @argument_errors = ("Errors occured when saving: " + @submitter.errors.full_messages.join(' '))
               raise ArgumentError
@@ -225,7 +225,7 @@ class QuestionsController < ApplicationController
           return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
-        flash[:notice] = 'An internal error has occured. Please check back later.'
+        flash[:warning] = "An internal error has occured. Please check back later."
         @host_name = request.host_with_port
         
         if @question.blank?
@@ -286,8 +286,8 @@ class QuestionsController < ApplicationController
     REVIEWTEXT
 
 
-    if !(@submitter = User.find_by_email(params[:email]))
-      @submitter = User.new({:email => params[:email], :kind => 'PublicUser'})
+    if !(@submitter = User.find_by_email(params[:email].strip))
+      @submitter = User.new({:email => params[:email].strip, :kind => 'PublicUser'})
       if !@submitter.valid?
         returninformation = {'message' => @submitter.errors.full_messages.join("\n"), 'success' => false}
         return render :json => returninformation.to_json, :status => :unprocessable_entity

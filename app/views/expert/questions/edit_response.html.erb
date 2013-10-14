@@ -6,7 +6,13 @@
     
     <h1>Edit Question</h1>
     <h3>Editing guidelines</h3>
+    <% if @response.is_expert %>
     <p>You can correct grammatical, spelling or factual errors. If it is a factual edit or an edit that changes the nature of the response, please click the 'Notify Question Submitter of this Change' checkbox below so the question submitter will get an e-mail notification that this edit has occurred. For all minor, spelling, grammatical, etc. edits, please do not check the box to notify the submitter. The author of the response will be notified on every edit.</p>
+    <% else %>
+    <p>
+	  NOTE: You are editing a response from the question submitter. Please correct grammatical and spelling errors in order to optimize public questions for search results. Since these changes should not be factual and just minor, no notifications will be sent to the submitter or anyone else.
+	</p>
+    <% end %>
     <div id="edit_response" class="formy">
       
 	  <%= form_for @response, :url => update_response_expert_question_path(:id => @question.id, :response_id => @response.id) do |f| %>
@@ -22,10 +28,12 @@
 	     <%= text_area_tag :reason, nil, { rows: 5 } %>
 	    </p>
 	
+	    <% if @response.is_expert %>
 	    <p>
 		  <label><%= check_box_tag :notify_submitter %> Notify Question Submitter of this Change</label>
 		  <p>Note: A notification to the submitter should be sent if there are any factual changes in the response or changes that would affect the nature of it that a submitter would like to know. All other changes (ie. grammer, spelling, minor changes etc.) do not need submitter notification but the author of the original response will be automatically notified on every change.</p>
 		</p>
+		<% end %>
   	  </fieldset>
 
 	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>
