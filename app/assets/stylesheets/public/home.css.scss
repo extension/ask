@@ -1,4 +1,12 @@
 @import "_variables";
+/*bootstrap override*/
+  img {max-width: none;}
+/* ie 8 fixes */
+.thumb {
+  width: 40px !important;
+  height: 40px !important;
+}
+
 
 .badge {
   display: block;
@@ -222,12 +230,12 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 }*/
 
 /*.aboutme {float:left;}*/
-
+.global-nav-mobile {display:none;}
 
 @media screen and (min-width: 767px) {
 /*  .global-nav-mobile-shim {height:50px; outline:1px solid lime;}*/
   .brand img {width:360px;}
-  .global-nav-mobile {display:none;}
+/*  .global-nav-mobile {display:none;}*/
 /*  .global-nav {position:fixed; top:0;}*/
 }
 
@@ -309,3 +317,6 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 
 }
 
+
+/*.navbar {background:#000 !important; border:3px solid red; background-image:none; padding-top:30px;}*/
+/*.navbar-inner {background:#000 !important; border:3px solid lime; background-image:none; padding-top:100px !important;}*/

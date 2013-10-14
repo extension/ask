@@ -192,15 +192,17 @@ input[type="color"],
 }
 
 .navbar-inner {
-	background:none;
+  
+	background:#fff;
 	border:none;
 	border-bottom:1px solid #d9d9d9;
 	vertical-align: bottom;
 	padding:20px 0 10px;
 	-webkit-box-shadow:none;
-    -moz-box-shadow:none;
-    box-shadow:none;
-    font-family: 'Sanchez', serif;
+  -moz-box-shadow:none;
+  box-shadow:none;
+  font-family: 'Sanchez', serif;
+  filter:none; /*override ie8 default*/
 }
 
 .navbar .nav > li > a {
