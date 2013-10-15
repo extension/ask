@@ -4,7 +4,7 @@
   <%- if @question_testing -%>
     <h3>This feedback refers to the question you asked on <%= @question.created_at.strftime("%B %e, %Y") %> titled <%= link_to(@question.title, "#", target: '_blank') %></h3>
   <%- else -%>
-    <h3>This feedback refers to the question you asked on <%= @question.created_at.strftime("%B %e, %Y") %> titled <%= link_to(@question.title, question_path(@question), target: '_blank') %></h3>
+    <h3>This feedback refers to the question you asked on <%= @question.created_at.strftime("%B %e, %Y") %> titled <%= link_to(@question.title, submitter_view_path(:fingerprint => @question.question_fingerprint), target: '_blank') %></h3>
   <%- end -%>
 
   <p>Your feedback about the answer to your recent question is very important to us. Thank you for helping us to improve the eXtension Ask an Expert experience!</p>
