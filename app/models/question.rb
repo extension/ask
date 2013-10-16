@@ -13,6 +13,9 @@ class Question < ActiveRecord::Base
   
   rakismet_attrs :author_email => :email, :content => :body
   has_paper_trail :on => [:update], :only => [:title, :body]
+  
+  # remove extra whitespace on these attributes
+  auto_strip_attributes :submitter_email, :submitter_firstname, :submitter_lastname, :squish => true
 
 
   class Question::Image < Asset

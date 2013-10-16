@@ -2,6 +2,9 @@ class Tag < ActiveRecord::Base
   has_many :taggings
   validates_uniqueness_of :name
   
+  # remove extra whitespace from these attributes
+  auto_strip_attributes :name, :squish => true
+  
   scope :used_at_least_once, joins(:taggings).group("tags.id").having("COUNT(taggings.id) > 0").select("tags.*, COUNT(taggings.id) AS tag_count")
   scope :not_used, includes(:taggings).group("tags.id").having("COUNT(taggings.id) = 0")
   

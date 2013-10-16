@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130828184953) do
+ActiveRecord::Schema.define(:version => 20131016212841) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -406,8 +406,8 @@ ActiveRecord::Schema.define(:version => 20130828184953) do
     t.integer  "initial_response_id"
     t.integer  "initial_response_time"
     t.string   "question_fingerprint",                        :null => false
-    t.string   "submitter_firstname",      :default => "",    :null => false
-    t.string   "submitter_lastname",       :default => "",    :null => false
+    t.string   "submitter_firstname",      :default => ""
+    t.string   "submitter_lastname",       :default => ""
     t.integer  "county_id"
     t.integer  "location_id"
     t.boolean  "spam_legacy",              :default => false, :null => false

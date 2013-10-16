@@ -81,6 +81,9 @@ gem 'passenger'
 # comment and threaded discussion support
 gem 'ancestry'
 
+# auto strip spaces out of attributes of models
+gem "auto_strip_attributes", "~> 2.0"
+
 # readability port
 gem "ruby-readability", "~> 0.2.4" ,:require => 'readability'
 

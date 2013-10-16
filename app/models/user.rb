@@ -10,6 +10,9 @@ class User < ActiveRecord::Base
   extend YearMonth
   include TagUtilities
   
+  # remove extra whitespace from these attributes
+  auto_strip_attributes :first_name, :last_name, :email, :squish => true
+  
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
