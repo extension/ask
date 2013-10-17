@@ -39,6 +39,8 @@ GEM
       sass (>= 3.2)
     ansi (1.4.3)
     arel (3.0.2)
+    auto_strip_attributes (2.0.4)
+      activerecord (>= 3.0)
     bcrypt-ruby (3.0.1)
     bootstrap-wysihtml5-rails (0.3.1.22)
       railties (>= 3.0)
@@ -293,7 +295,12 @@ PLATFORMS
 DEPENDENCIES
   airbrake
   ancestry
+<<<<<<< HEAD
   anjlab-bootstrap-rails (~> 2.3.1.2)
+=======
+  anjlab-bootstrap-rails
+  auto_strip_attributes (~> 2.0)
+>>>>>>> development
   bootstrap-wysihtml5-rails (~> 0.3.1.22)
   capatross
   capistrano
