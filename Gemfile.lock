@@ -295,12 +295,8 @@ PLATFORMS
 DEPENDENCIES
   airbrake
   ancestry
-<<<<<<< HEAD
   anjlab-bootstrap-rails (~> 2.3.1.2)
-=======
-  anjlab-bootstrap-rails
   auto_strip_attributes (~> 2.0)
->>>>>>> development
   bootstrap-wysihtml5-rails (~> 0.3.1.22)
   capatross
   capistrano
