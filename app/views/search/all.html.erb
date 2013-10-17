@@ -1,38 +1,25 @@
-<h1><%= @list_title %></h1>
+<div class="span8">  
+  <h1><%= @list_title %></h1>
 
-<div class="search_section">
-  <h2>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h2>
-  
-<div id="main" class="span12">
-  <% if @questions.total_entries > 0 %>
-    <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.size %> of <%= @questions.total_entries %></strong></p>
-    <%= paginate @questions %>
+  <div class="search_section">
+    <h2>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h2>
 
-    <% @questions.each do |question| %>
-    <div class="incoming_question">
 
-      <div class="row-fluid">   
+    <% if @questions.total_entries > 0 %>
+      <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.size %> of <%= @questions.total_entries %></strong></p>
+      <%= paginate @questions %>
+      
+      <% @questions.each do |question| %>
+        <%= render :partial => 'home/full_public_question', :locals => {:question => question} %>
+      <% end %>
 
-        <div class="span8">
-          <%= link_to question_path(question.id) do %>
-            <% if question.title.present? %>
-              <h3><%= format_text_for_display(question.title) -%></h3>
-            <% else %>
-              <h3><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></h3>
-            <% end %>
-          <%- end -%>
-          <p>    
-            <%= time_ago_in_words(question.created_at) %> ago
-          </p>
-        </div>
-      </div>
-    </div>
+      <%= paginate @questions %>
+    <% else %>
+      <p>There are currently no questions with these search terms.</p>
     <% end %>
- 
-    <%= paginate @questions %>
-  <% else %>
-    <p>There are currently no questions with these search terms.</p>
-  <% end %>
+  </div>  
 </div>
-  <br class="clearing" />
+
+<div class="span3 offset1">
 </div>
+
