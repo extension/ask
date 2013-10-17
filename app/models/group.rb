@@ -2,6 +2,9 @@ class Group < ActiveRecord::Base
   
   include TagUtilities
   
+  # remove extra whitespace from these attributes
+  auto_strip_attributes :name, :squish => true
+  
   has_many :group_connections, :dependent => :destroy  
   has_many :group_events
   has_many :question_events
