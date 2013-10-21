@@ -470,6 +470,10 @@ class User < ActiveRecord::Base
   def earliest_assigned_at
     QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
   end
+  
+  def earliest_touched_at
+    QuestionEvent.where("initiated_by_id = ?",self.id).minimum(:created_at)
+  end
 
   def assigned_count_by_year
     QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')

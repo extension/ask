@@ -8,9 +8,6 @@
 <div class='row-fluid'>
 
   <div class='span8'>
-    <%- if !@earliest_assigned_at -%>
-      <p><%= @expert.first_name %> has not yet had any assigned questions.</p>
-    <%- else -%>
       <div class="accordion" id="yearly_breakdown">
       <%- @counts_by_year_and_year_month.keys.sort.reverse.each_with_index do |year,index| -%>
         <div class="accordion-group">
@@ -56,6 +53,5 @@
           </div>
         </div>
       <%- end # year loop -%>
-    <%- end # has earliest assigned date -%>
   </div>
 </div>
