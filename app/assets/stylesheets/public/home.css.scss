@@ -281,6 +281,9 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   #publicbar .brand {font-size:2.5em;}
 	.navbar #publicbar .container {width: 940px; padding:2em;}
 	#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
+	
+	.modal {width:880px; margin: 0 0 0 -440px;}
+  .modal-body {max-height:500px;}
 }
 @media screen and (min-width: 1200px) {
 /*  body {border:4px solid blue;}*/
