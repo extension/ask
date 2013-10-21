@@ -12,11 +12,8 @@ class ReportsController < ApplicationController
 
   def expert
     @expert = User.find(params[:id])
-    
-    if(!@earliest_possible_contact = @expert.created_at)
-      return
-    end
-    year_months = User.year_months_between_dates(@earliest_possible_contact,Time.now)
+
+    year_months = User.year_months_between_dates(@expert.created_at,Time.now)
 
     assigned_count_by_year_month = @expert.assigned_count_by_year_month
     answered_count_by_year_month = @expert.answered_count_by_year_month
