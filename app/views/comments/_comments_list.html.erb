@@ -1,0 +1,7 @@
+<% if @question_comments.present? && @question_comments.length > 0 %>
+  <% if @parent_comment.present? %>
+    <%= nested_comments(@question_comments.arrange(:order => 'created_at DESC'), @parent_comment) %>
+  <% else %>
+    <%= nested_comments(@question_comments.arrange(:order => 'created_at DESC')) %>
+  <% end %>
+<% end %>

@@ -14,6 +14,8 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question
     @question_responses = @question.responses
+    @comment = Comment.new
+    @question_comments = @question.comments
     
     ga_tracking = []
     
