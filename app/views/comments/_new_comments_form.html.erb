@@ -5,14 +5,14 @@
       <p><%= @errors %></p>
     </div>
   <% end %>
+  
+  <% if current_user.has_exid? %>
+    <p><%= link_public_user_avatar(current_user, :thumb) %> <%= link_to current_user.public_name, user_path(current_user.id) %></p>
+  <% else %>
+    <p><strong><%= current_user.public_name %></strong></p>
+  <% end %>
 
   <%= form_for @comment, html: {class: "no-top-margin"}, remote: true do |f| %>
-  
-    <% if current_user.has_exid? %>
-      <p><%= link_public_user_avatar(current_user, :thumb) %> <%= link_to current_user.public_name, user_path(current_user.id) %></p>
-    <% else %>
-      <p><strong><%= current_user.public_name %></strong></p>
-    <% end %>
     
     <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5" %>
     

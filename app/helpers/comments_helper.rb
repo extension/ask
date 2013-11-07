@@ -16,12 +16,8 @@ module CommentsHelper
   def comment_class(comment)
     if(@viewer and @last_viewed_at)
       if(@last_viewed_at - 5.minutes < comment.updated_at and comment.user_id != @viewer.id)
-        'comment new'
-      else
-        'comment'
+        'comment-unviewed'
       end
-    else
-      'comment'
     end
   end
 end
