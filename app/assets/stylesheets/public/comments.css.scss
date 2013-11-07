@@ -4,9 +4,8 @@
 
 @import "_variables";
 
-.cc-comment {padding: 1em; position:relative; border-bottom:1px solid #ddd; background:#eee; margin-bottom:1em;}
+.cc-comment {position:relative; padding: 1em 1em .5em; border-bottom:1px solid #ddd; background:#eee; margin-bottom:1em;}
 .cc-comment .content {line-height:1.6em; font-family: Georgia, serif; font-size:15px; color:#444;text-align:left; margin-bottom:0; padding:0;}
-.cc-comment .avatar {width:40px;height:40px; border:1px solid #fff;}
 
 .comment-actions {font-size:13px !important;}
 .comment-actions a {padding:.1em .3em; color:#777;}
@@ -31,5 +30,6 @@
 }
 .cc-comment-form textarea {width:98%;}
 
-.cc-comment.cc-highlight {background: #ffa; -webkit-transition: all 1s linear;}
+.cc-comment.cc-highlight {border:1px solid #ccc; background: #ffa; -webkit-transition: background-color 1s linear;}
 .cc-comment.comment-unviewed {background:#ffa;}
+.cc-comment-anchor {margin-top:-5em; position:absolute;}
