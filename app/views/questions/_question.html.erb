@@ -43,7 +43,7 @@
   <% end %>
   
   
-    <p class="muted"><small>Asked <%= time_ago_in_words(@question.created_at) %> ago</small></p>
+    <p class="muted"><small>Asked <%= humane_date(@question.created_at) %></small></p>
 
       <p>
         <% if @question.location.present? %>
@@ -77,7 +77,8 @@
   <% if @question_responses.size > 0 %>
     <h2 id="responses" class="subhead_style bordered"><%= @question_responses.size %> <%= @question_responses.size == 1 ? "Response" : "Responses" %></h2>
     <% @question_responses.each do |response| %>
-      <div class="response_block">
+      <div id="response-<%= response.id %>" class="response_block">
+        <div id="view-response-<%= response.id %>" class="response-anchor"></div>
         <div class="response">
           <%= format_text_for_display(response.body) %>
         </div>
@@ -126,7 +127,8 @@
           <% else %>
             <p>Anonymous Guest</p>
           <% end %>
-          <p class="muted"><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
+          
+          <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp muted", :title => "Link to this response"} %></small></p>
         </div>
       </div>
     <% end %>
