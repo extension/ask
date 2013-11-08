@@ -131,8 +131,8 @@
       <h2>Comments</h2>
       <p>Comments can be posted on public questions and appear below Expert answers and replies.</p>
     </div>
-    <div id="comment-list">
-	  <%= render :partial => '/comments/comment_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
+    <div id="comments-list">
+      <%= render :partial => 'comments/comments_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
 	  </div>
 	  <% end %>
 	  
@@ -170,3 +170,16 @@
 </div>
 <br class="clearing" />
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#new-comments-form .wysihtml5').wysihtml5({image: false});
+    var highlightedComment = window.location.hash;
+    $(highlightedComment).closest(".cc-comment").addClass("cc-highlight");
+    
+    $(".comment-timestamp").click(function() {
+      $(".cc-comment").removeClass("cc-highlight");
+      $(this).closest(".cc-comment").addClass("cc-highlight");
+    });
+  })
+</script>
