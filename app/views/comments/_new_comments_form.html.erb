@@ -17,10 +17,7 @@
     <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5" %>
     
     <%= f.hidden_field :question_id, value: @question.id %>
-    <!-- parent_comment being present means that we called this template from the parent comment's view page 
-         and we're passing the parent_comment id along to the request to edit that comment so we can then 
-         render the correct thing after the comment edit is executed, because the originating page is a comment and it's 
-         children and not the whole list of comments -->
+    
     <% if @parent_comment.present? %>
       <%= f.hidden_field :parent_id, value: @parent_comment.id %>
     <% end %>
