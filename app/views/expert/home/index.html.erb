@@ -72,28 +72,25 @@
   
   <div class="expert_dashboard_tags">
     
-    <% if @user.expertise_locations.size > 0 %>
-      <% @user.expertise_locations.each do |l| %>
-        <% @unanswered_questions_count = Question.where("location_id = ?", l.id).submitted.not_rejected.count %>
-      
-        <% if @unanswered_questions_count > 0 %>
+    <% if @locations_with_open_questions.present? %>
+      <% @locations_with_open_questions.each do |l| %>
+        <% if l.open_count > 0 %>
           <div class="group_in_group_list active">
             <h4>
               <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span> 
-              <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id)%></strong>
+              <strong><%= link_to "#{l.open_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id)%></strong>
               <span>- <%= link_to "activity report", expert_reports_home_path(:location_id => l.id) %></span>
             </h4>
             <br class="clearing" />
           </div>
           
-          <% if @user.expertise_counties.where("location_id = ?", l.id).size > 0 %>
-            <% @user.expertise_counties.where("location_id = ?", l.id).each do |c| %>
-              <% @unanswered_questions_count = Question.where("county_id = ?", c.id).submitted.not_rejected.count %>
-              <% if @unanswered_questions_count > 0 %>
+          <% if @counties_with_open_questions.present? %>
+            <% @counties_with_open_questions.each do |c| %>
+              <% if c.open_count > 0 %>
                 <div class="group_in_group_list active">
                   <h4>
                     <span class="tag tag-geography"><%= link_to "#{c.name}", expert_view_county_path(c.id) %></span>
-                    <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id, :county_id => c.id)%></strong>
+                    <strong><%= link_to "#{c.open_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id, :county_id => c.id)%></strong>
                   </h4>
                   <br class="clearing" />
                 </div>

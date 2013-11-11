@@ -254,6 +254,24 @@ class User < ActiveRecord::Base
     end
   end
   
+  def get_locations_with_open_questions
+    expertise_location_ids = self.expertise_locations.map{|l| l.id}.join(',')
+    if expertise_location_ids.present?
+      return Location.joins(:questions_with_origin).select("locations.*, COUNT(locations.id) AS open_count").where("locations.id IN (#{expertise_location_ids}) AND questions.status_state = #{Question::STATUS_SUBMITTED}").group("locations.id")
+    else
+      return []
+    end
+  end
+  
+  def get_counties_with_open_questions
+    expertise_county_ids = self.expertise_counties.map{|c| c.id}.join(',')
+    if expertise_county_ids.present?
+      return County.joins(:questions_with_origin).select("counties.*, COUNT(counties.id) AS open_count").where("counties.id IN (#{expertise_county_ids}) AND questions.status_state = #{Question::STATUS_SUBMITTED}").group("counties.id")
+    else
+      return []
+    end
+  end
+  
   def get_pref(pref_name)
     return self.preferences.find(:first, conditions: {name: pref_name})
   end
