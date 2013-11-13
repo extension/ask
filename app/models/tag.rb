@@ -7,6 +7,13 @@ class Tag < ActiveRecord::Base
   
   scope :used_at_least_once, joins(:taggings).group("tags.id").having("COUNT(taggings.id) > 0").select("tags.*, COUNT(taggings.id) AS tag_count")
   scope :not_used, includes(:taggings).group("tags.id").having("COUNT(taggings.id) = 0")
+  scope :tags_with_open_question_frequency, lambda {|tags| joins("JOIN taggings ON taggings.tag_id = tags.id JOIN questions on questions.id = taggings.taggable_id")
+                                                      .where("tags.id IN (#{tags.map{|t| t.id}.join(',')})")
+                                                      .where("taggable_type = 'Question'")
+                                                      .where("status_state = #{Question::STATUS_SUBMITTED}")
+                                                      .group("tags.id")
+                                                      .select("tags.*, COUNT(taggings.id) AS open_question_count")
+                                                    }
   
   # normalize tag names 
   # convert whitespace to single space, underscores to space, yank everything that's not alphanumeric : - or whitespace (which is now single spaces)   

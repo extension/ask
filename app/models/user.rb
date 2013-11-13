@@ -272,6 +272,15 @@ class User < ActiveRecord::Base
     end
   end
   
+  def get_tags_with_open_questions
+    user_tags = self.tags.used_at_least_once
+    if user_tags.present?
+      return Tag.tags_with_open_question_frequency(user_tags)
+    else
+      return 
+    end
+  end
+  
   def get_pref(pref_name)
     return self.preferences.find(:first, conditions: {name: pref_name})
   end

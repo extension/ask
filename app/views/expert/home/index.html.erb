@@ -105,14 +105,13 @@
     <p><%= link_to 'Add locations to your profile', expert_settings_location_path(), :class => "btn btn-primary" %>
   <% end %>
 
-  <% if @user.tags.size > 0 %>
-    <% @user.tags.used_at_least_once.each do |tag| %>
-      <% @unanswered_questions_count = Question.submitted.tagged_with(tag.id).count %>
-      <% if @unanswered_questions_count > 0 %>
+  <% if @tags_with_open_questions.present? %>
+      <% @tags_with_open_questions.each do |tag| %>
+        <% if tag.open_question_count > 0 %>
         <div class="group_in_group_list active">
           <h4>
             <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> 
-            <strong><%= link_to "#{@unanswered_questions_count} unanswered", expert_questions_path(:status => "unanswered", :tag_id => tag.id)%></strong>
+            <strong><%= link_to "#{tag.open_question_count} unanswered", expert_questions_path(:status => "unanswered", :tag_id => tag.id)%></strong>
           </h4>
           <br class="clearing" />
         </div>

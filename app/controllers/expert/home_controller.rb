@@ -21,6 +21,7 @@ class Expert::HomeController < ApplicationController
     
     @locations_with_open_questions = @user.get_locations_with_open_questions
     @counties_with_open_questions = @user.get_counties_with_open_questions
+    @tags_with_open_questions = @user.get_tags_with_open_questions
     
     @my_groups = @user.group_memberships.except(:order).find(:all, :select => "groups.*", :joins => "LEFT JOIN questions on groups.id = questions.assigned_group_id", :group => "groups.id", :order => "COUNT(IF(questions.status_state = #{Question::STATUS_SUBMITTED}, questions.id, NULL)) DESC, groups.name")
     @all_unanswered_questions_count = Question.submitted.not_rejected.count
