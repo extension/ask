@@ -277,7 +277,7 @@ class User < ActiveRecord::Base
     if user_tags.present?
       return Tag.tags_with_open_question_frequency(user_tags)
     else
-      return 
+      return []
     end
   end
   
