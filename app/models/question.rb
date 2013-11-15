@@ -794,17 +794,17 @@ class Question < ActiveRecord::Base
   
   # making a separate method for this right now using memcache, but may combine with similar function for this later
   def self.cached_asked_for_year_month(year_month, cache_options = { expires_in: 2.hours })
-    cache_key = self.get_cache_key(__method__, {year_month: year_month})
+    cache_key = self.get_cache_key(__method__, { year_month: year_month })
     Rails.cache.fetch(cache_key, cache_options) do
-      self.not_rejected.asked_list_for_year_month(year_month).order('created_at DESC')
+      self.not_rejected.asked_list_for_year_month(year_month).count
     end
   end
   
   # making a separate method for this right now using memcache, but may combine with similar function for this later
   def self.cached_answered_for_year_month(year_month, cache_options = { expires_in: 2.hours })
-    cache_key = self.get_cache_key(__method__, {year_month: year_month})
+    cache_key = self.get_cache_key(__method__, { year_month: year_month })
     Rails.cache.fetch(cache_key, cache_options) do
-      self.not_rejected.answered_list_for_year_month(year_month).order('created_at DESC')
+      self.not_rejected.answered_list_for_year_month(year_month).count
     end
   end
     
