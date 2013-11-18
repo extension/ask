@@ -21,11 +21,11 @@
       <%= link_to 'edit', edit_comment_path(comment), class: "muted", remote: true %>
     <%- end %>
 
-    <% if current_user %>
+    <% if current_user && !comment.question.is_private %>
       <%= link_to 'reply', reply_comments_path(comment_id: comment.id), class: '', id: "reply-to-comment-#{comment.id}", remote: true, :data => { :comment => comment.id } %>
 
       <%= link_to 'cancel reply', cancel_reply_comments_path(comment_id: comment.id), style: "display: none;", class: 'cancel-reply-to-comment', id: "cancel-reply-to-comment-#{comment.id}", remote: true, :data => { :comment => comment.id } %>
-      <% end %>
+    <% end %>
   </p>
     
   <% if comment.parent_removed %>

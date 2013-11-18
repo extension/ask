@@ -4,15 +4,21 @@
     <%= @question.comments.size %> <%= @question.comments.size == 1 ? "Comment" : "Comments"%>
   </h2>
   
-  <% if current_user %>
-    <div id="new-comments-form">
-      <%= render partial: 'comments/new_comments_form' %>
-    </div>
-  <% else %>
-    <div class="sign_in_prompt" >
-      <p>Please sign in to post a comment</p>
-      <p><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath), :class => "btn" )%></p>
-    </div>
+  <% if @question.is_private %>
+    <p>* Note: New public comments are disabled for this question because it has been marked private.</p>
+  <% end %>
+   
+  <% if !@question.is_private %>
+    <% if current_user %>
+      <div id="new-comments-form">
+        <%= render partial: 'comments/new_comments_form' %>
+      </div>
+    <% else %>
+      <div class="sign_in_prompt" >
+        <p>Please sign in to post a comment</p>
+        <p><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath), :class => "btn" )%></p>
+      </div>
+    <% end %>
   <% end %>
   
   <div id="comments-list">
