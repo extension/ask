@@ -1,8 +1,10 @@
 <section id="comments">  
   
-  <h2 id="responses" class="subhead_style bordered">
-    <%= @question.comments.size %> <%= @question.comments.size == 1 ? "Comment" : "Comments"%>
-  </h2>
+  <div id="comment-count">
+    <h2 id="responses" class="subhead_style bordered">
+      <%= get_comment_count(@question) %>
+    </h2>
+  </div>
   
   <% if @question.is_private %>
     <p>* Note: New public comments are disabled for this question because it has been marked private.</p>

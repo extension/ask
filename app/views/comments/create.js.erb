@@ -5,6 +5,8 @@ $('#new-comments-form .wysihtml5').wysihtml5({image: false});
 $("#comment-<%= @comment.parent.id %>").children(".cc-comment-form").replaceWith("<%= escape_javascript(render partial: 'comments/new_comments_form') %>");
 <% end %>
 
+$("#comment-count").children("#responses").html("<%= escape_javascript(get_comment_count(@question)) %>");
+
 <% if !defined?(@errors) || @errors.blank? %>
   $("#comments-list").html("<%= escape_javascript(render partial: 'comments_list') %>");
 <% end %>
