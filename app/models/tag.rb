@@ -25,4 +25,13 @@ class Tag < ActiveRecord::Base
     returnstring
   end
   
+  def self.tags_with_open_question_frequency(tag_list)
+    return Tag.joins("JOIN taggings ON taggings.tag_id = tags.id JOIN questions on questions.id = taggings.taggable_id")
+              .where("tags.id IN (#{tag_list.map{|t| t.id}.join(',')})")
+              .where("taggable_type = 'Question'")
+              .where("status_state = #{Question::STATUS_SUBMITTED}")
+              .group("tags.id")
+              .select("tags.*, COUNT(taggings.id) AS open_question_count")
+  end
+  
 end
