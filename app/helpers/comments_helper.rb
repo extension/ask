@@ -20,4 +20,8 @@ module CommentsHelper
       end
     end
   end
+  
+  def get_comment_count(question)
+    return "#{question.comments.size} #{question.comments.size == 1 ? 'Comment' : 'Comments'}"
+  end
 end
