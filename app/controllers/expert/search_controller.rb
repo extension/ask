@@ -21,9 +21,8 @@ class Expert::SearchController < ApplicationController
     @number_passed = false
     
     # special "id of question, expert or group check"
-    if(params[:q].to_i > 0)
+    if (id_number = params[:q].cast_to_i) > 0
       @number_passed = true
-      id_number = params[:q].to_i
       @questions = Question.where(id: id_number).page(1)
       @experts = User.where(id: id_number, kind: 'User').page(1)
       @groups = Group.where(id: id_number).page(1)
