@@ -2,7 +2,7 @@ set :deploy_to, "/services/aae/"
 if(branch = ENV['BRANCH'])
   set :branch, branch
 else
-  set :branch, 'development'
+  set :branch, 'master'
 end
 server 'dev.ask.extension.org', :app, :web, :db, :primary => true
 
