@@ -165,7 +165,7 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_reject
-    InternalMailer.aae_reject(rejected_event: self.notifiable, user: self.notifiable.previous_handling_recipient).deliver unless self.notifiable.previous_handling_recipient.nil?
+    InternalMailer.aae_reject(rejected_event: self.notifiable, user: self.notifiable.previous_handling_recipient).deliver unless self.notifiable.previous_handling_recipient.nil? || (self.notifiable.initiator.id == self.notifiable.previous_handling_recipient)
   end
   
   def process_aae_public_expert_response
