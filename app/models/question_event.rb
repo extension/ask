@@ -292,7 +292,7 @@ class QuestionEvent < ActiveRecord::Base
   def create_question_event_notification
     case self.event_state
     when REJECTED
-      Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless self.previous_recipient_id.nil?
+      Notification.create(notifiable: self, created_by: self.initiated_by_id, recipient_id: self.previous_recipient_id, notification_type: Notification::AAE_REJECT, delivery_time: 1.minute.from_now ) unless (self.previous_recipient_id.nil? || (self.initiated_by_id == self.previous_recipient_id))
     when INTERNAL_COMMENT
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.question.assignee.id, notification_type: Notification::AAE_INTERNAL_COMMENT, delivery_time: 1.minute.from_now ) unless (self.question.assignee.nil? or (self.question.assignee.id == self.initiated_by_id))
     when EDIT_QUESTION
