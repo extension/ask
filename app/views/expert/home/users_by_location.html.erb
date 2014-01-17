@@ -1,4 +1,5 @@
-<h1>Experts in '<%= @location.name %>' (<%= @expert_total_count %>)</h1>
+<h1>Experts in '<%= @location.name %>' (<%= @expert_total_count %>)   <span class='serious-small'><%= link_to 'CSV Email Download', expert_users_by_location_email_csv_path(@location, format: "csv") %></span>
+</h1>
 <h3><%= link_to "View everything in '#{@location.name}'", expert_view_location_path(:id => @location.id) %></h3>
 
 <%= render partial: 'expert/home/expert_list' %>
