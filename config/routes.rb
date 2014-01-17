@@ -139,6 +139,7 @@ Aae::Application.routes.draw do
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
     match "home/users/locations/:id" => "home#users_by_location", :as => 'users_by_location'
+    match "home/users/locations/:id/csv" => "home#users_by_location_email_csv", :as => 'users_by_location_email_csv'
     match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
     match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
     match "home/users/counties/:id" => "home#users_by_county", :as => 'users_by_county' 
