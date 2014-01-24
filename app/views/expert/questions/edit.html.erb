@@ -6,7 +6,11 @@
   
     <h1>Edit Question</h1>
     <h3>Editing guidelines</h3>
-    <p>Please correct grammatical and spelling errors. Question titles may be rewritten in order to optimize public questions for search results.</p>
+    <ul>
+      <li>Please correct grammatical and spelling errors.</li>
+      <li>Titles may be rewritten in order to optimize public questions for search results.</li>
+      <li>Editing the question body or title doesn't generate any email notifications</li>
+    </ul>
     <div id="edit_question" class="formy">
   
 	    <%= form_for @question, :url => expert_question_path(@question) do |f| %>
@@ -24,7 +28,7 @@
     	  </fieldset>
 
           <p>
-	       <%= label_tag :reason, 'Reason' %>
+	       <%= label_tag :reason, 'Reason for editing (This is saved in the revision history)' %>
 	       <%= text_area_tag :reason, nil, { rows: 5 } %>
 	      </p>
 
