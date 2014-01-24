@@ -287,4 +287,17 @@ class Expert::ReportsController < ApplicationController
     @subtext_display = "for #{@year_month}"
     @breadcrumb_display = "#{filter.capitalize} Questions for #{@expert.name} for #{@year_month}"
   end
+
+  def location_summary_by_year
+    @valid_years = Question.group('YEAR(created_at)').count.keys
+    if(params[:year] and @valid_years.include?(params[:year].to_i))
+      @year = params[:year].to_i
+    else
+      @year = Date.today.year
+    end
+    @totals = Question.in_state_out_metrics_by_year(@year).merge(Question.asked_answered_metrics_by_year(@year))
+    @locations =  Location.in_state_out_metrics_by_year(@year).deep_merge(Location.asked_answered_metrics_by_year(@year))
+  end
+
+
 end
