@@ -124,9 +124,9 @@ class InternalMailer < ActionMailer::Base
     @user = options[:user]
     @question = options[:question]
     @response = options[:response]
-    @subject = "Your response to a Ask an Expert question has been edited by another expert (Question:#{@question.id})"
+    @subject = "One of your Ask an Expert responses was edited (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
-    @title = "Your Response to a Ask an Expert Question Has Been Edited by Another Expert"
+    @title = "One of your Ask an Expert responses was edited"
     
     if(!@user.email.blank?)
       if(@will_cache_email)
