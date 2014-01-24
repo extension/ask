@@ -39,7 +39,7 @@
       </tr>
       <%- @locations.each do |location,data| -%>
         <tr>
-          <td><%= location.name %></td>
+          <td><%= link_to(location.name, expert_reports_home_path(:location_id => location.id, :year => @year)) %></td>
           <td><%= data[:asked] -%></td>
           <td><%= data[:submitters] -%></td>
           <td><%= data[:answered] -%></td>
