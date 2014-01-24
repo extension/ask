@@ -4,18 +4,18 @@
   <div id="question_wrapper">
     <p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
     
-    <h1>Edit Response</h1>
-    <h3>Editing guidelines</h3>
     <% if @response.is_expert %>
+      <h1>Edit Expert's Response</h1>
+      <h3>Editing guidelines</h3>
       <ul>
         <li>Please correct grammatical, spelling or factual errors.</li>
         <li>The expert who wrote this response will be notified EVERY time you click "Save changes".</li>
         <li>Only click 'Notify question submitter of this edit' if your edit substantially alters the response, i.e. factual changes.</li>
       </ul>
     <% else %>
-    <p>
-	  NOTE: You are editing a response from the question submitter. Please correct grammatical and spelling errors in order to optimize public questions for search results. Since these changes should not be factual and just minor, no notifications will be sent to the submitter or anyone else.
-	</p>
+      <h1>Edit Submitter's Response</h1>
+      <h3>Editing guidelines</h3>
+    <p>Please correct grammatical and spelling errors in order to optimize public questions for search results. Your edits should be minor, so no notifications will be sent to the submitter or anyone else.</p>
     <% end %>
     <div id="edit_response" class="formy">
       
