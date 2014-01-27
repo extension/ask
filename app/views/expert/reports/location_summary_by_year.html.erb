@@ -8,6 +8,24 @@
   <h1>Metrics by Location for <%= @year -%></h1>
 </div>
 
+<div class="row-fluid">
+  <div class="span12">
+    <ul class="nav nav-pills">
+      <%- @valid_years.each do |year| -%>
+        <%- if year == @year -%>
+         <li class='active'><%= link_to(year, url_for(:year => year)) %></li>
+        <%- else -%>
+          <li><%= link_to(year, url_for(:year => year)) %></li>
+        <%- end -%>
+      <%- end -%> 
+    </ul>
+  </div>
+</div>
+
+
+
+
+
 
 <div class='row-fluid'>
   <div class="span12">

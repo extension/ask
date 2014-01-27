@@ -289,7 +289,7 @@ class Expert::ReportsController < ApplicationController
   end
 
   def location_summary_by_year
-    @valid_years = Question.group('YEAR(created_at)').count.keys
+    @valid_years = Question.group('YEAR(created_at)').count.keys.sort.reverse
     if(params[:year] and @valid_years.include?(params[:year].to_i))
       @year = params[:year].to_i
     else
