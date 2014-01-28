@@ -808,14 +808,28 @@ class Question < ActiveRecord::Base
     end
   end
 
-  def self.in_state_out_metrics_by_year(year,cache_options = { expires_in: 24.hours })
+  def self.in_state_out_metrics_by_year(year,cache_options = {})
+    if(!cache_options[:expires_in].present?)
+      if(year == Date.today.year)
+        cache_options[:expires_in] = 24.hours
+      else
+        cache_options[:expires_in] = 7.days
+      end
+    end    
     cache_key = self.get_cache_key(__method__,{year: year})
     Rails.cache.fetch(cache_key,cache_options) do
       self._in_state_out_metrics_by_year(year)
     end
   end
 
-  def self.asked_answered_metrics_by_year(year,cache_options = { expires_in: 24.hours })
+  def self.asked_answered_metrics_by_year(year,cache_options = {})
+    if(!cache_options[:expires_in].present?)
+      if(year == Date.today.year)
+        cache_options[:expires_in] = 24.hours
+      else
+        cache_options[:expires_in] = 7.days
+      end
+    end    
     cache_key = self.get_cache_key(__method__,{year: year})
     Rails.cache.fetch(cache_key,cache_options) do
       self._asked_answered_metrics_by_year(year)
