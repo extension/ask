@@ -807,5 +807,94 @@ class Question < ActiveRecord::Base
       self.not_rejected.answered_list_for_year_month(year_month).count
     end
   end
+
+  def self.in_state_out_metrics_by_year(year,cache_options = {})
+    if(!cache_options[:expires_in].present?)
+      if(year == Date.today.year)
+        cache_options[:expires_in] = 24.hours
+      else
+        cache_options[:expires_in] = 7.days
+      end
+    end    
+    cache_key = self.get_cache_key(__method__,{year: year})
+    Rails.cache.fetch(cache_key,cache_options) do
+      self._in_state_out_metrics_by_year(year)
+    end
+  end
+
+  def self.asked_answered_metrics_by_year(year,cache_options = {})
+    if(!cache_options[:expires_in].present?)
+      if(year == Date.today.year)
+        cache_options[:expires_in] = 24.hours
+      else
+        cache_options[:expires_in] = 7.days
+      end
+    end    
+    cache_key = self.get_cache_key(__method__,{year: year})
+    Rails.cache.fetch(cache_key,cache_options) do
+      self._asked_answered_metrics_by_year(year)
+    end
+  end  
+
+  def self._in_state_out_metrics_by_year(year)
+    in_out_state = {}
+    out_state = Question.not_rejected.joins(:question_events => :initiator) \
+                .where('users.location_id != questions.location_id') \
+                .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+                .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+                .count('DISTINCT(questions.id)')
+
+    out_state_experts = Question.not_rejected.joins(:question_events => :initiator) \
+                .where('users.location_id != questions.location_id') \
+                .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+                .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+                .count('DISTINCT(question_events.initiated_by_id)')
+
+    in_state = Question.not_rejected.joins(:question_events => :initiator) \
+                .where('users.location_id = questions.location_id') \
+                .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+                .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+                .count('DISTINCT(questions.id)')
+
+    in_state_experts = Question.not_rejected.joins(:question_events => :initiator) \
+                .where('users.location_id = questions.location_id') \
+                .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+                .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+                .count('DISTINCT(question_events.initiated_by_id)')
+
+      in_out_state = {:in_state => in_state || 0, 
+                      :out_state => out_state || 0, 
+                      :in_state_experts => in_state_experts || 0, 
+                      :out_state_experts => out_state_experts || 0 }    
+
+  end
+
+  def self._asked_answered_metrics_by_year(year)
+    asked_answered = {}
+    asked    = Question.not_rejected \
+               .where("DATE_FORMAT(questions.created_at,'%Y') = #{year}") \
+               .count('DISTINCT(questions.id)')
+
+    submitters = Question.not_rejected \
+               .where("DATE_FORMAT(questions.created_at,'%Y') = #{year}") \
+               .count('DISTINCT(questions.submitter_id)')
+
+    answered = Question.not_rejected.joins(:question_events => :initiator) \
+               .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+               .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+               .count('DISTINCT(questions.id)')
+
+    experts = QuestionEvent.joins(:initiator).handling_events \
+               .where("DATE_FORMAT(question_events.created_at,'%Y') = #{year}") \
+               .count('DISTINCT(question_events.initiated_by_id)')
+
+      asked_answered = {:asked => asked || 0, 
+                        :submitters => submitters|| 0, 
+                        :answered => answered|| 0,
+                        :experts => experts|| 0 }
+
+    asked_answered
+
+  end  
     
 end
