@@ -86,6 +86,10 @@ class Response < ActiveRecord::Base
     Notification.where(notifiable_id: self.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT, delivery_time: Time.now..Settings.expert_response_edit_interval.from_now).size > 0
   end
 
+  def pending_submitter_response_edit_notification?
+    Notification.where(notifiable_id: self.id, notification_type: Notification::AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER, delivery_time: Time.now..Settings.expert_response_edit_interval.from_now).size > 0
+  end
+
   private
 
   def set_public_flag
