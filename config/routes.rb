@@ -146,6 +146,7 @@ Aae::Application.routes.draw do
     match "home/groups/counties/:id" => "home#groups_by_county", :as => 'groups_by_county'
     match "home/questions/counties/:id" => "home#questions_by_county", :as => 'questions_by_county'
     match "home/experts" => "home#experts"
+    match "home/recent_activity" => "home#recent_activity"
     match "home/answered" => "home#answered"
     match "home/unanswered" => "home#unanswered"
     match "home/dashboard" => "home#dashboard"
