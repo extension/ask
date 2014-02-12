@@ -44,7 +44,7 @@ class Expert::HomeController < ApplicationController
   end
   
   def recent_activity
-    @question_edits = QuestionEvent.page.order("created_at DESC").limit(25)
+    @question_edits = QuestionEvent.significant_events.page.order("created_at DESC").limit(25)
   end
   
   def search

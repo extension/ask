@@ -1,11 +1,11 @@
 <h1>Recent activity</h1>
-<p>This is a global view of all question and response edits and related activity</p>
+<p>This is a global view of significant activity including question and response editing, question rejections, and changes in privacy status.</p>
 <%= paginate @question_edits %>
 <ul class="question-edit-activity">
 <% if @question_edits.size > 0 %>
   <% @question_edits.each do |event| %>
     <li class="question-edit-activity-item" id='qe_<%= event.id %>'>
-      <%= stringify_question_event(event) %>
+      <%= stringify_question_event(event, true) %>
     </li>
   <% end %>
 <% end %>
