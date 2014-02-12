@@ -162,6 +162,7 @@
     <h4><span><%= number_with_delimiter(@number_of_questions_asked, :delimiter => ',') %></span> Question<%= (@number_of_questions_asked == 1) ? '' : 's' %> Asked</h4>
     <h4><span><%= number_with_delimiter(@number_of_questions_answered, :delimiter => ',') %></span> Question<%= (@number_of_questions_answered == 1) ? '' : 's' %> Answered</h4>
     <p><%= link_to "View Reports", expert_reports_home_path() %></p>
+    <p><%= link_to "Recent Activity", expert_home_recent_activity_path() %></p>
   </div>
   
 </div>
