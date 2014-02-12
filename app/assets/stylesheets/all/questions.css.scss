@@ -114,3 +114,9 @@ div.rejected {padding:1em; @include rounded10; margin-bottom:2em; background:#F5
 #areyousure {padding:1em; @include rounded10; margin-bottom:2em; background:#FFFFA5 !important; border:3px solid #999; }
 #areyousure h3 {font-size:1.6em; color:#000; margin-bottom:1em;}
 #areyousure p {font-size:1.2em; color:#000;}
+
+.question-edit-activity {margin:0 0 5em; background:#F8F8F8; color:#363955; padding:2em 1em;}
+.question-edit-activity-item {
+  margin-bottom:.5em; list-style:none; border-bottom:1px solid #ddd;
+}
+.question-edit-activity-item a {color:#363955; font-weight:bold;}

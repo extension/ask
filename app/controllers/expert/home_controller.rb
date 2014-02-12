@@ -43,6 +43,10 @@ class Expert::HomeController < ApplicationController
     redirect_to expert_home_path()
   end
   
+  def recent_activity
+    @question_edits = QuestionEvent.significant_events.page.order("created_at DESC").limit(25)
+  end
+  
   def search
   end
   

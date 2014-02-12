@@ -71,10 +71,12 @@ class QuestionEvent < ActiveRecord::Base
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
+  SIGNIFICANT_EVENTS = [REJECTED,NO_ANSWER,EXPERT_EDIT_QUESTION,EXPERT_EDIT_RESPONSE,CHANGED_TO_PUBLIC,CHANGED_TO_PRIVATE]
 
 
   scope :latest, order("#{self.table_name}.created_at desc")
   scope :handling_events, where("event_state IN (#{HANDLING_EVENTS.join(',')})")
+  scope :significant_events, where("event_state IN (#{SIGNIFICANT_EVENTS.join(',')})")
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
