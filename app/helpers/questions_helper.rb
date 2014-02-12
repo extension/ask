@@ -36,7 +36,7 @@ module QuestionsHelper
     when QuestionEvent::RESOLVED 
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::NO_ANSWER
-      return "No answer available was sent from <strong #{qw}>#{initiator_full_name}</strong><span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+      return "#{question_context} response \"No answer available\" was sent from <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CLOSED
       close_msg = "Question Closed Out by <strong #{qw}>#{initiator_full_name}</strong><span> #{humane_date(q_event.created_at)}</span>"
       close_msg += " <span class=\"comment\">#{q_event.response}</span>"
