@@ -5,15 +5,30 @@
 # see LICENSE file
 
 class EvaluationAnswer < ActiveRecord::Base
+  ## includes
   include MarkupScrubber
 
+  ## attributes
+  attr_accessible :question, :question_id, :user, :user_id, :response, :value, :evaluation_question_id, :evaluation_question
+
+  ## constants
+  
+  ## associations
   belongs_to :evaluation_question
   belongs_to :user
   belongs_to :question
   has_many :evaluation_logs
-  attr_accessible :question, :question_id, :user, :user_id, :response, :value, :evaluation_question_id, :evaluation_question
 
+  ## scopes
+  
+  ## validations
+  
+  ## filters
   after_save :log_changed_answers
+
+  ## class methods
+  
+  ## instance methods
 
   def log_changed_answers
     if(self.changed? and !self.changes[:response].blank? and !self.changes[:response][0].blank?)
