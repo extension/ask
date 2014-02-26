@@ -63,26 +63,38 @@ class Question < ActiveRecord::Base
   PRIVACY_REASON_SUBMITTER = 2
   PRIVACY_REASON_EXPERT = 3
   PRIVACY_REASON_REJECTED = 4
-  
-  # disclaimer info
-  EXPERT_DISCLAIMER = "This message for informational purposes only. " +  
-                      "It is not intended to be a substitute for personalized professional advice. For specific local information, " + 
-                      "contact your local county Cooperative Extension office or other qualified professionals." + 
-                      "eXtension Foundation does not recommend or endorse any specific tests, professional, products, procedures, opinions, or other information " + 
-                      "that may be mentioned. Reliance on any information provided by eXtension Foundation, employees, suppliers, member universities, or other " + 
-                      "third parties through eXtension is solely at the user's own risk. All eXtension content and communication is subject to  the terms of " + 
-                      "use http://www.extension.org/main/termsofuse which may be revised at any time."
-  
-  
+    
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
-  WRANGLER_REASSIGN_COMMENT = "This question has been assigned to you because the previous assignee clicked the 'Hand off to a Question Wrangler' button."
+
+  WRANGLER_REASSIGN_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
+  This question has been assigned to you because the previous assignee 
+  clicked the 'Hand off to a Question Wrangler' button.
+  END_TEXT
   
-  PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = "This question has been reassigned to you because a new comment has been posted to your response. Please " +
-  "reply using the link below or close the question out if no reply is needed. Thank You."
-  PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = "This question has been assigned to you because a new comment has been posted to an expert's response or open question who has marked aae vacation status. Please " +
-  "reply using the link below or close the question out if no reply is needed. Thank You."
+  PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
+  This question has been reassigned to you because a new comment has 
+  been posted to your response. Please reply using the link below or 
+  close the question out if no reply is needed. Thank You.
+  END_TEXT
+
+  PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
+  This question has been assigned to you because a new comment has been 
+  posted to an expert's response or open question who has marked aae 
+  vacation status. Please reply using the link below or close the 
+  question out if no reply is needed. Thank You.
+  END_TEXT
   
-  DECLINE_ANSWER = "Thank you for your question for eXtension. The topic area in which you've made a request is not yet fully staffed by eXtension experts and therefore we cannot provide you with a timely answer. Instead, if you live in the United States, please consider contacting the Cooperative Extension office closest to you. Simply go to http://www.extension.org, drop in your zip code and choose the office that is most convenient for you.  We apologize that we can't help you right now,  but please come back to eXtension to check in as we grow and add experts."
+  DECLINE_ANSWER = <<-END_TEXT.gsub(/\s+/, " ").strip
+  Thank you for your question for eXtension. The topic area in which 
+  you've made a request is not yet fully staffed by eXtension experts 
+  and therefore we cannot provide you with a timely answer. Instead, 
+  if you live in the United States, please consider contacting the 
+  Cooperative Extension office closest to you. Simply go to 
+  http://www.extension.org, drop in your zip code and choose the 
+  office that is most convenient for you.  We apologize that we 
+  can't help you right now,  but please come back to eXtension to 
+  check in as we grow and add experts.
+  END_TEXT
   
   AAE_V2_TRANSITION = '2012-12-03 12:00:00 UTC'
   EVALUATION_ELIGIBLE = '2013-03-15 00:00:00 UTC' # beware the ides of March
