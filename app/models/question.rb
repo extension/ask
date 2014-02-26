@@ -6,77 +6,21 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+  ## includes
   include MarkupScrubber
   include Rakismet::Model
   include CacheTools
   include TagUtilities
   
+  ## attributes
   rakismet_attrs :author_email => :email, :content => :body
   has_paper_trail :on => [:update], :only => [:title, :body]
   
   # remove extra whitespace on these attributes
   auto_strip_attributes :submitter_email, :submitter_firstname, :submitter_lastname, :squish => true
-
-
-  class Question::Image < Asset
-    has_attached_file :attachment, 
-                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
-                      :styles => Proc.new { |attachment| attachment.instance.styles }
-                        attr_accessible :attachment
-    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
-    def dynamic_style_format_symbol
-        URI.escape(@dynamic_style_format).to_sym
-      end
-
-      def styles
-        unless @dynamic_style_format.blank?
-          { dynamic_style_format_symbol => @dynamic_style_format }
-        else
-          { :medium => "300x300>", :thumb => "100x100>" }
-        end
-      end
-
-      def dynamic_attachment_url(format)
-        @dynamic_style_format = format
-        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
-        attachment.url(dynamic_style_format_symbol)
-      end
-  end
-
-  has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
-  belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
-  belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
-  belongs_to :location
-  belongs_to :county
-  belongs_to :original_location, :class_name => "Location", :foreign_key => "original_location_id"
-  belongs_to :original_county, :class_name => "County", :foreign_key => "original_county_id"
-  belongs_to :widget 
-  belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
-  belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
-  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
-  belongs_to :original_group, :class_name => "Group", :foreign_key => "original_group_id"
-  
-  has_many :comments
-  has_many :ratings
-  has_many :responses
-  has_many :question_events
-  has_many :question_viewlogs, dependent: :destroy
-  
-  has_many :taggings, :as => :taggable, dependent: :destroy
-  has_many :tags, :through => :taggings
   
   accepts_nested_attributes_for :images, :allow_destroy => true
   accepts_nested_attributes_for :responses
-  
-  validates :body, :presence => true
-  validate :validate_attachments
-  
-  before_create :generate_fingerprint, :set_last_opened
-
-
-  after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
-  after_update :index_me
-
 
   # sunspot/solr search
   searchable :auto_index => false do
@@ -87,6 +31,8 @@ class Question < ActiveRecord::Base
     boolean :is_private
   end  
   
+
+  ## constants
   ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
   
   # status numbers (for status_state)     
@@ -141,6 +87,30 @@ class Question < ActiveRecord::Base
   AAE_V2_TRANSITION = '2012-12-03 12:00:00 UTC'
   EVALUATION_ELIGIBLE = '2013-03-15 00:00:00 UTC' # beware the ides of March
 
+  ## associations
+  has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
+  belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
+  belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
+  belongs_to :location
+  belongs_to :county
+  belongs_to :original_location, :class_name => "Location", :foreign_key => "original_location_id"
+  belongs_to :original_county, :class_name => "County", :foreign_key => "original_county_id"
+  belongs_to :widget 
+  belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
+  belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
+  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
+  belongs_to :original_group, :class_name => "Group", :foreign_key => "original_group_id"
+  
+  has_many :comments
+  has_many :ratings
+  has_many :responses
+  has_many :question_events
+  has_many :question_viewlogs, dependent: :destroy
+  
+  has_many :taggings, :as => :taggable, dependent: :destroy
+  has_many :tags, :through => :taggings
+  
+  ## scopes
   scope :public_visible, conditions: { is_private: false }
   scope :private, conditions: { is_private: true }
   scope :switched_to_private, conditions: { is_private: true, :is_private_reason => PRIVACY_REASON_EXPERT}
@@ -166,6 +136,32 @@ class Question < ActiveRecord::Base
   scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
+
+  ## validations
+  validates :body, :presence => true
+  validate :validate_attachments
+
+  ## filters
+  before_create :generate_fingerprint, :set_last_opened
+  after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+  after_update :index_me
+  
+  ## class methods
+  ## instance methods
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+
 
   # check for spam - given the process flow, not sure
   # this is a candidate for delayed job
