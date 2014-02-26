@@ -7,7 +7,7 @@
   </div>
   
   <% if @question.is_private %>
-    <p>* Note: New public comments are disabled for this question because it has been marked private.</p>
+    <p class="well">Commenting is disabled because this question is marked private. You can still use the response button above to send a message to the expert assigned to this question.</p>
   <% end %>
    
   <% if !@question.is_private %>
