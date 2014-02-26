@@ -5,15 +5,25 @@
 # see LICENSE file
 
 class Demographic < ActiveRecord::Base
+  ## includes
   include MarkupScrubber
 
+  ## attributes
+  attr_accessible :demographic_question, :demographic_question_id, :user, :user_id, :response, :value
+
+  ## constants
+  ## associations
   belongs_to :demographic_question
   belongs_to :user
   has_many :demographic_logs
-  attr_accessible :demographic_question, :demographic_question_id, :user, :user_id, :response, :value
 
+  ## scopes
+  ## validations
+  ## filters
   after_save :log_changed_answers
 
+  ## class methods
+  ## instance methods
 
   def log_changed_answers
     if(self.changed? and !self.changes[:response].blank? and !self.changes[:response][0].blank?)

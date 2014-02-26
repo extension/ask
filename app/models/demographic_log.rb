@@ -5,7 +5,18 @@
 # see LICENSE file
 
 class DemographicLog < ActiveRecord::Base
-  serialize :changed_answers
-  belongs_to :demographic
+  ## includes
+  ## attributes
   attr_accessible :demographic, :demographic_id, :changed_answers
+  serialize :changed_answers
+
+  ## constants
+  ## associations
+  belongs_to :demographic
+
+  ## scopes
+  ## validations
+  ## filters
+  ## class methods
+  ## instance methods
 end
