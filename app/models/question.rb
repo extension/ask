@@ -6,6 +6,32 @@
 #  see LICENSE file
 
 class Question < ActiveRecord::Base
+  # subclasses
+  class Question::Image < Asset
+    has_attached_file :attachment, 
+                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :styles => Proc.new { |attachment| attachment.instance.styles }
+                        attr_accessible :attachment
+    # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
+    def dynamic_style_format_symbol
+        URI.escape(@dynamic_style_format).to_sym
+      end
+
+      def styles
+        unless @dynamic_style_format.blank?
+          { dynamic_style_format_symbol => @dynamic_style_format }
+        else
+          { :medium => "300x300>", :thumb => "100x100>" }
+        end
+      end
+
+      def dynamic_attachment_url(format)
+        @dynamic_style_format = format
+        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+        attachment.url(dynamic_style_format_symbol)
+      end
+    end
+
   ## includes
   include MarkupScrubber
   include Rakismet::Model
@@ -19,9 +45,6 @@ class Question < ActiveRecord::Base
   # remove extra whitespace on these attributes
   auto_strip_attributes :submitter_email, :submitter_firstname, :submitter_lastname, :squish => true
   
-  accepts_nested_attributes_for :images, :allow_destroy => true
-  accepts_nested_attributes_for :responses
-
   # sunspot/solr search
   searchable :auto_index => false do
     text :title, more_like_this: true
@@ -105,6 +128,7 @@ class Question < ActiveRecord::Base
 
   ## associations
   has_many :images, :as => :assetable, :class_name => "Question::Image", :dependent => :destroy
+  accepts_nested_attributes_for :images, :allow_destroy => true
   belongs_to :assignee, :class_name => "User", :foreign_key => "assignee_id"
   belongs_to :current_resolver, :class_name => "User", :foreign_key => "current_resolver_id"
   belongs_to :location
@@ -116,16 +140,19 @@ class Question < ActiveRecord::Base
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :original_group, :class_name => "Group", :foreign_key => "original_group_id"
-  
+  belongs_to :initial_response,  class_name: 'AaeResponse', :foreign_key => "initial_response_id"
+
   has_many :comments
   has_many :ratings
   has_many :responses
+  accepts_nested_attributes_for :responses  
   has_many :question_events
   has_many :question_viewlogs, dependent: :destroy
   
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   
+
   ## scopes
   scope :public_visible, conditions: { is_private: false }
   scope :private, conditions: { is_private: true }
