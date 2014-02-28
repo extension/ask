@@ -38,9 +38,6 @@ gem 'rmagick'
 gem 'geocoder'
 gem 'geoip'
 
-# Deploy with Capistrano
-gem 'capistrano'
-
 gem 'sitemap_generator'
 
 # authentication
