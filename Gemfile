@@ -129,6 +129,11 @@ group :development do
   gem 'quiet_assets'
   gem 'pry'
   gem 'net-http-spy'
+
+  # pretty error handling
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'meta_request'
 end
 
 group :test do
