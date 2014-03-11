@@ -25,6 +25,10 @@ gem 'anjlab-bootstrap-rails', '~> 2.3.1.2', :require => 'bootstrap-rails'
 # wysihtml5 + bootstrap + asset pipeline
 gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
+# jqplot
+gem 'outfielding-jqplot-rails'
+
+
 # storage
 gem 'mysql2'
 
@@ -60,7 +64,7 @@ gem 'kaminari'
 # revision history
 gem 'paper_trail', '~> 2'
 
-# diffs 
+# diffs
 gem 'diffy'
 
 # email validation
