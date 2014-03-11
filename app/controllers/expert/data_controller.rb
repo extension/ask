@@ -16,18 +16,18 @@ class AaeController < ApplicationController
     @question_stats = Question.answered_stats_by_yearweek('questions',options)
     @expert_stats = QuestionActivity.stats_by_yearweek(options)
     @responsetime_stats = Question.answered_stats_by_yearweek('responsetime',options)
-    @evaluation_response_rate = AaeEvaluationQuestion.mean_response_rate
-    @demographic_response_rate = AaeDemographicQuestion.mean_response_rate
+    @evaluation_response_rate = EvaluationQuestion.mean_response_rate
+    @demographic_response_rate = DemographicQuestion.mean_response_rate
   end
 
 
 
   def demographics
-    @demographic_questions = AaeDemographicQuestion.order(:questionorder).active
+    @demographic_questions = DemographicQuestion.order(:questionorder).active
   end
 
   def evaluations
-    @evaluation_questions = AaeEvaluationQuestion.order(:questionorder).active
+    @evaluation_questions = EvaluationQuestion.order(:questionorder).active
 
   end
 
