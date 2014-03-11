@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140311150831) do
+ActiveRecord::Schema.define(:version => 20140311154941) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -343,13 +343,13 @@ ActiveRecord::Schema.define(:version => 20140311150831) do
   add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id", "question_id"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
-    t.integer  "question_id",                        :null => false
+    t.integer  "question_id",                                           :null => false
     t.integer  "submitter_id"
     t.integer  "initiated_by_id"
     t.integer  "recipient_id"
     t.integer  "recipient_group_id"
     t.text     "response"
-    t.integer  "event_state",                        :null => false
+    t.integer  "event_state",                                           :null => false
     t.integer  "contributing_question_id"
     t.text     "tags"
     t.text     "additional_data"
@@ -365,9 +365,10 @@ ActiveRecord::Schema.define(:version => 20140311150831) do
     t.text     "previous_tags"
     t.integer  "previous_group_id"
     t.integer  "changed_group_id"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.text     "updated_question_values"
+    t.boolean  "is_expert",                          :default => false
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
