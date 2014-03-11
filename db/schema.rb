@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131016212841) do
+ActiveRecord::Schema.define(:version => 20140311150831) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -405,6 +405,7 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
     t.text     "current_response"
     t.integer  "initial_response_id"
     t.integer  "initial_response_time"
+    t.datetime "initial_response_at"
     t.string   "question_fingerprint",                        :null => false
     t.string   "submitter_firstname",      :default => ""
     t.string   "submitter_lastname",       :default => ""
@@ -438,6 +439,7 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
+  add_index "questions", ["initial_response_id", "initial_response_time", "initial_response_at"], :name => "initial_response_ndx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
