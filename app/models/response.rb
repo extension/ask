@@ -2,13 +2,13 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 class Response < ActiveRecord::Base
   # subclasses
   class Response::Image < Asset
-    has_attached_file :attachment, 
+    has_attached_file :attachment,
                       :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
                       :styles => Proc.new { |attachment| attachment.instance.styles }
                         attr_accessible :attachment
@@ -31,29 +31,39 @@ class Response < ActiveRecord::Base
       attachment.url(dynamic_style_format_symbol)
     end
   end
+
+  # includes
   include MarkupScrubber
+
+  # attributes
   has_paper_trail :on => [:update], :only => [:body]
-  
+
+  # constants
+  YEARWEEK_RESOLVED = 'YEARWEEK(responses.created_at,3)'
+
+  # associations
   belongs_to :question
   belongs_to :resolver, :class_name => "User", :foreign_key => "resolver_id"
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   has_many :ratings
   has_many :images, :as => :assetable, :class_name => "Response::Image", :dependent => :destroy
-  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
-  
   accepts_nested_attributes_for :images, :allow_destroy => true
-  
-  before_save :set_public_flag
-  after_create :set_timings
-  after_save :check_first_response, :index_parent_question
-  
-  validates :body, :presence => true
-  validate :validate_attachments
+  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
 
+  # scopes
   scope :latest, order('created_at DESC')
   scope :expert, where(is_expert: true)
   scope :expert_after_public, where(is_expert: true).where(previous_expert: false)
   scope :non_expert, where(is_expert: false)
+
+  # validations
+  validates :body, :presence => true
+  validate :validate_attachments
+
+  # filters
+  before_save :set_public_flag
+  after_create :set_timings
+  after_save :check_first_response, :index_parent_question
 
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
@@ -65,7 +75,7 @@ class Response < ActiveRecord::Base
   def body=(bodycontent)
     write_attribute(:body, self.cleanup_html(bodycontent))
   end
-  
+
   def set_timings
     question_submitted_at = self.question.created_at
     update_attribs = {}
@@ -73,12 +83,12 @@ class Response < ActiveRecord::Base
 
     if(last_response = self.question.responses.where('id != ?',self.id).where('created_at <= ?',self.created_at).latest.first)
       update_attribs[:time_since_last] = (self.created_at - last_response.created_at)
-      update_attribs[:previous_expert] = last_response.is_expert?    
+      update_attribs[:previous_expert] = last_response.is_expert?
     else
       # first response - set time_since_last to time_since_submission and previous_expert false to ease calculations
       update_attribs[:time_since_last] = (self.created_at - question_submitted_at)
       update_attribs[:previous_expert] = false
-    end         
+    end
     self.update_attributes(update_attribs)
   end
 
@@ -103,13 +113,12 @@ class Response < ActiveRecord::Base
 
   def check_first_response
     if(self.question.initial_response_id.blank?)
-      self.question.update_attributes({initial_response_id: self.id, initial_response_time: self.created_at - self.question.created_at})
+      self.question.update_attributes({initial_response_id: self.id, initial_response_time: self.created_at - self.question.created_at, initial_response_at: self.created_at})
     end
   end
-  
+
   def index_parent_question
     Sunspot.index(self.question)
   end
-    
-end
 
+end
