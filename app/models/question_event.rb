@@ -85,6 +85,7 @@ class QuestionEvent < ActiveRecord::Base
   scope :handling_events, where("event_state IN (#{HANDLING_EVENTS.join(',')})")
   scope :significant_events, where("event_state IN (#{SIGNIFICANT_EVENTS.join(',')})")
   scope :individual_assignments, where("event_state = ?",ASSIGNED_TO)
+  scope :expert, where(is_expert: true)
 
   # validations
 
@@ -366,28 +367,28 @@ class QuestionEvent < ActiveRecord::Base
       cache_key = self.get_cache_key(__method__,{scope_sql: current_scope ? current_scope.to_sql : ''})
       Rails.cache.fetch(cache_key,cache_options) do
         with_scope do
-          _stats_by_yearweek(cache_options)
+          _stats_by_yearweek
         end
       end
     else
       with_scope do
-        _stats_by_yearweek(cache_options)
+        _stats_by_yearweek
       end
     end
   end
 
-  def self._stats_by_yearweek(cache_options = {})
+  def self._stats_by_yearweek
     metric = 'experts'
     stats = YearWeekStats.new
     # increase_group_concat_length
     with_scope do
-      ea = self.earliest_activity_at
+      ea = self.expert.earliest_activity_at
       if(ea.blank?)
         return stats
       end
-      la = self.latest_activity_at - 1.week
+      la = self.expert.latest_activity_at
 
-      metric_by_yearweek = self.group(YEARWEEK_ACTIVE).count('DISTINCT(contributor_id)')
+      metric_by_yearweek = self.expert.group(YEARWEEK_ACTIVE).count('DISTINCT(initiated_by_id)')
 
       year_weeks = self.year_weeks_between_dates(ea.to_date,la.to_date)
       year_weeks.each do |year,week|
