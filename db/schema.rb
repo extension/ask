@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140312143248) do
+ActiveRecord::Schema.define(:version => 20140312185332) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -73,6 +73,21 @@ ActiveRecord::Schema.define(:version => 20140312143248) do
 
   add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
   add_index "counties", ["name"], :name => "idx_counties_on_name"
+
+  create_table "data_filters", :force => true do |t|
+    t.integer  "created_by"
+    t.text     "settings"
+    t.text     "notifylist"
+    t.string   "fingerprint",            :limit => 40
+    t.boolean  "dump_in_progress"
+    t.datetime "dump_last_generated_at"
+    t.float    "dump_last_runtime"
+    t.integer  "dump_last_filesize"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  add_index "data_filters", ["fingerprint"], :name => "fingerprint_ndx", :unique => true
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -407,6 +422,7 @@ ActiveRecord::Schema.define(:version => 20140312143248) do
     t.integer  "initial_response_id"
     t.integer  "initial_response_time"
     t.datetime "initial_response_at"
+    t.datetime "initial_responder_id"
     t.string   "question_fingerprint",                        :null => false
     t.string   "submitter_firstname",      :default => ""
     t.string   "submitter_lastname",       :default => ""
@@ -441,7 +457,7 @@ ActiveRecord::Schema.define(:version => 20140312143248) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
-  add_index "questions", ["initial_response_id", "initial_response_time", "initial_response_at"], :name => "initial_response_ndx"
+  add_index "questions", ["initial_response_id", "initial_response_time", "initial_response_at", "initial_responder_id"], :name => "initial_response_ndx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"

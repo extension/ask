@@ -113,7 +113,10 @@ class Response < ActiveRecord::Base
 
   def check_first_response
     if(self.question.initial_response_id.blank?)
-      self.question.update_attributes({initial_response_id: self.id, initial_response_time: self.created_at - self.question.created_at, initial_response_at: self.created_at})
+      self.question.update_attributes({initial_response_id: self.id,
+                                      initial_response_time: self.created_at - self.question.created_at,
+                                      initial_response_at: self.created_at,
+                                      initial_responder_id: self.resolver_id})
     end
   end
 
