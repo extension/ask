@@ -2,21 +2,42 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 require 'valid_email'
 class User < ActiveRecord::Base
+  # includes
   extend YearMonth
   include TagUtilities
-  
+
+  # attributes
   # remove extra whitespace from these attributes
   auto_strip_attributes :first_name, :last_name, :email, :squish => true
-  
+
+  # sunspot/solr search
+  searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
+    text :name
+    text :bio
+    text :login
+    text :email
+    text :tag_fulltext
+    boolean :retired
+    boolean :is_blocked
+    string :kind
+    time :last_active_at
+  end
+
+
+  devise :rememberable, :trackable, :database_authenticatable
+
+
+  # constants
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
 
+  # associations
   has_many :authmaps
   has_many :comments
   has_many :user_locations
@@ -58,39 +79,12 @@ class User < ActiveRecord::Base
   has_many :previous_handling_initiator_question_events, :class_name => "QuestionEvent", :foreign_key => "previous_handling_initiator_id"
   has_many :submitted_responses, :class_name => "Response", :foreign_key => "submitter_id"
   has_many :resolved_responses, :class_name => "Response", :foreign_key => "resolver_id"
-  
-  
   belongs_to :location
   belongs_to :county
-
-  # sunspot/solr search
-  searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
-    text :name
-    text :bio
-    text :login
-    text :email
-    text :tag_fulltext
-    boolean :retired
-    boolean :is_blocked
-    string :kind
-    time :last_active_at
-  end
-
-
-  devise :rememberable, :trackable, :database_authenticatable
-
   has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
 
-  validates_attachment :avatar, :size => { :less_than => 8.megabytes },
-    :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
 
-  # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter 
-  # does not pass email information back.
-  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
-  
-  before_update :update_vacated_aae
-  before_save :update_aae_status_for_public
-
+  # scopes
   scope :tagged_with, lambda {|tag_id|
     {:include => {:taggings => :tag}, :conditions => "tags.id = '#{tag_id}' AND taggings.taggable_type = 'User'"}
   }
@@ -109,12 +103,12 @@ class User < ActiveRecord::Base
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
-  
+
   scope :tagged_with_any, lambda { |tag_array|
-    tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',') 
-    joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC") 
+    tag_list = tag_array.map{|t| "'#{t.name}'"}.join(',')
+    joins(:tags).select("#{self.table_name}.*, COUNT(#{self.table_name}.id) AS tag_count").where("tags.name IN (#{tag_list})").group("#{self.table_name}.id").order("tag_count DESC")
   }
-  
+
   scope :group_membership_for, lambda { |group_id| joins(:group_connections => :group).where("group_connections.group_id = #{group_id}")}
   scope :from_location, lambda{ |location| joins(:location).where("locations.id = #{location.id}")}
   scope :from_county, lambda{ |county| joins(:county).where("counties.id = #{county.id}")}
@@ -146,7 +140,7 @@ class User < ActiveRecord::Base
          :secondword => "^#{words[1]}"
         }
       end
-      
+
       conditions = ["((first_name rlike :firstword AND last_name rlike :secondword) OR (first_name rlike :secondword AND last_name rlike :firstword))",findvalues]
     else
       if type.nil?
@@ -157,25 +151,37 @@ class User < ActiveRecord::Base
     end
     {:conditions => conditions}
   }
-  
-  # the first authmap is twitter if either it's a new record and we're saving the first authmap to it or 
+
+  # validations
+  validates_attachment :avatar, :size => { :less_than => 8.megabytes },
+    :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
+
+  # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter
+  # does not pass email information back.
+  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
+
+  # filters
+  before_update :update_vacated_aae
+  before_save :update_aae_status_for_public
+
+  # the first authmap is twitter if either it's a new record and we're saving the first authmap to it or
   # more than one authmap exists for the user and the first one is the twitter authmap
   def first_authmap_twitter?
     twitter_authmap = self.authmaps.detect{|am| am.source == 'twitter'}
     twitter_authmap.present? && (self.authmaps.length == 1 || (self.authmaps.order(:created_at).first.id == twitter_authmap.id))
   end
-  
-  
+
+
   def self.by_question_event_count(event_state,options = {})
     with_scope do
       (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
-        
+
       qe_scope = self.exid_holder.not_retired
-      .select("users.*, 
+      .select("users.*,
                COUNT(DISTINCT IF(question_events.event_state = #{event_state}, question_id, NULL)) AS resolved_count")
       .joins("LEFT JOIN question_events on question_events.initiated_by_id = users.id")
       .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",options[:yearmonth]).group("initiated_by_id")
-        
+
       qe_scope = qe_scope.limit(options[:limit]) if options[:limit].present?
       qe_scope.order("resolved_count DESC")
     end
@@ -198,10 +204,10 @@ class User < ActiveRecord::Base
     end
     return DEFAULT_NAME
   end
-  
+
   def self.to_csv(users, fields, options = {})
     fields = self.column_names if fields.blank?
-    CSV.generate(options) do |csv| 
+    CSV.generate(options) do |csv|
       csv << fields
       users.each do |user|
         csv << user.attributes.values_at(*fields)
@@ -238,7 +244,7 @@ class User < ActiveRecord::Base
   def retired?
     return self.retired
   end
-    
+
   def previously_assigned(question)
     find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
     !find_question.blank?
@@ -253,7 +259,7 @@ class User < ActiveRecord::Base
       end
     end
   end
-  
+
   def get_locations_with_open_questions
     expertise_location_ids = self.expertise_locations.map{|l| l.id}.join(',')
     if expertise_location_ids.present?
@@ -262,7 +268,7 @@ class User < ActiveRecord::Base
       return []
     end
   end
-  
+
   def get_counties_with_open_questions
     expertise_county_ids = self.expertise_counties.map{|c| c.id}.join(',')
     if expertise_county_ids.present?
@@ -271,7 +277,7 @@ class User < ActiveRecord::Base
       return []
     end
   end
-  
+
   def get_tags_with_open_questions
     user_tags = self.tags.used_at_least_once
     if user_tags.present?
@@ -280,15 +286,15 @@ class User < ActiveRecord::Base
       return []
     end
   end
-  
+
   def get_pref(pref_name)
     return self.preferences.find(:first, conditions: {name: pref_name})
   end
-  
+
   def log_create_group(group)
     GroupEvent.log_group_creation(group, self, self)
   end
-  
+
   def join_group(group, connection_type)
     if (connection = GroupConnection.where(user_id: self.id, group_id: group.id).first)
       connection.destroy
@@ -308,7 +314,7 @@ class User < ActiveRecord::Base
     if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
       if(connection_type == 'leader' || connection_type == 'member')
         self.update_attribute(:is_question_wrangler, true)
-        Preference.create_or_update(self, Preference::NOTIFICATION_INCOMING, true, group.id) 
+        Preference.create_or_update(self, Preference::NOTIFICATION_INCOMING, true, group.id)
       end
     end
 
@@ -411,7 +417,7 @@ class User < ActiveRecord::Base
   def send_incoming_notification?(group)
     self.preferences.setting(Preference::NOTIFICATION_INCOMING, group)
   end
-  
+
   def send_activity_notification?(question)
     self.preferences.setting(Preference::NOTIFICATION_ACTIVITY, nil, question)
   end
@@ -464,7 +470,7 @@ class User < ActiveRecord::Base
     logger.debug "In time_for_user #{self.id}"
     self.has_time_zone? ? datetime.in_time_zone(self.time_zone) : datetime.in_time_zone(Settings.default_display_timezone)
   end
-  
+
   def last_view_for_question(question)
     activity = self.question_viewlogs.views.where(question_id: question.id).first
     if(!activity.blank?)
@@ -473,7 +479,7 @@ class User < ActiveRecord::Base
       nil
     end
   end
-  
+
   def daily_summary_group_list
     list = []
     self.group_memberships.each{|group| list.push(group) if (send_daily_summary?(group) and group.include_in_daily_summary?)}
@@ -497,7 +503,7 @@ class User < ActiveRecord::Base
   def earliest_assigned_at
     QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
   end
-  
+
   def earliest_touched_at
     QuestionEvent.where("initiated_by_id = ?",self.id).minimum(:created_at)
   end
@@ -535,7 +541,7 @@ class User < ActiveRecord::Base
     .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
-  
+
   def touched_count_by_year
     QuestionEvent.where("initiated_by_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
   end
@@ -543,7 +549,7 @@ class User < ActiveRecord::Base
   def touched_count_by_year_month
     QuestionEvent.where("initiated_by_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
   end
-  
+
   def touched_list_for_year_month(year_month)
     year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     Question.select("DISTINCT(questions.id), questions.*")
@@ -551,38 +557,38 @@ class User < ActiveRecord::Base
     .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
-  
-  # this instance method used to merge two user accounts into one account, particularly used 
-  # when merging two accounts created for the same user resulting from a user using 
+
+  # this instance method used to merge two user accounts into one account, particularly used
+  # when merging two accounts created for the same user resulting from a user using
   # more than one method of authentication (eg. twitter, eXtension, etc.).
   # right now, this is meant to be run in the console.
   def merge_account_with(user_id, respect_email_consistency = false)
-    if self.id == user_id 
+    if self.id == user_id
       puts 'Cannot merge an account with itself.'
       return
     end
-    
+
     user_to_merge_with = User.find_by_id(user_id)
     if user_to_merge_with.blank?
       puts 'User to merge with does not exist'
       return
     end
-    
+
     if respect_email_consistency == true && self.email.strip != user_to_merge_with.email.strip
       puts 'User to merge with does not have the same email address as user. This is an error because respect_email_consistency is on'
       return
     end
-    
-    # we're keeping the first user account created and merging the later one with it 
+
+    # we're keeping the first user account created and merging the later one with it
     # along with destroying the later account when the merging is complete
-    if user_to_merge_with.created_at >= self.created_at 
+    if user_to_merge_with.created_at >= self.created_at
       user_to_keep = self
       user_to_remove = user_to_merge_with
     else
       user_to_keep = user_to_merge_with
       user_to_remove = self
     end
-    
+
     User.reflect_on_all_associations.each do |association_to_user|
       # make sure we have the field we need to use for the user for the associated tables
       if !association_to_user.options[:foreign_key].blank?
@@ -590,26 +596,26 @@ class User < ActiveRecord::Base
       else
         key_of_user = nil
       end
-      
+
       additional_conditions = ''
-      
-      case association_to_user.macro 
+
+      case association_to_user.macro
       when :has_many || :has_one
-        # in the case of :has_one, I think it's pretty rare to see the :as option get used,  
+        # in the case of :has_one, I think it's pretty rare to see the :as option get used,
         # but I'm going to cover it along with :has_many anyways
-        
+
         # we are not including the 'through' relationships
-        # we are relying on the 'through' table to be a separate association defined on the user model, and since this 'through' table is 
+        # we are relying on the 'through' table to be a separate association defined on the user model, and since this 'through' table is
         # the table that holds the user association, it would be a duplicate pass through for a through relationship, so we skip the 'through' relationships here.
-                
-        # for example: 
+
+        # for example:
         # has_many :taggings, :as => :taggable, dependent: :destroy
         # has_many :tags, :through => :taggings
-        # the taggings association will cycle through this loop and do the options[:as] condition, 
-        # the tags association is through taggings, and since it's part of that same association as taggings, 
+        # the taggings association will cycle through this loop and do the options[:as] condition,
+        # the tags association is through taggings, and since it's part of that same association as taggings,
         # and taggings has already been processed (or will be), the taggings table is the only table needing updating.
         next if !association_to_user.options[:through].blank?
-        
+
         if !association_to_user.options[:as].blank?
           # get the class name of the associated table and the user key (eg. prefable_id)
           key_of_user = "#{association_to_user.options[:as]}_id"
@@ -621,7 +627,7 @@ class User < ActiveRecord::Base
           key_of_user = "user_id" if key_of_user.blank?
           model_to_use = association_to_user.klass
         end
-        
+
         model_to_use.where("#{key_of_user} = #{user_to_remove.id}" + "#{additional_conditions}").update_all(key_of_user.to_sym => user_to_keep.id)
       when :has_and_belongs_to_many
         join_table = association_to_user.options[:join_table]
@@ -630,20 +636,76 @@ class User < ActiveRecord::Base
         else
           key_of_user = 'user'
         end
-        # do raw sql here to update a join table without having to instantiate the objects and do AR (delete old and add new) operations 
+        # do raw sql here to update a join table without having to instantiate the objects and do AR (delete old and add new) operations
         # that triggers callbacks.
         connection.execute("UPDATE #{join_table} SET #{key_of_user} = #{user_to_keep.id} WHERE #{key_of_user} = #{user_to_remove.id}")
       end
     end
-    
-    # if the user record from eXtension authentication is the user record to be removed, 
+
+    # if the user record from eXtension authentication is the user record to be removed,
     # then transfer the darmok_id to the remaining user account if the darmok id doesn't exist for it, b/c that's needed for sync with people.
     if user_to_remove.darmok_id.present? && user_to_keep.darmok_id.blank?
-      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id) 
+      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id)
     end
-    
+
     user_to_remove.destroy
   end
 
+  def self.demographics_data_csv(filename)
+    with_scope do
+      _demographics_data_csv(filename)
+    end
+  end
+
+  def self.demographics_private_data_csv(filename)
+    with_scope do
+      _demographics_data_csv(filename,true)
+    end
+  end
+
+  private
+
+  def self._demographics_data_csv(filename,show_submitter = false)
+    CSV.open(filename,'wb') do |csv|
+      headers = []
+      if(show_submitter)
+        headers << 'submitter_id'
+      end
+      headers << 'submitter_is_extension'
+      headers << 'demographics_count'
+      demographic_columns = []
+      AaeDemographicQuestion.order(:id).active.each do |adq|
+        demographic_columns << "demographic_#{adq.id}"
+      end
+      headers += demographic_columns
+      csv << headers
+
+      # data
+      # evaluation_answer_questions
+      eligible_submitters = Question.demographic_eligible.pluck(:submitter_id).uniq
+      response_submitters = Demographic.pluck(:user_id).uniq
+      eligible_response_submitters = eligible_submitters & response_submitters
+      self.where("id in (#{eligible_response_submitters.join(',')})").order("RAND()").each do |person|
+        demographic_count = person.demographics.count
+        next if (demographic_count == 0)
+        row = []
+        if(show_submitter)
+          row << person.id
+        end
+        row << person.has_exid?
+        row << demographic_count
+        demographic_data = {}
+        person.demographics.each do |demographic_answer|
+          demographic_data["demographic_#{demographic_answer.demographic_question_id}"] = demographic_answer.response
+        end
+
+        demographic_columns.each do |column|
+          row << demographic_data[column]
+        end
+
+        csv << row
+      end
+    end
+  end
 
 end

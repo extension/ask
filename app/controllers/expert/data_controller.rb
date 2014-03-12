@@ -5,7 +5,7 @@
 #
 #  see LICENSE file
 
-class AaeController < ApplicationController
+class Expert::DataController < ApplicationController
 
   def index
     if(params[:forcecacheupdate])
@@ -14,7 +14,7 @@ class AaeController < ApplicationController
       options = {}
     end
     @question_stats = Question.answered_stats_by_yearweek('questions',options)
-    @expert_stats = QuestionActivity.stats_by_yearweek(options)
+    @expert_stats = QuestionEvent.stats_by_yearweek(options)
     @responsetime_stats = Question.answered_stats_by_yearweek('responsetime',options)
     @evaluation_response_rate = EvaluationQuestion.mean_response_rate
     @demographic_response_rate = DemographicQuestion.mean_response_rate

@@ -1,0 +1,92 @@
+<%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Evaluations'}) %>
+
+<header class="jumbotron subhead" id="overview">
+  <h1>AaE Evaluation <small><%= link_to("Download raw data &raquo;".html_safe,'',:class => 'btn') %></small></h1>
+  <p class="lead">Data through <%= year_week_for_last_week%> (<%= date_range_for_last_week%>)</p>
+</header>
+
+
+<%- @evaluation_questions.each do |eq| -%>
+<%-
+    if(params[:forcecacheupdate])
+      response_data = eq.response_data({force: true})
+    else
+      response_data = eq.response_data
+    end
+-%>
+
+<%- if !response_data.blank? -%>
+<div class="page-header">
+  <h3><%= eq.prompt %></h3>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <table class='table table-bordered'>
+      <tbody>
+        <tr>
+          <td><strong>Overall Response rate</strong></td><td><strong><%= response_rate(response_data) %></strong></td>
+        </tr>
+
+      <%- case eq.responsetype -%>
+      <%- when EvaluationQuestion::SCALE -%>
+        <%- (eq.range_start..eq.range_end).each do |value| -%>
+        <tr>
+          <td>
+          <%- if value == eq.range_start -%>
+            <%= value %> : <%= eq.responses[0] -%>
+          <%- elsif value == eq.range_end -%>
+            <%= value %> : <%= eq.responses[1] -%>
+          <%- else -%>
+            <%= value -%>
+          <%- end -%>
+          </td>
+          <td>
+            <%= response_data[:counts][value-1] -%>
+            (<%= number_to_percentage((response_data[:counts][value-1] / response_data[:responses])*100, precision: 1) %>)
+          </td>
+        </tr>
+        <%- end -%>
+      <%- when EvaluationQuestion::MULTIPLE_CHOICE -%>
+        <%- (eq.responses).each_with_index do |response,index| -%>
+        <tr>
+          <td>
+            <%= response -%>
+          </td>
+          <td>
+            <%= response_data[:counts][index] -%>
+            (<%= number_to_percentage((response_data[:counts][index] / response_data[:responses])*100, precision: 1) %>)
+          </td>
+        </tr>
+        <%- end -%>
+      <%- when EvaluationQuestion::OPEN_DOLLAR_VALUE -%>
+        <%- (response_data[:labels]).each_with_index do |bin,index| -%>
+        <tr>
+          <td>
+            <%= bin -%>
+          </td>
+          <td>
+            <%= response_data[:counts][index] -%>
+          </td>
+        </tr>
+        <%- end -%>
+      <%- else -%>
+      <%- end -%>
+
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "evaluation_#{eq.id}"})%>
+  </div>
+</div>
+
+
+      <%- end -%>
+
+
+<%- end -%>

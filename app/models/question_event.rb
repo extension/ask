@@ -85,7 +85,7 @@ class QuestionEvent < ActiveRecord::Base
   scope :handling_events, where("event_state IN (#{HANDLING_EVENTS.join(',')})")
   scope :significant_events, where("event_state IN (#{SIGNIFICANT_EVENTS.join(',')})")
   scope :individual_assignments, where("event_state = ?",ASSIGNED_TO)
-  scope :expert, where(is_expert: true)
+  scope :extension, where(is_extension: true)
 
   # validations
 
@@ -268,11 +268,11 @@ class QuestionEvent < ActiveRecord::Base
       question.update_column(:last_assigned_at, time_of_this_event)
     end
 
-    # set is_expert
+    # set is_extension
     if(create_attributes[:initiated_by_id] and user = User.find(create_attributes[:initiated_by_id]))
-      create_attributes[:is_expert] = user.has_exid?
+      create_attributes[:is_extension] = user.has_exid?
     elsif(create_attributes[:initiator])
-      create_attributes[:is_expert] = create_attributes[:initiator].has_exid?
+      create_attributes[:is_extension] = create_attributes[:initiator].has_exid?
     end
 
 
@@ -382,13 +382,13 @@ class QuestionEvent < ActiveRecord::Base
     stats = YearWeekStats.new
     # increase_group_concat_length
     with_scope do
-      ea = self.expert.earliest_activity_at
+      ea = self.extension.earliest_activity_at
       if(ea.blank?)
         return stats
       end
-      la = self.expert.latest_activity_at
+      la = self.extension.latest_activity_at
 
-      metric_by_yearweek = self.expert.group(YEARWEEK_ACTIVE).count('DISTINCT(initiated_by_id)')
+      metric_by_yearweek = self.extension.group(YEARWEEK_ACTIVE).count('DISTINCT(initiated_by_id)')
 
       year_weeks = self.year_weeks_between_dates(ea.to_date,la.to_date)
       year_weeks.each do |year,week|

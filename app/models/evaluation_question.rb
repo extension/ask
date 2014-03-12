@@ -29,29 +29,29 @@ class EvaluationQuestion < ActiveRecord::Base
   scope :active, where(is_active: true)
 
   ## class methods
-  
+
   def self.mean_response_rate
     response_rate = {}
-    limit_pool = Question.public_only.evaluation_eligible.pluck(:id).uniq
+    limit_pool = Question.public_submissions.evaluation_eligible.pluck(:id).uniq
     response_rate[:eligible] = limit_pool.size
     limit_list = self.active.pluck(:id)
-    response_rate[:responses] = (AaeEvaluationAnswer.where("question_id IN (#{limit_pool.join(',')})").where("evaluation_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
+    response_rate[:responses] = (EvaluationAnswer.where("question_id IN (#{limit_pool.join(',')})").where("evaluation_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
     response_rate
   end
 
   def self.weekly_mean_response_rate
     weeks = {}
-    earliest_date = Question.public_only.evaluation_eligible.minimum(:initial_response_at).to_date
+    earliest_date = Question.public_submissions.evaluation_eligible.minimum(:initial_response_at).to_date
     latest_date = Date.today
     year_weeks = self.year_weeks_between_dates(earliest_date,latest_date)
     year_weeks.each do |year,week|
       yearweek = self.yearweek(year,week)
       response_rate = {}
-      limit_pool = Question.public_only.evaluation_eligible.where("YEARWEEK(initial_response_at) = #{yearweek}").pluck(:id).uniq
+      limit_pool = Question.public_submissions.evaluation_eligible.where("YEARWEEK(initial_response_at) = #{yearweek}").pluck(:id).uniq
       response_rate[:eligible] = limit_pool.size
       if(limit_pool.size > 0)
         limit_list = self.active.pluck(:id)
-        response_rate[:responses] = (AaeEvaluationAnswer.where("question_id IN (#{limit_pool.join(',')})").where("evaluation_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
+        response_rate[:responses] = (EvaluationAnswer.where("question_id IN (#{limit_pool.join(',')})").where("evaluation_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
       else
         response_rate[:responses] = 0
       end
@@ -115,7 +115,7 @@ class EvaluationQuestion < ActiveRecord::Base
     when OPEN_TIME_VALUE
       # interpret as days
       response.gsub(%r{[^\d]},'').to_i
-    else 
+    else
       ''
     end
   end
@@ -124,7 +124,7 @@ class EvaluationQuestion < ActiveRecord::Base
     case self.responsetype
     when MULTIPLE_CHOICE
       self.response_value(response) + 1
-    else 
+    else
       self.response_value(response)
     end
   end
@@ -133,7 +133,7 @@ class EvaluationQuestion < ActiveRecord::Base
     user = options[:user]
     question = options[:question]
     params = options[:params]
-    
+
     begin
       answer = self.evaluation_answers.create(user: user, question: question, response: params[:response], value: self.response_value(params[:response]))
     rescue ActiveRecord::RecordNotUnique => e
@@ -157,7 +157,7 @@ class EvaluationQuestion < ActiveRecord::Base
 
   def _response_data
     data = {}
-    limit_to_pool = Question.public_only.evaluation_eligible.pluck(:id).uniq
+    limit_to_pool = Question.public_submissions.evaluation_eligible.pluck(:id).uniq
     data[:eligible] = limit_to_pool.size
     case self.responsetype
     when MULTIPLE_CHOICE
@@ -197,7 +197,7 @@ class EvaluationQuestion < ActiveRecord::Base
         when 2500..4999
           value_bins['$2,500 - $4,999'] +=1
         when 5000..9999
-          value_bins['$5,000 - $9,999'] +=1          
+          value_bins['$5,000 - $9,999'] +=1
         else
           value_bins['>= $10,000'] +=1
         end
@@ -210,6 +210,6 @@ class EvaluationQuestion < ActiveRecord::Base
       return nil
     end
     data
-  end  
+  end
 
 end

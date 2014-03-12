@@ -38,6 +38,7 @@ class Question < ActiveRecord::Base
   include CacheTools
   include TagUtilities
   extend NilUtils
+  extend YearWeek
 
   ## attributes
   rakismet_attrs :author_email => :email, :content => :body
@@ -180,8 +181,10 @@ class Question < ActiveRecord::Base
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
-  scope :evaluation_eligible, where("created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true)
-  scope :demographic_eligible, where("created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true)
+
+  scope :public_submissions, lambda { where(submitter_is_extension: false) }
+  scope :evaluation_eligible, lambda { where("created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true) }
+  scope :demographic_eligible, lambda { where("created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true) }
 
 
   ## validations
@@ -189,7 +192,7 @@ class Question < ActiveRecord::Base
   validate :validate_attachments
 
   ## filters
-  before_create :generate_fingerprint, :set_last_opened
+  before_create :generate_fingerprint, :set_last_opened, :set_is_extension
   after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
   after_update :index_me
 
@@ -826,6 +829,10 @@ class Question < ActiveRecord::Base
     self.last_opened_at = Time.now
   end
 
+  def set_is_extension
+    self.submitter_is_extension = self.submitter.has_exid?
+  end
+
   def pick_user_from_list(users)
     if !users or users.length == 0
       return nil
@@ -1028,7 +1035,7 @@ class Question < ActiveRecord::Base
       headers << 'submitter_is_extension'
       headers << 'evaluation_count'
       eval_columns = []
-      AaeEvaluationQuestion.order(:id).active.each do |aeq|
+      EvaluationQuestion.order(:id).active.each do |aeq|
         eval_columns << "evaluation_#{aeq.id}_response"
         eval_columns << "evaluation_#{aeq.id}_value"
       end
@@ -1084,6 +1091,118 @@ class Question < ActiveRecord::Base
   def self.latest_resolved_at
     with_scope do
       self.maximum(:initial_response_at)
+    end
+  end
+
+
+  def self.answered_stats_by_yearweek(metric,cache_options = {})
+    if(!cache_options[:nocache])
+      cache_key = self.get_cache_key(__method__,{metric: metric, scope_sql: current_scope ? current_scope.to_sql : ''})
+      Rails.cache.fetch(cache_key,cache_options) do
+        with_scope do
+          _answered_stats_by_yearweek(metric,cache_options)
+        end
+      end
+    else
+      with_scope do
+        _answered_stats_by_yearweek(metric,cache_options)
+      end
+    end
+  end
+
+  def self._answered_stats_by_yearweek(metric,cache_options = {})
+    stats = YearWeekStats.new
+    # increase_group_concat_length
+    with_scope do
+      era = self.answered.earliest_resolved_at
+      if(era.blank?)
+        return stats
+      end
+      lra = self.answered.latest_resolved_at - 1.week
+
+      case metric
+      when 'questions'
+        metric_by_yearweek = self.answered.group(YEARWEEK_ANSWERED).count(:id)
+      when 'responsetime'
+        questions_by_yearweek = self.answered.group(YEARWEEK_ANSWERED).count(:id)
+        responsetime_by_yearweek = self.answered.group(YEARWEEK_ANSWERED).sum(:initial_response_time)
+        metric_by_yearweek = {}
+        responsetime_by_yearweek.each do |yearweek,total_response_time|
+          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / questions_by_yearweek[yearweek].to_f )
+        end
+      else
+        return stats
+      end
+
+      year_weeks = self.year_weeks_between_dates(era.to_date,lra.to_date)
+      year_weeks.each do |year,week|
+        yw = self.yearweek(year,week)
+        stats[yw] = {}
+        metric_value = metric_by_yearweek[yw] || 0
+        stats[yw][metric] = metric_value
+
+        previous_year_key = self.yearweek(year-1,week)
+        (previous_year,previous_week) = self.previous_year_week(year,week)
+        previous_week_key = self.yearweek(previous_year,previous_week)
+
+        previous_week = (metric_by_yearweek[previous_week_key]  ? metric_by_yearweek[previous_week_key] : 0)
+        stats[yw]["previous_week_#{metric}"] = previous_week
+        previous_year = (metric_by_yearweek[previous_year_key]  ? metric_by_yearweek[previous_year_key] : 0)
+        stats[yw]["previous_year_#{metric}"] = previous_year
+
+        # pct_change
+        if(previous_week == 0)
+          stats[yw]["pct_change_week_#{metric}"] = nil
+        else
+          stats[yw]["pct_change_week_#{metric}"] = (metric_value - previous_week) / previous_week.to_f
+        end
+
+        if(previous_year == 0)
+          stats[yw]["pct_change_year_#{metric}"] = nil
+        else
+          stats[yw]["pct_change_year_#{metric}"] = (metric_value - previous_year) / previous_year.to_f
+        end
+      end
+    end
+    stats
+  end
+
+
+  def self.latest_yearweek
+    (year,week) = latest_year_week
+    yearweek(year,week)
+  end
+
+  def self.latest_year_week(cache_options = {})
+    # cachekey = self.get_cache_key(__method__)
+    # Rails.cache.fetch(cachekey,cache_options) do
+      if(yearweek = self._latest_year_week)
+        latest_year = yearweek[0]
+        latest_week = yearweek[1]
+      else
+        (latest_year,latest_week) = self.last_year_week
+      end
+      [latest_year,latest_week]
+    # end
+  end
+
+  def self.latest_date
+    (year,week) = self.latest_year_week
+    (blah,last_date) = self.date_pair_for_year_week(year,week)
+    last_date
+  end
+
+  def self._latest_year_week
+    year = self.maximum('YEAR(created_at)')
+    if(year.nil?)
+      nil
+    else
+      week = self.where(" YEAR(created_at) = ?",year).maximum("WEEKOFYEAR(created_at)")
+      if(week.nil?)
+        nil
+      else
+        [year,week]
+      end
     end
   end
 

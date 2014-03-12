@@ -1,0 +1,25 @@
+<%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Demographics'}) %>
+
+<header class="jumbotron subhead" id="overview">
+  <h1>AaE Demographics <small><%= link_to("Download raw data &raquo;".html_safe,'',:class => 'btn') %></small></h1>
+  <p class="lead">Data through <%= year_week_for_last_week%> (<%= date_range_for_last_week%>)</p>
+</header>
+
+
+<%- @demographic_questions.each do |dq| -%>
+<%-
+    if(params[:forcecacheupdate])
+      response_data = dq.response_data({force: true})
+    else
+      response_data = dq.response_data
+    end
+-%>
+
+<div class="row">
+  <div class="span12">
+    <h3><%= dq.prompt %> <small>Response rate: <%= response_rate(response_data) %></small></h3>
+    <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "demographic_#{dq.id}"})%>
+  </div>
+</div>
+
+<%- end -%>

@@ -7,6 +7,7 @@
 class DemographicQuestion < ActiveRecord::Base
   ## includes
   include CacheTools
+  extend YearWeek
 
   ## attributes
   attr_accessible :creator, :creator_id, :prompt, :responses, :responsetype, :questionorder
@@ -28,10 +29,10 @@ class DemographicQuestion < ActiveRecord::Base
   ## class methods
   def self.mean_response_rate
     response_rate = {}
-    limit_pool = Question.public_only.demographic_eligible.pluck(:submitter_id).uniq
+    limit_pool = Question.public_submissions.demographic_eligible.pluck(:submitter_id).uniq
     response_rate[:eligible] = limit_pool.size
     limit_list = self.active.pluck(:id)
-    response_rate[:responses] = (AaeDemographic.where("user_id in (#{limit_pool.join(',')})").where("demographic_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
+    response_rate[:responses] = (Demographic.where("user_id in (#{limit_pool.join(',')})").where("demographic_question_id IN (#{limit_list.join(',')})").count / limit_list.size)
     response_rate
   end
 
@@ -83,7 +84,7 @@ class DemographicQuestion < ActiveRecord::Base
 
   def _response_data
     data = {}
-    limit_to_pool = Question.public_only.demographic_eligible.pluck(:submitter_id).uniq
+    limit_to_pool = Question.public_submissions.demographic_eligible.pluck(:submitter_id).uniq
     data[:eligible] = limit_to_pool.size
     response_counts = self.demographics.where("demographics.user_id IN (#{limit_to_pool.join(',')})").group('LOWER(response)').count
     data[:responses] = response_counts.values.sum
@@ -93,6 +94,6 @@ class DemographicQuestion < ActiveRecord::Base
       data[:counts] << ((response_counts[r.downcase].blank?) ? 0 : response_counts[r.downcase])
     end
     data
-  end  
+  end
 
 end

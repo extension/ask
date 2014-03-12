@@ -101,6 +101,4 @@ module YearWeek
     year_weeks.map{|(year,week)| yearweek(year,week)}
   end
 
-
-
 end
