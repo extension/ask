@@ -1,3 +1,5 @@
+<div class="span12">
+
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Evaluations'}) %>
 
 <header class="jumbotron subhead" id="overview">
@@ -20,7 +22,7 @@
   <h3><%= eq.prompt %></h3>
 </div>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <table class='table table-bordered'>
       <tbody>
@@ -79,7 +81,7 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "evaluation_#{eq.id}"})%>
   </div>
@@ -90,3 +92,4 @@
 
 
 <%- end -%>
+</div>

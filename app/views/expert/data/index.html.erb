@@ -1,3 +1,5 @@
+<div class="span12">
+
 <% @page_title = "Ask an Expert Data" %>
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Data'}) %>
 
@@ -5,7 +7,7 @@
   <h1><%= @page_title %></h1>
 </header>
 
-<div class="row">
+<div class="row-fluid">
 
   <div class="span6">
     <h2>Evaluation</h2>
@@ -25,23 +27,25 @@
   <h2>Growth and Performance over time <small><%= link_to("Download raw data &raquo;".html_safe,'',:class => 'btn') %></small></h2>
 </div>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <h3>Answered Questions by Week</h3>
     <%= render(:partial => 'shared/line_plot', :locals => {:data => @question_stats.to_graph_data('questions'), :datalabel => 'questions'})%>
   </div>
 </div>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <h3>Active Experts by Week</h3>
     <%= render(:partial => 'shared/line_plot', :locals => {:data => @expert_stats.to_graph_data('experts'), :datalabel => 'experts'})%>
   </div>
 </div>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <h3>Mean Initial Response Time (Hours) by Week</h3>
     <%= render(:partial => 'shared/line_plot', :locals => {:data => @responsetime_stats.to_graph_data('responsetime'), :datalabel => 'responsetime'})%>
   </div>
+</div>
+
 </div>

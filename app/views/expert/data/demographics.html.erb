@@ -1,3 +1,5 @@
+<div class="span12">
+
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Demographics'}) %>
 
 <header class="jumbotron subhead" id="overview">
@@ -15,7 +17,7 @@
     end
 -%>
 
-<div class="row">
+<div class="row-fluid">
   <div class="span12">
     <h3><%= dq.prompt %> <small>Response rate: <%= response_rate(response_data) %></small></h3>
     <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "demographic_#{dq.id}"})%>
@@ -23,3 +25,4 @@
 </div>
 
 <%- end -%>
+</div>

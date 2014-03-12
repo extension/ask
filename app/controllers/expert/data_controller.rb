@@ -6,6 +6,7 @@
 #  see LICENSE file
 
 class Expert::DataController < ApplicationController
+  layout 'expert'
 
   def index
     if(params[:forcecacheupdate])
@@ -28,7 +29,6 @@ class Expert::DataController < ApplicationController
 
   def evaluations
     @evaluation_questions = EvaluationQuestion.order(:questionorder).active
-
   end
 
 end
