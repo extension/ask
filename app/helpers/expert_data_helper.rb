@@ -51,4 +51,16 @@ module ExpertDataHelper
   end
 
 
+  def question_filter_text(filter_hash)
+    string_array = []
+    filter_hash.each do |filter_key,items|
+      if(filter_key == 'date_range')
+        # TODO something
+      else
+        string_array << "<strong>#{filter_key.gsub('_',' ').capitalize}</strong>: #{items.map(&:name).join(' or ')}"
+      end
+    end
+    string_array.join(' and ').html_safe
+  end
+
 end

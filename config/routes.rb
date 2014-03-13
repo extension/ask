@@ -108,6 +108,8 @@ Aae::Application.routes.draw do
         get  :questions
         get  :filter_questions
         post :filter_questions
+        get  :filter_evaluations
+        post :filter_evaluations
       end
     end
 

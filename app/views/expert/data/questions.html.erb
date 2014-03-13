@@ -18,10 +18,10 @@
 
 <div class="row-fluid">
   <div class="question_filter">
-    <%- if @aae_filter -%>
+    <%- if @question_filter -%>
     <div class='well'>
       <p>Filtering results by:</p>
-      <p><%= filter_text(@question_filter_objects) %></p>
+      <p><%= question_filter_text(@question_filter_objects) %></p>
     </div>
     <%- end -%>
   </div>

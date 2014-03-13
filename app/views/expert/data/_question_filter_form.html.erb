@@ -10,9 +10,9 @@
         for ('Oregon' OR 'North Carolina') AND ('eXtension Support')</em></p>
 
       <div class="control-group">
-        <%= label_tag('groups', 'Assigned Group', :class => 'control-label') -%>
+        <%= label_tag('assigned_groups', 'Assigned Group', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("groups","", class: 'span8' ) -%>
+          <%= text_field_tag("assigned_groups","", class: 'span8' ) -%>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
 
 
    $(function () {
-      $('#groups').select2({
+      $('#assigned_groups').select2({
         minimumInputLength: 2,
         multiple: true,
         ajax: {
@@ -64,8 +64,8 @@
         }
      });
 
-    <%- if (@data_filter_objects && @question_filter_objects['groups']) -%>
-      $('#groups').select2('data', <%= @question_filter_objects['groups'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+    <%- if (@data_filter_objects && @question_filter_objects['assigned_groups']) -%>
+      $('#assigned_groups').select2('data', <%= @question_filter_objects['assigned_groups'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
     <%- end -%>
 
    });

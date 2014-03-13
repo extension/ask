@@ -7,13 +7,37 @@
   <p class="lead">Data through <%= year_week_for_last_week%> (<%= date_range_for_last_week%>)</p>
 </header>
 
+<div class="page-header">
+  <h2><%= @page_title %></h2>
+    <%= link_to(@showform ? "Filter Options <i class='fa fa-caret-down'></i>".html_safe : "Filter Options <i class='fa fa-caret-right'></i>".html_safe,
+                '#',
+                id: 'formtoggler',
+                data: {toggle: 'collapse', target: '#showform'}) %>
+
+    <div id="showform" class="<%= (@showform ? 'collapse in' : 'collapse') -%>">
+      <%= render(:partial => 'expert/data/question_filter_form', locals: {filter_path: filter_evaluations_expert_data_path}) %>
+    </div>
+</div>
+
+<div class="row-fluid">
+  <div class="question_filter">
+    <%- if @question_filter -%>
+    <div class='well'>
+      <p>Filtering results by:</p>
+      <p><%= question_filter_text(@question_filter_objects) %></p>
+    </div>
+    <%- end -%>
+  </div>
+</div>
+
+
 
 <%- @evaluation_questions.each do |eq| -%>
 <%-
     if(params[:forcecacheupdate])
-      response_data = eq.response_data({force: true})
+      response_data = eq.response_data({question_filter: @question_filter, show_all: @show_all},{force: true})
     else
-      response_data = eq.response_data
+      response_data = eq.response_data({question_filter: @question_filter, show_all: @show_all})
     end
 -%>
 

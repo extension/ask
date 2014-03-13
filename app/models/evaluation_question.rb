@@ -144,20 +144,33 @@ class EvaluationQuestion < ActiveRecord::Base
     answer
   end
 
-  def response_data(cache_options = {})
+  def response_data(response_data_options = {}, cache_options = {})
     if(!cache_options[:nocache])
-      cache_key = self.get_cache_key(__method__)
+      cache_key = self.get_cache_key(__method__,response_data_options)
       Rails.cache.fetch(cache_key,cache_options) do
-        _response_data
+        _response_data(response_data_options)
       end
     else
-      _response_data
+      _response_data(response_data_options)
     end
   end
 
-  def _response_data
+  def _response_data(response_data_options = {})
+    question_filter = response_data_options[:question_filter]
+    public_only = response_data_options[:show_all].present? ? !response_data_options[:show_all] : true
     data = {}
-    limit_to_pool = Question.public_submissions.evaluation_eligible.pluck(:id).uniq
+    limit_scope = Question.evaluation_eligible
+
+    if(question_filter.present?)
+      limit_scope = limit_scope.filtered_by(question_filter)
+    end
+
+    if(public_only)
+      limit_scope = limit_scope.public_submissions
+    end
+
+    limit_to_pool = limit_scope.pluck(:id).uniq
+
     data[:eligible] = limit_to_pool.size
     case self.responsetype
     when MULTIPLE_CHOICE

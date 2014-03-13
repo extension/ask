@@ -6,6 +6,9 @@
 #  see LICENSE file
 
 class ApplicationController < ActionController::Base
+  TRUE_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'yes','YES','y','Y']
+  FALSE_VALUES = [false, 0, '0', 'f', 'F', 'false', 'FALSE','no','NO','n','N']
+
   helper_method :current_location
   helper_method :current_county
   before_filter :set_time_zone_from_user, :set_last_active_at_for_user, :check_retired

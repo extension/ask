@@ -30,6 +30,16 @@ class Expert::DataController < ApplicationController
   end
 
   def evaluations
+
+    @showform = (params[:showform] and TRUE_VALUES.include?(params[:showform]))
+
+    if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
+      @question_filter_objects = @question_filter.settings_to_objects
+    end
+
+    @show_all = (params[:show_all] and TRUE_VALUES.include?(params[:show_all]))
+
+
     @evaluation_questions = EvaluationQuestion.order(:questionorder).active
   end
 
@@ -50,6 +60,15 @@ class Expert::DataController < ApplicationController
     else
       flash[:warning] = 'Invalid filter provided.'
       return redirect_to(questions_expert_data_url)
+    end
+  end
+
+  def filter_evaluations
+    if(question_filter = QuestionFilter.find_or_create_by_settings(params,current_user))
+      return redirect_to(evaluations_expert_data_url(filter: question_filter.id))
+    else
+      flash[:warning] = 'Invalid filter provided.'
+      return redirect_to(evaluations_expert_data_url)
     end
   end
 
