@@ -36,3 +36,4 @@
 //= require submittable
 //= require bootstrap_hacks
 //= require rangeinput/rangeinput.js
+//= require select2

@@ -1,0 +1,120 @@
+<div class="row-fluid">
+  <div class="span12">
+
+    <%= form_tag(filter_path, class: 'form-horizontal') do -%>
+
+    <fieldset>
+      <legend>Filter list by:</legend>
+      <p><em>Searches within a filter typle are 'or' searches. Searches between filter types are an 'and' search.
+        For example, specifying Locations: 'Oregon' 'North Carolina' and Groups: 'eXtension Support' will search
+        for ('Oregon' OR 'North Carolina') AND ('eXtension Support')</em></p>
+
+      <div class="control-group">
+        <%= label_tag('groups', 'Assigned Group', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("groups","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <%= label_tag('locations', 'Locations', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("locations","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <%= label_tag('tags', 'Tags', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("tags","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+    </fieldset>
+
+      <p><%= submit_tag "Filter", :class => "btn btn-primary" %> <%= link_to "cancel", '#', :class => "btn", :id => 'cancel_button' %></p>
+
+    <%- end -%>
+
+  </div>
+</div>
+
+<script class="code" type="text/javascript">
+
+    $('#cancel_button').on('click', function () {
+      $('#showform').collapse('hide');
+    });
+
+
+   $(function () {
+      $('#groups').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_groups_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+    <%- if (@data_filter_objects && @question_filter_objects['groups']) -%>
+      $('#groups').select2('data', <%= @question_filter_objects['groups'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#locations').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_locations_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+     <%- if (@question_filter_objects && @question_filter_objects['locations']) -%>
+      $('#locations').select2('data', <%= @question_filter_objects['locations'].map{|l|  {id: l.id, text: l.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#tags').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_tags_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+    <%- if (@question_filter_objects && @question_filter_objects['tags']) -%>
+      $('#tags').select2('data', <%= @question_filter_objects['tags'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+    <%- end -%>
+   });
+
+ </script>

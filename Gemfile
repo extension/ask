@@ -25,9 +25,14 @@ gem 'anjlab-bootstrap-rails', '~> 2.3.1.2', :require => 'bootstrap-rails'
 # wysihtml5 + bootstrap + asset pipeline
 gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
+# select2 asset packaging - used for filter interfaces
+gem "select2-rails"
+
 # jqplot
 gem 'outfielding-jqplot-rails'
 
+# replaces glyphicons
+gem 'font-awesome-rails'
 
 # storage
 gem 'mysql2'
@@ -135,7 +140,7 @@ group :development do
   gem 'net-http-spy'
 
   # pretty error handling
-  gem 'better_errors'
+  #gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
 end

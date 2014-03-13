@@ -101,10 +101,13 @@ Aae::Application.routes.draw do
       end
     end
 
-    resources :data, :only => [:index] do 
+    resources :data, :only => [:index] do
       collection do
-        get :demographics
-        get :evaluations
+        get  :demographics
+        get  :evaluations
+        get  :questions
+        get  :filter_questions
+        post :filter_questions
       end
     end
 
@@ -275,6 +278,14 @@ Aae::Application.routes.draw do
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]
+
+  # json data enpoints for tokeninput
+  controller :selectdata do
+    simple_named_route 'groups', via: [:get]
+    simple_named_route 'locations', via: [:get]
+    simple_named_route 'tags', via: [:get]
+  end
+
 
   root :to => 'home#index'
 

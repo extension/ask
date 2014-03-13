@@ -1206,18 +1206,16 @@ class Question < ActiveRecord::Base
     end
   end
 
-  def self.filtered_by(data_filter)
+  def self.filtered_by(question_filter)
     with_scope do
       base_scope = select('DISTINCT questions.id, questions.*')
-      if(data_filter  && !data_filter.is_all? && settings = data_filter.settings)
-        DataFilter::KNOWN_KEYS.each do |filter_key|
+      if(question_filter && settings = question_filter.settings)
+        QuestionFilter::KNOWN_KEYS.each do |filter_key|
           if(settings[filter_key])
             case filter_key
-            when 'groups'
-              base_scope = base_scope.joins(:communities).where("communities.id IN (#{settings[filter_key].join(',')})").where(Community::CONNECTION_CONDITIONS['joined'])
             when 'locations'
               base_scope = base_scope.where("questions.location_id IN (#{settings[filter_key].join(',')})")
-            when 'groups'
+            when 'assigned_groups'
               base_scope = base_scope.where("questions.assigned_group_id IN (#{settings[filter_key].join(',')})")
             when 'tags'
               base_scope = base_scope.joins(:tags).where("tags.id IN (#{settings[filter_key].join(',')})")

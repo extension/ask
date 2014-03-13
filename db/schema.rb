@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140312185332) do
+ActiveRecord::Schema.define(:version => 20140313143610) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -74,21 +74,6 @@ ActiveRecord::Schema.define(:version => 20140312185332) do
   add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
   add_index "counties", ["name"], :name => "idx_counties_on_name"
 
-  create_table "data_filters", :force => true do |t|
-    t.integer  "created_by"
-    t.text     "settings"
-    t.text     "notifylist"
-    t.string   "fingerprint",            :limit => 40
-    t.boolean  "dump_in_progress"
-    t.datetime "dump_last_generated_at"
-    t.float    "dump_last_runtime"
-    t.integer  "dump_last_filesize"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
-  end
-
-  add_index "data_filters", ["fingerprint"], :name => "fingerprint_ndx", :unique => true
-
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
     t.integer  "attempts",   :default => 0
@@ -136,6 +121,27 @@ ActiveRecord::Schema.define(:version => 20140312185332) do
   end
 
   add_index "demographics", ["demographic_question_id", "user_id"], :name => "dq_u_ndx", :unique => true
+
+  create_table "downloads", :force => true do |t|
+    t.string   "label"
+    t.string   "display_label"
+    t.string   "filetype"
+    t.string   "objectclass"
+    t.string   "objectmethod"
+    t.string   "filterclass"
+    t.integer  "filter_id"
+    t.integer  "period",            :default => 0
+    t.boolean  "in_progress",       :default => false
+    t.boolean  "is_private",        :default => false
+    t.datetime "last_generated_at"
+    t.float    "last_runtime"
+    t.integer  "last_filesize"
+    t.text     "notifylist"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  add_index "downloads", ["label", "period"], :name => "download_ndx"
 
   create_table "evaluation_answers", :force => true do |t|
     t.integer  "evaluation_question_id", :null => false
@@ -392,6 +398,17 @@ ActiveRecord::Schema.define(:version => 20140312185332) do
   add_index "question_events", ["question_id"], :name => "idx_question_id"
   add_index "question_events", ["recipient_id"], :name => "idx_recipient_id"
   add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
+
+  create_table "question_filters", :force => true do |t|
+    t.integer  "created_by"
+    t.text     "settings"
+    t.string   "fingerprint", :limit => 40
+    t.integer  "use_count"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "question_filters", ["fingerprint"], :name => "fingerprint_ndx", :unique => true
 
   create_table "question_viewlogs", :force => true do |t|
     t.integer  "user_id",                    :null => false
