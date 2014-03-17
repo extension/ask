@@ -35,3 +35,4 @@ akismet_key: 'notset'
 akismet_host: 'https://ask.extension.org'
 sitemap_dir: 'notset'
 downloads_data_dir: 'notset'
+sidekiq_enabled: true

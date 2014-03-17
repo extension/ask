@@ -44,10 +44,10 @@ class Download < ActiveRecord::Base
 
 
   def queue_filedump
-    if(!Settings.background_enabled)
+    if(!Settings.sidekiq_enabled)
       self.dump_to_file
     else
-      self.class.delay_for(5.seconds).delayed_dump_to_file(self.id)
+      self.class.sidekiq_delay_for(5.seconds).delayed_dump_to_file(self.id)
     end
   end
 
@@ -64,7 +64,7 @@ class Download < ActiveRecord::Base
     if(!self.filter_id.nil? and !self.filterclass.nil?)
       filelabel += "_filtered_by_#{self.filterclass.downcase}_#{self.filter_id}"
     end
-    "#{Rails.root}/#{Settings.downloads_data_dir}/#{filelabel}_#{now.strftime("%Y-%m-%d")}.csv"
+    "#{Rails.root}/#{Settings.downloads_data_dir}/#{filelabel}_#{now.strftime("%Y-%V")}.csv"
   end
 
   def dump_to_file(forceupdate=false)

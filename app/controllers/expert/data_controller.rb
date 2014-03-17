@@ -84,7 +84,7 @@ class Expert::DataController < ApplicationController
         return redirect_to(expert_data _url)
       end
     elsif(!@download.dumpfile_updated?)
-      #@download.queue_filedump
+      @download.queue_filedump
       @download.add_to_notifylist(current_user)
       flash[:notice] = 'This export has not been updated. Check back in a few minutes.'
       if(@download.label == 'demographics')
