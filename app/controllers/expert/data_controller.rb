@@ -59,6 +59,7 @@ class Expert::DataController < ApplicationController
 
   def questions_download
     if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
+      @questions_filter_id = @question_filter.id
       @question_filter_objects = @question_filter.settings_to_objects
       @download = Download.find_or_create_by_label_and_filter('questions',@question_filter)
     else
