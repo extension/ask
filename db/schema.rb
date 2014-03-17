@@ -122,26 +122,30 @@ ActiveRecord::Schema.define(:version => 20140313143610) do
 
   add_index "demographics", ["demographic_question_id", "user_id"], :name => "dq_u_ndx", :unique => true
 
+  create_table "download_logs", :force => true do |t|
+    t.integer  "download_id"
+    t.integer  "downloaded_by"
+    t.datetime "created_at"
+  end
+
+  add_index "download_logs", ["download_id", "downloaded_by"], :name => "download_ndx"
+
   create_table "downloads", :force => true do |t|
     t.string   "label"
     t.string   "display_label"
-    t.string   "filetype"
-    t.string   "objectclass"
-    t.string   "objectmethod"
     t.string   "filterclass"
     t.integer  "filter_id"
-    t.integer  "period",            :default => 0
-    t.boolean  "in_progress",       :default => false
-    t.boolean  "is_private",        :default => false
+    t.boolean  "dump_in_progress",  :default => false
     t.datetime "last_generated_at"
     t.float    "last_runtime"
     t.integer  "last_filesize"
+    t.integer  "last_itemcount"
     t.text     "notifylist"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
   end
 
-  add_index "downloads", ["label", "period"], :name => "download_ndx"
+  add_index "downloads", ["label", "filterclass", "filter_id"], :name => "download_ndx"
 
   create_table "evaluation_answers", :force => true do |t|
     t.integer  "evaluation_question_id", :null => false

@@ -75,12 +75,13 @@ class Question < ActiveRecord::Base
   REJECTED_TEXT = 'rejected'
   CLOSED_TEXT = 'closed'
 
-  # privacy reasons
-  PRIVACY_CODE_TO_TEXT = {
-   1 => "public",
-   2 => "private by submitter",
-   3 => "private by expert",
-   4 => "private because of rejected/duplicate"
+  # status text (to be used when a text version of the status is needed)
+  STATUS_TEXT = {
+    STATUS_SUBMITTED => 'submitted',
+    STATUS_RESOLVED => 'answered',
+    STATUS_NO_ANSWER => 'not_answered',
+    STATUS_REJECTED => 'rejected',
+    STATUS_CLOSED => 'closed'
   }
 
   # privacy constants
@@ -88,6 +89,16 @@ class Question < ActiveRecord::Base
   PRIVACY_REASON_SUBMITTER = 2
   PRIVACY_REASON_EXPERT = 3
   PRIVACY_REASON_REJECTED = 4
+
+  # privacy reasons
+  PRIVACY_CODE_TO_TEXT = {
+   PRIVACY_REASON_PUBLIC => "public",
+   PRIVACY_REASON_SUBMITTER => "private by submitter",
+   PRIVACY_REASON_EXPERT => "private by expert",
+   PRIVACY_REASON_REJECTED => "private because of rejected/duplicate"
+  }
+
+
 
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
 
@@ -144,6 +155,8 @@ class Question < ActiveRecord::Base
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :original_group, :class_name => "Group", :foreign_key => "original_group_id"
   belongs_to :initial_response,  class_name: 'Response', :foreign_key => "initial_response_id"
+  belongs_to :initial_responder, :class_name => "User", :foreign_key => "initial_responder_id"
+
   has_many :comments
   has_many :ratings
   has_many :responses
@@ -152,6 +165,7 @@ class Question < ActiveRecord::Base
   has_many :question_viewlogs, dependent: :destroy
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
+  has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id' 
 
 
   ## scopes
@@ -1002,6 +1016,10 @@ class Question < ActiveRecord::Base
     self.response_times.mean
   end
 
+  def median_response_time
+    self.response_times.median
+  end
+
   def aae_version
     (self.created_at >= Time.parse(AAE_V2_TRANSITION)) ? 2 : 1
   end
@@ -1226,5 +1244,6 @@ class Question < ActiveRecord::Base
       base_scope
     end
   end
+
 
 end
