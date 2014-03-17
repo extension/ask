@@ -2,7 +2,7 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 class Location < ActiveRecord::Base
@@ -21,7 +21,7 @@ class Location < ActiveRecord::Base
   has_many :counties
   has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
   has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
-  
+
 
   scope :states, where(entrytype: STATE)
 
@@ -61,7 +61,7 @@ class Location < ActiveRecord::Base
       return nil
     end
   end
-  
+
   def get_all_county
     return County.find_by_location_id_and_name(self.id, 'All')
   end
@@ -92,7 +92,7 @@ class Location < ActiveRecord::Base
     Rails.cache.fetch(cache_key,cache_options) do
       self._asked_answered_metrics_by_year(year)
     end
-  end  
+  end
 
   def self._in_state_out_metrics_by_year(year)
     in_out_state = {}
@@ -122,9 +122,9 @@ class Location < ActiveRecord::Base
 
 
     Location.order('entrytype,name').each do |location|
-      in_out_state[location] ={:in_state => in_state[location.id] || 0, 
-                               :out_state => out_state[location.id] || 0, 
-                               :in_state_experts => in_state_experts[location.id] || 0, 
+      in_out_state[location] ={:in_state => in_state[location.id] || 0,
+                               :out_state => out_state[location.id] || 0,
+                               :in_state_experts => in_state_experts[location.id] || 0,
                                :out_state_experts => out_state_experts[location.id] || 0 }
     end
 
@@ -152,8 +152,8 @@ class Location < ActiveRecord::Base
                .group('users.location_id').count('DISTINCT(question_events.initiated_by_id)')
 
     Location.order('entrytype,name').each do |location|
-      asked_answered[location] ={:asked => asked[location.id] || 0, 
-                                 :submitters => submitters[location.id] || 0, 
+      asked_answered[location] ={:asked => asked[location.id] || 0,
+                                 :submitters => submitters[location.id] || 0,
                                  :answered => answered[location.id] || 0,
                                  :experts => experts[location.id] || 0 }
     end
@@ -163,5 +163,14 @@ class Location < ActiveRecord::Base
   end
 
 
+  # the spec says leading 0 is required
+  # but the R maps package leaves it as numeric, so I'm doing that
+  def fips(make_integer = true)
+    if(make_integer)
+      fipsid
+    else
+      "%02d" % fipsid
+    end
+  end
 
 end
