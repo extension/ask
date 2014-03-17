@@ -128,6 +128,9 @@ gem 'rakismet'
 # memcached
 gem 'dalli'
 
+# useragent analysis
+gem 'useragent'
+
 group :development do
   # require the powder gem
   gem 'powder'
