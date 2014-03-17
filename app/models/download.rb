@@ -14,6 +14,34 @@ class Download < ActiveRecord::Base
                   :display_label, :dump_in_progress, :notifylist
 
 
+  # download "types"
+  KNOWN_LABELS = ['questions','demographics']
+
+  # kinda hacky and verbose
+  def self.find_or_create_by_label_and_filter(label,filter=nil)
+    if(!KNOWN_LABELS.include?(label))
+      return nil
+    end
+
+    if(filter.nil?)
+      if(dl = self.where(label: label).first)
+        return dl
+      elsif(label == 'questions')
+        dl = Download.create(label: 'questions', display_label: 'Ask an Expert Questions')
+        return dl
+      else
+        return nil
+      end
+    elsif(dl = self.where(label: label).where(filterclass: filter.class.name).where(filter_id: filter.id))
+      return dl
+    elsif(label == 'questions')
+      dl = Download.create(label: 'questions', display_label: 'Ask an Expert Questions (Filtered)', filterclass: filter.class.name, filter_id: filter.id)
+      return dl
+    else
+      return nil
+    end
+  end
+
 
   def queue_filedump
     if(!Settings.background_enabled)
@@ -71,14 +99,6 @@ class Download < ActiveRecord::Base
 
   def available_for_download?
     self.dumpfile_updated? and !self.dump_in_progress?
-  end
-
-  def updated?
-    File.exists?(self.filename)
-  end
-
-  def available_for_download?
-    self.updated? and !self.in_progress?
   end
 
   def add_to_notifylist(person)

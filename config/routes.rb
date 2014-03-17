@@ -113,6 +113,12 @@ Aae::Application.routes.draw do
       end
     end
 
+    namespace :data do
+      match 'demographics/download', action: 'demographics_download'
+      match 'questions/download', action: 'questions_download'
+      match 'getfile', action: 'getfile', via: [:get,:post]
+    end
+
 
     match "/" => "home#dashboard"
     match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'

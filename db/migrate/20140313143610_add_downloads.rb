@@ -26,7 +26,9 @@ class AddDownloads < ActiveRecord::Migration
 
       add_index "download_logs", ["download_id","downloaded_by"], :name => "download_ndx"
 
-
+      Download.reset_column_information
+      # create the demographics download entry - questions will be created dynamically
+      Download.create(label: 'demographics', display_label: 'Ask an Expert Demographics')
   end
 
 end

@@ -1,0 +1,467 @@
+<%- @page_title = "Ask an Expert Question Data"-%>
+<%= render(:partial => 'download_breadcrumbs', :locals => {:endpoint => 'AaE Question Data'}) %>
+
+<header class="jumbotron subhead" id="overview">
+  <h1><%= @page_title %></h1>
+</header>
+
+<div class="row">
+  <div class="span6">
+    <table class="table table-bordered">
+      <tbody>
+          <tr>
+            <td>Period</td>
+            <td><%= @download.period_to_s %></td>
+          </tr>
+          <tr><td>Format</td><td><%= @download.filetype %></td></tr>
+          <tr><td>Last Export Size</td><td><%= humanize_bytes(@download.last_filesize,'n/a') %></td></tr>
+          <tr><td>Last Export Size</td><td><%= (@download.last_generated_at.blank? ? 'n/a' : @download.last_generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")) %></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class='span6'>
+    <div class="well">
+      <p>
+    <%- if @download.available_for_download? %>
+      <%= link_to("Download",getfile_download_path(@download),class: 'btn') %>
+    <%- elsif(@download.in_progress?) -%>
+      Export in progress. Please check back in a few minutes.
+    <%- elsif(!@download.updated?) -%>
+      <%- @download.delay.dump_to_file -%>
+      Export not up to date. Please check back in a few minutes.
+    <%- end -%>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="span12">
+    <h3>Question Data Key</h3>
+
+    <table class="table table-bordered table-striped">
+      <thead>
+        <th>Variable</th>
+        <th>Description</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>question_id</td>
+          <td>The id number assigned to the question.</td>
+        </tr>
+
+        <tr>
+          <td>detectable_location</td>
+          <td>
+            True/False if an IP was recorded so that the location could be detected.
+          </td>
+        </tr>
+
+        <tr>
+          <td>detected_location</td>
+          <td>
+            The location of the question submitter, determined by the ip address to location mapping if the ip address is stored for the question.  Please note, this is the location determined <strong>at the time the report was generated</strong>. This may differ from the location assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>detected_location_fips</td>
+          <td>
+            The FIPS code of the detected location.  Please note, this is the location determined <strong>at the time the report was generated</strong>. This may differ from the location assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>detected_county</td>
+          <td>
+            The county of the question submitter, determined by the ip address to location mapping if the ip address is stored for the question.  Please note, this is the county determined <strong>at the time the report was generated</strong>. This may differ from the county assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>detected_county_fips</td>
+          <td>
+            The FIPS code of the detected county.  Please note, this is the location determined <strong>at the time the report was generated</strong>. This may differ from the location assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>location</td>
+          <td>
+            The location assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>location_fips</td>
+          <td>
+            The FIPS code of the location assigned to the question
+          </td>
+        </tr>
+
+        <tr>
+          <td>location_changed</td>
+          <td>
+            True/False if the question location was changed by an expert (relevant to AaEv2 only)
+          </td>
+        </tr>
+
+        <tr>
+          <td>county</td>
+          <td>
+            The county assigned to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>county_fips</td>
+          <td>
+            The FIPS code of the county assigned to the question
+          </td>
+        </tr>
+
+        <tr>
+          <td>county_changed</td>
+          <td>
+            True/False if the question county was changed by an expert (relevant to AaEv2 only)
+          </td>
+        </tr>
+
+        <tr>
+          <td>original_group_id</td>
+          <td>
+            The id number of the group assigned to the question at the time of submission.
+          </td>
+        </tr>
+
+        <tr>
+          <td>original_group</td>
+          <td>
+            The group assigned to the question at the time of submission.
+          </td>
+        </tr>
+
+        <tr>
+          <td>assigned_group_id</td>
+          <td>
+            The id number of the group assigned to the question at the time the report was generated. This is considered the "answering group" for reporting.
+          </td>
+        </tr>
+
+        <tr>
+          <td>assigned_group</td>
+          <td>
+            The group assigned to the question at the time the report was generated. This is considered the "answering group" for reporting.
+          </td>
+        </tr>
+
+        <tr>
+          <td>status</td>
+          <td>
+            The question's current status (submitted, answered, closed, or "not answered")
+          </td>
+        </tr>
+
+        <tr>
+          <td>submitted_from_mobile</td>
+          <td>
+            If the information is available to make a determination, a true/false value if whether or not the question was submitted from a mobile browser.
+          </td>
+        </tr>
+
+        <tr>
+          <td>submitted_at</td>
+          <td>
+            The date and time the question was submitted (UTC).
+          </td>
+        </tr>
+
+        <tr>
+          <td>submitter_id</td>
+          <td>
+            The id number assigned to the question submitter.
+          </td>
+        </tr>
+
+        <tr>
+          <td>submitter_is_extension</td>
+          <td>
+            Whether the submitter of the question did so using an eXtension Account (true/false).
+          </td>
+        </tr>
+
+        <tr>
+          <td>aae_version</td>
+          <td>
+            The version of AaE used for this question (either '1' or '2').
+          </td>
+        </tr>
+
+        <tr>
+          <td>source</td>
+          <td>
+            If available, the source of the question (either 'widget' or 'website' - which is www.extension.org for AaEv1 and ask.extension.org for AaEv2).
+          </td>
+        </tr>
+
+        <tr>
+          <td>comment_count</td>
+          <td>
+            The number of comments the question has received (can be from the public or from other experts).
+          </td>
+        </tr>
+
+        <tr>
+          <td>submitter_response_count</td>
+          <td>
+            The number of follow-up responses the question has received from the submitter.
+          </td>
+        </tr>
+
+        <tr>
+          <td>expert_response_count</td>
+          <td>
+            The number of responses the question has received from experts.
+          </td>
+        </tr>
+
+        <tr>
+          <td>expert_responders</td>
+          <td>
+            The number of different experts that have responded to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_response_at</td>
+          <td>
+            The date and time of the initial expert response (UTC).
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_id</td>
+          <td>
+            The id number of the initial expert responder to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_name</td>
+          <td>
+            The name of the initial expert responder to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_location</td>
+          <td>
+            The primary location (if specified at people.extension.org) of the initial expert responder to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_location_fips</td>
+          <td>
+            The FIPS code of the responder location
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_county</td>
+          <td>
+            The primary county (if specified at people.extension.org) of the initial expert responder to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_responder_county_fips</td>
+          <td>
+            The FIPS code of the responder county
+          </td>
+        </tr>
+
+        <tr>
+          <td>initial_response_time</td>
+          <td>
+            The time in hours from question submission to response for the initial expert response to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>mean_response_time</td>
+          <td>
+            The mean time in hours between public response and followup expert response for all expert responses to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>median_response_time</td>
+          <td>
+            The median time in hours between public response and followup expert response for all expert responses to the question.
+          </td>
+        </tr>
+
+        <tr>
+          <td>demographic_eligible</td>
+          <td>
+            Whether the question was eligible for a demographic survey response.
+          </td>
+        </tr>
+
+        <tr>
+          <td>evaluation_eligible</td>
+          <td>
+            Whether the question was eligible for a evaluation survey response.
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>tags</td>
+          <td>
+            A comma-delimited list of tags assigned to the question.
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+<div class="row">
+  <div class="span12">
+    <h3>Data Key</h3>
+    <p>Evaluation questions are split into _response (raw response) and _value (numeric value, if applicable) columns</p>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <th>Variable</th>
+        <th>Description</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>question_id</td>
+          <td>Question ID that this evaluation is associated with.</td>
+        </tr>
+
+        <tr>
+          <td>question_submitted_at</td>
+          <td>The date and time that the question was submitted. (May/will differ from the response date and time)</td>
+        </tr>
+
+        <tr>
+          <td>submitter_is_extension</td>
+          <td>Whether the submitter of the demographic data did so using an eXtension Account (true/false).</td>
+        </tr>
+
+        <tr>
+          <td>evaluation_count</td>
+          <td>The number of evaluation questions answered by the submitter</td>
+        </tr>
+
+        <%- EvaluationQuestion.order(:id).active.each do |aeq| -%>
+        <tr>
+          <td>
+            evaluation_<%= aeq.id %>
+          </td>
+          <td>
+            <p>
+              <%- if aeq.responsetype == AaeEvaluationQuestion::SCALE -%>
+                <%= aeq.prompt %> <em>(on a scale from <%= aeq.range_start %> to <%= aeq.range_end %>)</em>
+              <%- else -%>
+                <%= aeq.prompt %>
+              <%- end -%>
+            </p>
+
+
+           <%- if !aeq.responses.blank? -%>
+            <ul>
+              <%- if aeq.responsetype == AaeEvaluationQuestion::SCALE -%>
+                <li><span class="badge"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
+                <li><span class="badge"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
+              <%- elsif aeq.responsetype == AaeEvaluationQuestion::MULTIPLE_CHOICE -%>
+                <%- aeq.responses.each_with_index do |response_text,index| %>
+                  <li><span class="badge"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
+                <%- end -%>
+              <%- else -%>
+                <%- aeq.responses.each_with_index do |response_text,index| %>
+                <li><%= response_text %></li>
+                <%- end -%>
+              <%- end -%>
+            </ul>
+            <%- end -%>
+          </td>
+        </tr>
+        <%- end -%>
+
+      </tbody>
+    </table>
+
+    <h3>Evaluation Data Key</h3>
+    <p>Evaluation questions are split into _response (raw response) and _value (numeric value, if applicable) columns</p>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <th>Variable</th>
+        <th>Description</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>question_id</td>
+          <td>Question ID that this evaluation is associated with.</td>
+        </tr>
+
+        <tr>
+          <td>question_submitted_at</td>
+          <td>The date and time that the question was submitted. (May/will differ from the response date and time)</td>
+        </tr>
+
+        <tr>
+          <td>submitter_is_extension</td>
+          <td>Whether the submitter of the demographic data did so using an eXtension Account (true/false).</td>
+        </tr>
+
+        <tr>
+          <td>evaluation_count</td>
+          <td>The number of evaluation questions answered by the submitter</td>
+        </tr>
+
+        <%- EvaluationQuestion.order(:id).active.each do |aeq| -%>
+        <tr>
+          <td>
+            evaluation_<%= aeq.id %>
+          </td>
+          <td>
+            <p>
+              <%- if aeq.responsetype == AaeEvaluationQuestion::SCALE -%>
+                <%= aeq.prompt %> <em>(on a scale from <%= aeq.range_start %> to <%= aeq.range_end %>)</em>
+              <%- else -%>
+                <%= aeq.prompt %>
+              <%- end -%>
+            </p>
+
+
+           <%- if !aeq.responses.blank? -%>
+            <ul>
+              <%- if aeq.responsetype == AaeEvaluationQuestion::SCALE -%>
+                <li><span class="badge"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
+                <li><span class="badge"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
+              <%- elsif aeq.responsetype == AaeEvaluationQuestion::MULTIPLE_CHOICE -%>
+                <%- aeq.responses.each_with_index do |response_text,index| %>
+                  <li><span class="badge"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
+                <%- end -%>
+              <%- else -%>
+                <%- aeq.responses.each_with_index do |response_text,index| %>
+                <li><%= response_text %></li>
+                <%- end -%>
+              <%- end -%>
+            </ul>
+            <%- end -%>
+          </td>
+        </tr>
+        <%- end -%>
+
+      </tbody>
+    </table>
+
+  </div>
+</div>

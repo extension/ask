@@ -29,8 +29,12 @@ class Expert::DataController < ApplicationController
     @demographic_questions = DemographicQuestion.order(:questionorder).active
   end
 
-  def evaluations
+  def demographics_download
+    @download = Download.find_by_label('demographics')
+    @response_rate = DemographicQuestion.mean_response_rate
+  end
 
+  def evaluations
     @showform = (params[:showform] and TRUE_VALUES.include?(params[:showform]))
 
     if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
@@ -38,7 +42,6 @@ class Expert::DataController < ApplicationController
     end
 
     @show_all = (params[:show_all] and TRUE_VALUES.include?(params[:show_all]))
-
 
     @evaluation_questions = EvaluationQuestion.order(:questionorder).active
   end
@@ -51,6 +54,35 @@ class Expert::DataController < ApplicationController
       @questions = Question.filtered_by(@question_filter).page(params[:page])
     else
       @questions = Question.page(params[:page])
+    end
+  end
+
+  def questions_download
+    if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
+      @question_filter_objects = @question_filter.settings_to_objects
+      @download = Download.find_or_create_by_label_and_filter('questions',@question_filter)
+    else
+      @download = Download.find_or_create_by_label_and_filter('questions')
+    end
+  end
+
+
+  def getfile
+    @download = Download.find(params[:id])
+
+
+    if(@download.in_progress?)
+      flash[:notice] = 'This export is currently in progress. Check back in a few minutes.'
+      return redirect_to(downloads_url)
+    elsif(!@download.updated?)
+      @download.delay.dump_to_file
+      flash[:notice] = 'This export has not been updated. Check back in a few minutes.'
+      return redirect_to(downloads_url)
+    else
+      DownloadLog.create(download_id: @download.id, downloaded_by: current_user.id)
+      send_file(@download.filename,
+                :type => 'text/csv; charset=iso-8859-1; header=present',
+                :disposition => "attachment; filename=#{File.basename(@download.filename)}")
     end
   end
 
