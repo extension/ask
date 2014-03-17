@@ -69,15 +69,35 @@ class Expert::DataController < ApplicationController
 
   def getfile
     @download = Download.find(params[:id])
-
-
-    if(@download.in_progress?)
+    if(@download.dump_in_progress?)
       flash[:notice] = 'This export is currently in progress. Check back in a few minutes.'
-      return redirect_to(downloads_url)
-    elsif(!@download.updated?)
-      @download.delay.dump_to_file
+      @download.add_to_notifylist(current_user)
+      if(@download.label == 'demographics')
+        return redirect_to(expert_data_demographics_download_url)
+      elsif(@download.label == 'questions')
+        if(!@download.filter_id.nil? and filter = QuestionFilter.find_by_id(@download.filter_id))
+          return redirect_to(expert_data_questions_download_url(filter: filter.id))
+        else
+          return redirect_to(expert_data_questions_download_url)
+        end
+      else
+        return redirect_to(expert_data _url)
+      end
+    elsif(!@download.dumpfile_updated?)
+      #@download.queue_filedump
+      @download.add_to_notifylist(current_user)
       flash[:notice] = 'This export has not been updated. Check back in a few minutes.'
-      return redirect_to(downloads_url)
+      if(@download.label == 'demographics')
+        return redirect_to(expert_data_demographics_download_url)
+      elsif(@download.label == 'questions')
+        if(!@download.filter_id.nil? and filter = QuestionFilter.find_by_id(@download.filter_id))
+          return redirect_to(expert_data_questions_download_url(filter: filter.id))
+        else
+          return redirect_to(expert_data_questions_download_url)
+        end
+      else
+        return redirect_to(expert_data _url)
+      end
     else
       DownloadLog.create(download_id: @download.id, downloaded_by: current_user.id)
       send_file(@download.filename,
