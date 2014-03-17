@@ -443,7 +443,7 @@ ActiveRecord::Schema.define(:version => 20140313143610) do
     t.integer  "initial_response_id"
     t.integer  "initial_response_time"
     t.datetime "initial_response_at"
-    t.datetime "initial_responder_id"
+    t.integer  "initial_responder_id"
     t.string   "question_fingerprint",                        :null => false
     t.string   "submitter_firstname",      :default => ""
     t.string   "submitter_lastname",       :default => ""
