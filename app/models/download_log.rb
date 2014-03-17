@@ -10,6 +10,6 @@ class DownloadLog < ActiveRecord::Base
   attr_accessible :download, :download_id, :downloaded_by, :downloader
 
   belongs_to :download
-  belongs_to :downloader, class: 'User', foreign_key: 'downloaded_by'
+  belongs_to :downloader, class_name: 'User', foreign_key: 'downloaded_by'
 
 end

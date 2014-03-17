@@ -33,7 +33,7 @@
   <div class="span12">
     <p class='pull-right'>
       <%= link_to("<i class='fa fa-file-o'></i> Download this list (.csv)".html_safe,
-                  '',
+                  expert_data_questions_download_path(filter: @question_filter),
                   :class => 'btn') %>
     </p>
     <%= page_entries_info @questions %>

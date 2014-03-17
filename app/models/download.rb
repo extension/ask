@@ -32,7 +32,7 @@ class Download < ActiveRecord::Base
       else
         return nil
       end
-    elsif(dl = self.where(label: label).where(filterclass: filter.class.name).where(filter_id: filter.id))
+    elsif(dl = self.where(label: label).where(filterclass: filter.class.name).where(filter_id: filter.id).first)
       return dl
     elsif(label == 'questions')
       dl = Download.create(label: 'questions', display_label: 'Ask an Expert Questions (Filtered)', filterclass: filter.class.name, filter_id: filter.id)
