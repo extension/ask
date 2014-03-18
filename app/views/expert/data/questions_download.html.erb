@@ -24,6 +24,7 @@
       <tbody>
           <tr><td>Last Export Size</td><td><%= humanize_bytes(@download.last_filesize,'n/a') %></td></tr>
           <tr><td>Last Export At</td><td><%= (@download.last_generated_at.blank? ? 'n/a' : @download.last_generated_at.strftime("%Y-%m-%d %H:%M:%S %Z")) %></td></tr>
+          <tr><td>Last Export Time Taken</td><td><%= time_period_to_s(@download.last_runtime,true,'n/a') %></td></tr>
       </tbody>
     </table>
   </div>

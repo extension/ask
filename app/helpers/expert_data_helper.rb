@@ -6,19 +6,7 @@
 # see LICENSE file
 
 module ExpertDataHelper
-
-  # code from: https://github.com/ripienaar/mysql-dump-split
-  def humanize_bytes(bytes,defaultstring='')
-    if(!bytes.nil? and bytes != 0)
-      units = %w{B KB MB GB TB}
-      e = (Math.log(bytes)/Math.log(1024)).floor
-      s = "%.1f"%(bytes.to_f/1024**e)
-      s.sub(/\.?0*$/,units[e])
-    else
-      defaultstring
-    end
-  end
-  
+ 
   def response_rate(response_rate)
     if(response_rate[:eligible] >= 0)
       ratio = (response_rate[:responses] / response_rate[:eligible]) * 100
