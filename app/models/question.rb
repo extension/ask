@@ -1231,8 +1231,10 @@ class Question < ActiveRecord::Base
         QuestionFilter::KNOWN_KEYS.each do |filter_key|
           if(settings[filter_key])
             case filter_key
-            when 'locations'
+            when 'question_locations'
               base_scope = base_scope.where("questions.location_id IN (#{settings[filter_key].join(',')})")
+            when 'question_counties'
+              base_scope = base_scope.where("questions.county_id IN (#{settings[filter_key].join(',')})")
             when 'assigned_groups'
               base_scope = base_scope.where("questions.assigned_group_id IN (#{settings[filter_key].join(',')})")
             when 'tags'

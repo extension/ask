@@ -17,11 +17,18 @@
       </div>
 
       <div class="control-group">
-        <%= label_tag('locations', 'Locations', :class => 'control-label') -%>
+        <%= label_tag('question_locations', 'Question Locations', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("locations","", class: 'span8' ) -%>
+          <%= text_field_tag("question_locations","", class: 'span8' ) -%>
         </div>
       </div>
+
+      <div class="control-group">
+        <%= label_tag('question_counties', 'Question Counties', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("question_counties","", class: 'span8' ) -%>
+        </div>
+      </div>      
 
       <div class="control-group">
         <%= label_tag('tags', 'Tags', :class => 'control-label') -%>
@@ -65,13 +72,13 @@
      });
 
     <%- if (@data_filter_objects && @question_filter_objects['assigned_groups']) -%>
-      $('#assigned_groups').select2('data', <%= @question_filter_objects['assigned_groups'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+      $('#assigned_groups').select2('data', <%= @question_filter_objects['assigned_groups'].map{|g|  {id: g.id, text: g.name}}.to_json.html_safe %>);
     <%- end -%>
 
    });
 
     $(function () {
-      $('#locations').select2({
+      $('#question_locations').select2({
         minimumInputLength: 2,
         multiple: true,
         ajax: {
@@ -88,8 +95,32 @@
         }
      });
 
-     <%- if (@question_filter_objects && @question_filter_objects['locations']) -%>
-      $('#locations').select2('data', <%= @question_filter_objects['locations'].map{|l|  {id: l.id, text: l.name}}.to_json.html_safe %>);
+     <%- if (@question_filter_objects && @question_filter_objects['question_locations']) -%>
+      $('#question_locations').select2('data', <%= @question_filter_objects['question_locations'].map{|l|  {id: l.id, text: l.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#question_counties').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_counties_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+     <%- if (@question_filter_objects && @question_filter_objects['question_counties']) -%>
+      $('#question_counties').select2('data', <%= @question_filter_objects['question_counties'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
     <%- end -%>
 
    });

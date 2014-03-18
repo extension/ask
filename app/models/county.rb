@@ -29,6 +29,10 @@ class County < ActiveRecord::Base
     end
   end
 
+  def name_with_location
+    "#{self.name}, #{self.location.abbreviation}"
+  end
+
   def self.find_by_geoip(ipaddress = Settings.request_ip_address,cache_options = {})
     cache_key = self.get_cache_key(__method__,{ipaddress: ipaddress})
     Rails.cache.fetch(cache_key,cache_options) do

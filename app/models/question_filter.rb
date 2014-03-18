@@ -9,19 +9,19 @@ class QuestionFilter < ActiveRecord::Base
   serialize :settings
   attr_accessible :creator, :created_by, :settings, :use_count
 
-  KNOWN_KEYS = ['locations','responder_locations','assigned_groups','tags','date_range']
+  KNOWN_KEYS = ['question_locations','question_counties','assigned_groups','tags','date_range']
 
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   before_save :set_fingerprint
 
   def self.find_or_create_by_settings(settings,creator)
     settings_array = self.convert_settings_hash(settings)
-    return find(ALL) if settings_array.blank?
+    return nil if settings_array.blank?
     find_fingerprint = self.settings_fingerprint(settings_array)
-    if(!(browse_filter = self.find_by_fingerprint(find_fingerprint)))
-      browse_filter = self.create(settings: settings, creator: creator)
+    if(!(question_filter = self.find_by_fingerprint(find_fingerprint)))
+      question_filter = self.create(settings: settings, creator: creator)
     end
-    browse_filter
+    question_filter
   end
 
 
@@ -33,10 +33,10 @@ class QuestionFilter < ActiveRecord::Base
         objecthash[filter_key] = Tag.where("id in (#{id_list.join(',')})").order(:name).all
       when 'assigned_groups'
         objecthash[filter_key] = Group.where("id in (#{id_list.join(',')})").order(:name).all
-      when 'locations'
+      when 'question_locations'
         objecthash[filter_key] = Location.where("id in (#{id_list.join(',')})").order(:name).all
-      when 'responder_locations'
-        objecthash[filter_key] = Location.where("id in (#{id_list.join(',')})").order(:name).all
+      when 'question_counties'
+        objecthash[filter_key] = County.where("id in (#{id_list.join(',')})").order(:name).all
       end
     end
     objecthash

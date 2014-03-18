@@ -68,6 +68,8 @@ module ExpertDataHelper
     filter_hash.each do |filter_key,items|
       if(filter_key == 'date_range')
         # TODO something
+      elsif(filter_key == 'question_counties')
+        string_array << "<strong>#{filter_key.gsub('_',' ').capitalize}</strong>: #{items.map(&:name_with_location).join(' or ')}"        
       else
         string_array << "<strong>#{filter_key.gsub('_',' ').capitalize}</strong>: #{items.map(&:name).join(' or ')}"
       end

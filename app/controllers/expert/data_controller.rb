@@ -51,9 +51,9 @@ class Expert::DataController < ApplicationController
 
     if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
       @question_filter_objects = @question_filter.settings_to_objects
-      @questions = Question.filtered_by(@question_filter).page(params[:page])
+      @questions = Question.filtered_by(@question_filter).order('questions.created_at DESC').page(params[:page])
     else
-      @questions = Question.page(params[:page])
+      @questions = Question.order('questions.created_at DESC').page(params[:page])
     end
   end
 
@@ -111,7 +111,6 @@ class Expert::DataController < ApplicationController
     if(question_filter = QuestionFilter.find_or_create_by_settings(params,current_user))
       return redirect_to(questions_expert_data_url(filter: question_filter.id))
     else
-      flash[:warning] = 'Invalid filter provided.'
       return redirect_to(questions_expert_data_url)
     end
   end
@@ -120,7 +119,6 @@ class Expert::DataController < ApplicationController
     if(question_filter = QuestionFilter.find_or_create_by_settings(params,current_user))
       return redirect_to(evaluations_expert_data_url(filter: question_filter.id))
     else
-      flash[:warning] = 'Invalid filter provided.'
       return redirect_to(evaluations_expert_data_url)
     end
   end

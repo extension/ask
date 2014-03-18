@@ -291,6 +291,7 @@ Aae::Application.routes.draw do
   controller :selectdata do
     simple_named_route 'groups', via: [:get]
     simple_named_route 'locations', via: [:get]
+    simple_named_route 'counties', via: [:get]
     simple_named_route 'tags', via: [:get]
   end
 

@@ -27,49 +27,56 @@
   </div>
 </div>
 
-
-<%- if !@questions.blank? -%>
-<div class="row-fluid">
+<div class='row-fluid'>
   <div class="span12">
+    <%- if @questions.blank? -%>
+    <p>No questions to display</p>
+    <%- else -%>
+      <%= page_entries_info @questions %>
+      <%= paginate(@questions) %>
     <p class='pull-right'>
       <%= link_to("<i class='fa fa-file-o'></i> Download this list (.csv)".html_safe,
                   expert_data_questions_download_path(filter: @question_filter),
                   :class => 'btn') %>
-    </p>
-    <%= page_entries_info @questions %>
-    <%= paginate(@questions) %>
-
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-        <th>Internal ID</th>
-        <th>Submitted</th>
-        <th>Status</th>
-        <th>Location</th>
-        <th>Assigned Group</th>
-        <th>Initial Response</th>
-        <th>Initial Responder Location</th>
-        </tr>
-      </thead>
-
-      <tbody>
-      <%- for question in @questions -%>
-        <tr id="question_row_<%= question.id %>">
-          <td><%= link_to("Question ##{question.id}",expert_question_path(id: question.id)) %></td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-      <%- end -%>
-      </tbody>
-    </table>
-
+     </p>    
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th>Question Location</th>
+            <th>Assigned Group</th>
+          </tr>
+        </thead>
+        <tbody>
+        <%- @questions.each do |question| -%>
+          <tr>
+            <td><%= link_to(question.title.html_safe, expert_question_path(id: question.id)) %></td>
+            <td><%= humane_date(question.created_at) %></td>
+            <td><%= Question.convert_to_string(question.status_state) %></td>
+            <td><% if question.location.present? %>
+              <% if question.county.present? %>
+                <%= "#{question.county.name}, " %> 
+              <% end %>
+              <%= question.location.abbreviation %>
+            <% else %>
+              No Location
+            <% end %>
+          </td>
+          <td><%= question.assigned_group.name %></td>
+          </tr>
+        <%- end -%>
+        </tbody>
+      </table>
+      <%= paginate(@questions) %>
+    <%- end # questions -%>
   </div>
 </div>
-<%- end -%>
+
+
+
+
 
 </div>
 
