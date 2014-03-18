@@ -20,6 +20,12 @@ class SelectdataController < ApplicationController
     render(json: token_hash)
   end
 
+  def counties
+    @counties = County.includes(:location).where("name like ?", "%#{params[:q]}%")
+    token_hash = @counties.collect{|county| {id: county.id, text: "#{county.name}, #{county.location.abbreviation}"}}
+    render(json: token_hash)
+  end
+
   def tags
     @tags = Tag.used_at_least_once.where("name like ?", "#{params[:q]}%")
     token_hash = @tags.collect{|tags| {id: tags.id, text: tags.name}}

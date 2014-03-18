@@ -44,6 +44,8 @@ class Notification < ActiveRecord::Base
   AAE_EXPERT_HANDLING_REMINDER = 1015
   AAE_EXPERT_PUBLIC_COMMENT = 1016
   AAE_EXPERT_RESPONSE_EDIT = 1017
+  AAE_DATA_DOWNLOAD_AVAILABLE = 1018
+
     
   ##########################################
   #  Ask an Expert Notifications - Public
@@ -61,7 +63,7 @@ class Notification < ActiveRecord::Base
   ##########################################
   
   
-  
+  # really needs to change to be a reflection of some kind
   def process
     return true if (!Settings.send_notifications)
     
@@ -114,6 +116,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_response_edit
     when AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER
       process_aae_expert_response_edit_to_submitter
+    when AAE_DATA_DOWNLOAD_AVAILABLE
+      process_aae_data_download_available
     else
       # nothing
     end
@@ -243,6 +247,19 @@ class Notification < ActiveRecord::Base
     delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
     self.update_attribute(:delayed_job_id, delayed_job.id)
   end
+
+  def process_aae_data_download_available
+     if(self.notifiable.notifylist)
+      self.notifiable.notifylist.each do |id|
+        if(person = User.find_by_id(id))
+          InternalMailer.data_download_available({download: self.notifiable, notification: self, recipient: person}).deliver
+        end
+      end
+    end
+    # clear notify list
+    self.notifiable.notifylist = []
+    self.notifiable.save
+  end   
   
   def self.pending_activity_notification?(notifiable)
     Notification.where(notifiable_id: notifiable.id, notification_type: AAE_QUESTION_ACTIVITY, delivery_time: Time.now..Settings.activity_notification_interval.from_now).size > 0

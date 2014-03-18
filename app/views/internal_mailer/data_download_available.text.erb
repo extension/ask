@@ -1,0 +1,21 @@
+<%= render(:partial => 'shared_mailer/demo_notice') if is_demo? -%>
+Hi <%= @recipient.name %>,
+
+The CSV download you requested is now available.  
+
+You can download the file today by returning to:
+
+<%- if @download.label == 'demographics' -%>
+  <%= expert_data_demographics_download_url %>
+<%- elsif @download.label == 'questions' -%>
+  <%- if(!@download.filter_id.nil? and filter = QuestionFilter.find_by_id(@download.filter_id)) -%>
+    <%= expert_data_questions_download_url(filter: filter.id) %>
+  <%- else -%>
+    <%= expert_data_questions_download_url %>
+  <%- end -%>
+<%- end -%>
+      
+and clicking "Download"
+
+(Please note, the download file will be flagged for a rebuild week, if you don't download the file by then, you may have to wait again for the download to be generated again)
+

@@ -83,7 +83,7 @@ class Download < ActiveRecord::Base
           last_itemcount = 0
         end
       end
-      # TODO create notification
+      Notification.create(notifiable: self, notification_type: Notification::AAE_DATA_DOWNLOAD_AVAILABLE, created_by:1, recipient_id: 1, delivery_time: 1.minute.from_now)
       self.update_attributes(last_generated_at: Time.now,
                              last_runtime: benchmark.real,
                              last_filesize: File.size(this_filename),
