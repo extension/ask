@@ -30,16 +30,22 @@ if(TRUE_VALUES.include?(ENV['MIGRATE']))
   after "deploy", "deploy:web:enable"
 else
   before "deploy", "delayed_job:stop"
+  before "deploy", "sidekiq:stop"
   before "deploy", "deploy:checks:git_migrations"
   after "deploy:update_code", "deploy:update_maint_msg"
   after "deploy:update_code", "deploy:link_and_copy_configs"
   after "deploy:update_code", "deploy:cleanup"
   after "deploy", "delayed_job:start"
+  after "deploy", "sidekiq:start"
 end
 
 # delayed job - stop when app is manually put into maintenance mode and when there are migrations to run
 before "deploy:web:disable", "delayed_job:stop"
 before "deploy:web:enable", "delayed_job:start"
+
+# ditto sidekiq
+after "deploy:web:disable",   "sidekiq:stop"
+before "deploy:web:enable",   "sidekiq:start"
 
 namespace :deploy do
   
@@ -62,7 +68,8 @@ namespace :deploy do
     ln -nfs #{shared_path}/config/settings.local.yml #{release_path}/config/settings.local.yml &&
     ln -nfs #{shared_path}/config/sunspot.yml #{release_path}/config/sunspot.yml &&
     ln -nfs #{shared_path}/config/robots.txt #{release_path}/public/robots.txt &&
-    ln -nfs #{shared_path}/sitemaps #{release_path}/public/sitemaps   
+    ln -nfs #{shared_path}/sitemaps #{release_path}/public/sitemaps &&
+    ln -nfs #{shared_path}/downloads #{release_path}/tmp/downloads  
     CMD
   end
   
@@ -154,3 +161,33 @@ namespace :db do
     end
 end  
 
+namespace :sidekiq do
+  desc 'Stop sidekiq'
+  task 'stop', :roles => :app do
+    # check status
+    started = false
+    invoke_command 'status workers' do |channel,stream,data|
+      started = (data =~ %r{start})
+    end
+    if(started)
+      invoke_command 'stop workers', via: 'sudo'
+    end
+  end
+
+  desc 'Start sidekiq'
+  task 'start', :roles => :app do
+    stopped = false
+    invoke_command 'status workers' do |channel,stream,data|
+      stopped = (data =~ %r{stop})
+    end
+    if(stopped)
+      invoke_command 'start workers', via: 'sudo'
+    end
+  end
+
+  desc 'Restart sidekiq'
+  task 'restart', :roles => :app do
+    stop
+    start
+  end
+end     
