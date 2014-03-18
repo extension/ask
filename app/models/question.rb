@@ -191,7 +191,7 @@ class Question < ActiveRecord::Base
   scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
   scope :answered, where(:status_state => STATUS_RESOLVED)
   scope :submitted, where(:status_state => STATUS_SUBMITTED)
-  scope :not_rejected, conditions: "status_state <> #{STATUS_REJECTED}"
+  scope :not_rejected, lambda { where("status_state <> #{STATUS_REJECTED}") }
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
@@ -1146,7 +1146,7 @@ class Question < ActiveRecord::Base
         responsetime_by_yearweek = self.answered.group(YEARWEEK_ANSWERED).sum(:initial_response_time)
         metric_by_yearweek = {}
         responsetime_by_yearweek.each do |yearweek,total_response_time|
-          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / questions_by_yearweek[yearweek].to_f )
+          metric_by_yearweek[yearweek] = ((questions_by_yearweek[yearweek].nil? or questions_by_yearweek[yearweek] == 0) ? 0 : total_response_time / 3600 / questions_by_yearweek[yearweek].to_f )
         end
       else
         return stats

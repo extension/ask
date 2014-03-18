@@ -173,7 +173,7 @@ class Download < ActiveRecord::Base
         headers << column
       end
       csv << headers
-      question_scope = Question
+      question_scope = Question.not_rejected
       if(!self.filter_id.nil? and self.filterclass == 'QuestionFilter' and question_filter = QuestionFilter.find_by_id(self.filter_id))
         question_scope = question_scope.filtered_by(question_filter)
       end

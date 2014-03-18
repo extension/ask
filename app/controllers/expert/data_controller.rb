@@ -16,9 +16,9 @@ class Expert::DataController < ApplicationController
     else
       options = {}
     end
-    @question_stats = Question.answered_stats_by_yearweek('questions',options)
+    @question_stats = Question.not_rejected.answered_stats_by_yearweek('questions',options)
     @expert_stats = QuestionEvent.stats_by_yearweek(options)
-    @responsetime_stats = Question.answered_stats_by_yearweek('responsetime',options)
+    @responsetime_stats = Question.not_rejected.answered_stats_by_yearweek('responsetime',options)
     @evaluation_response_rate = EvaluationQuestion.mean_response_rate
     @demographic_response_rate = DemographicQuestion.mean_response_rate
   end
@@ -51,9 +51,9 @@ class Expert::DataController < ApplicationController
 
     if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
       @question_filter_objects = @question_filter.settings_to_objects
-      @questions = Question.filtered_by(@question_filter).order('questions.created_at DESC').page(params[:page])
+      @questions = Question.not_rejected.filtered_by(@question_filter).order('questions.created_at DESC').page(params[:page])
     else
-      @questions = Question.order('questions.created_at DESC').page(params[:page])
+      @questions = Question.not_rejected.order('questions.created_at DESC').page(params[:page])
     end
   end
 
