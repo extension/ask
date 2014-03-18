@@ -82,12 +82,12 @@ class Expert::DataController < ApplicationController
           return redirect_to(expert_data_questions_download_url)
         end
       else
-        return redirect_to(expert_data _url)
+        return redirect_to(expert_data_url)
       end
     elsif(!@download.dumpfile_updated?)
       @download.queue_filedump
       @download.add_to_notifylist(current_user)
-      flash[:notice] = 'This export has not been updated. Check back in a few minutes.'
+      flash[:notice] = 'The data export has been started. Check back in a few minutes.'
       if(@download.label == 'demographics')
         return redirect_to(expert_data_demographics_download_url)
       elsif(@download.label == 'questions')
@@ -97,7 +97,7 @@ class Expert::DataController < ApplicationController
           return redirect_to(expert_data_questions_download_url)
         end
       else
-        return redirect_to(expert_data _url)
+        return redirect_to(expert_data_url)
       end
     else
       DownloadLog.create(download_id: @download.id, downloaded_by: current_user.id)
