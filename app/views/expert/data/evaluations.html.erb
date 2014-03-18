@@ -3,7 +3,9 @@
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Evaluations'}) %>
 
 <header class="jumbotron subhead" id="overview">
-  <h1>AaE Evaluation <small><%= link_to("Download raw data &raquo;".html_safe,'',:class => 'btn') %></small></h1>
+  <h1>AaE Evaluation <small><%= link_to("Download data &raquo;".html_safe,
+                                         expert_data_questions_download_path(filter: (@question_filter.present? ? @question_filter.id : nil)),
+                                         :class => 'btn') %></small></h1>
   <p class="lead">Data through <%= year_week_for_last_week%> (<%= date_range_for_last_week%>)</p>
 </header>
 
