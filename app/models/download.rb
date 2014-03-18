@@ -47,6 +47,8 @@ class Download < ActiveRecord::Base
     if(!Settings.sidekiq_enabled)
       self.dump_to_file
     else
+      # cheat by setting dump_in_progress do to the file generation redirect
+      self.update_attributes(dump_in_progress: true)
       self.class.sidekiq_delay_for(5.seconds).delayed_dump_to_file(self.id)
     end
   end
