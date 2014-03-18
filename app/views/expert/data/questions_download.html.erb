@@ -385,11 +385,11 @@
              <%- if !aeq.responses.blank? -%>
               <ul>
                 <%- if aeq.responsetype == EvaluationQuestion::SCALE -%>
-                  <li><span class="badge"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
-                  <li><span class="badge"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
+                  <li><span class="label"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
+                  <li><span class="label"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
                 <%- elsif aeq.responsetype == EvaluationQuestion::MULTIPLE_CHOICE -%>
                   <%- aeq.responses.each_with_index do |response_text,index| %>
-                    <li><span class="badge"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
+                    <li><span class="label"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
                   <%- end -%>
                 <%- else -%>
                   <%- aeq.responses.each_with_index do |response_text,index| %>
