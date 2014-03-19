@@ -288,9 +288,6 @@ class Download < ActiveRecord::Base
         demographic_count = person.demographics.count
         next if (demographic_count == 0)
         row = []
-        if(show_submitter)
-          row << person.id
-        end
         row << person.has_exid?
         row << demographic_count
         demographic_data = {}
