@@ -24,7 +24,7 @@
       <p>
     <%- if @download.available_for_download? %>
       <%= link_to("Download",expert_data_getfile_path(id: @download.id),class: 'btn') %>
-    <%- elsif(@download.dump_in_progress?) -%>
+    <%- elsif(@download.dump_in_progress? or @show_notify) -%>
       <%= link_to("Notify me",expert_data_getfile_path(id: @download.id),class: 'btn') %>
       <p>Export is in progress. Click "Notify me" and we'll notify you via email when it's finished</p>
     <%- elsif(!@download.dumpfile_updated?) -%>

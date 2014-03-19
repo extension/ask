@@ -30,6 +30,8 @@ class Expert::DataController < ApplicationController
   end
 
   def demographics_download
+    @show_notify = (params[:show_notify] and TRUE_VALUES.include?(params[:show_notify]))
+
     @download = Download.find_by_label('demographics')
     @response_rate = DemographicQuestion.mean_response_rate
   end
@@ -58,6 +60,8 @@ class Expert::DataController < ApplicationController
   end
 
   def questions_download
+    @show_notify = (params[:show_notify] and TRUE_VALUES.include?(params[:show_notify]))
+
     if(params[:filter] && @question_filter = QuestionFilter.find_by_id(params[:filter]))
       @questions_filter_id = @question_filter.id
       @question_filter_objects = @question_filter.settings_to_objects
@@ -89,12 +93,12 @@ class Expert::DataController < ApplicationController
       @download.add_to_notifylist(current_user)
       flash[:notice] = 'The data export has been started. Check back in a few minutes.'
       if(@download.label == 'demographics')
-        return redirect_to(expert_data_demographics_download_url)
+        return redirect_to(expert_data_demographics_download_url(show_notify: true))
       elsif(@download.label == 'questions')
         if(!@download.filter_id.nil? and filter = QuestionFilter.find_by_id(@download.filter_id))
-          return redirect_to(expert_data_questions_download_url(filter: filter.id))
+          return redirect_to(expert_data_questions_download_url(filter: filter.id, show_notify: true))
         else
-          return redirect_to(expert_data_questions_download_url)
+          return redirect_to(expert_data_questions_download_url(show_notify: true))
         end
       else
         return redirect_to(expert_data_url)
