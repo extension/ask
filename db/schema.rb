@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140313143610) do
+ActiveRecord::Schema.define(:version => 20140319212033) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -366,6 +366,15 @@ ActiveRecord::Schema.define(:version => 20140313143610) do
 
   add_index "preferences", ["classification"], :name => "index_preferences_on_classification"
   add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id", "question_id"], :name => "pref_uniq_ndx", :unique => true
+
+  create_table "question_data_caches", :force => true do |t|
+    t.integer  "question_id"
+    t.text     "data_values"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "question_data_caches", ["question_id"], :name => "question_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
     t.integer  "question_id",                                           :null => false

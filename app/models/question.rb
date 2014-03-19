@@ -166,7 +166,7 @@ class Question < ActiveRecord::Base
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id' 
-
+  has_one :question_data_cache
 
   ## scopes
   scope :public_visible, conditions: { is_private: false }
@@ -209,6 +209,7 @@ class Question < ActiveRecord::Base
   before_create :generate_fingerprint, :set_last_opened, :set_is_extension
   after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
   after_update :index_me
+  after_save :update_data_cache
 
   ## class methods
   def self.evaluation_pool(days_closed = Settings.days_closed_for_evaluation)
@@ -1224,6 +1225,19 @@ class Question < ActiveRecord::Base
     end
   end
 
+  def update_data_cache
+    QuestionDataCache.create_or_update_from_question(self)
+  end
+
+  def data_cache
+    if(!(qdc = self.question_data_cache))
+      qdc = QuestionDataCache.create_or_update_from_question(self)
+    end
+    qdc.data_values
+  end
+
+
+
   def self.filtered_by(question_filter)
     with_scope do
       base_scope = select('DISTINCT questions.id, questions.*')
@@ -1246,6 +1260,8 @@ class Question < ActiveRecord::Base
       base_scope
     end
   end
+
+
 
 
 end
