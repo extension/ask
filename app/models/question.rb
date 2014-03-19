@@ -1013,11 +1013,11 @@ class Question < ActiveRecord::Base
   end
 
   def mean_response_time
-    self.response_times.mean
+    self.response_times.mean || 0
   end
 
   def median_response_time
-    self.response_times.median
+    self.response_times.median || 0
   end
 
   def aae_version
