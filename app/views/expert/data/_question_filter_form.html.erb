@@ -1,0 +1,159 @@
+<div class="row-fluid">
+  <div class="span12">
+
+    <%= form_tag(filter_path, class: 'form-horizontal') do -%>
+
+    <fieldset>
+      <legend>Filter list by:</legend>
+
+    <div class="well">
+      <h3>Filter Notes</h3>
+      <ul>
+        <li>Searches within a filter typle are 'or' searches. Searches between filter types are an 'and' search. For example, specifying Question Locations: 'Oregon' 'North Carolina' and Groups: 'eXtension Support' will search
+        for ('Oregon' OR 'North Carolina') AND ('eXtension Support')</li>
+        <li><strong>Question location data should not be considered as an absolute value.</strong> Ask an Expert uses a commercial location detection service that matches internet protocol (IP) address. This service is ~90% accurate <strong>at best</strong> to the state level, and ~80% accurate <strong>at best</strong> within 40km (county level). Cell-network (mobile) submitters, submitters travelling and using public wifi networks, and often public wifi networks on University campuses may not report the location accurately. For widget-based questions, the widget configuration may not enable the collection of the question location. Detected location also can change over time. Significant changes and improvements in question location assignment were made in December 2012 which should be considered when doing year-over-year comparisons beginning in 2013 as compared to 2012 and earlier years.</li>
+      </ul>
+    </div>
+
+      <p><em></em></p>
+
+      <div class="control-group">
+        <%= label_tag('assigned_groups', 'Assigned Group', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("assigned_groups","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <%= label_tag('question_locations', 'Question Locations', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("question_locations","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <%= label_tag('question_counties', 'Question Counties', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("question_counties","", class: 'span8' ) -%>
+        </div>
+      </div>      
+
+      <div class="control-group">
+        <%= label_tag('tags', 'Tags', :class => 'control-label') -%>
+        <div class="controls">
+          <%= text_field_tag("tags","", class: 'span8' ) -%>
+        </div>
+      </div>
+
+    </fieldset>
+
+      <p><%= submit_tag "Filter", :class => "btn btn-primary" %> <%= link_to "cancel", '#', :class => "btn", :id => 'cancel_button' %></p>
+
+    <%- end -%>
+
+  </div>
+</div>
+
+<script class="code" type="text/javascript">
+
+    $('#cancel_button').on('click', function () {
+      $('#showform').collapse('hide');
+    });
+
+
+   $(function () {
+      $('#assigned_groups').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_groups_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+    <%- if (@data_filter_objects && @question_filter_objects['assigned_groups']) -%>
+      $('#assigned_groups').select2('data', <%= @question_filter_objects['assigned_groups'].map{|g|  {id: g.id, text: g.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#question_locations').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_locations_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+     <%- if (@question_filter_objects && @question_filter_objects['question_locations']) -%>
+      $('#question_locations').select2('data', <%= @question_filter_objects['question_locations'].map{|l|  {id: l.id, text: l.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#question_counties').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_counties_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+     <%- if (@question_filter_objects && @question_filter_objects['question_counties']) -%>
+      $('#question_counties').select2('data', <%= @question_filter_objects['question_counties'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+    <%- end -%>
+
+   });
+
+    $(function () {
+      $('#tags').select2({
+        minimumInputLength: 2,
+        multiple: true,
+        ajax: {
+          url: "<%= selectdata_tags_path -%>",
+          dataType: 'json',
+          data: function(term,page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
+     });
+
+    <%- if (@question_filter_objects && @question_filter_objects['tags']) -%>
+      $('#tags').select2('data', <%= @question_filter_objects['tags'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+    <%- end -%>
+   });
+
+ </script>

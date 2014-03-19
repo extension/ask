@@ -6,19 +6,19 @@ Aae::Application.routes.draw do
   devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
-  
+
   resources :questions do
     collection do
       post 'account_review_request'
     end
   end
-  
+
   resources :responses, :only => [:create] do
     member do
       post 'remove_image'
     end
   end
-  
+
   resources :comments, :only => [:create, :update, :destroy, :show, :edit] do
     collection do
       get 'cancel_edit'
@@ -27,16 +27,16 @@ Aae::Application.routes.draw do
       post 'reply'
     end
   end
-  
+
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
-  
+
   resources :users do
     member do
       post 'comment_notification_subscription'
-    end  
+    end
   end
-  
+
   resources :groups do
     member do
       get 'ask'
@@ -100,7 +100,26 @@ Aae::Application.routes.draw do
         get 'email_csv'
       end
     end
-    
+
+    resources :data, :only => [:index] do
+      collection do
+        get  :demographics
+        get  :evaluations
+        get  :questions
+        get  :filter_questions
+        post :filter_questions
+        get  :filter_evaluations
+        post :filter_evaluations
+      end
+    end
+
+    namespace :data do
+      match 'demographics/download', action: 'demographics_download'
+      match 'questions/download', action: 'questions_download'
+      match 'getfile', action: 'getfile', via: [:get,:post]
+    end
+
+
     match "/" => "home#dashboard"
     match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
     match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
@@ -108,7 +127,7 @@ Aae::Application.routes.draw do
     match "reports/question_list", to: "reports#question_list", :via => [:get], :as => 'reports_question_list'
     # match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
     match "reports/:action", to: "reports", :via => [:get]
-    
+
     match "users/:id/answered" => "users#answered", :via => [:get], :as => 'user_answered'
     match "users/:id/watched" => "users#watched", :via => [:get], :as => 'user_watched'
     match "users/:id/rejected" => "users#rejected", :via => [:get], :as => 'user_rejected'
@@ -142,7 +161,7 @@ Aae::Application.routes.draw do
     match "home/users/locations/:id/email_list" => "home#users_by_location_email_csv", :as => 'users_by_location_email_csv'
     match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
     match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
-    match "home/users/counties/:id" => "home#users_by_county", :as => 'users_by_county' 
+    match "home/users/counties/:id" => "home#users_by_county", :as => 'users_by_county'
     match "home/groups/counties/:id" => "home#groups_by_county", :as => 'groups_by_county'
     match "home/questions/counties/:id" => "home#questions_by_county", :as => 'questions_by_county'
     match "home/experts" => "home#experts"
@@ -171,18 +190,18 @@ Aae::Application.routes.draw do
     match "search/questions" => "search#questions", :via => [:get]
     match "home/search" => "home#search", :via => [:get]
   end
-  
+
   # public search
   match "search/all" => "search#all", :via => [:get]
-  
+
   # widgets for resolved questions
   match "widgets/front_porch" => "widgets#front_porch", :via => [:get]
   match "widgets/answered" => "widgets#answered", :via => [:get]
-  
+
   # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
   match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'
   match "questions/authorize_submitter" => "questions#authorize_submitter", :via => :post, :as => 'authorize_submitter'
-  
+
   match "home/about" => "home#about", :via => :get
   match "home/unanswered" => "home#unanswered", :via => :get
   match "home/change_yolo" => "home#change_yolo", :via => [:post]
@@ -191,9 +210,9 @@ Aae::Application.routes.draw do
   match "home/private_page" => "home#private_page", :via => :get
   match "home/county_options_list/:location_id" => "home#county_options_list", :via => :get
   match "settings/profile" => "settings#profile", :via => [:get, :put], :as => 'nonexid_profile_edit'
-  
+
   match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
-  
+
   match "ask" => "groups#ask", :id => "38" #id for QW group
 
   match "ajax/tags" => "ajax#tags", :via => [:get]
@@ -235,7 +254,7 @@ Aae::Application.routes.draw do
     match "/:mailer_cache_id/logo" => "webmail#logo", :as => 'webmail_logo'
     match "/view/:hashvalue" => "webmail#view", :as => 'webmail_view'
   end
-  
+
   match "webmail/examples", to: "webmail/examples#index", :via => [:get], :as => 'webmail_index'
   # webmail example routing
   namespace "webmail" do
@@ -252,10 +271,10 @@ Aae::Application.routes.draw do
   match "evaluation/authorize" => "evaluation#authorize", via: [:post], :as => 'authorize_evaluation'
   match "evaluation/example" => "evaluation#example", via: [:get], :as => 'example_evaluation'
   match "evaluation/thanks" => "evaluation#thanks", via: [:get], :as => 'evaluation_thanks'
-  
+
   # feeds
   match "feeds/answered_questions", :via => :get, :defaults => { :format => 'xml' }
-  
+
   # wildcard
   match "evaluation/:action", to: "evaluation", :via => [:get, :post]
 
@@ -267,6 +286,15 @@ Aae::Application.routes.draw do
 
   # wildcard
   match "debug/:action", to: "debug", :via => [:get]
+
+  # json data enpoints for tokeninput
+  controller :selectdata do
+    simple_named_route 'groups', via: [:get]
+    simple_named_route 'locations', via: [:get]
+    simple_named_route 'counties', via: [:get]
+    simple_named_route 'tags', via: [:get]
+  end
+
 
   root :to => 'home#index'
 

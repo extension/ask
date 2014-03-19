@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131016212841) do
+ActiveRecord::Schema.define(:version => 20140313143610) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -121,6 +121,31 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
   end
 
   add_index "demographics", ["demographic_question_id", "user_id"], :name => "dq_u_ndx", :unique => true
+
+  create_table "download_logs", :force => true do |t|
+    t.integer  "download_id"
+    t.integer  "downloaded_by"
+    t.datetime "created_at"
+  end
+
+  add_index "download_logs", ["download_id", "downloaded_by"], :name => "download_ndx"
+
+  create_table "downloads", :force => true do |t|
+    t.string   "label"
+    t.string   "display_label"
+    t.string   "filterclass"
+    t.integer  "filter_id"
+    t.boolean  "dump_in_progress",  :default => false
+    t.datetime "last_generated_at"
+    t.float    "last_runtime"
+    t.integer  "last_filesize"
+    t.integer  "last_itemcount"
+    t.text     "notifylist"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  add_index "downloads", ["label", "filterclass", "filter_id"], :name => "download_ndx"
 
   create_table "evaluation_answers", :force => true do |t|
     t.integer  "evaluation_question_id", :null => false
@@ -343,13 +368,13 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
   add_index "preferences", ["prefable_id", "prefable_type", "name", "group_id", "question_id"], :name => "pref_uniq_ndx", :unique => true
 
   create_table "question_events", :force => true do |t|
-    t.integer  "question_id",                        :null => false
+    t.integer  "question_id",                                           :null => false
     t.integer  "submitter_id"
     t.integer  "initiated_by_id"
     t.integer  "recipient_id"
     t.integer  "recipient_group_id"
     t.text     "response"
-    t.integer  "event_state",                        :null => false
+    t.integer  "event_state",                                           :null => false
     t.integer  "contributing_question_id"
     t.text     "tags"
     t.text     "additional_data"
@@ -365,9 +390,10 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
     t.text     "previous_tags"
     t.integer  "previous_group_id"
     t.integer  "changed_group_id"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.text     "updated_question_values"
+    t.boolean  "is_extension",                       :default => false
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
@@ -376,6 +402,17 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
   add_index "question_events", ["question_id"], :name => "idx_question_id"
   add_index "question_events", ["recipient_id"], :name => "idx_recipient_id"
   add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
+
+  create_table "question_filters", :force => true do |t|
+    t.integer  "created_by"
+    t.text     "settings"
+    t.string   "fingerprint", :limit => 40
+    t.integer  "use_count"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "question_filters", ["fingerprint"], :name => "fingerprint_ndx", :unique => true
 
   create_table "question_viewlogs", :force => true do |t|
     t.integer  "user_id",                    :null => false
@@ -405,6 +442,8 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
     t.text     "current_response"
     t.integer  "initial_response_id"
     t.integer  "initial_response_time"
+    t.datetime "initial_response_at"
+    t.integer  "initial_responder_id"
     t.string   "question_fingerprint",                        :null => false
     t.string   "submitter_firstname",      :default => ""
     t.string   "submitter_lastname",       :default => ""
@@ -429,6 +468,7 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
     t.datetime "working_on_this"
     t.boolean  "featured",                 :default => false, :null => false
     t.datetime "featured_at"
+    t.boolean  "submitter_is_extension",   :default => false
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -438,6 +478,7 @@ ActiveRecord::Schema.define(:version => 20131016212841) do
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
+  add_index "questions", ["initial_response_id", "initial_response_time", "initial_response_at", "initial_responder_id"], :name => "initial_response_ndx"
   add_index "questions", ["is_private"], :name => "fk_is_private"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"

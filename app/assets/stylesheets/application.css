@@ -13,5 +13,8 @@
  *= require vendor
  *= require twitter/bootstrap-responsive
  *= require bootstrap-wysihtml5
+ *= require jquery.jqplot
+ *= require font-awesome
+ *= require select2
  *= require_tree ./all
 */

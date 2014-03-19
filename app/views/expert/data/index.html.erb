@@ -1,0 +1,70 @@
+<div class="span12">
+
+<% @page_title = "Ask an Expert Data" %>
+<%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Data'}) %>
+
+<header class="jumbotron subhead" id="overview">
+  <h1><%= @page_title %></h1>
+</header>
+
+<div class="row-fluid">
+  <h3>Questions</h3>
+  <div class="span6">
+    <p><span class="mednumber"><%= number_with_delimiter(Question.answered.count) %></span> questions have been answered by
+    <span class="mednumber"><%= number_with_delimiter(Response.expert.count('DISTINCT(resolver_id)')) %></span> experts since <%= Question.earliest_resolved_at.strftime("%B %e, %Y") %></p>
+  </div>
+
+  <div class="span5">
+    <p><%= link_to("Explore more &raquo;".html_safe,questions_expert_data_path,:class => 'btn') %></p>
+  </div>  
+</div>
+
+<div class="row-fluid">
+  <h3>Evaluation</h3>
+  <div class="span6">
+    <p>Mean Public Response Rate: <span class="mednumber"><%= response_rate(@evaluation_response_rate) %></span></p>
+  </div>
+
+  <div class="span5">
+    <p><%= link_to("Explore more &raquo;".html_safe,evaluations_expert_data_path,:class => 'btn') %></p>
+  </div>  
+</div>
+
+<div class="row-fluid">
+  <h3>Demographics</h3>
+  <div class="span6">
+    <p>Mean Public Response Rate: <span class="mednumber"><%= response_rate(@demographic_response_rate) %></span></p>
+  </div>
+
+  <div class="span5">
+    <p><%= link_to("Explore more &raquo;".html_safe,demographics_expert_data_path,:class => 'btn') %></p>
+  </div>  
+</div>
+
+
+<div class="page-header">
+  <h2>Growth and Performance over time</h2>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+    <h3>Answered Questions by Week</h3>
+    <%= render(:partial => 'shared/line_plot', :locals => {:data => @question_stats.to_graph_data('questions'), :datalabel => 'questions'})%>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+    <h3>Active Experts by Week</h3>
+    <%= render(:partial => 'shared/line_plot', :locals => {:data => @expert_stats.to_graph_data('experts'), :datalabel => 'experts'})%>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+    <h3>Mean Initial Response Time (Hours) by Week</h3>
+    <%= render(:partial => 'shared/line_plot', :locals => {:data => @responsetime_stats.to_graph_data('responsetime'), :datalabel => 'responsetime'})%>
+  </div>
+</div>
+
+</div>

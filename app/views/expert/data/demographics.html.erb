@@ -1,0 +1,27 @@
+<div class="span12">
+
+<%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Demographics'}) %>
+
+<header class="jumbotron subhead" id="overview">
+  <h1>AaE Demographics <small><%= link_to("Download data &raquo;".html_safe,expert_data_demographics_download_path,:class => 'btn') %></small></h1>
+</header>
+
+
+<%- @demographic_questions.each do |dq| -%>
+<%-
+    if(params[:forcecacheupdate])
+      response_data = dq.response_data({force: true})
+    else
+      response_data = dq.response_data
+    end
+-%>
+
+<div class="row-fluid">
+  <div class="span12">
+    <h3><%= dq.prompt %> <small>Response rate: <%= response_rate(response_data) %></small></h3>
+    <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "demographic_#{dq.id}"})%>
+  </div>
+</div>
+
+<%- end -%>
+</div>

@@ -1,0 +1,22 @@
+<%- # TODO: there have to be better ways of doing this that utilize the action names -%>
+<ul class="breadcrumb">
+  <li>
+    <%- if local_assigns.has_key?(:endpoint) and endpoint == 'Data' -%>
+      Data<span class="divider">/</span>
+    <%- else -%>
+      <%= link_to('Data',expert_data_path) %><span class="divider">/</span>
+    <%- end -%>
+  </li>
+
+  <%- if local_assigns.has_key?(:endpoint) and endpoint != 'Data'-%>
+    <%- if endpoint == 'Demographics Download' -%>
+      <li><%= link_to('Demographics',demographics_expert_data_path) %><span class="divider">/</span></li>
+      <li class='active'>Download</li>
+    <%- elsif endpoint == 'Questions Download' -%>
+      <li><%= link_to('Questions',questions_expert_data_path(filter: @questions_filter_id)) %><span class="divider">/</span></li>
+      <li class='active'>Download</li>
+    <%- else -%>
+      <li class='active'><%= endpoint %></li>
+    <%- end -%>
+  <%- end -%>
+</ul>

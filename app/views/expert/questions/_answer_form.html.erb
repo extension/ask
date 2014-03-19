@@ -18,7 +18,7 @@
   <p class="save_it"><%= submit_tag 'Send Response', :class => "btn btn-primary btn-large" %></p>
             
   <p>All responses include <a id="disclaimer_switch" class="cursor">this disclaimer</a></p>
-  <p id="disclaimer" style="display:none;"><%= Question::EXPERT_DISCLAIMER %></p>
+  <p id="disclaimer" style="display:none;"><%= render(partial: 'partials/expert_disclaimer') %></p>
 <% end %>
 
 

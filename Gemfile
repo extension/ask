@@ -25,6 +25,15 @@ gem 'anjlab-bootstrap-rails', '~> 2.3.1.2', :require => 'bootstrap-rails'
 # wysihtml5 + bootstrap + asset pipeline
 gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
+# select2 asset packaging - used for filter interfaces
+gem "select2-rails"
+
+# jqplot
+gem 'outfielding-jqplot-rails'
+
+# replaces glyphicons
+gem 'font-awesome-rails'
+
 # storage
 gem 'mysql2'
 
@@ -37,9 +46,6 @@ gem 'rmagick'
 # ip to geo mapping
 gem 'geocoder'
 gem 'geoip'
-
-# Deploy with Capistrano
-gem 'capistrano'
 
 gem 'sitemap_generator'
 
@@ -63,7 +69,7 @@ gem 'kaminari'
 # revision history
 gem 'paper_trail', '~> 2'
 
-# diffs 
+# diffs
 gem 'diffy'
 
 # email validation
@@ -74,9 +80,6 @@ gem "rails_config"
 
 # exception notification
 gem 'airbrake'
-
-#phusion passenger
-gem 'passenger'
 
 # comment and threaded discussion support
 gem 'ancestry'
@@ -108,6 +111,9 @@ group :test, :development do
   gem 'sunspot_solr', "~> 1.3.0"
 end
 
+# sidekiq - must come before delayed job in the gemfile
+gem 'sidekiq', "~> 2.17"
+
 # delayed_job
 gem "delayed_job"
 gem 'delayed_job_active_record'
@@ -125,6 +131,9 @@ gem 'rakismet'
 # memcached
 gem 'dalli'
 
+# useragent analysis
+gem 'useragent'
+
 group :development do
   # require the powder gem
   gem 'powder'
@@ -135,6 +144,11 @@ group :development do
   gem 'quiet_assets'
   gem 'pry'
   gem 'net-http-spy'
+
+  # pretty error handling
+  #gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'meta_request'
 end
 
 group :test do

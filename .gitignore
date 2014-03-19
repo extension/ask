@@ -12,10 +12,8 @@
 # environment files
 /.rvmrc
 /.powenv
-/.powrc
 /.tm_properties
-/.ruby-version
-/.ruby-gemset
+
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
