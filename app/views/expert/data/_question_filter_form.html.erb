@@ -79,7 +79,7 @@
         }
      });
 
-    <%- if (@data_filter_objects && @question_filter_objects['assigned_groups']) -%>
+    <%- if (@question_filter_objects && @question_filter_objects['assigned_groups']) -%>
       $('#assigned_groups').select2('data', <%= @question_filter_objects['assigned_groups'].map{|g|  {id: g.id, text: g.name}}.to_json.html_safe %>);
     <%- end -%>
 
