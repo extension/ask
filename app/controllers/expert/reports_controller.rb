@@ -9,6 +9,52 @@ class Expert::ReportsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
+  def home_mockup
+    @user = current_user
+    @location = @user.location.present? ? @user.location : Location.find_by_id(37)
+    
+    @date = DateTime.now
+    @year_month = User.year_month_string(Date.today.year,Date.today.month)
+    @assigned = @user.assigned_list_for_year_month(@year_month)
+    @answered = @user.answered_list_for_year_month(@year_month)
+    @touched = @user.touched_list_for_year_month(@year_month)
+    
+    question_group_scope = Question.where({})
+    expert_group_scope = User.where({})
+    
+    @condition_array = " #{@location.name} "
+    question_location_scope = question_group_scope.by_location(@location)
+    expert_location_scope = expert_group_scope.from_location(@location)
+    
+    
+    # get number of questions resolved by experts in state
+    @resolved_by_state_experts = question_location_scope.not_rejected.resolved_questions_by_in_state_responders(@location, @year_month).count
+    # get number of responses by experts in state
+    responses_by_state_experts = question_location_scope.not_rejected.responses_by_in_state_responders(@location, @year_month)    
+    @responses_by_in_state_count = responses_by_state_experts.count
+    @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
+      
+    # get number of questions resolved by experts out of state
+    @resolved_by_outside_state_experts = question_location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).count
+    # get number of responses by experts out of state for questions from this state
+    responses_by_outside_state_experts = question_location_scope.not_rejected.responses_by_outside_state_responders(@location, @year_month)
+    @responses_by_outside_state_count = responses_by_outside_state_experts.count
+    @responders_outside_state_count = responses_by_outside_state_experts.map{|r| r.initiated_by_id}.uniq.count
+    
+    # get number of questions (with origin out of state) resolved by experts in state 
+    @resolved_by_state_experts_outside_location = question_group_scope.not_rejected.resolved_questions_by_in_state_responders_outside_location(@location, @year_month).count
+    responses_by_state_experts_outside_location = question_group_scope.not_rejected.responses_by_in_state_responders_outside_location(@location, @year_month)
+    @responses_by_state_experts_outside_location_count = responses_by_state_experts_outside_location.count
+    @responders_by_state_experts_outside_location_count = responses_by_state_experts_outside_location.map{|r| r.initiated_by_id}.uniq.count
+
+    @experts = expert_location_scope.except(:select).by_question_event_count(QuestionEvent::RESOLVED, {limit: 40, yearmonth: @year_month}).page(params[:page]).per(20)
+    @unanswered_questions_count = question_location_scope.submitted.not_rejected.order('created_at DESC').count
+    @questions_asked_count = question_location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC').count
+    @questions_answered_count = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').count
+    
+    
+  end
+  
   def index
     @locations = Location.order('fipsid ASC')
     @my_tags = current_user.tags
