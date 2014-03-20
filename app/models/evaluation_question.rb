@@ -190,7 +190,7 @@ class EvaluationQuestion < ActiveRecord::Base
         data[:counts] << ((response_counts[value].blank?) ? 0 : response_counts[value])
       end
     when OPEN_DOLLAR_VALUE
-      values = self.evaluation_answers.pluck(:value).compact
+      values = self.evaluation_answers.where("evaluation_answers.question_id IN (#{limit_to_pool.join(',')})").pluck('value').compact
       data[:responses] = values.size
       data[:labels] = ['$0-$249','$250-$499','$500-$999','$1,000 - $2,499','$2,500 - $4,999','$5,000 - $9,999','>= $10,000']
       value_bins = {}
