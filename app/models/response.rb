@@ -63,7 +63,7 @@ class Response < ActiveRecord::Base
   # filters
   before_save :set_public_flag
   after_create :set_timings
-  after_save :check_first_response, :index_parent_question
+  after_save :check_first_response, :index_parent_question, :update_question_data
 
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
@@ -122,6 +122,10 @@ class Response < ActiveRecord::Base
 
   def index_parent_question
     Sunspot.index(self.question)
+  end
+
+  def update_question_data
+    self.question.update_data_cache
   end
 
 end

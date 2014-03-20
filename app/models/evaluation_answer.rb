@@ -24,7 +24,7 @@ class EvaluationAnswer < ActiveRecord::Base
   ## validations
   
   ## filters
-  after_save :log_changed_answers
+  after_save :log_changed_answers, :update_question_data
 
   ## class methods
   
@@ -39,4 +39,9 @@ class EvaluationAnswer < ActiveRecord::Base
   def response=(response_text)
     write_attribute(:response, self.html_to_text(response_text))
   end
+
+  def update_question_data
+    self.question.update_data_cache
+  end
+  
 end
