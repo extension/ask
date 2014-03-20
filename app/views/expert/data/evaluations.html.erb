@@ -71,7 +71,7 @@
           </td>
           <td>
             <%= response_data[:counts][value-1] -%>
-            (<%= number_to_percentage((response_data[:counts][value-1] / response_data[:responses])*100, precision: 1) %>)
+            (<%= number_to_percentage((response_data[:counts][value-1] / response_data[:responses] rescue 0 )*100, precision: 1) %>)
           </td>
         </tr>
         <%- end -%>
@@ -83,7 +83,7 @@
           </td>
           <td>
             <%= response_data[:counts][index] -%>
-            (<%= number_to_percentage((response_data[:counts][index] / response_data[:responses])*100, precision: 1) %>)
+            (<%= number_to_percentage((response_data[:counts][index] / response_data[:responses] rescue 0)*100, precision: 1) %>)
           </td>
         </tr>
         <%- end -%>
