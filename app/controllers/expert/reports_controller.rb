@@ -59,6 +59,14 @@ class Expert::ReportsController < ApplicationController
       @question_filter_objects = @question_filter.settings_to_objects
     end
     
+    if(params[:forcecacheupdate])
+      options = {force: true}
+    else
+      options = {}
+    end
+    @question_stats = Question.not_rejected.answered_stats_by_yearweek('questions',options)
+    @expert_stats = QuestionEvent.stats_by_yearweek(options)
+    
   end
   
   def index
