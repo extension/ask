@@ -1,5 +1,6 @@
-<div class="row">
+
   <div class="span6">
+    <div class="well">
     
     <h3>Your Monthly Activity <small><%= link_to('View your metrics',expert_expert_report_path(@user.id)) %></small></h3>
 
@@ -33,7 +34,7 @@
 
       </tbody>
     </table>  
-    
+    </div>
   </div>
   
   <div class="span6">
@@ -129,8 +130,24 @@
       <% end %>
       <% end %>
     </div>
+    
+    
+  </div>
+  
+
+<div class="span12">
+  <div class="well">
+    <h2>Explore questions</h2>
+    <% if @question_filter %>
+    <p>Here's a recent search:</p>
+    <p><%= link_to "#{question_filter_text(@question_filter_objects)}".html_safe, questions_expert_data_path(:filter => @question_filter.id), :class => "btn" %></p>
+    <% end %>
+    <p><%= link_to "Create your own filter", questions_expert_data_path(:showform => 1), :class => "btn" %></p>
   </div>
 </div>
+
+  
+
 
 
 

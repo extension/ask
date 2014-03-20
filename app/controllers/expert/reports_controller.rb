@@ -53,6 +53,12 @@ class Expert::ReportsController < ApplicationController
     @questions_answered_count = question_location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').count
     
     
+    
+    @question_filter = QuestionFilter.find_by_created_by(@user) ? QuestionFilter.where(created_by: @user.id).order('created_at DESC').first : QuestionFilter.last
+    if @question_filter
+      @question_filter_objects = @question_filter.settings_to_objects
+    end
+    
   end
   
   def index
