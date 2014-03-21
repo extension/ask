@@ -835,7 +835,7 @@ class Question < ActiveRecord::Base
     begin
       self.question_fingerprint = Digest::MD5.hexdigest(create_time + self.body.to_s + self.email)
     rescue
-      errors.add(:base, 'An error occured while saving your question. Make sure an email address has been submitted and try again.')
+      errors.add(:base, 'An error occurred while saving your question. Make sure an email address has been submitted and try again.')
       return false
     end
   end
