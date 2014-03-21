@@ -163,7 +163,7 @@ class QuestionsController < ApplicationController
           if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
             @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
             if !@submitter.valid?
-              @argument_errors = ("Errors occured when saving: " + @submitter.errors.full_messages.join(' '))
+              @argument_errors = ("Errors occurred when saving: " + @submitter.errors.full_messages.join(' '))
               raise ArgumentError
             end
           end
@@ -199,7 +199,7 @@ class QuestionsController < ApplicationController
 
         # validate question
         if !@question.valid?
-          @argument_errors = ("Errors occured when saving: " + @question.errors.full_messages.join(' '))
+          @argument_errors = ("Errors occurred when saving: " + @question.errors.full_messages.join(' '))
           raise ArgumentError
         end
 
@@ -227,7 +227,7 @@ class QuestionsController < ApplicationController
           return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
-        flash[:warning] = "An internal error has occured. Please check back later."
+        flash[:warning] = "An internal error has occurred. Please check back later."
         @host_name = request.host_with_port
         
         if @question.blank?
