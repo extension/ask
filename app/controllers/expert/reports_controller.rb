@@ -11,6 +11,15 @@ class Expert::ReportsController < ApplicationController
   
   def home_mockup
     @user = current_user
+    
+    if(params[:user_id])
+      @user = User.find_by_id(params[:user_id])
+      if !@user.present?
+        flash[:error] = "There's no expert with the ID \"#{params[:user_id]}\"."
+        return redirect_to expert_reports_home_url
+      end
+    end
+    
     @location = @user.location.present? ? @user.location : Location.find_by_id(37)
     
     @date = DateTime.now
@@ -33,6 +42,7 @@ class Expert::ReportsController < ApplicationController
     responses_by_state_experts = question_location_scope.not_rejected.responses_by_in_state_responders(@location, @year_month)    
     @responses_by_in_state_count = responses_by_state_experts.count
     @responders_in_state_count = responses_by_state_experts.map{|r| r.initiated_by_id}.uniq.count
+    @responder_count = question_location_scope.not_rejected.resolved_response_initiators_for_year_month(@year_month).count
       
     # get number of questions resolved by experts out of state
     @resolved_by_outside_state_experts = question_location_scope.not_rejected.resolved_questions_by_outside_state_responders(@location, @year_month).count
