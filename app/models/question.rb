@@ -842,10 +842,12 @@ class Question < ActiveRecord::Base
 
   def set_last_opened
     self.last_opened_at = Time.now
+    true
   end
 
   def set_is_extension
     self.submitter_is_extension = self.submitter.has_exid?
+    true
   end
 
   def pick_user_from_list(users)
@@ -1227,6 +1229,7 @@ class Question < ActiveRecord::Base
 
   def update_data_cache
     QuestionDataCache.create_or_update_from_question(self)
+    true
   end
 
   def data_cache
