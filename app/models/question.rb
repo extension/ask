@@ -1235,7 +1235,9 @@ class Question < ActiveRecord::Base
   def data_cache
     if(!(qdc = self.question_data_cache))
       qdc = QuestionDataCache.create_or_update_from_question(self)
-    end
+    elsif(qdc.version != QuestionDataCache::CURRENT_VERSION)
+      qdc = QuestionDataCache.create_or_update_from_question(self)
+    end      
     qdc.data_values
   end
 
