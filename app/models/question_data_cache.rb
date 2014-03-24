@@ -7,7 +7,10 @@
 
 class QuestionDataCache < ActiveRecord::Base
   serialize :data_values
-  attr_accessible :question_id, :data_values, :question
+  attr_accessible :question_id, :data_values, :question, :version
+
+  CURRENT_VERSION = 2
+
   belongs_to :question
 
   def self.rebuild_all
@@ -22,6 +25,7 @@ class QuestionDataCache < ActiveRecord::Base
   def self.create_or_update_from_question(question)
     data = []
     data << question.id
+    data << question.is_private
     data << (!question.user_ip.blank?)
     data << question.class.name_or_nil(question.detected_location)
     data << ((question.detected_location.nil?) ? nil : question.detected_location.fips)
@@ -105,9 +109,9 @@ class QuestionDataCache < ActiveRecord::Base
     end
 
     if(qdc = self.where(question_id: question.id).first)
-      qdc.update_attribute(:data_values, data)
+      qdc.update_attributes({data_values: data, version: CURRENT_VERSION})
     else
-      qdc = self.create(question_id: question.id, data_values: data)
+      qdc = self.create(question_id: question.id, data_values: data, version: CURRENT_VERSION)
     end
 
     qdc

@@ -116,6 +116,7 @@ class Download < ActiveRecord::Base
     return if(label != 'questions')
     question_columns = [
       'question_id',
+      'is_private',
       'detectable_location',
       'detected_location',
       'detected_location_fips',

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140319212033) do
+ActiveRecord::Schema.define(:version => 20140324153148) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -370,8 +370,9 @@ ActiveRecord::Schema.define(:version => 20140319212033) do
   create_table "question_data_caches", :force => true do |t|
     t.integer  "question_id"
     t.text     "data_values"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.integer  "version",     :default => 1
   end
 
   add_index "question_data_caches", ["question_id"], :name => "question_ndx", :unique => true
