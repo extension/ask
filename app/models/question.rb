@@ -197,8 +197,8 @@ class Question < ActiveRecord::Base
 
 
   scope :public_submissions, lambda { where(submitter_is_extension: false) }
-  scope :evaluation_eligible, lambda { where("created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true) }
-  scope :demographic_eligible, lambda { where("created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true) }
+  scope :evaluation_eligible, lambda { where("questions.created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true) }
+  scope :demographic_eligible, lambda { where("questions.created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true) }
 
 
   ## validations
