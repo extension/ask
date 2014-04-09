@@ -121,7 +121,8 @@ Aae::Application.routes.draw do
 
 
     match "/" => "home#dashboard"
-    match "reports", to: "reports#index", :via => [:get], :as => 'reports_home'
+    match "reports", to: "reports#home_mockup", :via => [:get], :as => 'reports_home'
+    match "reports/locations_and_groups", to: "reports#locations_and_groups", :via => [:get], :as => 'reports_locations_and_groups'
     match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
     match "reports/expert_list", to: "reports#expert_list", :via => [:get], :as => 'reports_expert_list'
     match "reports/question_list", to: "reports#question_list", :via => [:get], :as => 'reports_question_list'

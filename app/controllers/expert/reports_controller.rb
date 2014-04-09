@@ -79,7 +79,7 @@ class Expert::ReportsController < ApplicationController
     
   end
   
-  def index
+  def locations_and_groups
     @locations = Location.order('fipsid ASC')
     @my_tags = current_user.tags
     @condition_array = ""
