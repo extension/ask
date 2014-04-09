@@ -9,7 +9,7 @@ class Expert::ReportsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
-  def home_mockup
+  def index
     @user = current_user
     
     if(params[:user_id])
