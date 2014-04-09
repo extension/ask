@@ -32,14 +32,14 @@
         <h2 class="report_date_range"><%= @date.strftime("%B, %Y") %></h2>
         
         <p class="dontprintme">
-          <%= link_to "Previous month", expert_reports_home_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
+          <%= link_to "Previous month", expert_reports_locations_and_groups_path(:year_month => @previous_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
           <% if @following_year_month %>
-  	      |  <%= link_to "Following month", expert_reports_home_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+  	      |  <%= link_to "Following month", expert_reports_locations_and_groups_path(:year_month => @following_year_month, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
   	      <% end %>
   	      
   	      <span class="pull-right">
-  	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
-    	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+  	        <%= link_to "Last Year", expert_reports_locations_and_groups_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
+    	      <%= link_to "This Year", expert_reports_locations_and_groups_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
     	      </span>
         </p>
         
@@ -47,10 +47,10 @@
         <h2 class="report_date_range"><%= @date %></h2>
         
         <p class="dontprintme">
-          <%= link_to "Current month", expert_reports_home_path(:year_month => (DateTime.now).strftime('%Y-%m'), :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
+          <%= link_to "Current month", expert_reports_locations_and_groups_path(:year_month => (DateTime.now).strftime('%Y-%m'), :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> 
   	      <span class="pull-right">
-  	        <%= link_to "Last Year", expert_reports_home_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
-    	      <%= link_to "This Year", expert_reports_home_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
+  	        <%= link_to "Last Year", expert_reports_locations_and_groups_path(:year => (Time.now.year - 1).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %> | 
+    	      <%= link_to "This Year", expert_reports_locations_and_groups_path(:year => (Time.now.year).to_s, :location_id => params[:location_id], :county_id => params[:county_id], :group_id => params[:group_id]) %>
     	      </span>
         </p>
       <% end %>
