@@ -4,7 +4,7 @@
   
   <div class="map"></div>
   <h1><%= @county.name %>, <%= link_to @location.name, expert_view_location_path(@location.id) %></h1>
-  <h2><%= link_to "View Summary Report", expert_reports_home_path(:location_id => @location.id, :county_id => @county.id) %></h2>
+  <h2><%= link_to "View Summary Report", expert_reports_locations_and_groups_path(:location_id => @location.id, :county_id => @county.id) %></h2>
   <h3>
     <% if @unanswered_questions_count %>
       <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :location_id => @location.id, :county_id => @county.id )%>
