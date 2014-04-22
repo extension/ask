@@ -8,6 +8,10 @@
 class County < ActiveRecord::Base
   include CacheTools
 
+  # special cases of alternate names for geo areas
+  LOCATION_ALASKA = 10
+  LOCATION_LOUISIANA = 28
+
   has_many :user_counties
   has_many :users, :through => :user_counties
   has_many :group_counties
@@ -19,12 +23,30 @@ class County < ActiveRecord::Base
   def name
     if self.censusclass == "C7"
       # return self.name + " (Non-county incorporation)"
-      return self[:name]
+      self[:name]
     else
       if self[:name] == 'All'
         return "Entire state"
       else
-        return self[:name] + " County"
+        if(self.location_id == LOCATION_ALASKA)
+          case self.censusclass
+          # H6 == city/muncipality - don't set a geo_term
+          when 'H5'
+            geo_term = 'Census Area'
+          when 'H1'
+            geo_term = 'Borough'
+          end
+
+        elsif(self.location_id == LOCATION_LOUISIANA)
+          geo_term = 'Parish'
+        else
+          geo_term = 'County'
+        end
+        if(geo_term.blank?)
+          self[:name]
+        else
+          "#{self[:name]} #{geo_term}"
+        end
       end
     end
   end
