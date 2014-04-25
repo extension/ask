@@ -192,6 +192,9 @@ class Notification < ActiveRecord::Base
   
   # send comment notification to submitter of question
   def process_aae_public_comment
+    # comments can be deleted
+    return if self.notifiable.nil?
+
     question_submitter = self.notifiable.question.submitter
     # make sure the question submitter has not opted out of receiving comment notifications
     if self.notifiable.question.opted_into_comment_notifications?(question_submitter)
@@ -217,6 +220,9 @@ class Notification < ActiveRecord::Base
   # those watching the question (signed up to be notified of activity)
   # all resolvers of the question
   def process_aae_expert_public_comment
+    # comments can be deleted
+    return if self.notifiable.nil?
+
     question_watchers = self.notifiable.question.question_activity_preference_list.map{|pref| pref.prefable}
     # send emails to the watchers that were not the submitter of the parent comment (already handled in reply notification) and 
     # who did not post the comment themselves or who did not submit the question (already handled in submission notification)
