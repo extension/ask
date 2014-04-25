@@ -5,7 +5,6 @@
 #
 #  see LICENSE file
 
-require 'valid_email'
 class User < ActiveRecord::Base
   # includes
   extend YearMonth
@@ -36,6 +35,7 @@ class User < ActiveRecord::Base
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"No name provided"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
+  EMAIL_VALIDATION_REGEX = Regexp.new('\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z',Regexp::IGNORECASE)
 
   # associations
   has_many :authmaps
@@ -662,6 +662,44 @@ class User < ActiveRecord::Base
       _demographics_data_csv(filename,true)
     end
   end
+
+  def has_valid_email_regex?
+    self.email =~ EMAIL_VALIDATION_REGEX ? true : false
+  end
+
+  def has_valid_email_mx?
+    # from: https://github.com/hallelujah/valid_email/blob/master/lib/valid_email/mx_validator.rb
+    # LICENSE: https://github.com/hallelujah/valid_email/blob/master/LICENSE
+    begin
+      m = Mail::Address.new(self.email)
+      if m.domain
+        mx = []
+        Resolv::DNS.open do |dns|
+          mx.concat dns.getresources(m.domain, Resolv::DNS::Resource::IN::MX)
+        end
+        r = mx.size > 0
+      end
+    rescue Mail::Field::ParseError
+      false
+    end
+  end
+
+  def self.check_for_invalid_emails(mxcheck = false)
+    self.where("email is not NULL").find_each do |u|
+      if(!u.has_valid_email_regex?)
+        u.has_invalid_email = true
+        u.invalid_email = u.email
+        u.email = 'invalid_aae_email@extension.org'
+        u.save
+      elsif(mxcheck and !u.has_valid_email_mx?)
+        u.has_invalid_email = true
+        u.invalid_email = u.email
+        u.email = 'invalid@extension.org'
+        u.save
+      end
+    end
+  end        
+
 
   private
 
