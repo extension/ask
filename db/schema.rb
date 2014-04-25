@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140324153148) do
+ActiveRecord::Schema.define(:version => 20140425161444) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -615,6 +615,8 @@ ActiveRecord::Schema.define(:version => 20140324153148) do
     t.datetime "updated_at",                                                      :null => false
     t.date     "last_active_at"
     t.boolean  "needs_search_update"
+    t.boolean  "has_invalid_email",                       :default => false
+    t.string   "invalid_email"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"
