@@ -192,6 +192,9 @@ class Notification < ActiveRecord::Base
   
   # send comment notification to submitter of question
   def process_aae_public_comment
+    # comments can be deleted.
+    return if self.notifiable.nil?
+
     question_submitter = self.notifiable.question.submitter
     # make sure the question submitter has not opted out of receiving comment notifications
     if self.notifiable.question.opted_into_comment_notifications?(question_submitter)
