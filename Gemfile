@@ -72,9 +72,6 @@ gem 'paper_trail', '~> 2'
 # diffs
 gem 'diffy'
 
-# email validation
-gem 'valid_email'
-
 # server settings
 gem "rails_config"
 
