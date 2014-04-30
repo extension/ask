@@ -64,5 +64,14 @@ module Aae
 
     #get rid of pesky app errors
     config.action_dispatch.ip_spoofing_check = false
+
+    # see https://github.com/rack/rack/issues/337
+    config.middleware.use ::Rack::Robustness do |g|
+      g.no_catch_all
+      g.on(ArgumentError) { |ex| 400 }
+      g.content_type 'text/plain'
+      g.body{ |ex| ex.message }
+      g.ensure(true) { |ex| env['rack.errors'].write(ex.message) }
+    end    
   end
 end
