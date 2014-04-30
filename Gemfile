@@ -131,6 +131,9 @@ gem 'dalli'
 # useragent analysis
 gem 'useragent'
 
+# catch rack errors
+gem 'rack-robustness'
+
 group :development do
   # require the powder gem
   gem 'powder'
