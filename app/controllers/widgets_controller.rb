@@ -67,17 +67,30 @@ class WidgetsController < ApplicationController
       ##### End of Widget Logging
     end
     
+    @title = "eXtension Latest Answered Questions"
+    
     if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
       question_group_scope = Question.from_group(group.id)
       @path_to_questions = group_url(group.id)
+      @title += " from #{group.name}"
     else
       question_group_scope = Question.where({})
       @path_to_questions = root_url
     end
-      
-    if params[:tags].present?  
+    
+    if params[:location].present? && params[:location].to_i > 0 && location = Location.find_by_id(params[:location])
+      question_group_scope = question_group_scope.by_location(location)
+      @title += " from #{location.name}"
+    end
+    
+    if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
+      question_group_scope = question_group_scope.by_county(county)
+      @title += " from #{county.name}"
+    end
+    
+    if params[:tags].present?
       @tag_list = params[:tags].split(',')
-      @title = "eXtension Latest Resolved Questions in #{@tag_list.join(',')}"
+      @title += " in #{@tag_list.join(',')}"
       if params[:operator].present?
         if params[:operator].downcase == 'and'
           @question_list = question_group_scope.public_visible_answered.tagged_with_all(@tag_list).order('resolved_at DESC').limit(question_limit)  
@@ -86,16 +99,11 @@ class WidgetsController < ApplicationController
         @question_list = question_group_scope.public_visible_answered.tagged_with_any(@tag_list).order('COUNT(questions.id) DESC, resolved_at DESC').limit(question_limit)
       end
     else
-      if group.present?
-        @title = "eXtension Latest Resolved Questions from Group #{group.name}"
-      else
-        @title = "eXtension Latest Resolved Questions"
-      end
       @question_list = question_group_scope.public_visible_answered.order('resolved_at DESC').limit(question_limit)
     end
     
     if @question_list.length == 0
-      @title = "eXtension Latest Resolved Questions"
+      @title = "eXtension Latest Answered Questions"
       @path_to_questions = root_url
       @tag = Tag.find_by_name("front page")
       @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
