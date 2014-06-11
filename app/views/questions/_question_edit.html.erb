@@ -5,11 +5,15 @@
     <span class="edit_question_toggle btn btn-primary">Edit my question</span> 
   </div>
 
-  <div id="edit_question" class="formy">
+  <div id="edit_question">
     <h2>Edit Your Question</h2>
-	  <%= form_for @question do |f| %>
-	      <%= f.text_field :title, {:type => "text"} %> <br />
-	      <%= f.text_area :body, :rows => "10", :cols => "60", class: 'wysiwyg' %>
+	  <%= form_for @question, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+	    
+	    <fieldset>
+	      <p><%= f.text_field :title, {:type => "text", class: 'span6'} %></p>
+	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'span6 wysiwyg' %></p>
+	    </fieldset>
+	    
 		  <div id="aae_image_div">
 			<h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>

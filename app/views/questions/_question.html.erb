@@ -139,10 +139,10 @@
 	    <div id="submitter_followup">
 	      <p class="additional_comment_toggle btn btn-primary btn-large">Post a response to the expert</p>
 	    </div>
-	    <div id="additional_comment" class="formy">
+	    <div id="additional_comment">
 	      <h2>Post a Response to the Expert</h2>
-	      <%= form_for @response do |r_form| %>
-          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg' %>
+	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg span6' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
