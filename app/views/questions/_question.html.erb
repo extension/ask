@@ -11,7 +11,9 @@
       
       <div class="infobar bordered clearfix">
         <span class="muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
+        <% if !@question.is_private %>
         <%= render(:partial => 'addthis') %>
+        <% end %>
       </div>
 
     <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>  
