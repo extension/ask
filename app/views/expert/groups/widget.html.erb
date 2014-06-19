@@ -28,41 +28,45 @@
 		</p>
 
 		<p>
-        <label>        
+        <label>
           <%= f.check_box 'widget_public_option' %>  Enable "public display" option
 			    <span>(Allows submitter to choose to make their question is public. If this option is unchecked, all questions submitted will be private.)</span>
         </label>
     </p>
 
 	<p>
-        <label>        
+        <label>
           <%= f.check_box 'widget_upload_capable' %>  Enable photo upload option
         </label>
     </p>
 
 	<p>
-        <label>        
+        <label>
           <%= f.check_box 'widget_show_location', @group.assignment_outside_locations == false ? {disabled: true} : {disabled: false} %>  Enable location option for widgets
           <% if @group.assignment_outside_locations == false %>
             <span>This option is locked because the "Questions must come from this group's locations" <%= link_to 'assignment preference', expert_group_assignment_options_path %> is selected.</span>
           <% end %>
-          <span>(Location option is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>.)</span>
-          
         </label>
 	</p>
-	
+
+<p>
+      <label>
+        <%= f.check_box 'ask_form_show_location' -%>  Enable location option for the <%= link_to "Ask form", ask_group_url(@group.id) -%>
+      </label>
+</p>
+
 	<p>
       <label>
         <%= f.check_box 'widget_show_title' %>  Display Title Field for widgets
 		    <span>(Title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>. If no title field is provided, a title is created from the first 80 characters of the question.)</span>
       </label>
-	</p>	
-		
+	</p>
+
     </fieldset>
 
 
   </div>
-  
+
   <fieldset>
     <p><%= submit_tag "Save Changes", :class => "btn btn-primary btn-large" %></p>
   </fieldset>
@@ -72,8 +76,5 @@
   <div id="widgetcode"><textarea><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
 
 </div>
-  
+
 <%- end -%>
-
-
-

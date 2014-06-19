@@ -32,8 +32,7 @@
     </fieldset>
   <% end %>
 
-
-
+  <%- if @group.ask_form_show_location -%>
     <fieldset>
       <p>
         <%= f.label :location_id, 'Location and County (optional)' %>
@@ -47,6 +46,7 @@
         <% end %>
       </p>
     </fieldset>
+  <%- end -%>
 
 
   <% if @group.widget_upload_capable? %>
@@ -60,9 +60,9 @@
       </p>
     </fieldset>
   <% end %>
-  
+
   <p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary btn-orange btn-large" %></p>
-  
+
   <%- if current_user and current_user.email.present? -%>
     <p>Your answer will be sent to <%= current_user.email %></p>
   <% end %>
@@ -70,7 +70,7 @@
 
 <script class="code" type="text/javascript">
   $(document).ready(function () {
-    
+
     // http://www.jquery4u.com/mobile/detect-mobile-devices-jquery/
     var isiDevice = /ipad|iphone|ipod/i.test(navigator.userAgent.toLowerCase());
 
