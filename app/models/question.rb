@@ -524,7 +524,7 @@ class Question < ActiveRecord::Base
 
   def auto_assign_by_preference
     return true if self.spam?
-    if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
+    if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = ?", self.body, self.email])
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
