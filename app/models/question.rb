@@ -1,5 +1,3 @@
-# === COPYRIGHT:
-#  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
 #
@@ -165,7 +163,7 @@ class Question < ActiveRecord::Base
   has_many :question_viewlogs, dependent: :destroy
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
-  has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id' 
+  has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id'
   has_one :question_data_cache
 
   ## scopes
@@ -1236,7 +1234,7 @@ class Question < ActiveRecord::Base
       qdc = QuestionDataCache.create_or_update_from_question(self)
     elsif(qdc.version != QuestionDataCache::CURRENT_VERSION)
       qdc = QuestionDataCache.create_or_update_from_question(self)
-    end      
+    end
     qdc.data_values
   end
 
