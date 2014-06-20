@@ -227,9 +227,10 @@ class QuestionsController < ApplicationController
           return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
+        notify_airbrake(e)
         flash[:warning] = "An internal error has occurred. Please check back later."
         @host_name = request.host_with_port
-        
+
         if @question.blank?
           @question = Question.new
           @question.images.build
