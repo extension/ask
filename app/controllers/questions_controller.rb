@@ -9,30 +9,30 @@ class QuestionsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
   before_filter :set_format, :only => [:show, :submitter_view]
-  
+
   def show
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question
     @question_responses = @question.responses
     @comment = Comment.new
     @question_comments = @question.comments
-    
+
     ga_tracking = []
-    
+
     if @question.tags.length > 0
       ga_tracking = ["|tags"] + @question.tags.map(&:name)
     end
-    
+
     question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
-    
+
     if question_resolves_with_resolver.length > 0
       ga_tracking += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
     end
-    
+
     if @question.assigned_group
       ga_tracking += ["|group"] + [@question.assigned_group.name]
     end
-    
+
     if ga_tracking.length > 0
       flash.now[:googleanalytics] = question_path(@question.id) + "?" + ga_tracking.join(",")
     end
@@ -56,7 +56,7 @@ class QuestionsController < ApplicationController
       comment_pref = @authenticated_submitter.get_pref(Preference::NOTIFICATION_COMMENTS)
       @comment_notification_pref = (comment_pref.present? && comment_pref.value == false) ? false : true
     end
-    
+
     if( @viewer)
       @last_viewed_at = @viewer.last_view_for_question(@question)
       # log view
@@ -65,7 +65,7 @@ class QuestionsController < ApplicationController
 
 
   end
-  
+
   def submitter_view
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
     # the hash will authenticate the question submitter to edit their question.
@@ -83,13 +83,13 @@ class QuestionsController < ApplicationController
       return record_not_found
     end
   end
-  
+
   def authorize_submitter
     @question = Question.find_by_question_fingerprint(params[:fingerprint])
 
     return record_not_found if !@question
 
-    if params[:email_address].present? && (submitter = User.find_by_email(params[:email_address].strip.downcase)) 
+    if params[:email_address].present? && (submitter = User.find_by_email(params[:email_address].strip.downcase))
       # make sure that this question belongs to this user
       if(@question.submitter.id == submitter.id)
         session[:submitter_id] = submitter.id
@@ -101,7 +101,7 @@ class QuestionsController < ApplicationController
     flash.now[:warning] = "The email address you entered does not match the email used to submit the question. Please check the email address and try again."
     render :template => 'questions/submitter_signin'
   end
-    
+
   def update
     @question = Question.find_by_id(params[:id])
     if(!@question)
@@ -123,26 +123,26 @@ class QuestionsController < ApplicationController
         flash[:notice] = "Your changes have been saved. Thanks for making your question better!"
       end
       QuestionEvent.log_public_edit(@question)
-    end  
+    end
     redirect_to question_url(@question)
   end
-  
+
   # TODO: incorporate title into this.
   def create
-    if request.post?  
-      
-      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+    if request.post?
+
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed
       if params[:question].blank?
-        @status_message = "The question form is not complete. Please fill out all fields."  
+        @status_message = "The question form is not complete. Please fill out all fields."
         return render(:template => '/widget/status', :layout => false)
       end
-      
+
       @group = Group.find_by_widget_fingerprint(params[:fingerprint].strip) if !params[:fingerprint].blank?
       if(!@group)
         @status_message = "Unknown widget specified."
         return render(:template => '/widget/status', :layout => false)
       end
-      
+
       begin
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
@@ -159,7 +159,7 @@ class QuestionsController < ApplicationController
             @argument_errors = "Email address does not match the confirmation email address."
             raise ArgumentError
           end
-          
+
           if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
             @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
             if !@submitter.valid?
@@ -168,7 +168,7 @@ class QuestionsController < ApplicationController
             end
           end
         end
-              
+
         @question.submitter = @submitter
         @question.assigned_group = @group
         @question.original_group_id = @group.id
@@ -177,7 +177,7 @@ class QuestionsController < ApplicationController
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
-        
+
         # record the original location and county
         @question.original_location = @question.location
         @question.original_county = @question.county
@@ -215,26 +215,27 @@ class QuestionsController < ApplicationController
       rescue ArgumentError => ae
         flash[:warning] = @argument_errors
         @host_name = request.host_with_port
-        
+
         if @question.blank?
           @question = Question.new
           @question.images.build
         end
-        
+
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
           return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
+        notify_airbrake(e)
         flash[:warning] = "An internal error has occurred. Please check back later."
         @host_name = request.host_with_port
-        
+
         if @question.blank?
           @question = Question.new
           @question.images.build
         end
-        
+
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
@@ -321,14 +322,14 @@ class QuestionsController < ApplicationController
 
   def setup_images_for_edit
     @response = Response.new
-    3.times do    
+    3.times do
       @response.images.build
     end
 
     # max of 3 total images allowed (including existing)
     new_image_count = 3 - @question.images.count
     if new_image_count > 0
-      new_image_count.times do    
+      new_image_count.times do
         @question.images.build
       end
     end

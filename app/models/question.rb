@@ -1,5 +1,3 @@
-# === COPYRIGHT:
-#  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
 #
@@ -165,7 +163,7 @@ class Question < ActiveRecord::Base
   has_many :question_viewlogs, dependent: :destroy
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
-  has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id' 
+  has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id'
   has_one :question_data_cache
 
   ## scopes
@@ -524,7 +522,7 @@ class Question < ActiveRecord::Base
 
   def auto_assign_by_preference
     return true if self.spam?
-    if existing_question = Question.joins(:submitter).find(:first, :conditions => ["questions.id != #{self.id} and questions.body = ? and users.email = '#{self.email}'", self.body])
+    if existing_question = Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
@@ -1236,7 +1234,7 @@ class Question < ActiveRecord::Base
       qdc = QuestionDataCache.create_or_update_from_question(self)
     elsif(qdc.version != QuestionDataCache::CURRENT_VERSION)
       qdc = QuestionDataCache.create_or_update_from_question(self)
-    end      
+    end
     qdc.data_values
   end
 
