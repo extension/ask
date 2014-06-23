@@ -9,9 +9,9 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require twitter/bootstrap
+ *= require bootstrap
  *= require vendor
- *= require twitter/bootstrap-responsive
+ *= require bootstrap-responsive
  *= require bootstrap-wysihtml5
  *= require jquery.jqplot
  *= require font-awesome
