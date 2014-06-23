@@ -51,8 +51,6 @@
     <% if current_user.has_exid? %>
 
       <div id="expert_navbar" class="navbar expert-navbar navbar-inverse app-navbar clearfix">
-        <div id="expert_navbar-inner" class="navbar-inner clearfix">
-
 
             <ul class="navavatar loggedin pull-right">
               <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
@@ -79,8 +77,6 @@
               <% end %>
             </span>
 
-
-        </div>
       </div>
 
     <% end %>
@@ -94,20 +90,20 @@
  
  
     <div class="navbar">
-    <div class="navbar-inner">
+
         <a class="btn navbar-btn mobile-menu-search-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-search'></i> <i class='icon-th'></i></a>
         <!-- <a class="btn navbar-btn mobile-menu-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-th'></i></a> -->
         <a class="navbar-brand" href="/"><img class='hidden-xs' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-xs' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
         <div class="navbar-collapse collapse">
 
             <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
-              <div class="input-append">
-                <%= text_field_tag 'q', params[:q], :class => "input-small col-md-2 search-query", :placeholder => "Search", :id => "search_field" %>
-                <input type="submit" value="Go" class="btn" />
+              <div class="input-group">
+                <%= text_field_tag 'q', params[:q], :class => "form-control col-md-2 search-query", :placeholder => "Search", :id => "search_field" %>
+                <input type="submit" value="Go" class="btn " />
       			  </div>
       			<% end %>
           
-            <ul class="nav">
+            <ul class="list-inline">
               <li><%= link_to 'Answered', root_path() %></li>
               <li><%= link_to 'Unanswered', home_unanswered_path() %></li>
               <li><%= link_to("Ask a Question", ask_path()) %></li>
@@ -129,7 +125,7 @@
             </div>
             
         </div><!--/.navbar-collapse -->
-    </div>
+
 </div>
 
       <div class="row">
@@ -155,7 +151,7 @@
       
       <footer>
         <span id="extension_icon_512" class="pull-left noprint"><img id="extension_logo" src="/assets/extension_logo.jpg" alt="eXtension" /></span>
-        <ul class="inline noprint">
+        <ul class="list-inline noprint">
           <li><%= link_to "Institutional Partners", "http://www.extension.org/main/partners" %></li>
           <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
           <li><%= link_to "Contact Us", home_about_path() %></li>
