@@ -21,7 +21,7 @@ gem 'nokogiri'
 gem 'jquery-rails'
 
 # bootstrap in sass in rails
-gem 'anjlab-bootstrap-rails', '~> 2.3.1.2', :require => 'bootstrap-rails'
+gem 'bootstrap-sass', '~> 2.3.2.2'
 # wysihtml5 + bootstrap + asset pipeline
 gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
