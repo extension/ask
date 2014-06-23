@@ -39,7 +39,7 @@
     </div>
   <% end %>
   
-  <div class='nonmobile hidden-phone'>
+  <div class='nonmobile hidden-xs'>
   <% if current_user and current_user.has_exid? %>
     <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   <% else %>
@@ -97,7 +97,7 @@
     <div class="navbar-inner">
         <a class="btn navbar-btn mobile-menu-search-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-search'></i> <i class='icon-th'></i></a>
         <!-- <a class="btn navbar-btn mobile-menu-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-th'></i></a> -->
-        <a class="navbar-brand" href="/"><img class='hidden-phone' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-phone' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
+        <a class="navbar-brand" href="/"><img class='hidden-xs' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-xs' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
         <div class="navbar-collapse collapse">
 
             <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
