@@ -246,7 +246,7 @@ body#expert {
 /*  .app-navbar .navbar-inner {background:#2C2A2A;}*/
   .app-navbar .navbar-inner {padding-top:.6em; border-radius:0}
   #searchform input {width:230px;}
-  .navbar-inverse .brand, .navbar-inverse .nav > li > a {color:#ccc;}
+  .navbar-inverse .navbar-brand, .navbar-inverse .nav > li > a {color:#ccc;}
   #oldest_question {margin:0 0 1em; background:#eee;}
   .coffeetime {font-size:1.1em; color:#888; padding-left:30px; line-height:1.5em;}
   i.coffee {background: transparent url(/assets/34-coffee.png) 50% 50% no-repeat; width:30px; height:30px; display:block; float:left; margin-right:.5em;}
@@ -297,7 +297,7 @@ body#expert {
 	#history_comment_toggle {margin:1em 0;}
 	.history_of_tags {margin:0 1em .35em; display:block;}
 	.history_of_tags span { padding:.1em .35em;}
-	.brand.home {color:#fff; font-size:1.8em;}
+	.navbar-brand.home {color:#fff; font-size:1.8em;}
 	background:#504848;
 	padding-bottom:5em;
 	.row {background:#f9f9f9;}
@@ -559,7 +559,7 @@ body#expert {
   #reassignment_results_feedback_wrapper {position:relative; z-index:500;}
   #reassignment_results_feedback {display:none;position:absolute; left:0; right:0; height:1000px; padding:1em 3em 3em;  background:#F8F8F8; }
   #reassignment_results_feedback h3 {color:#999; font-size:2.8em; font-weight:normal; margin-bottom:1em; text-align:center; line-height:1.2em;}
-  .brand.home img {height:30px; width:80px; margin-right:10px;}
+  .navbar-brand.home img {height:30px; width:80px; margin-right:10px;}
   .group_info {display:block; float:left; margin-left:12px;}
   .group_list_item {float:left; display:block; clear:both; border-bottom:1px solid #fff; width:100%; padding-bottom:10px;}
   .group_list_item .avatar_with_badge {float:left; display:block;}

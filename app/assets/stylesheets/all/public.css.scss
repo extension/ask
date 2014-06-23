@@ -58,10 +58,10 @@ body#public {
     box-shadow: none;
     text-shadow:none;
 	}
-	#publicbar .brand {color:#000;}
+	#publicbar .navbar-brand {color:#000;}
 	
 	#expertbar {border-bottom: 2px solid #000 !important; padding-top:.5em; padding-bottom:.75em;}
-	#expertbar a.brand {font-size:1.4em; }
+	#expertbar a.navbar-brand {font-size:1.4em; }
 	#expertbar a:hover {color:#fff !important; text-decoration:none;}
 	#expertbar .navavatar.loggedin a {color:#999;}
 	#expertbar.navbar-inner {min-height:35px; height:35px;}
@@ -74,7 +74,7 @@ body#public {
   .avatar.small {display:block; width:25px; height:25px; background:#bbb; border:1px solid #888; float:left; margin-right:1em;}
 
 	.aae_protected_signin {line-height:1.6em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.5em;}
-	a.brand {color:#fff !important; text-shadow:none;}
+	a.navbar-brand {color:#fff !important; text-shadow:none;}
 /*  .navbar {height:80px !important;}*/
 	
 	.navavatar {float:right; /*padding:.5em 2em; */color:#fff;}
@@ -116,7 +116,7 @@ body#public {
 		#search_field {width:20em}
 	}	
 	@media screen and (min-width: 979px) {
-	  #publicbar .brand {font-size:2.5em;}
+	  #publicbar .navbar-brand {font-size:2.5em;}
 		.navbar #publicbar .container {width: 940px; padding:2em;}
 		#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
 	}
@@ -139,7 +139,7 @@ body#public {
     #expertbar {padding:0;}
     #expertbar .container {padding:0;}
     #publicbar .container h1 {margin:0;}
-    .brand {padding-left:20px;}
+    .navbar-brand {padding-left:20px;}
 	}
 }
 
