@@ -1,6 +1,6 @@
 <% @page_title = @user.public_name %>
 
-<div id="main" class="span6">
+<div id="main" class="col-md-6">
   
   <div id="user_masthead">
     <%= link_public_user_avatar(@user) %>
@@ -64,7 +64,7 @@
 </div>
 
 <% if @user.has_exid? %>
-<div id="main" class="span6">
+<div id="main" class="col-md-6">
   <% if @open_questions.size > 0 %>
     <h3>Assigned Questions</h3>
 

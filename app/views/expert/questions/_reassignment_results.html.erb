@@ -5,13 +5,13 @@
       <% group_tags = group.tags %>
 
        <div class="assignment_match <% @filter_terms.count %>">
-        <div class="row-fluid">
+        <div class="row">
         
-          <div class="span4">
+          <div class="col-md-4">
           <%= link_to link_expert_group_avatar_group_label(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
           </div>
           
-          <div class="span8">
+          <div class="col-md-8">
           <table class="table table-bordered">
           <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
             <% if @question.location.present? && group_expertise_locations.include?(@question.location) %>
@@ -50,9 +50,9 @@
         <% expert_tags = expert.tags %>
         
         <div class="assignment_match <% @filter_terms.count %>">
-        <div class="row-fluid">
+        <div class="row">
         
-            <div class="span4">
+            <div class="col-md-4">
             <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to raw(expert_user(expert)), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
             <div class="expert_meta">
               <% if expert.title.present? %>
@@ -69,7 +69,7 @@
             <span class="downplay">last active <%= get_last_active_time(expert) %></span>
             </div>
             
-            <div class="span8">
+            <div class="col-md-8">
             <table class="table table-bordered">
             <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
               

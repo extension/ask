@@ -1,4 +1,4 @@
-<div id="main" class="span8">
+<div id="main" class="col-md-8">
   
   <p><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location"}) %></p>
   
@@ -15,7 +15,7 @@
   
   
   <br class="clearing" />
-  <div class="span5">
+  <div class="col-md-5">
     <div class="location_section">
       <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
     <% if @experts.size > 0 %>
@@ -29,7 +29,7 @@
     </div>
   </div>
   
-  <div class="span6">
+  <div class="col-md-6">
     <div class="location_section">
       <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
     <% if @groups.size > 0 %>
@@ -70,7 +70,7 @@
 
 </div>
 
-<div id="secondary" class="span4">
+<div id="secondary" class="col-md-4">
   
   
   

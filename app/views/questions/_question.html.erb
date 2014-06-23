@@ -2,7 +2,7 @@
 <% @page_type = "article" %>
 <% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
-<div id="main" class="span8">
+<div id="main" class="col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
     
     <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
@@ -144,7 +144,7 @@
 	    <div id="additional_comment">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
-          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg span6' %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg col-md-6' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
@@ -188,7 +188,7 @@
 
 </div>
 
-<div class="span3 offset1">  
+<div class="col-md-3 col-md-offset-1">  
   <% if current_user && current_user.has_exid? %>
       <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
   <% end %>

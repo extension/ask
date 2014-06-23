@@ -1,4 +1,4 @@
-<div class="span12">
+<div class="col-md-12">
 
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Evaluations'}) %>
 
@@ -20,8 +20,8 @@
     </div>
 </div>
 
-<div class="row-fluid">
-  <div class="span12">
+<div class="row">
+  <div class="col-md-12">
     <div class='well'>
       <p><strong>Data Notes:</strong> Evaluation summaries by default do not include evaluation responses from those colleagues that have an Extension ID. Download the full question set to see all evaluation responses.</p>
     <div class="question_filter">
@@ -48,8 +48,8 @@
   <h3><%= eq.prompt %></h3>
 </div>
 
-<div class="row-fluid">
-  <div class="span12">
+<div class="row">
+  <div class="col-md-12">
     <table class='table table-bordered'>
       <tbody>
         <tr>
@@ -107,8 +107,8 @@
   </div>
 </div>
 
-<div class="row-fluid">
-  <div class="span12">
+<div class="row">
+  <div class="col-md-12">
     <%= render(partial: 'shared/bar_chart', locals: {:data => response_data[:counts], labels: response_data[:labels], :datalabel => "evaluation_#{eq.id}"})%>
   </div>
 </div>

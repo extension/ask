@@ -1,6 +1,6 @@
 <% @page_title = "Reassign"%>
 
-<div class="span12">
+<div class="col-md-12">
   
   <div id="working_on_this_banner">
     <%= render :partial => 'working_on_this_banner' %>
@@ -44,11 +44,11 @@
 
 <div id="reassign_wrapper">
   <div class="assignment_match_header <% @filter_terms.count %>">
-    <div class="row-fluid">
+    <div class="row">
     
-      <div class="span4"><h2>Best Matches</h2></div>
+      <div class="col-md-4"><h2>Best Matches</h2></div>
         
-      <div class="span8">
+      <div class="col-md-8">
       <table class="table table-bordered">
       <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
         
@@ -88,7 +88,7 @@
 
 </div>
 
-<!-- <div class="span3"> -->
+<!-- <div class="col-md-3"> -->
 <!-- </div> -->
 
 <script class="code" type="text/javascript">

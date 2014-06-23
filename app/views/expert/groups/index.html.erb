@@ -5,7 +5,7 @@
   <p><%= link_to "Create a new group", new_expert_group_path, :class => "btn" %> <small><%= link_to "Listing of all groups", all_expert_groups_path() %></small></p>
 </div>
 
-<div class="span6">
+<div class="col-md-6">
   
   <h2>My Groups</h2>
   <p><%= link_to 'Manage your group notifications', expert_user_groups_path(current_user) %></p>
@@ -31,7 +31,7 @@
 </div>  
 
 
-<div class="span5">
+<div class="col-md-5">
   <h2>Groups near you...</h2>
   
   <% if current_county.present? %>
