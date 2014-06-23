@@ -32,7 +32,7 @@
     <h3>
       <%= link_to @group.name, group_path(@group.id) %> 
       <% if current_user && current_user.has_exid? %>
-        <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
+        <%= link_to "expert view", expert_group_path(@group.id), :class => "btn btn-default" %>
       <% end %>
     </h3>
 

@@ -10,7 +10,7 @@
     <div id="question">
       
       <div class="infobar bordered clearfix">
-        <span class="muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
+        <span class="text-muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
         <% if !@question.is_private %>
         <%= render(:partial => 'addthis') %>
         <% end %>
@@ -132,7 +132,7 @@
             <p>Anonymous Guest</p>
           <% end %>
           
-          <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp muted", :title => "Link to this response"} %></small></p>
+          <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp text-muted", :title => "Link to this response"} %></small></p>
         </div>
       </div>
     <% end %>
@@ -190,7 +190,7 @@
 
 <div class="col-md-3 col-md-offset-1">  
   <% if current_user && current_user.has_exid? %>
-      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
+      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" %></p>
   <% end %>
   
   <% if @question.status_state == Question::STATUS_REJECTED %>
@@ -225,7 +225,7 @@
       <% end %>
     <% end %>
     
-    <p class="muted">Ask an Expert is made up of groups and individual experts.</p>
+    <p class="text-muted">Ask an Expert is made up of groups and individual experts.</p>
     <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn orange lg" %></p>
   </aside>
   <% end %>

@@ -18,7 +18,7 @@
 
     
     <%- if current_user && (current_user.id == comment.user_id) -%>
-      <%= link_to 'edit', edit_comment_path(comment), class: "muted", remote: true %>
+      <%= link_to 'edit', edit_comment_path(comment), class: "text-muted", remote: true %>
     <%- end %>
 
     <% if current_user && !comment.question.is_private %>

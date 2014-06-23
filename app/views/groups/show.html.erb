@@ -1,7 +1,7 @@
 <div class="col-md-12">
   <% if current_user && current_user.has_exid? %>
   <p class="pull-right">
-    <%= link_to "expert view", expert_group_path(@group.id), :class => "btn" %>
+    <%= link_to "expert view", expert_group_path(@group.id), :class => "btn btn-default" %>
   </p>
   <% end %>
   
@@ -58,7 +58,7 @@
           <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
         <% end %>
       <% end %>
-       <span class="smallish muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
+       <span class="smallish text-muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
     <% end %>
 	</p>
   <% end %>
@@ -90,7 +90,7 @@
           <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
         <% end %>
       <% end %>
-       <span class="smallish muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
+       <span class="smallish text-muted">Posted <%= time_ago_in_words(q.created_at) %> ago</span>
     <% end %>
 	</p>
   <% end %>

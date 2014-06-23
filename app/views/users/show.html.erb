@@ -12,7 +12,7 @@
     <% end %>
     
     <% if current_user && current_user.has_exid? && @user.has_exid? %>
-      <p><%= link_to "expert view", expert_user_path(@user.id), :class => "btn btn-small" %></p>
+      <p><%= link_to "expert view", expert_user_path(@user.id), :class => "btn btn-sm" %></p>
     <% end %>    
   </div>
   
