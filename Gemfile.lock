@@ -310,8 +310,8 @@ DEPENDENCIES
   ancestry
   auto_strip_attributes (~> 2.0)
   binding_of_caller
-  bootstrap-sass (~> 3.1.1)
-  bootstrap-wysihtml5-rails (~> 0.3.2.99)
+  bootstrap-sass
+  bootstrap-wysihtml5-rails
   capatross
   capistrano
   coffee-rails (~> 3.2.2)
