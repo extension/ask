@@ -49,52 +49,51 @@
   
   <% if current_user %>
     <% if current_user.has_exid? %>
-
-      <div id="expert_navbar" class="navbar expert-navbar navbar-inverse app-navbar clearfix">
-
-            <ul class="navavatar loggedin pull-right">
-              <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
-              <li>
-                <ul class="nav pull-right" id="user_actions">
-                  <li id="username" class="dropdown">
-                    <a href="#" id="username_link" class="dropdown-toggle" data-toggle="dropdown"><span class="hidecompact420"><%= current_user.name %></span> <i class="caret"></i></a>
-                    <ul class="dropdown-menu">
-                      <li><%= link_to "My Dashboard", expert_home_path() %></li>
-                      <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
-                      <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
-                      <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
-                      <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-
-            </ul>
-
-            <span class="pull-left">
-              <%= link_to(expert_home_path(), :class => "navbar-brand") do %>
-               AaE Expert Dashboard
-              <% end %>
-            </span>
-
+    
+      <div class="navbar expert-navbar">
+        <div class="container expert-navbar-container">
+        <div class="pull-right">
+          <%= link_expert_user_avatar(current_user, :thumb) %>
+        
+        <div class="btn-group">
+          
+          <span class="btn dropdown-toggle expert-dropdown-options" data-toggle="dropdown">
+            <span class="hidecompact420"><%= current_user.name %></span> <span class="caret"></span>
+          </span>
+          
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li><%= link_to "My Dashboard", expert_home_path() %></li>
+            <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
+            <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
+            <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
+            <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+          </ul>
+        </div>
+        </div>
+        <span class="pull-left">
+          <%= link_to(expert_home_path(), :class => "navbar-brand navbar-brand-dashboard") do %>
+            AaE Expert Dashboard
+          <% end %>
+        </span>
+        </div>
       </div>
 
     <% end %>
   <% end %>
   
   
-  <div class="container">
+  <div class="container container-main">
     <div id="flash_notification_wrapper" class="flash_notification_wrapper">
       <%= flash_notifications -%>
     </div>
  
  
-    <div class="navbar">
-
-        <a class="btn navbar-btn mobile-menu-search-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-search'></i> <i class='icon-th'></i></a>
-        <!-- <a class="btn navbar-btn mobile-menu-btn" data-toggle="collapse" data-target=".navbar-collapse"><i class='icon-th'></i></a> -->
-        <a class="navbar-brand" href="/"><img class='hidden-xs' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-xs' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
-        <div class="navbar-collapse collapse">
+    <div class="navbar masthead">
+      
+      <span class="navbar-toggle btn btn-default mobile-menu-search-btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search'></i> <i class='fa fa-bars'></i></span>
+      <a class="navbar-brand" href="/"><img class='hidden-xs' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-xs' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
+      
+      <div id="app-navbar" class="navbar-collapse collapse">
 
             <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
               <div class="input-group">
@@ -105,7 +104,7 @@
               </div>
             <% end %>
 
-            <ul class="list-inline">
+            <ul class="app-navbar-list list-inline pull-right">
               <li><%= link_to 'Answered', root_path() %></li>
               <li><%= link_to 'Unanswered', home_unanswered_path() %></li>
               <li><%= link_to("Ask a Question", ask_path()) %></li>
