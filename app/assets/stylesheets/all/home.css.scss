@@ -38,3 +38,28 @@ body#public {
 .simple_border {border:1px solid #ddd;}
 
 .serious-small {font-size:14px !important; font-weight:normal !important;}
+.expert-navbar {margin:0;padding:0;background: #1b1b1b;}
+.expert-dropdown-options {color:#aaa;}
+.expert-dropdown-options:hover {color:#fff;}
+.lime {outline:1px solid lime;}
+
+.global-nav-internal-mobile .internal_nav li ul li {
+  display:block !important;
+  padding:0;
+  text-align:left;
+  
+}
+.global-nav-internal-mobile .internal_nav li ul li a {
+   padding:10px; 
+/*   outline:1px solid lime;*/
+   display:block;
+}
+
+.app-navbar-items li {display:inline-block; 
+/*  outline: 1px solid lime;*/
+  }
+
+
+
+/*override global nav styles*/
+ul.extension_global_nav .group {padding:0 !important; border-right:0 !important; margin:0 !important}
