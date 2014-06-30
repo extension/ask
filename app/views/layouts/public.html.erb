@@ -72,7 +72,7 @@
         </div>
         <span class="pull-left">
           <%= link_to(expert_home_path(), :class => "navbar-brand navbar-brand-dashboard") do %>
-            AaE Expert Dashboard
+            AaE Dashboard
           <% end %>
         </span>
         </div>
@@ -104,7 +104,7 @@
               </div>
             <% end %>
 
-            <ul class="app-navbar-list list-inline pull-right">
+            <ul class="app-navbar-list list-inline pull-right app-navbar-items">
               <li><%= link_to 'Answered', root_path() %></li>
               <li><%= link_to 'Unanswered', home_unanswered_path() %></li>
               <li><%= link_to("Ask a Question", ask_path()) %></li>
@@ -117,7 +117,7 @@
               <% end %>
             </ul>
             
-            <div class="global-nav-mobile">
+            <div class="global-nav-mobile visible-xs">
             <% if current_user and current_user.has_exid? %>
               <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
             <% else %>
