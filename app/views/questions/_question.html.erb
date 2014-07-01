@@ -2,7 +2,7 @@
 <% @page_type = "article" %>
 <% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
-<div id="main" class="col-md-8">
+<div id="main" class="col-sm-8 col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
     
     <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
@@ -192,7 +192,7 @@
 
 </div>
 
-<div class="col-md-3 col-md-offset-1">  
+<div class="col-sm-4 col-sm-offset-0 col-md-3 col-md-offset-1">  
   <% if current_user && current_user.has_exid? %>
       <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" %></p>
   <% end %>
