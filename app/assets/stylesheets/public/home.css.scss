@@ -139,7 +139,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 .response_images a.image_wrapper {padding:1px; margin-right:1em;float:left; border:1px solid #ddd;}
 .response_block .author {padding: 0 0 0 1em;}
 
-.question_body {font-size:20px; line-height:1.6em; font-family: Georgia, serif;}
+.question_body {font-size:20px; line-height:1.6em; font-family: Georgia, serif; word-wrap:break-word;}
 .main_body p {font-size:20px; line-height:1.6em; font-family: Georgia, serif;}
 /*h3.subhead_style {font-size: 22px;}*/
 
@@ -228,14 +228,8 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 
 
 
-/*.aboutme {float:left;}*/
-/*.global-nav-mobile {display:none;}*/
-
 @media screen and (min-width: 767px) {
-/*  .global-nav-mobile-shim {height:50px; outline:1px solid lime;}*/
   .navbar-brand img {width:360px;}
-/*  .global-nav-mobile {display:none;}*/
-/*  .global-nav {position:fixed; top:0;}*/
 }
 
 @media screen and (min-width: 767px) and (max-width: 979px) {
@@ -272,9 +266,11 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
     color:#fff;
     text-shadow: none;
     display:block;
-/*      outline:1px solid blue;*/
     padding:10px;
   }
+  .footer-links li {display:block; padding:0; border-right:0;}
+  .footer-links li a {display:block; padding:5px 10px;}
+  #searchform {float:left !important;}
 }
 
 
@@ -331,7 +327,8 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   #expertbar {padding:0;}
   #expertbar .container {padding:0;}
   #publicbar .container h1 {margin:0;}
-  .navbar-brand {padding-left:20px;}
+  .navbar-brand {padding-left:0;}
+  .navbar-brand-dashboard {padding-left:20px;}
   #expert_navbar-inner a.navbar-brand {font-size:15px;}
 
 }

@@ -99,7 +99,7 @@
               <div class="input-group">
                 <%= text_field_tag 'q', params[:q], :class => "form-control col-md-2", :placeholder => "Search", :id => "search_field" %>
                 <span class="input-group-btn">
-                <input type="submit" value="Go" class="input-group-addon btn btn-default" />
+                <input type="submit" value="Go" class="btn btn-default" />
                 </span>
               </div>
             <% end %>
@@ -152,7 +152,7 @@
       
       <footer>
         <span id="extension_icon_512" class="pull-left noprint"><img id="extension_logo" src="/assets/extension_logo.jpg" alt="eXtension" /></span>
-        <ul class="list-inline noprint">
+        <ul class="footer-links list-inline noprint">
           <li><%= link_to "Institutional Partners", "http://www.extension.org/main/partners" %></li>
           <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
           <li><%= link_to "Contact Us", home_about_path() %></li>

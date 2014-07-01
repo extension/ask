@@ -266,7 +266,7 @@ ul.nav {
 .navbar .form-search .btn {
 	background: #fa6218;
 	color:#FFF;
-/*  border:1px solid #d65506;*/
+  border: 0 !important;
 	-webkit-border-radius: 15px;
 	-moz-border-radius: 15px;
 	border-radius: 15px !important;
@@ -1188,14 +1188,11 @@ footer p {
 
 
 .expert-navbar {
-/*  outline:1px solid lime;*/
   margin:0;
 	padding:0;
 	background: #1b1b1b;
 	}
-/*.expert-navbar .container {outline:1px solid red;}*/
-.expert-navbar-container {background:none;}
-/*.app-navbar-list {clear:both; border:1px solid red;}*/
+.expert-navbar-container {background:none; padding-right:0; padding-left:0;}
 
 .navbar-brand {height:auto;}
 .navbar-brand {
