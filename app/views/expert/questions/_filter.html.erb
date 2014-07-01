@@ -1,24 +1,22 @@
 <div id="location_filter">
-  <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status", :class => "form-control"} %>
-  <%= select_tag "privacy", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "privacy", :class => "form-control"} %>
-  <br class="clearing" />
-  <div id="location_picker">
-	<%= select_tag "location_id", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_id", :class => "form-control"} %>
+  <div class="form-group form-inline">
+    <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "Any Status", :name => "status", :class => "form-control"} %>
+    <%= select_tag "privacy", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Any Status", :name => "privacy", :class => "form-control"} %>
   </div>
-  
-  <div id="county_list">
+
+  <div class="form-group form-inline">
+    <div id="location_picker">
+	    <%= select_tag "location_id", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "All locations", :name => "location_id", :class => "form-control"} %>
+    </div>
+    <div id="county_list">
     <% if @location_pref.present? %>
       <%= render :partial => 'expert/home/counties', :locals => {:location_obj => Location.find_by_id(@location_pref)} %>  
     <% end %>
+    </div>
+    <%= select_tag "group_id", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_id", :class => "form-control"} %>
+    <%= select_tag "tag_id", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_id", :class => "form-control"} %>
+    <span id="clearfilter" class="cursor downplay btn btn-default">clear filter</span>
   </div>
-
-  <%= select_tag "group_id", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_id", :class => "form-control"} %>
-	
-  <%= select_tag "tag_id", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_id", :class => "form-control"} %>
-  
-  <span id="clearfilter" class="cursor downplay btn btn-default">clear filter</span>
-    
-  <br class="clearing" />
 </div>
 
 

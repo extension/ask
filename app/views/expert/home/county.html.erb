@@ -1,6 +1,6 @@
 <div id="main" class="col-md-8">
   
-  <p><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location"}) %></p>
+  <p class="form-inline"><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick a location", :class => "form-control"}) %></p>
   
   <div class="map"></div>
   <h1><%= @county.name %>, <%= link_to @location.name, expert_view_location_path(@location.id) %></h1>
