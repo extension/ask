@@ -15,7 +15,7 @@
 <%= form_tag close_out_expert_question_path(@question.id) do %>
   <p>
     <label for="close_out_question">Reason for closing this question</label>
-    <%= text_field_tag :close_out_reason %>
+    <%= text_field_tag :close_out_reason, "", class: 'form-control' %>
   </p>
   
   <p>

@@ -53,12 +53,12 @@
       <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
         
         <td class="match location_match">
-          <%= select_tag(:location_id, options_for_select(get_location_options, @question.location.present? ? @question.location.id : nil)) %>
+          <%= select_tag(:location_id, options_for_select(get_location_options, @question.location.present? ? @question.location.id : nil), {:class => 'form-control'}) %>
         </td>
         
         <td class="match location_match" id="county_list">
           <% if @question.location.present? %>
-            <%= select_tag(:question_county_id, options_for_select(get_county_options(@question.location), @question.county.present? ? @question.county.id : nil)) %>
+            <%= select_tag(:question_county_id, options_for_select(get_county_options(@question.location), @question.county.present? ? @question.county.id : nil), {:class => 'form-control'}) %>
           <% end %>
         </td>
         
