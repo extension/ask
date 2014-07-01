@@ -65,6 +65,16 @@ body#expert {
   }
   #flash_notification p {padding: 1em; font-size:1.5em;}
   
+  #searchform {float:left;}
+  .expert-app-navbar-items {float:left !important;
+/*    outline: 1px solid lime;*/
+    }
+  .expert-app-navbar-items > li > a:hover, .expert-app-navbar-items > li > a:focus {
+    background:#000;
+  }  
+    
+    
+  
   @media screen and (max-width: 979px) {
     #fixed_fixer {height: 0;}
 	}
@@ -202,10 +212,12 @@ body#expert {
   
   #form_errors {color:red; padding:1em; font-size:1.5em; background:#fff; margin:1em 0;}
   #form_errors h3 {color:red; font-size:1.1em;}
+  #app-navbar {padding-top:10px;}
   
   @media screen and (max-width: 1200px) {
 /*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
     .app-navbar .container {width: auto; padding-left:20px; padding-right:20px;}
+    #searchform {float:left;}
   }
   
   @media screen and (max-width: 979px) {
@@ -216,6 +228,10 @@ body#expert {
 	@media screen and (min-width: 979px) {
 	  .modal {width:880px; margin: 0 0 0 -440px;}
 	  .modal-body {max-height:500px;}
+	}
+	
+	@media screen and (min-width: 767px) {
+	  #search_field {width: 18em;}
 	}
 	
 	@media screen and (max-width: 767px) {
@@ -245,7 +261,7 @@ body#expert {
   
 /*  .app-navbar .navbar-inner {background:#2C2A2A;}*/
   .app-navbar .navbar-inner {padding-top:.6em; border-radius:0}
-/*  #searchform input {width:230px;}*/
+
   .navbar-inverse .navbar-brand, .navbar-inverse .nav > li > a {color:#ccc;}
   #oldest_question {margin:0 0 1em; background:#eee;}
   .coffeetime {font-size:1.1em; color:#888; padding-left:30px; line-height:1.5em;}
@@ -401,6 +417,9 @@ body#expert {
 	
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto; margin-left:-1em;margin-right:-1em;}
+    .expert-navbar-container {
+/*      outline:1px solid red; */
+      width:auto;}
 	}
 	
 	span.removetag {padding:.1em .5em; background:#eee; color:#aaa; cursor:pointer;}
@@ -493,12 +512,9 @@ body#expert {
 	#search input {margin:0 .5em 0 0; }
 	#search {padding:.5em;}
 	#search .btn {margin:0;}
-	#search_field {}
-/*	#associated_group {padding:.25em 0 0 1em;}*/
 	
 	.group {margin:1em 0;}
 	#associated_group_picker {margin:0 0 3em;}
-/*  #privacy_status a {color:#999;}*/
 	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 	
 	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; padding:4px;}
@@ -577,10 +593,10 @@ body#expert {
   
   
   @media screen and (max-width: 1200px) {
-/*    .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {width: auto; padding-left:20px; padding-right:20px;}*/
     .app-navbar .container {width: auto; padding-left:0; padding-right:0; margin:0;}
     .app-navbar .navbar-inner {width: auto; padding-left:0; padding-right:0; margin:0;}
     .app-navbar .container {max-width: 1180px;padding: 0 20px;}
+/*    .expert-navbar-container {outline:1px solid red; width:1040px;}*/
   }
   
   @media screen and (max-width: 979px) {

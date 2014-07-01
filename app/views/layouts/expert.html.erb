@@ -28,7 +28,7 @@
       
       <span class="navbar-toggle btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search fa-inverse'></i> <i class='fa fa-bars fa-inverse'></i></span>
       
-      <div class="expert-navbar-container pull-right">
+      <div class="pull-right">
         <%= link_expert_user_avatar(current_user, :thumb, highlight_badge = true) %>
     
         <div class="btn-group">
@@ -55,7 +55,7 @@
     </span>
     
     <div id="app-navbar" class="navbar-collapse collapse">
-      <ul class="nav app-navbar-items">
+      <ul class="nav app-navbar-items expert-app-navbar-items">
         <li><%= link_to "Dashboard", expert_home_path %></li>
         <li><%= build_url_based_on_pref_filters("unanswered") %></li>
         <li><%= build_url_based_on_pref_filters("answered") %></li>
@@ -63,14 +63,16 @@
       </ul>
       
       
-      <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
+
+      <%= form_tag(expert_search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search"}) do %>
         <div class="input-group">
-          <%= text_field_tag 'q', params[:q], :class => "form-control col-md-2", :placeholder => "Search experts, questions, groups", :id => "search_field" %>
+          <%= text_field_tag 'q', params[:q], :class => "form-control", :placeholder => "Search experts, questions, groups", :id => "search_field" %>
           <span class="input-group-btn">
-            <input type="submit" value="Go" class="input-group-addon btn btn-default" />
+            <input type="submit" value="Go" class="btn btn-default" />
           </span>
         </div>
       <% end %>
+
       
       <div class='visible-xs global-nav-internal-mobile'>
         <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>

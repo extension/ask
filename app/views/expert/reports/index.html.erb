@@ -47,7 +47,7 @@
     <div class="simple-container location-report-dash-summary">
       
       <% if !@user.location.present? %>
-        <p class="simple-highlight"><%= link_to("Customize this summary by setting a primary location", "http://www.extension.org/people/profile/edit") %> <%= link_to("Go", "http://www.extension.org/people/profile/edit", :class => "btn btn-small") %></p>
+        <p class="simple-highlight"><%= link_to("Customize this summary by setting a primary location", "http://www.extension.org/people/profile/edit") %> <%= link_to("Go", "http://www.extension.org/people/profile/edit", :class => "btn btn-default") %></p>
       <% end %>
       
       <h3>Questions from <%= @condition_array.present? ? @condition_array : "All Locations and Groups" %> for <%= @date.strftime("%B, %Y") %></h3>
@@ -107,9 +107,9 @@
     <h2>Explore questions</h2>
     <% if @question_filter %>
     <p>Here's a recent search:</p>
-    <p><%= link_to "<i class='fa fa-search'></i> All questions with #{question_filter_text(@question_filter_objects)}".html_safe, questions_expert_data_path(:filter => @question_filter.id), :class => "btn" %></p>
+    <p><%= link_to "<i class='fa fa-search'></i> All questions with #{question_filter_text(@question_filter_objects)}".html_safe, questions_expert_data_path(:filter => @question_filter.id), :class => "btn btn-default" %></p>
     <% end %>
-    <p><%= link_to "Create your own filter", questions_expert_data_path(:showform => 1), :class => "btn" %></p>
+    <p><%= link_to "Create your own filter", questions_expert_data_path(:showform => 1), :class => "btn btn-default" %></p>
   </div>
 </div>
 </div>
@@ -118,7 +118,7 @@
 <div class="simple-container">
 <div class="col-md-12">
   <h2>Growth and Performance Over Time</h2>
-  <p><%= link_to "full report", expert_data_path(), :class => "btn" %></p>
+  <p><%= link_to "full report", expert_data_path(), :class => "btn btn-default" %></p>
 </div>
 
 <div class="row">
