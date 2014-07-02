@@ -31,26 +31,30 @@
       <% end %>
 
       <% if question.images.size > 0 %>
-
-        <div class="images_wrapper">  
+        
+        <div class="images_wrapper clearfix"> 
         <% question.images.each do |image| %>
           <% if image.persisted? %>
             <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
             <div class="question_image_wrapper">
-              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size150w" %></a>
+              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
             </div>
 
-            <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-header">
-                <p>
-                  <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                  <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-                <p>
-              </div>
-              <div class="modal-body">
-                <%= image_tag image.url() %>
-              </div>
-            </div>
+
+            <div id="myModal<%= image.id %>" class="modal fade">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                  </div>
+                  <div class="modal-body">
+                    <%= image_tag image.url() %>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
             <% else %>
              <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
             <% end %>
@@ -58,6 +62,8 @@
         <% end %>  
         <br class="clearing" />
       </div>
+        
+
 
     <% end %>
       
