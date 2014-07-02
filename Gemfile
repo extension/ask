@@ -5,11 +5,9 @@ gem 'rails', "3.2.18"
 
 # Gems used only for assets and not required
 # in production environments by default.
-group :assets do
-  gem 'coffee-rails', "~> 3.2.2"
-  gem 'uglifier', '>= 1.0.3'
-  gem 'jqtools-rails'
-end
+gem 'coffee-rails', "~> 3.2.2"
+gem 'uglifier', '>= 1.0.3'
+gem 'jqtools-rails'
 
 # xml parsing
 gem 'nokogiri'
