@@ -310,7 +310,7 @@ DEPENDENCIES
   ancestry
   auto_strip_attributes (~> 2.0)
   binding_of_caller
-  bootstrap-sass
+  bootstrap-sass (~> 3.1.1)
   bootstrap-wysihtml5-rails
   capatross
   capistrano
