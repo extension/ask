@@ -42,14 +42,14 @@
   <fieldset>
     <p>
       <%= f.label :name, 'Group Name' %>
-      <%= f.text_field :name,  :class => "" %>
+      <%= f.text_field :name,  :class => "form-control" %>
     </p>
     
     <p>
       <%= f.label :description do %>
       About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
       <% end %>
-      <%= f.text_area :description, :rows => "4",  :class => "l wysiwyg" %>
+      <%= f.text_area :description, :rows => "4",  :class => "form-control wysiwyg" %>
     </p>
     
     <p>
