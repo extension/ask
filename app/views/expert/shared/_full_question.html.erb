@@ -19,7 +19,7 @@
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
       <% if question.status_state == Question::STATUS_REJECTED %>
-        <p class="rejected"><span class="label label-important">Rejected</span> <%= wrap_text(question.current_response) %></p>
+        <p class="rejected"><span class="label label-danger">Rejected</span> <%= wrap_text(question.current_response) %></p>
       <% elsif question.status_state == Question::STATUS_NO_ANSWER %>
         <p>A canned response was used to answer this question</p>
       <% elsif question.status_state == Question::STATUS_CLOSED %>
