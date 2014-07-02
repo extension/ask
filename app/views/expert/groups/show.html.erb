@@ -17,7 +17,7 @@
   <div id="group_masthead">
     <%= link_expert_group_avatar(@group) %>
     <h1><span class="<%= @group.question_wrangler_group? ? 'qw_large' : '' %>"><%= @group.name %></span></h1>
-    <p><%= link_to "Public Profile", group_path(@group.id), :class => "btn" %></p>
+    <p><%= link_to "Public Profile", group_path(@group.id), :class => "btn btn-default" %></p>
   </div>
 
   <div class="group aboutme">
