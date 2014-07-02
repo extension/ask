@@ -8,7 +8,6 @@ gem 'rails', "3.2.18"
 # speed up sppppppprooooockets
 gem 'turbo-sprockets-rails3'
 group :assets do
-  gem 'sass-rails', "~> 3.2.4"
   gem 'coffee-rails', "~> 3.2.2"
   gem 'uglifier', '>= 1.0.3'
   gem 'jqtools-rails'
@@ -21,6 +20,9 @@ gem 'nokogiri'
 gem 'jquery-rails'
 
 # bootstrap in sass in rails
+gem 'sprockets-rails', '=2.0.0.backport1'
+gem 'sprockets', '=2.2.2.backport2'
+gem 'sass-rails', github: 'guilleiguaran/sass-rails', branch: 'backport'
 gem 'bootstrap-sass', '~> 3.1.1'
 
 # wysihtml5 + bootstrap + asset pipeline
