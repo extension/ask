@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140619120754) do
+ActiveRecord::Schema.define(:version => 20140702114930) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -285,6 +285,7 @@ ActiveRecord::Schema.define(:version => 20140619120754) do
     t.boolean  "group_active",                 :default => true,  :null => false
     t.boolean  "ignore_county_routing",        :default => false
     t.boolean  "ask_form_show_location",       :default => true
+    t.boolean  "send_evaluation",              :default => true
   end
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
