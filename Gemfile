@@ -5,8 +5,6 @@ gem 'rails', "3.2.18"
 
 # Gems used only for assets and not required
 # in production environments by default.
-# speed up sppppppprooooockets
-gem 'turbo-sprockets-rails3'
 group :assets do
   gem 'coffee-rails', "~> 3.2.2"
   gem 'uglifier', '>= 1.0.3'
