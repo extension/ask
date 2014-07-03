@@ -1,5 +1,5 @@
 <%= form_for @question, :url => ask_group_path(), :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
-
+  
   <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
   <fieldset>
@@ -65,6 +65,13 @@
   <%- if current_user and current_user.email.present? -%>
     <p>Your answer will be sent to <%= current_user.email %></p>
   <% end %>
+  
+  
+  <% if @group.is_australian? %>
+   <p><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy" %></small></p>
+  <% end %>
+  
+  
 <% end %>
 
 <script class="code" type="text/javascript">
