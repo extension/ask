@@ -27,7 +27,7 @@
         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
         <span class="help-block">Share your question with the public at ask.extension.org so others can learn from the answer.</span>
       </label>
-      
+
     </div>
   <% end %>
 
@@ -76,7 +76,7 @@
     if (!isiDevice)
     {
       $('.wysiwyg').each(function(i, elem) {
-        $(elem).wysihtml5({image: false});
+        $(elem).wysihtml5({toolbar: { "fa": true, "image": false}});
       });
     }
 
