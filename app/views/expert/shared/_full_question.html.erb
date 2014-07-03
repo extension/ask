@@ -5,9 +5,9 @@
 
 <div class="incoming_question <%= question.is_being_worked_on? ? 'being_worked_on' : '' %>">
   
-  <div class="row-fluid">
+  <div class="row">
     
-    <div class="span8">
+    <div class="col-md-8">
       <% if question.is_being_worked_on? %>
         <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
       <% end %>
@@ -19,7 +19,7 @@
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
       
       <% if question.status_state == Question::STATUS_REJECTED %>
-        <p class="rejected"><span class="label label-important">Rejected</span> <%= wrap_text(question.current_response) %></p>
+        <p class="rejected"><span class="label label-danger">Rejected</span> <%= wrap_text(question.current_response) %></p>
       <% elsif question.status_state == Question::STATUS_NO_ANSWER %>
         <p>A canned response was used to answer this question</p>
       <% elsif question.status_state == Question::STATUS_CLOSED %>
@@ -31,26 +31,30 @@
       <% end %>
 
       <% if question.images.size > 0 %>
-
-        <div class="images_wrapper">  
+        
+        <div class="images_wrapper clearfix"> 
         <% question.images.each do |image| %>
           <% if image.persisted? %>
             <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
             <div class="question_image_wrapper">
-              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size150w" %></a>
+              <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
             </div>
 
-            <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-header">
-                <p>
-                  <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                  <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-                <p>
-              </div>
-              <div class="modal-body">
-                <%= image_tag image.url() %>
-              </div>
-            </div>
+
+            <div id="myModal<%= image.id %>" class="modal fade">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                  </div>
+                  <div class="modal-body">
+                    <%= image_tag image.url() %>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
             <% else %>
              <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
             <% end %>
@@ -58,12 +62,14 @@
         <% end %>  
         <br class="clearing" />
       </div>
+        
+
 
     <% end %>
       
-    </div> <!-- end .span8 -->
+    </div> <!-- end .col-md-8 -->
     
-    <div class="span4">
+    <div class="col-md-4">
       <div class="expert">
         <% if !hide_assignee %>
           <% if question.assignee_id.present? %>
@@ -81,7 +87,7 @@
           <% end %>
         <% end %>
       </div>
-    </div><!-- end .span4 -->
+    </div><!-- end .col-md-4 -->
   
   </div>
   

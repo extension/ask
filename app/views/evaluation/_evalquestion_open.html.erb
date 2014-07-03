@@ -11,7 +11,7 @@
   <legend><%= evaluation_question.prompt %></legend>
   <div class="control-group">
     <div class="controls">
-      <%= text_field_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable span4'}) %>
+      <%= text_field_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable col-md-4'}) %>
     </div>
   </div>
 <%- end -%>

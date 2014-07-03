@@ -2,7 +2,7 @@
 <% @page_type = "article" %>
 <% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
-<div id="main" class="span8">
+<div id="main" class="col-sm-8 col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
     
     <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
@@ -10,7 +10,7 @@
     <div id="question">
       
       <div class="infobar bordered clearfix">
-        <span class="muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
+        <span class="text-muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
         <% if !@question.is_private %>
         <%= render(:partial => 'addthis') %>
         <% end %>
@@ -27,18 +27,22 @@
           <div class="question_image_wrapper">
             <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
           </div>
-
-          <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-header">
-              <p>
-                <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-              <p>
-            </div>
-            <div class="modal-body">
-              <%= image_tag image.url() %>
-            </div>
-          </div>
+        
+          
+          <div id="myModal<%= image.id %>" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                </div>
+                <div class="modal-body">
+                  <%= image_tag image.url() %>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+          
           <% else %>
            <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
           <% end %>
@@ -132,7 +136,7 @@
             <p>Anonymous Guest</p>
           <% end %>
           
-          <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp muted", :title => "Link to this response"} %></small></p>
+          <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp text-muted", :title => "Link to this response"} %></small></p>
         </div>
       </div>
     <% end %>
@@ -144,7 +148,7 @@
 	    <div id="additional_comment">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
-          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg span6' %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg col-md-6' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
@@ -188,9 +192,9 @@
 
 </div>
 
-<div class="span3 offset1">  
+<div class="col-sm-4 col-sm-offset-0 col-md-3 col-md-offset-1">  
   <% if current_user && current_user.has_exid? %>
-      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" %></p>
+      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" %></p>
   <% end %>
   
   <% if @question.status_state == Question::STATUS_REJECTED %>
@@ -225,7 +229,7 @@
       <% end %>
     <% end %>
     
-    <p class="muted">Ask an Expert is made up of groups and individual experts.</p>
+    <p class="text-muted">Ask an Expert is made up of groups and individual experts.</p>
     <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn orange lg" %></p>
   </aside>
   <% end %>

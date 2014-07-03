@@ -21,7 +21,7 @@ gem 'nokogiri'
 gem 'jquery-rails'
 
 # bootstrap in sass in rails
-gem 'bootstrap-sass', '~> 2.3.2.2'
+gem 'bootstrap-sass', '~> 3.1.1'
 # wysihtml5 + bootstrap + asset pipeline
 gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
 
@@ -83,9 +83,6 @@ gem 'ancestry'
 
 # auto strip spaces out of attributes of models
 gem "auto_strip_attributes", "~> 2.0"
-
-# readability port
-gem "ruby-readability", "~> 0.2.4" ,:require => 'readability'
 
 # html scrubbing
 gem "loofah"

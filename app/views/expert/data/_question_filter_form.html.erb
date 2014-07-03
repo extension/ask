@@ -1,5 +1,5 @@
-<div class="row-fluid">
-  <div class="span12">
+<div class="row">
+  <div class="col-md-12">
 
     <%= form_tag(filter_path, class: 'form-horizontal') do -%>
 
@@ -20,28 +20,28 @@
       <div class="control-group">
         <%= label_tag('assigned_groups', 'Assigned Group', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("assigned_groups","", class: 'span8' ) -%>
+          <%= text_field_tag("assigned_groups","", class: 'col-md-8' ) -%>
         </div>
       </div>
 
       <div class="control-group">
         <%= label_tag('question_locations', 'Question Locations', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("question_locations","", class: 'span8' ) -%>
+          <%= text_field_tag("question_locations","", class: 'col-md-8' ) -%>
         </div>
       </div>
 
       <div class="control-group">
         <%= label_tag('question_counties', 'Question Counties', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("question_counties","", class: 'span8' ) -%>
+          <%= text_field_tag("question_counties","", class: 'col-md-8' ) -%>
         </div>
       </div>      
 
       <div class="control-group">
         <%= label_tag('tags', 'Tags', :class => 'control-label') -%>
         <div class="controls">
-          <%= text_field_tag("tags","", class: 'span8' ) -%>
+          <%= text_field_tag("tags","", class: 'col-md-8' ) -%>
         </div>
       </div>
 

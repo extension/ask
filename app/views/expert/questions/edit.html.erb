@@ -1,6 +1,6 @@
 <% @page_title = "Edit Question ##{@question.id}"%>
 
-<div id="main" class="span8">
+<div id="main" class="col-md-8">
   <div id="question_wrapper">
     <p id="aaeid"><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></p>
   
@@ -18,18 +18,18 @@
     	  <fieldset>
           <p>
             <%= f.label :title, 'Title' %>
-            <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "xl required"} %>
+            <%= f.text_field :title, {:maxlength => 100, :type => "text", :class => "input-lg form-control required"} %>
           </p>
       
           <p>
             <%= f.label :body, 'Question' %>
-            <%= f.text_area :body, :rows => 12, :class => "xl required wysiwyg" %>
+            <%= f.text_area :body, :rows => 12, :class => "form-control required wysiwyg" %>
           </p>
     	  </fieldset>
 
           <p>
 	       <%= label_tag :reason, 'Reason for editing (This is saved in the revision history)' %>
-	       <%= text_area_tag :reason, nil, { rows: 5 } %>
+	       <%= text_area_tag :reason, nil, { rows: 5, class: "form-control" } %>
 	      </p>
 
     	  <p><%= submit_tag "Save changes", :class => 'btn btn-primary' %></p>

@@ -1,4 +1,4 @@
-<div class="span12">
+<div class="col-md-12">
 
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Questions'}) %>
 
@@ -17,8 +17,8 @@
 </div>
 
 
-<div class="row-fluid">
-  <div class="span12">
+<div class="row">
+  <div class="col-md-12">
     <div class='well'>
       <p><strong>Data Notes:</strong> Rejected question (whether spam, duplicates, or for other reasons) are not included as part of this data</p>
     <div class="question_filter">
@@ -30,8 +30,8 @@
   </div>
 </div>
 
-<div class='row-fluid'>
-  <div class="span12">
+<div class='row'>
+  <div class="col-md-12">
     <%- if @questions.blank? -%>
     <p>No questions to display</p>
     <%- else -%>

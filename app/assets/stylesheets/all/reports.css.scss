@@ -26,7 +26,7 @@
 #dashboard .state_ratio_label {margin-bottom:2em; font-size:1.2em;}
 .table_header {margin-top:2em;}
 
-.simple-container {border: 1px solid #ddd; margin-bottom: 3em; padding: 1.5em; background: #fff; @include rounded10;}
+.simple-container {border: 1px solid #ddd; margin-bottom: 3em; padding: 1.5em; background: #fff; @include rounded10;@include wordwrap;}
 .simple-highlight {background:#FFFFCE; padding:.5em 1em; font-weight:normal; font-size:1.2em;}
 .simple-highlight a {color:#666;}
 #myCanvas {max-width:100% !important;}

@@ -4,7 +4,7 @@
     <p><span class="notifylink"><%= submit_tag "Notify me when this question has activity", {:id => '1', :class => 'btn btn-small'}%></span></p>
     <%= hidden_field_tag('value', '1') %>
   <%- else -%>
-    <p><span class="notifylink"><%= submit_tag "Turn off my notifications for this question", {:id => '0', :class => 'btn btn-small'}%></span></p>
+    <p><span class="notifylink"><%= submit_tag "Turn off my notifications for this question", {:id => '0', :class => 'btn btn-default btn-primary'}%></span></p>
     <%= hidden_field_tag('value', '0') %>
   <%- end -%> 
 <% end %>

@@ -1,6 +1,6 @@
 /* slider root element */
 .slider { 
-  background:#3C72E6 url(/assets/h30.png) repeat-x 0 0; 
+  background:#3C72E6 url(<%= asset_path 'h30.png' %>) repeat-x 0 0; 
   height:9px; 
   position:relative; 
   cursor:pointer;
@@ -23,7 +23,7 @@
 
 /* drag handle */
 .handle { 
-  background:#fff url(/assets/h30.png) repeat-x 0 0; 
+  background:#fff url(<%= asset_path 'h30.png' %>) repeat-x 0 0; 
   height:28px;
   width:28px;
   top:-12px;

@@ -1,4 +1,4 @@
-<%= select_tag("county_id", options_for_select(get_county_options(location_obj), @county_pref)) %>
+<%= select_tag("county_id", options_for_select(get_county_options(location_obj), @county_pref), :class => "form-control") %>
 
 <script class="code" type="text/javascript">
 $("#county_option").change(function() {
