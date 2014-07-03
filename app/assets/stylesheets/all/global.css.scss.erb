@@ -350,8 +350,8 @@ body#expert {
 
   .expert_title {margin-bottom:.5em;}
   .big_avatar {width:150px; height:150px; background:#ccc; margin:0 0 2em;}
-  .qw_large {background: transparent url(/assets/lasso_32px.png) right 50% no-repeat; padding-right:36px; clear:left;}
-  .icon-qw {background: transparent url(/assets/lasso.png) 0 0; width:16px; height:16px;}
+  .qw_large {background: transparent url(<%= asset_path 'lasso_32px.png' %>) right 50% no-repeat; padding-right:36px; clear:left;}
+  .icon-qw {background: transparent url(<%= asset_path 'lasso.png' %>) 0 0; width:16px; height:16px;}
 
   .answered_question {margin: 0 0 .5em; padding:0 0 .5em;}
 
@@ -489,8 +489,8 @@ body#expert {
 
 	.county_list {list-style:none;}
 	.county_list li {padding:.2em;}
-	.map {width:80px; height:80px; border:1px solid #bbb; background:#D2E7BC url(/assets/map_marker.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
-	.bigtag {width:80px; height:80px; border:1px solid #bbb; background:#bbb url(/assets/tag_80px.png) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
+	.map {width:80px; height:80px; border:1px solid #bbb; background:#D2E7BC url(<%= asset_path 'map_marker.png' %>) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
+	.bigtag {width:80px; height:80px; border:1px solid #bbb; background:#bbb url(<%= asset_path 'tag_80px.png' %>) 50% 50% no-repeat; float:left; margin-right:1em; padding:5px;}
 	#user_masthead {margin:0 0 .75em; border-bottom:1px solid #e5e5e5; padding-bottom:1em;}
 	#user_masthead a.medium {float:left; margin: 0 1.5em 2.5em 0;}
 	.aboutme {clear:both; line-height:1.5em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.3em;}
@@ -505,13 +505,13 @@ body#expert {
 
 	.group {margin:1em 0;}
 	#associated_group_picker {margin:0 0 3em;}
-	.lock {background: transparent url(/assets/icon-bw2-32-lock.png) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
+	.lock {background: transparent url(<%= asset_path 'icon-bw2-32-lock.png' %>) left 50% no-repeat; padding-left:40px; clear:left; line-height:2em;}
 
-	.match {background: transparent url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; padding:4px;}
+	.match {background: transparent url(<%= asset_path 'icon_checkmark_32.png' %>) 50% 50% no-repeat; padding:4px;}
 	.match i, .nomatch i {display:none;}
 	.nomatch {color:#999;}
-	.location_match {background: #DAEAC9  url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; color:#1F5983; height:32px;}
-	.tag_match {background: #C2E5EC  url(/assets/icon_checkmark_32.png) 50% 50% no-repeat; color:#1F5983; height:32px;}
+	.location_match {background: #DAEAC9  url(<%= asset_path 'icon_checkmark_32.png' %>) 50% 50% no-repeat; color:#1F5983; height:32px;}
+	.tag_match {background: #C2E5EC  url(<%= asset_path 'icon_checkmark_32.png' %>) 50% 50% no-repeat; color:#1F5983; height:32px;}
   .nomatch .matching_term {display:none;}
 	.matching_term, .matching_code {display:none;}
 	.term_count_1 td {width:100%}
@@ -526,8 +526,7 @@ body#expert {
 	footer {background:#222;}
   footer ul li a {color:#bbb;}
   footer ul li a:hover {color:#fff;}
-
-/*  .public {background: transparent url(/assets/world.png) left 50% no-repeat; padding-left:24px; clear:left; line-height:2em; margin-bottom:0;}*/
+  
 	.public, .private {line-height:2em; margin-bottom:0; color:#888;}
 	.public span, .private span {color:#333;}
 	.public, .private {font-size:1.3em;}
