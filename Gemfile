@@ -23,7 +23,7 @@ gem 'jquery-rails'
 # bootstrap in sass in rails
 gem 'bootstrap-sass', '~> 3.1.1'
 # wysihtml5 + bootstrap + asset pipeline
-gem 'bootstrap-wysihtml5-rails', '~> 0.3.1.22'
+gem 'bootstrap-wysihtml5-rails'
 
 # select2 asset packaging - used for filter interfaces
 gem "select2-rails"
