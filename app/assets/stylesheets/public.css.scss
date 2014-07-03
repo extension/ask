@@ -9,10 +9,9 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
+ *= require bootstrap
  *= require_tree ./public
  *= require vendor
  *= require bootstrap-wysihtml5
  *= require font-awesome
 */
-
-@import "bootstrap";
