@@ -48,7 +48,7 @@
   
   
   
-<div id="main" class="span8">
+<div id="main" class="col-sm-8 col-md-8">
     <% if @question.status_state != Question::STATUS_REJECTED %>
     <p class="response_count">
       <% if @question.status_state == Question::STATUS_RESOLVED %>
@@ -143,7 +143,7 @@
   </div>
 
 
-<div id="secondary" class="span4">
+<div id="secondary" class="col-sm-4 col-md-4">
   
   <div id="question_assignment">
     <%= render :partial => 'question_assignment' %>
@@ -173,7 +173,7 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    $('#new-comments-form .wysihtml5').wysihtml5({image: false});
+    $('#new-comments-form .wysihtml5').wysihtml5({toolbar: { "fa": true, "image": false}});
     var highlightedComment = window.location.hash;
     $(highlightedComment).closest(".cc-comment").addClass("cc-highlight");
     

@@ -1,8 +1,8 @@
 <%- if @private_view  %>
-  <div id="main" class="span8">
+  <div id="main" class="col-md-8">
     <h3>This question is private. If you asked this question, you can view and edit this question by clicking the link in the email you received.</h3>
     <%- if(current_user and current_user.has_exid?) -%>
-      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn" -%></p>
+      <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" -%></p>
     <%- end -%>
   </div>
 <%- else -%>

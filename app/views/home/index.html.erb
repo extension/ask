@@ -1,10 +1,10 @@
-<div class="span8">  
+<div class="col-sm-8 col-md-8">  
   <div id="home_question_list">
     <%= render :partial => 'list_of_questions', :locals => {:questions => @answered_questions, :listview => 'answered'} %>
   </div>
 </div>
 
-<div class="span3 offset1">
+<div class="col-sm-3 col-md-3 col-md-offset-1">
   <aside id="recent_photo_questions">
     <%= render :partial => 'recent_photo_questions', :locals => {:questions => @recent_photo_questions } %>
   </aside>

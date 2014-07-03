@@ -1,4 +1,4 @@
-<div id="sign_in" class="span12">
+<div id="sign_in" class="col-md-12">
   
   <h2>Sign In</h2>  
   
@@ -7,7 +7,7 @@
     <h4>eXtension experts should sign in with their eXtension account.</h4>
     <%= link_to authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
       <%= image_tag("extension_logo.jpg", :size => "50x50", :class => "size50x50") %>
-      <span class="btn btn-large">Sign in with eXtension</span>
+      <span class="btn btn-default">Sign in with eXtension</span>
     <% end %>
   </p>
   </div>
@@ -17,21 +17,21 @@
   <p>
     <%= link_to authmap_omniauth_authorize_path(:twitter, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
 	    <%= image_tag("twitter_newbird_boxed_whiteonblue.png", :size => "50x50", :class => "size50x50") %>    
-      <span class="btn btn-large">Sign in with Twitter</span>
+      <span class="btn btn-default">Sign in with Twitter</span>
     <% end %>
   </p>
   
   <p>
     <%= link_to authmap_omniauth_authorize_path(:facebook, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>  
     <%= image_tag("f_logo.jpg", :size => "50x50", :class => "size50x50") %>
-    <span class="btn btn-large">Sign in with Facebook</span>
+    <span class="btn btn-default">Sign in with Facebook</span>
     <% end %>
   </p>
   
   <p>
     <%= link_to authmap_omniauth_authorize_path(:google, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
       <%= image_tag("Google_logo.png", :size => "50x50", :class => "size50x50") %>
-      <span class="btn btn-large">Sign in with Google</span>
+      <span class="btn btn-default">Sign in with Google</span>
     <% end %>
   </p>
   </div>

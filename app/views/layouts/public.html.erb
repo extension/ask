@@ -39,7 +39,7 @@
     </div>
   <% end %>
   
-  <div class='nonmobile hidden-phone'>
+  <div class='nonmobile hidden-xs'>
   <% if current_user and current_user.has_exid? %>
     <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
   <% else %>
@@ -49,37 +49,32 @@
   
   <% if current_user %>
     <% if current_user.has_exid? %>
-
-      <div id="expert_navbar" class="navbar expert-navbar navbar-inverse app-navbar clearfix">
-        <div id="expert_navbar-inner" class="navbar-inner clearfix">
-
-
-            <ul class="navavatar loggedin pull-right">
-              <li><%= link_expert_user_avatar(current_user, :thumb) %></li>
-              <li>
-                <ul class="nav pull-right" id="user_actions">
-                  <li id="username" class="dropdown">
-                    <a href="#" id="username_link" class="dropdown-toggle" data-toggle="dropdown"><span class="hidecompact420"><%= current_user.name %></span> <i class="caret"></i></a>
-                    <ul class="dropdown-menu">
-                      <li><%= link_to "My Dashboard", expert_home_path() %></li>
-                      <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
-                      <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
-                      <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
-                      <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-
-            </ul>
-
-            <span class="pull-left">
-              <%= link_to(expert_home_path(), :class => "brand") do %>
-               AaE Expert Dashboard
-              <% end %>
-            </span>
-
-
+    
+      <div class="navbar expert-navbar">
+        <div class="container expert-navbar-container">
+        <div class="pull-right">
+          <%= link_expert_user_avatar(current_user, :thumb) %>
+        
+        <div class="btn-group">
+          
+          <span class="btn dropdown-toggle expert-dropdown-options" data-toggle="dropdown">
+            <span class="hidecompact420"><%= current_user.name %></span> <span class="caret"></span>
+          </span>
+          
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li><%= link_to "My Dashboard", expert_home_path() %></li>
+            <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
+            <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
+            <li><%= link_to "My Settings", expert_settings_profile_path() %></li>
+            <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+          </ul>
+        </div>
+        </div>
+        <span class="pull-left">
+          <%= link_to(expert_home_path(), :class => "navbar-brand navbar-brand-dashboard") do %>
+            AaE Dashboard
+          <% end %>
+        </span>
         </div>
       </div>
 
@@ -87,27 +82,29 @@
   <% end %>
   
   
-  <div class="container">
+  <div class="container container-main">
     <div id="flash_notification_wrapper" class="flash_notification_wrapper">
       <%= flash_notifications -%>
     </div>
  
  
-    <div class="navbar">
-    <div class="navbar-inner">
-        <a class="btn btn-navbar mobile-menu-search-btn" data-toggle="collapse" data-target=".nav-collapse"><i class='icon-search'></i> <i class='icon-th'></i></a>
-        <!-- <a class="btn btn-navbar mobile-menu-btn" data-toggle="collapse" data-target=".nav-collapse"><i class='icon-th'></i></a> -->
-        <a class="brand" href="/"><img class='hidden-phone' src="/assets/aae_logo_small.png" alt="eXtension" /><img class='visible-phone' src="/assets/aae_logo_mobile.png" alt="eXtension" /></a>
-        <div class="nav-collapse collapse">
+    <div class="navbar masthead">
+      
+      <span class="navbar-toggle btn btn-default mobile-menu-search-btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search'></i> <i class='fa fa-bars'></i></span>
+      <a class="navbar-brand" href="/"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></a>
+      
+      <div id="app-navbar" class="navbar-collapse collapse">
 
             <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
-              <div class="input-append">
-                <%= text_field_tag 'q', params[:q], :class => "input-small span2 search-query", :placeholder => "Search", :id => "search_field" %>
-                <input type="submit" value="Go" class="btn" />
-      			  </div>
-      			<% end %>
-          
-            <ul class="nav">
+              <div class="input-group">
+                <%= text_field_tag 'q', params[:q], :class => "form-control col-md-2", :placeholder => "Search", :id => "search_field" %>
+                <span class="input-group-btn">
+                <input type="submit" value="Go" class="btn btn-default" />
+                </span>
+              </div>
+            <% end %>
+
+            <ul class="app-navbar-list list-inline pull-right app-navbar-items">
               <li><%= link_to 'Answered', root_path() %></li>
               <li><%= link_to 'Unanswered', home_unanswered_path() %></li>
               <li><%= link_to("Ask a Question", ask_path()) %></li>
@@ -120,7 +117,7 @@
               <% end %>
             </ul>
             
-            <div class="global-nav-mobile">
+            <div class="global-nav-mobile visible-xs">
             <% if current_user and current_user.has_exid? %>
               <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
             <% else %>
@@ -128,8 +125,8 @@
             <% end %>
             </div>
             
-        </div><!--/.nav-collapse -->
-    </div>
+        </div><!--/.navbar-collapse -->
+
 </div>
 
       <div class="row">
@@ -137,10 +134,10 @@
       </div>
       
       <div class="row">
-        <div class="span9">
+        <div class="col-md-9">
       
         </div>
-      <div class="span3">
+      <div class="col-md-3">
       <% if !@sponsors.blank? %>
           <div class="sponsors">
           <%= render(:partial => 'shared/sponsors', :locals => {:sponsorlist =>  @sponsors}) %>
@@ -154,8 +151,8 @@
       <hr class="noprint" />
       
       <footer>
-        <span id="extension_icon_512" class="pull-left noprint"><img id="extension_logo" src="/assets/extension_logo.jpg" alt="eXtension" /></span>
-        <ul class="inline noprint">
+        <span id="extension_icon_512" class="pull-left noprint"><%= image_tag "extension_logo.jpg", :class => "hidden-xs", :id => "extension_logo", :alt => "eXtension" %></span>
+        <ul class="footer-links list-inline noprint">
           <li><%= link_to "Institutional Partners", "http://www.extension.org/main/partners" %></li>
           <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
           <li><%= link_to "Contact Us", home_about_path() %></li>

@@ -1,6 +1,6 @@
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<div id="main" class="span6">
+<div id="main" class="col-md-6">
   <h1>Assign to <%= link_expert_user(@user) %></h1>
   
   <% if @user.away %>
@@ -66,7 +66,7 @@
 
 
 
-<div id="secondary" class="span6">
+<div id="secondary" class="col-md-6">
   
   <div id="user_masthead" class="reassign well">
     <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>

@@ -5,7 +5,7 @@
 <p>You can set a location to use for asking questions.</p>
   <h3><span id="display_location">Customize your location</span></h3>
 <% end %>
-<span id="change_location" class="btn">change</span>
+<span id="change_location" class="btn btn-default">change</span>
 
 <div id="set_location" style="display:none;">
   <p><%= select_tag(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil)) %></p>

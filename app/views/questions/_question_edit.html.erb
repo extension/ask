@@ -10,8 +10,8 @@
 	  <%= form_for @question, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
 	    
 	    <fieldset>
-	      <p><%= f.text_field :title, {:type => "text", class: 'span6'} %></p>
-	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'span6 wysiwyg' %></p>
+	      <p><%= f.text_field :title, {:type => "text", class: 'col-md-6'} %></p>
+	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'col-md-6 wysiwyg' %></p>
 	    </fieldset>
 	    
 		  <div id="aae_image_div">

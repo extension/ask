@@ -1,6 +1,6 @@
 <%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]), {:multipart => true, id: "response_form"}) do %>
 
-  <p><%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 8}) %></p>
+  <p><%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'form-control wysiwyg', rows: 8}) %></p>
   <p>If we can't answer this question, use the <a id="canned_response" class="cursor">canned response</a> to suggest their local office.</p>
             
   <div id="add_images">
@@ -13,9 +13,9 @@
     <% end %>
   </div>
             
-  <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'wysiwyg'} %></p>
+  <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'form-control wysiwyg'} %></p>
             
-  <p class="save_it"><%= submit_tag 'Send Response', :class => "btn btn-primary btn-large" %></p>
+  <p class="save_it"><%= submit_tag 'Send Response', :class => "btn btn-primary btn-lg" %></p>
             
   <p>All responses include <a id="disclaimer_switch" class="cursor">this disclaimer</a></p>
   <p id="disclaimer" style="display:none;"><%= render(partial: 'partials/expert_disclaimer') %></p>
@@ -55,7 +55,7 @@
   if (!isiDevice)
   {
     $('.wysiwyg').each(function(i, elem) {
-      $(elem).wysihtml5({image: false});
+      $(elem).wysihtml5({toolbar: { "fa": true, "image": false}});
     });
   }
 
