@@ -36,36 +36,39 @@
           <label>
             <%= f.check_box :auto_route %>
             Questions submitted to my Groups can be automatically assigned to me.
-            <span>(note: Some groups use a question queue instead of automatic assignments)</span>
+            <span>(note: for some groups, instead of automatic assignments, leaders make assignments or members pick questions.)</span>
           </label>
         </p>
       
-      <div class="assignment_prefs">
-      <p>
-        <label>
-          <%= f.radio_button :routing_instructions, 'anywhere' %>
-          My groups can assign me a question from anywhere
-        </label>
         
+        <div class="checkbox">
+          <label><%= f.radio_button :routing_instructions, 'anywhere' %>
+          My groups can assign me a question from anywhere</label>
+        </div>
+        
+        <div class="checkbox">
         <label>
           <%= f.radio_button :routing_instructions, 'locations_only' %>
           Group questions must match my states
         </label>
-      
+        </div>
+        
+        <div class="checkbox">
         <label>
           <%= f.radio_button :routing_instructions, 'counties_only' %>
           Group questions must match my counties
         </label>
-      </p>
-      </div>
+        </div>
+
       </div>
     </div>
     
     <h3>Email Signature</h3>
-    <div class="bio">
+    <div class="form-group">
       <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
-      <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg' %>
+      <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg form-control' %>
     </div>
+    
     <p><%= f.submit "Save Answering Settings", :class => "btn btn-large btn-primary" %></p>
   </fieldset>
   
