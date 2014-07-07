@@ -41,7 +41,7 @@
             <%= hidden_field_tag(:group_id, group.id) %>
             <li><%= check_box_tag :send_incoming_notification, true, @user.send_incoming_notification?(group) %> Notify me every time this Group gets a new question</li>
             <li><%= check_box_tag :send_daily_summary, true, @user.send_daily_summary?(group) %>  Send me a Daily Summary</li>
-            <li><%= submit_tag "save", :class => 'btn'%></li>
+            <li><%= submit_tag "save", :class => 'btn btn-default'%></li>
           </ul>
           <% end %>
         </td>
