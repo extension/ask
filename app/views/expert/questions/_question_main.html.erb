@@ -16,7 +16,7 @@
         </div>
       
         
-        <div id="myModal<%= image.id %>" class="modal fade">
+        <div class="modal fade" id="myModal<%= image.id %>" tabindex="-1" role="dialog" aria-labelledby="myModal<%= image.id %>-label" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
@@ -63,22 +63,27 @@
         <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @question.assigned_group.id, :tag_id => tag.id) %></span> <span class="btn removetag">x</span>
           <%  if tag.name == "front page" %>
             
-            <!-- Button to trigger modal -->
-            <a href="#frontpage" data-toggle="modal"><span class="label label-inverse" >What's this?</span></a>
+            <!-- Button trigger modal -->
+            <span class="cursor label label-inverse" data-toggle="modal" data-target="#frontpage">What's this?</span>
 
             <!-- Modal -->
-            <div id="frontpage" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="frontpageLabel" aria-hidden="true">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="frontpageLabel">What is the "front page" tag?</h3>
-              </div>
-              <div class="modal-body">
-                <p>The "front page" tag will be used to feature questions on the front page of www.extension.org. A curation team chooses which questions should be featured and they add the "front page" tag accordingly. </p>
-              </div>
-              <div class="modal-footer">
-                <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <div class="modal fade" id="frontpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">What is the "front page" tag?</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>The "front page" tag will be used to feature questions on the front page of www.extension.org. A curation team chooses which questions should be featured and they add the "front page" tag accordingly. </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
               </div>
             </div>
+          
             
           <% end %>
           </p>
@@ -109,10 +114,13 @@
     <div class="response_block">
       <div class="response"><%= format_text_for_display(response.body) %></div>
       <div class="signature"><%= format_text_for_display(response.signature) %></div>
-
+      
+      
+      
+      
       <% if response.images.size > 0 %>
 
-        <div class="images_wrapper">  
+        <div class="images_wrapper clearfix"> 
         <% response.images.each do |image| %>
           <% if image.persisted? %>
             <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
@@ -120,27 +128,31 @@
               <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
             </div>
 
-            <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-header">
-                <p>
-                  <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                  <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-                <p>
-              </div>
-              <div class="modal-body">
-                <%= image_tag image.url() %>
-              </div>
-            </div>
+            <div class="modal fade" id="myModal<%= image.id %>" tabindex="-1" role="dialog" aria-labelledby="myModal<%= image.id %>-label" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                  </div>
+                  <div class="modal-body">
+                    <%= image_tag image.url() %>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
             <% else %>
              <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
             <% end %>
           <% end %>
         <% end %>  
         <br class="clearing" />
-        </div>
+      </div>
+
 
       <% end %>
-      
+
       <div class="author">
         <% if response.resolver_id %>
           <%= link_to expert_user_path(response.resolver_id) do %>
