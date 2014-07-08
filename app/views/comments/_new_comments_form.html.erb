@@ -14,7 +14,7 @@
 
   <%= form_for @comment, html: {class: "no-top-margin"}, remote: true do |f| %>
     
-    <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5" %>
+    <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5 form-control" %>
     
     <%= f.hidden_field :question_id, value: @question.id %>
     
