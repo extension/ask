@@ -91,43 +91,49 @@
           <%= format_text_for_display(response.body) %>
         </div>
         
-        
-        
-        <% if response.images.size > 0 %>
+         <% if response.images.size > 0 %>
 
-          <div class="images_wrapper">  
-          <% response.images.each do |image| %>
-            <% if image.persisted? %>
-              <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
-              
-              <div class="delete_question_image_wrapper">
-              <div class="question_image_wrapper">
-                <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
-              </div>
-              <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
-                <%= button_to "Delete image", remove_image_response_path(:id => response.id, :image_id => image.id), :class => "btn btn-mini image_delete" %>
-              <% end %>
-              </div>
-              <div id="myModal<%= image.id %>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-header">
-                  <p>
-                    <strong><a href="#" type="button" data-dismiss="modal" aria-hidden="true">Close</a></strong> -
-                    <%= link_to "View full size in a new window", image.url(), :target => "_blank" %>
-                  <p>
+            <div class="images_wrapper clearfix"> 
+            <% response.images.each do |image| %>
+              <% if image.persisted? %>
+                <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+                <div class="question_image_wrapper">
+                  <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
                 </div>
-                <div class="modal-body">
-                  <%= image_tag image.url() %>
-                </div>
-              </div>
-              <% else %>
-               <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+
+
+                <div id="myModal<%= image.id %>" class="modal fade">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                        <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
+                          <%= button_to "Delete image", remove_image_response_path(:id => response.id, :image_id => image.id), :class => "btn btn-default" %>
+                        <% end %>
+                      </div>
+                      <div class="modal-body">
+                        <%= image_tag image.url() %>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <% else %>
+                 <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+                <% end %>
               <% end %>
-            <% end %>
-          <% end %>  
-          <br class="clearing" />
+            <% end %>  
+            <br class="clearing" />
           </div>
 
         <% end %>
+
+        
+        
+        
+        
+        
         
         <div class="author" itemprop="author">
           <% if response.resolver_id %>
@@ -148,7 +154,7 @@
 	    <div id="additional_comment">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
-          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg col-md-6' %>
+          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
@@ -181,7 +187,7 @@
   <div>
 	<p id='comment_notification_pref'>
 	<% if @comment_notification_pref == true %>
-    <%= button_to 'Unsubscribe from comments', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post, :class => "btn btn-small" %>
+    <%= button_to 'Unsubscribe from comments', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post, :class => "btn btn-default btn-sm" %>
 	<% else %>
     <%= button_to 'Subscribe to comments', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post, :class => "btn btn-small" %>
 	<% end %>
