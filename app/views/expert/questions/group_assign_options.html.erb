@@ -10,11 +10,11 @@
     <%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
       <p>
         <label>Include a comment
-        <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :class => "l"} %>
+        <%= text_area_tag "assign_comment", nil, {:cols => 40, :rows => 5, :class => "form-control"} %>
         </label>
       <p>
       <p>
-        <%= submit_tag "Assign to #{@group.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn" %>
+        <%= submit_tag "Assign to #{@group.name}", :class => "btn btn-primary" %> <%= link_to "Cancel", reassign_expert_question_path(@question.id), :class => "btn btn-default" %>
       </p>
     <% end %>
   <% else %>
