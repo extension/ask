@@ -2,7 +2,7 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 class YoLo < ActiveRecord::Base
@@ -25,6 +25,12 @@ class YoLo < ActiveRecord::Base
 
     d_location = Location.find_by_geoip(ipaddress)
     d_county = County.find_by_geoip(ipaddress)
+
+    # override if something weird happens and we have a county/location
+    # mismatch
+    if(d_county and (d_county.location_id != d_location.id))
+      d_location = Location.where(id: d_county.location_id).first
+    end
 
     self.user = current_user
     self.ipaddress = ipaddress
