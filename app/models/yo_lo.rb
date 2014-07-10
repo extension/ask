@@ -28,7 +28,7 @@ class YoLo < ActiveRecord::Base
 
     # override if something weird happens and we have a county/location
     # mismatch
-    if(d_county.location_id != d_location.id)
+    if(d_county and (d_county.location_id != d_location.id))
       d_location = Location.where(id: d_county.location_id).first
     end
 
