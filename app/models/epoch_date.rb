@@ -62,6 +62,9 @@ class EpochDate
   # all copwiki content migrated to create
   CREATE_FINAL_WIKI_MIGRATION   = Date.parse('2011-07-09')
 
+  # AaEv2
+  AAE_V2_TRANSITION             = Date.parse('2012-12-03')
+
 
   def initialize(date)
     @date = date
