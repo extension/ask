@@ -33,6 +33,8 @@
        #flash_notice.warning {color:red;}
        #app_location {background:yellow; padding:1em; margin-bottom:1em;}
        fieldset {margin:1em 0 2em;}
+       .text-italic {font-style:italic;}
+       .text-legal {line-height:1.2em;}
        	-->
         </style>
 
@@ -134,7 +136,7 @@
      <% if @group.is_australian? %>
       <fieldset>
        <p>
-         <label><input type="checkbox" id="policy-content" class="checkbox" value="consent"> I consent to the privacy policy detailed below</label>
+         <label><input type="checkbox" id="policy-content" class="checkbox" value="consent"> I consent to any personal information which I submit in this form being disclosed and stored as detailed below</label>
        </p>
        </fieldset>
      <% end %>
@@ -146,7 +148,7 @@
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
     
     <% if @group.is_australian? %>
-     <p class="text-muted"><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/", :target => "_blank" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy", :target => "_blank" %></small></p>
+     <p class="text-muted text-italic text-legal"><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/", :target => "_blank" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy", :target => "_blank" %>.</small></p>
     <% end %>
     
     <% end %>
