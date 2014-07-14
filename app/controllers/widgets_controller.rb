@@ -68,24 +68,26 @@ class WidgetsController < ApplicationController
     end
     
     @title = "eXtension Latest Answered Questions"
+    new_params = []
     
     if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
       question_group_scope = Question.from_group(group.id)
-      @path_to_questions = group_url(group.id)
       @title += " from #{group.name}"
+      new_params << "group_id=#{group.id}"
     else
       question_group_scope = Question.where({})
-      @path_to_questions = root_url
     end
     
     if params[:location].present? && params[:location].to_i > 0 && location = Location.find_by_id(params[:location])
       question_group_scope = question_group_scope.by_location(location)
       @title += " from #{location.name}"
+      new_params << "location_id=#{location.id}"
     end
     
     if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
       question_group_scope = question_group_scope.by_county(county)
       @title += " from #{county.name}"
+      new_params << "county_id=#{county.id}"
     end
     
     if params[:tags].present?
@@ -104,10 +106,11 @@ class WidgetsController < ApplicationController
     
     if @question_list.length == 0
       @title = "eXtension Latest Answered Questions"
-      @path_to_questions = root_url
       @tag = Tag.find_by_name("front page")
       @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
     end
+    
+    @path_to_questions = questions_url + "?" + new_params.join("&")
     
     render "widgets"
   end
