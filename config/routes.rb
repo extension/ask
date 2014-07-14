@@ -208,7 +208,6 @@ Aae::Application.routes.draw do
   match "home/change_yolo" => "home#change_yolo", :via => [:post]
   match "home/locations/:id" => "home#locations", :as => 'view_location'
   match "home/county/:id" => "home#county", :as => 'view_county'
-  match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
   match "home/private_page" => "home#private_page", :via => :get
   match "home/county_options_list/:location_id" => "home#county_options_list", :via => :get
   match "settings/profile" => "settings#profile", :via => [:get, :put], :as => 'nonexid_profile_edit'
