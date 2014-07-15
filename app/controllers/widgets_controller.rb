@@ -1,5 +1,9 @@
 class WidgetsController < ApplicationController
   
+  def index
+    
+  end
+  
   def front_porch
     @question_list = Array.new
     group_array = Array.new
