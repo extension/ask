@@ -9,7 +9,11 @@ class QuestionsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
   before_filter :set_format, :only => [:show, :submitter_view]
-
+  
+  def index
+    @recent_questions = questions_based_on_pref_filter(current_user.filter_preference).public_visible
+  end
+  
   def show
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question
