@@ -8,28 +8,49 @@
 <%= form_tag(answer_evaluation_path, {remote: true, id: "answer_form_for_evaluation_question_#{evaluation_question.id}"}) do -%>
   <%= hidden_field_tag('question_id', question_id) %>
   <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
-  <legend><%= evaluation_question.prompt %> <small><em>on a scale from <%= evaluation_question.range_start %> to <%= evaluation_question.range_end %></em></small></legend>
-  <div class="control-group">
-    <div class="controls">
-      <div class="slider_ranges">
-        <p><span class="range_start"><%= evaluation_question.responses[0].capitalize! %></span></p>
-      </div>
-      <div class="center_slider">
-      <%= number_field_tag('response', scale_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), 
-          {min: evaluation_question.range_start, max: evaluation_question.range_end, id: "range_#{evaluation_question.id}", class: 'range', type: 'range', step: '1'}) %>
-      </div>
-      <div class="slider_ranges">
-        <p><span class="range_end"><%= evaluation_question.responses[1].capitalize! %></span></p>
-      </div>  
+  <legend class="range-prompt"><%= evaluation_question.prompt %></legend>
+  
+  <p class="range-response">. . . <%= evaluation_question.responses[0] %></p>
+  <div class="range-radio-group">
+    
+    <div class="radio range-response-radio range-response-radio-strong">
+    <label>
+    <%= radio_button_tag('response',1,
+      is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,1),
+      {class: 'radio submittable'}) %> <span>Agree with the above</span></label>
     </div>
+    
+    <div class="radio range-response-radio range-response-radio-medium">
+    <label>
+    <%= radio_button_tag('response',2,
+      is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,2),
+      {class: 'radio submittable'}) %> <span>Closer to the above</span></label>
+    </div>
+    
+    <div class="radio range-response-radio range-response-radio-neutral">
+    <label>
+    <%= radio_button_tag('response',3,
+      is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,3),
+      {class: 'radio submittable'}) %> <span>Neutral</span></label>
+    </div>
+    
+    <div class="radio range-response-radio range-response-radio-medium">
+    <label>
+    <%= radio_button_tag('response',4,
+      is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,4),
+      {class: 'radio submittable'}) %> <span>Closer to the below</span></label>
+    </div>
+    
+    <div class="radio range-response-radio range-response-radio-strong">
+    <label>
+    <%= radio_button_tag('response',5,
+      is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,5),
+      {class: 'radio submittable'}) %> <span>Agree with the below</span></label>
+    </div>
+    
   </div>
+  <p class="range-response">. . . <%= evaluation_question.responses[1] %></p>
+  
 <%- end -%>
 </div>
 
-<script class="code" type="text/javascript">
-  // jquery tools rangeinput
-  $("#range_<%= evaluation_question.id %>").rangeinput();
-  $("#range_<%= evaluation_question.id %>").change(function(event, value) {
-    $(this).parents('form:first').submit();
-  });
-</script>
