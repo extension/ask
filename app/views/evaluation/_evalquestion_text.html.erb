@@ -9,10 +9,10 @@
   <%= hidden_field_tag('question_id', question_id) %>
   <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
   <legend><%= evaluation_question.prompt %></legend>
-  <div class="control-group">
-    <div class="controls">
-      <%= text_area_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable'}) %>
-    </div>
+  <div class="row">
+  <div class="col-lg-6">
+    <%= text_area_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable form-control'}) %>
+  </div>
   </div>
 <%- end -%>
 </div>

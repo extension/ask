@@ -9,15 +9,13 @@
   <%= hidden_field_tag('question_id', question_id) %>
   <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
   <legend><%= evaluation_question.prompt %></legend>
-  <div class="control-group">
-    <div class="controls">
-
-      <div class="input-prepend">
-        <span class="add-on">$</span>
-        <%= text_field_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable col-md-2'}) %>
-      </div>
-
+  <div class="row">
+    <div class="col-lg-2">
+    <div class="input-group">
+      <div class="input-group-addon">$</div>
+      <%= text_field_tag('response',open_value_for_evalquestion_question_user(evaluation_question,question,@evaluator), {class: 'submittable form-control'}) %>
     </div>
+  </div>
   </div>
 <%- end -%>
 </div>

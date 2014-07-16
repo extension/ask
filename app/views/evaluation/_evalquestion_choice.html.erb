@@ -9,15 +9,13 @@
   <%= hidden_field_tag('question_id', question_id) %>
   <%= hidden_field_tag('evaluation_question_id', evaluation_question.id) -%>
   <legend><%= evaluation_question.prompt %></legend>
-  <div class="control-group">
-    <div class="controls">
-      <%- evaluation_question.responses.each_with_index do |response, index| -%>
-        <label class="radio">
-          <%= radio_button_tag('response',response,
-                               is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,index),
-                               {class: 'submittable'}) %> <%= response %></label>
-      <%- end -%>
+  <%- evaluation_question.responses.each_with_index do |response, index| -%>
+    <div class="radio">
+      <label>
+      <%= radio_button_tag('response',response,
+        is_multichoice_evalquestion_question_checked_for_user?(evaluation_question,question,@evaluator,index),
+        {class: 'submittable'}) %> <%= response %></label>
     </div>
-  </div>
+  <%- end -%>
 <%- end -%>
 </div>
