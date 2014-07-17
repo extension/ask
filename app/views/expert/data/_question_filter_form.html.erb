@@ -1,5 +1,6 @@
 <div class="row">
   <div class="col-md-12">
+    <div class="well">
 
     <%= form_tag(filter_path, class: 'form-horizontal') do -%>
 
@@ -15,42 +16,34 @@
       </ul>
     </div>
 
-      <p><em></em></p>
 
-      <div class="control-group">
-        <%= label_tag('assigned_groups', 'Assigned Group', :class => 'control-label') -%>
-        <div class="controls">
-          <%= text_field_tag("assigned_groups","", class: 'col-md-8' ) -%>
-        </div>
+      <div class="form-group col-lg-7 col-md-8">
+        <%= label_tag('assigned_groups', 'Assigned Group') -%>
+        <%= text_field_tag("assigned_groups","", class: 'form-control' ) -%>
       </div>
 
-      <div class="control-group">
-        <%= label_tag('question_locations', 'Question Locations', :class => 'control-label') -%>
-        <div class="controls">
-          <%= text_field_tag("question_locations","", class: 'col-md-8' ) -%>
-        </div>
+      <div class="form-group col-lg-7 col-md-8">
+        <%= label_tag('question_locations', 'Question Locations') -%>
+        <%= text_field_tag("question_locations","", class: 'form-control' ) -%>
       </div>
 
-      <div class="control-group">
-        <%= label_tag('question_counties', 'Question Counties', :class => 'control-label') -%>
-        <div class="controls">
-          <%= text_field_tag("question_counties","", class: 'col-md-8' ) -%>
-        </div>
-      </div>      
+      <div class="form-group col-lg-7 col-md-8">
+        <%= label_tag('question_counties', 'Question Counties') -%>
+        <%= text_field_tag("question_counties","", class: 'form-control' ) -%>
+      </div>
 
-      <div class="control-group">
-        <%= label_tag('tags', 'Tags', :class => 'control-label') -%>
-        <div class="controls">
-          <%= text_field_tag("tags","", class: 'col-md-8' ) -%>
-        </div>
+      <div class="form-group col-lg-7 col-md-8">
+        <%= label_tag('tags', 'Tags') -%>
+        <%= text_field_tag("tags","", class: 'form-control' ) -%>
       </div>
 
     </fieldset>
 
-      <p><%= submit_tag "Filter", :class => "btn btn-primary" %> <%= link_to "cancel", '#', :class => "btn", :id => 'cancel_button' %></p>
+      <p><%= submit_tag "Apply filter", :class => "btn btn-primary" %> <%= link_to "cancel", '#', :class => "btn btn-default", :id => 'cancel_button' %></p>
 
     <%- end -%>
 
+  </div>
   </div>
 </div>
 
