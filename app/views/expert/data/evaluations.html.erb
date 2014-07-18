@@ -2,35 +2,29 @@
 
 <%= render(:partial => 'data_breadcrumbs', :locals => {:endpoint => 'Evaluations'}) %>
 
-<header class="jumbotron subhead" id="overview">
+<header id="overview">
   <h1>AaE Evaluation <small><%= link_to("Download data &raquo;".html_safe,
                                          expert_data_questions_download_path(filter: (@question_filter.present? ? @question_filter.id : nil)),
                                          :class => 'btn') %></small></h1>
 </header>
 
-<div class="page-header">
-  <h2><%= @page_title %></h2>
-    <%= link_to(@showform ? "Filter Options <i class='fa fa-caret-down'></i>".html_safe : "Filter Options <i class='fa fa-caret-right'></i>".html_safe,
-                '#',
-                id: 'formtoggler',
-                data: {toggle: 'collapse', target: '#showform'}) %>
-
-    <div id="showform" class="<%= (@showform ? 'collapse in' : 'collapse') -%>">
-      <%= render(:partial => 'expert/data/question_filter_form', locals: {filter_path: filter_evaluations_expert_data_path}) %>
-    </div>
+<div class="alert alert-success">
+  <%- if @question_filter -%>
+    <h4>Filtering results by:</h4>
+    <p><%= question_filter_text(@question_filter_objects) %></p>
+  <%- else -%>
+    <p>No filter applied. Displaying all questions.</p>
+  <%- end -%>
+  <p><%= link_to(@showform ? "Filter Options <i class='fa fa-caret-down'></i>".html_safe : "Filter Options <i class='fa fa-caret-right'></i>".html_safe,
+              '#',
+              id: 'formtoggler',
+              data: {toggle: 'collapse', target: '#showform'}) %></p>
+  <p><small>Note: Evaluation summaries by default do not include evaluation responses from those colleagues that have an Extension ID. Download the full question set to see all evaluation responses.</small></p>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <div class='well'>
-      <p><strong>Data Notes:</strong> Evaluation summaries by default do not include evaluation responses from those colleagues that have an Extension ID. Download the full question set to see all evaluation responses.</p>
-    <div class="question_filter">
-      <%- if @question_filter -%>
-        <h4>Filtering results by:</h4>
-        <p><%= question_filter_text(@question_filter_objects) %></p>
-      <%- end -%>
-    </div>
-  </div>
+
+<div id="showform" class="<%= (@showform ? 'collapse in' : 'collapse') -%>">
+  <%= render(:partial => 'expert/data/question_filter_form', locals: {filter_path: filter_evaluations_expert_data_path}) %>
 </div>
 
 
