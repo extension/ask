@@ -4,31 +4,26 @@
 
 <%- @page_title = "Browse questions" -%>
 
-<div class="page-header">
-  <h2><%= @page_title %></h2>
-    <%= link_to(@showform ? "Filter Options <i class='fa fa-caret-down'></i>".html_safe : "Filter Options <i class='fa fa-caret-right'></i>".html_safe,
-                '#',
-                id: 'formtoggler',
-                data: {toggle: 'collapse', target: '#showform'}) %>
+<h1><%= @page_title %></h1>
 
-    <div id="showform" class="<%= (@showform ? 'collapse in' : 'collapse') -%>">
-      <%= render(:partial => 'expert/data/question_filter_form', locals: {filter_path: filter_questions_expert_data_path}) %>
-    </div>
+<div class="alert alert-success">
+  <%- if @question_filter -%>
+    <h4>Filtering results by:</h4>
+    <p><%= question_filter_text(@question_filter_objects) %></p>
+  <%- else -%>
+    <p>No filter applied. Displaying all questions.</p>
+  <%- end -%>
+  <p><%= link_to(@showform ? "Filter Options <i class='fa fa-caret-down'></i>".html_safe : "Filter Options <i class='fa fa-caret-right'></i>".html_safe,
+    '#',
+    id: 'formtoggler',
+    data: {toggle: 'collapse', target: '#showform'}) %></p>
+  <p><small>(Note: Rejected questions (spam, duplicates, or for other reasons) are not included as part of this data.)</small></p>
 </div>
 
-
-<div class="row">
-  <div class="col-md-12">
-    <div class='well'>
-      <p><strong>Data Notes:</strong> Rejected question (whether spam, duplicates, or for other reasons) are not included as part of this data</p>
-    <div class="question_filter">
-      <%- if @question_filter -%>
-        <h4>Filtering results by:</h4>
-        <p><%= question_filter_text(@question_filter_objects) %></p>
-      <%- end -%>
-    </div>
-  </div>
+<div id="showform" class="<%= (@showform ? 'collapse in' : 'collapse') -%>">
+  <%= render(:partial => 'expert/data/question_filter_form', locals: {filter_path: filter_questions_expert_data_path}) %>
 </div>
+
 
 <div class='row'>
   <div class="col-md-12">
@@ -41,7 +36,7 @@
       <%= link_to("<i class='fa fa-file-o'></i> Download this list (.csv)".html_safe,
                   expert_data_questions_download_path(filter: (@question_filter.present? ? @question_filter.id : nil)),
                   :class => 'btn') %>
-     </p>    
+     </p>
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -61,7 +56,7 @@
             <td><%= Question.convert_to_string(question.status_state) %></td>
             <td><% if question.location.present? %>
               <% if question.county.present? %>
-                <%= "#{question.county.name}, " %> 
+                <%= "#{question.county.name}, " %>
               <% end %>
               <%= question.location.abbreviation %>
             <% else %>
