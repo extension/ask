@@ -1,74 +1,16 @@
-/* slider root element */
-.slider { 
-  background:#3C72E6 url(<%= asset_path 'h30.png' %>) repeat-x 0 0; 
-  height:9px; 
-  position:relative; 
-  cursor:pointer;
-  border:1px solid #333;
-  width:100%;
-  float:left; 
-  clear:right;
-  -moz-border-radius:5px; 
-  -webkit-border-radius:5px; 
-  -moz-box-shadow:inset 0 0 8px #000;
-}
+.range-prompt {font-size:1.4em; font-weight:bold; border:0; color:#00006C;}
+.range-response {font-size:1.4em; padding-left:10px; color:#00006C;}
+.range-radio-group {margin:15px 0;}
 
-/* progress bar (enabled with progress: true) */
-.progress {
-  height:9px; 
-  background-color:#C5FF00; 
-  display:none;
-  opacity:0.6;
-}
+.range-response-radio {padding-left:20px; margin:0;}
+.range-response-radio-strong {background-color: #9DD9FE; color:#00006C;}
+.range-response-radio-medium {background-color: #C0E6FE; color:#245599;}
+.range-response-radio-neutral {background-color: #E0F3FF; color:#376299;}
 
-/* drag handle */
-.handle { 
-  background:#fff url(<%= asset_path 'h30.png' %>) repeat-x 0 0; 
-  height:28px;
-  width:28px;
-  top:-12px;
-  position:absolute; 
-  display:block; 
-  margin-top:1px;
-  border:1px solid #000;
-  cursor:move;
-  -moz-box-shadow:0 0 6px #000;
-  -webkit-box-shadow:0 0 6px #000;
-  -moz-border-radius:14px;
-  -webkit-border-radius:14px; 
+.range-response-radio-strong label {font-size:18px;}
 
-}
+.range-response-radio label {display:block; padding:14px;}
 
-
-/* the input field */
-.range {
-  border:1px inset #ddd;
-  float:left;
-  font-size:20px;
-  margin:0 0 0 15px;
-  padding:3px 0;
-  text-align:center;
-  width:50px;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-}
-
-.range {
-  display:none;
-}
-
-input[class='range'] {
-  display:none;
-}
-
-input[data-orig-type='range'] {
-  display:none;
-}
-
-.range_start {
-  float: left;
-}
-
-.range_end {
-  float: right;
-}
+.range-response-radio input {margin-right:10px;}
+.range-response-radio input[type="radio"]:checked + span {font-weight:bold;}
+#evaluation_form legend {color:#00006C;}

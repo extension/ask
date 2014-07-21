@@ -64,6 +64,9 @@ class EpochDate
 
   # AaEv2
   AAE_V2_TRANSITION             = Date.parse('2012-12-03')
+  
+  # range slider to radio button conversion on evaluation form 
+  CONVERT_EVALUATION_SLIDERS    = Date.parse('2014-07-21')
 
 
   def initialize(date)
