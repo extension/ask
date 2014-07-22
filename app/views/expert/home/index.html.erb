@@ -154,13 +154,12 @@
     <% end %>
   <% end %>
   </div>
-  
   <div id="last_30_days" class="formy">
     <h2>Ask an Expert Overview</h2>
     <h3><%= link_to "#{@all_unanswered_questions_count} Questions Need an Answer", expert_questions_path(:status => "unanswered") %></h3>
     <h3><%= @date.strftime("%B, %Y") %> at a Glance</h3>
-    <h4><span><%= number_with_delimiter(@number_of_questions_asked, :delimiter => ',') %></span> Question<%= (@number_of_questions_asked == 1) ? '' : 's' %> Asked</h4>
-    <h4><span><%= number_with_delimiter(@number_of_questions_answered, :delimiter => ',') %></span> Question<%= (@number_of_questions_answered == 1) ? '' : 's' %> Answered</h4>
+    <h4><%= pluralize(number_with_delimiter(@number_of_questions_asked, :delimiter => ','), 'Question') -%> Asked</h4>
+    <h4><%= pluralize(number_with_delimiter(@number_of_questions_answered, :delimiter => ','), 'Question') -%> Answered</h4>
     <p><%= link_to "View Reports", expert_reports_home_path() %></p>
     <p><%= link_to "Recent Activity", expert_home_recent_activity_path() %></p>
   </div>
