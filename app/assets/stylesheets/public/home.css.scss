@@ -286,33 +286,21 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 }
 
 @media screen and (min-width: 979px) {
-/*  body {border:4px solid orange;}*/
   .navbar-brand img {width:360px;}
   #publicbar .navbar-brand {font-size:2.5em;}
 	.navbar #publicbar .container {width: 940px; padding:2em;}
 	#publicbar.navbar-inner {height:120px !important; background: #F47B28 !important;}
-	
-/*  .modal {width:880px; margin: 0 0 0 -440px;}*/
-/*  .modal-body {max-height:500px;}*/
 }
 @media screen and (min-width: 1200px) {
-/*  body {border:4px solid blue;}*/
   .navbar-brand img {width:auto;}
 	.navbar #publicbar .container {width: 1170px; padding:2em 0;}
 }
 @media screen and (max-width: 450px) {
   .navavatar.loggedin.publicuser {display:block;float:none;}
   .hidecompact420 {display:none;}
-/*  .navavatar .avatar_with_badge img {height:20px;width:20px;}*/
 }
 @media screen and (max-width: 480px) {
-  .flash_notification_wrapper {
-/*    border:1px solid lime;
-    padding:10px;
-    margin-top:4px; */
-    margin-left:-26px; margin-right:-26px;}
-/*  .flash_notification_wrapper p {width:100%;}*/
-/*  #flash_notification {left:-26px;right:0;}*/
+  .flash_notification_wrapper {margin-left:-26px; margin-right:-26px;}
   #flash_notification p {padding: 1em; font-size:18px;}
   #extension_logo img {width:120px; height:auto;}
   #ask_an_expert_logo img {width:120px; height:auto;}
@@ -326,12 +314,9 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   .navbar-brand {padding-left:0;}
   .navbar-brand-dashboard {padding-left:20px;}
   #expert_navbar-inner a.navbar-brand {font-size:15px;}
-
 }
 
 
-/*.navbar {background:#000 !important; border:3px solid red; background-image:none; padding-top:30px;}*/
-/*.navbar-inner {background:#000 !important; border:3px solid lime; background-image:none; padding-top:100px !important;}*/
 #submitter_followup {margin-bottom:1em;}
 
 .btn-orange[disabled], .btn-orange[disabled]:hover, .btn-orange[disabled]:focus, .btn-orange[disabled]:active {background-color:#aaa !important; border-color:#888;}
@@ -340,3 +325,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 
 #widgetcode { margin:1em 0; padding:.5em 0;}
 #widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
+
+a:focus {background: #ffff00;}
+ul.extension_global_nav a:focus {color:#000 !important;background: #ffff00;}
+.expert-navbar-container a.thumb:focus .avatar_with_badge {background: #ffff00;}
