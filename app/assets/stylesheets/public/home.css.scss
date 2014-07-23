@@ -326,6 +326,7 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 #widgetcode { margin:1em 0; padding:.5em 0;}
 #widgetcode textarea {padding:.5em;font-family:monospace;font-size:1.15em;color:#0d027e;line-height:1.5em;overflow:auto;height:100px; width:40em}
 
-a:focus {background: #ffff00;}
-ul.extension_global_nav a:focus {color:#000 !important;background: #ffff00;}
-.expert-navbar-container a.thumb:focus .avatar_with_badge {background: #ffff00;}
+
+ul.extension_global_nav a:focus {color:#FFFF6D !important;background: #272E5A; outline:0;}
+.navbar-brand-dashboard:focus {color:#fff;}
+/*.expert-navbar-container a.thumb:focus .avatar_with_badge {background: #ffff00;}*/
