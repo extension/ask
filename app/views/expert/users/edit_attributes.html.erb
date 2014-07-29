@@ -22,6 +22,12 @@
   </fieldset>
   
 <% end %>
+<div class="formy">
+<h2>Edit this expert's expertise locations</h2>
+<div id="loc_wrapper" class="user" data-object="user" data-id="<%= @user.id %>">
+  <%= render :partial => 'ajax/location_picker' %>
+</div>
+</div>
   
   <div class="formy">
     <h2>Edit this expert's tags</h2>

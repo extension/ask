@@ -45,6 +45,7 @@ class Notification < ActiveRecord::Base
   AAE_EXPERT_PUBLIC_COMMENT = 1016
   AAE_EXPERT_RESPONSE_EDIT = 1017
   AAE_DATA_DOWNLOAD_AVAILABLE = 1018
+  AAE_EXPERT_LOCATION_EDIT = 1019
 
     
   ##########################################
@@ -108,6 +109,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_tag_edit
     when AAE_EXPERT_VACATION_EDIT
       process_aae_expert_vacation_edit
+    when AAE_EXPERT_LOCATION_EDIT
+      process_aae_expert_location_edit
     when AAE_EXPERT_HANDLING_REMINDER
       process_aae_expert_handling_reminder
     when AAE_EXPERT_PUBLIC_COMMENT
@@ -243,6 +246,10 @@ class Notification < ActiveRecord::Base
 
   def process_aae_expert_vacation_edit
     InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+  
+  def process_aae_expert_location_edit
+    InternalMailer.aae_expert_location_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
   
   def process_aae_expert_handling_reminder
