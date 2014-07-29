@@ -117,6 +117,10 @@ class AjaxController < ApplicationController
       end
       @object.save
     end
+    
+    change_hash = Hash.new
+    change_hash[:expertise_locations] = {:old => "", :new => @county.name}
+    UserEvent.log_added_county(@object, current_user, change_hash)
   end
 
 
@@ -136,6 +140,10 @@ class AjaxController < ApplicationController
     if !@object.expertise_locations.include?(location)
       @object.expertise_locations << location
     end
+    
+    change_hash = Hash.new
+    change_hash[:expertise_locations] = {:old => "", :new => location.name}
+    UserEvent.log_added_location(@object, current_user, change_hash)
   end
 
 
@@ -149,6 +157,10 @@ class AjaxController < ApplicationController
       @object.expertise_counties.delete(c)
     end
     @object.expertise_locations.delete(location)
+    
+    change_hash = Hash.new
+    change_hash[:expertise_locations] = {:old => location.name, :new => ""}
+    UserEvent.log_removed_location(@object, current_user, change_hash)
   end
 
 
@@ -164,6 +176,10 @@ class AjaxController < ApplicationController
     if @object.expertise_counties.where("counties.location_id = ?", location.id).count == 0
       @object.expertise_counties << location.get_all_county
     end
+    
+    change_hash = Hash.new
+    change_hash[:expertise_locations] = {:old => county.name, :new => ""}
+    UserEvent.log_removed_county(@object, current_user, change_hash)
   end
 
 end
