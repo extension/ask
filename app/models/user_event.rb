@@ -12,6 +12,8 @@ class UserEvent < ActiveRecord::Base
   REMOVED_LOCATION = 103
   ADDED_COUNTY = 104
   REMOVED_COUNTY = 105
+  ADDED_TAGS = 106
+  REMOVED_TAGS = 107
   
   USER_EVENT_STRINGS = {
     100 => 'changed tags',
@@ -19,12 +21,22 @@ class UserEvent < ActiveRecord::Base
     102 => 'added expertise location',
     103 => 'removed expertise location',
     104 => 'added expertise county',
-    105 => 'removed expertise county'
+    105 => 'removed expertise county',
+    106 => 'added expertise tag',
+    107 => 'removed expertise tag'
   }
   
   
   def self.log_updated_tags(user, initiator, edit_hash)
     return self.log_user_changes(user, initiator, CHANGED_TAGS, edit_hash)
+  end
+  
+  def self.log_added_tags(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, ADDED_TAGS, edit_hash)
+  end
+  
+  def self.log_removed_tags(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, REMOVED_TAGS, edit_hash)
   end
   
   def self.log_updated_vacation_status(user, initiator, edit_hash)

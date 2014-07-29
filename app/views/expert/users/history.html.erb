@@ -9,7 +9,11 @@
 
 <% @expert_events.each do |event| %>
     <% event.updated_user_attributes.each do |key, value| %>
-      <% case event.event_code %> 
+      <% case event.event_code %>
+      <% when UserEvent::ADDED_TAGS %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Added <strong class="tag tag-topic"><%= value[:new] %></strong> to <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small><p>
+      <% when UserEvent::REMOVED_TAGS %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Deleted <strong class="tag tag-topic"><%= value[:old] %></strong> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small><p>
       <% when UserEvent::CHANGED_VACATION_STATUS %>
         <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Switched <strong><%= key.to_s.gsub('_', ' ') %></strong> to <%= value[:new] ? '<span class="label label-default">away</span>'.html_safe : '<span class="label label-success">available</span>'.html_safe %> 
           <% if value[:reason].present? %>
