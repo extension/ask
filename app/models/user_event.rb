@@ -26,11 +26,6 @@ class UserEvent < ActiveRecord::Base
     107 => 'removed expertise tag'
   }
   
-  
-  def self.log_updated_tags(user, initiator, edit_hash)
-    return self.log_user_changes(user, initiator, CHANGED_TAGS, edit_hash)
-  end
-  
   def self.log_added_tags(user, initiator, edit_hash)
     return self.log_user_changes(user, initiator, ADDED_TAGS, edit_hash)
   end
@@ -73,7 +68,7 @@ class UserEvent < ActiveRecord::Base
   def create_user_event_notification
     if self.creator != self.user
       case self.event_code
-      when CHANGED_TAGS
+      when ADDED_TAGS, REMOVED_TAGS
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_TAG_EDIT, delivery_time: 1.minute.from_now )
       when CHANGED_VACATION_STATUS
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_VACATION_EDIT, delivery_time: 1.minute.from_now )
