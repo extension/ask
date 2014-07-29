@@ -65,7 +65,7 @@ class UserEvent < ActiveRecord::Base
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_TAG_EDIT, delivery_time: 1.minute.from_now )
       when CHANGED_VACATION_STATUS
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_VACATION_EDIT, delivery_time: 1.minute.from_now )
-      when ADDED_LOCATION || REMOVED_LOCATION || ADDED_COUNTY || REMOVED_COUNTY
+      when ADDED_LOCATION, REMOVED_LOCATION, ADDED_COUNTY, REMOVED_COUNTY
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_LOCATION_EDIT, delivery_time: 1.minute.from_now )
       end
     end
