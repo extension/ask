@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140702114930) do
+ActiveRecord::Schema.define(:version => 20140730182955) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -406,6 +406,8 @@ ActiveRecord::Schema.define(:version => 20140702114930) do
     t.datetime "updated_at",                                            :null => false
     t.text     "updated_question_values"
     t.boolean  "is_extension",                       :default => false
+    t.text     "added_tag"
+    t.text     "deleted_tag"
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
