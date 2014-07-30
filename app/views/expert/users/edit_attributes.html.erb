@@ -1,35 +1,39 @@
 <h1>Give <%= link_to @user.name, expert_user_path(@user) %> a Helping Hand</h1>
 
-<%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
-
-  <fieldset>
-      <h3>Away Status</h3>
-      <div class="radio_options">
-      <p>
-        <label>
-          <%= f.check_box :away %>
-          Mark <%= @user.name %> as away
-          <span>(When "away status" is turned on, AaE questions can not be assigned to the person.)</span>
-        </label>
-      </p>
-      	<label>
-	      Reason:
-	      <%= text_field_tag :set_to_away_reason %>
-	    </label>
-      </div>
-        
-    <p><%= f.submit "Save Away Status", :class => "btn btn-primary" %></p>
-  </fieldset>
-  
-<% end %>
-  
-  <div class="formy">
-    <h2>Edit this expert's tags</h2>
-    <h3>Please edit respectfully. Edits are logged and the expert will be notified of any changes made.</h3>
-    <div class="ui-widget">
-    	<input id="tag_picker" placeholder="Type and select a tag" />
+<%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => ""} do |f| %>
+  <div class="well">
+    <h2>Away Status</h2>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :away %>
+        Mark <%= @user.name %> as away
+        <span class="help-block">(When "away status" is turned on, AaE questions can not be assigned to the person.)</span>
+      </label>
     </div>
+    <div class="form-group">
+    <label>
+      Reason:
+      <%= text_field_tag :set_to_away_reason %>
+    </label>
+    </div>
+    <%= f.submit "Save away status", :class => "btn btn-primary" %>
+  </div>
+<% end %>
 
+<div class="well">
+  <h2>Expertise locations</h2>
+  <h3>Please edit respectfully. Edits are logged and the expert is notified of changes.</h3>
+  <div id="loc_wrapper" class="user" data-object="user" data-id="<%= @user.id %>">
+    <%= render :partial => 'ajax/location_picker' %>
+  </div>
+</div>
+  
+<div class="well">
+  <h2>Tags</h2>
+  <h3>Please edit respectfully. Edits are logged and the expert is notified of changes.</h3>
+  <div class="ui-widget">
+    <input id="tag_picker" placeholder="Type and select a tag" />
+  </div>
 
   <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
   <% if @user.tags.size > 0 %>
@@ -38,7 +42,7 @@
     <% end %>
   <% end %>
   </div>
-  
+</div>  
     
 
 

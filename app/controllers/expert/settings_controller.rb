@@ -37,8 +37,8 @@ class Expert::SettingsController < ApplicationController
     previous_tags = @user.tags.map(&:name).join(', ')
     @tag = @user.set_tag(params[:tag])
     current_tags = @user.tags.map(&:name).join(', ')
-    change_hash[:tags] = {:old => previous_tags, :new => current_tags}
-    UserEvent.log_updated_tags(@user, current_user, change_hash) if previous_tags != current_tags
+    change_hash[:tags] = {:old => "", :new => @tag.name}
+    UserEvent.log_added_tags(@user, current_user, change_hash) if previous_tags != current_tags
     
     if @tag.blank?
       render :nothing => true
@@ -53,8 +53,8 @@ class Expert::SettingsController < ApplicationController
     previous_tags = @user.tags.map(&:name).join(', ')
     @user.tags.delete(tag)
     current_tags = @user.tags.map(&:name).join(', ')
-    change_hash[:tags] = {:old => previous_tags, :new => current_tags}
-    UserEvent.log_updated_tags(@user, current_user, change_hash) if previous_tags != current_tags
+    change_hash[:tags] = {:old => tag.name, :new => ""}
+    UserEvent.log_removed_tags(@user, current_user, change_hash) if previous_tags != current_tags
     
     # remove their listview prefs for this tag if it exists
     pref = @user.filter_preference

@@ -9,10 +9,24 @@
 
 <% @expert_events.each do |event| %>
     <% event.updated_user_attributes.each do |key, value| %>
-      <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Changed <strong>Expert <%= key.to_s.gsub('_', ' ').capitalize %></strong> from '<strong><%= value[:old] %></strong>' to '<strong><%= value[:new] %></strong>' <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small><p>
-	  <% if key.to_s == 'vacation_status' && value[:reason].present? %>
-	    <p>Reason: <%= value[:reason] %></p>
-	  <% end %>
+      <% case event.event_code %>
+      <% when UserEvent::ADDED_TAGS %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Added <span class="label label-default label-topic"><%= value[:new] %></span> to <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% when UserEvent::REMOVED_TAGS %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Deleted <span class="label label-default label-topic label-strike"><%= value[:old] %></span> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% when UserEvent::CHANGED_VACATION_STATUS %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Switched <strong><%= key.to_s.gsub('_', ' ') %></strong> to <%= value[:new] ? '<span class="label label-default">away</span>'.html_safe : '<span class="label label-success">available</span>'.html_safe %> 
+          <% if value[:reason].present? %>
+            because <span class="bg-warning">"<%= value[:reason] %>"</span>
+          <% end %>
+        <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% when UserEvent::ADDED_LOCATION, UserEvent::ADDED_COUNTY %> 
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Added <span class="label label-default label-geography"><%= value[:new] %></span> to <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% when UserEvent::REMOVED_LOCATION, UserEvent::REMOVED_COUNTY %> 
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Deleted <span class="label label-default label-geography label-strike"><%= value[:old] %></span> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% else %>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Changed <strong><%= key.to_s.gsub('_', ' ').capitalize %></strong> from '<strong><%= value[:old] %></strong>' to '<strong><%= value[:new] %></strong>' <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <% end %>
     <% end %>
 <% end %>
 

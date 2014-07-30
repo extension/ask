@@ -25,6 +25,8 @@ class Expert::UsersController < ApplicationController
   def edit_attributes
     @user = User.exid_holder.find_by_id(params[:id])
     return record_not_found if @user.blank?
+    @locations = Location.order('fipsid ASC')
+    @object = @user
     
     if request.put?
       vacation_changed = false

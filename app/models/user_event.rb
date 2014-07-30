@@ -8,19 +8,50 @@ class UserEvent < ActiveRecord::Base
   # USER EVENTS
   CHANGED_TAGS = 100
   CHANGED_VACATION_STATUS = 101
+  ADDED_LOCATION = 102
+  REMOVED_LOCATION = 103
+  ADDED_COUNTY = 104
+  REMOVED_COUNTY = 105
+  ADDED_TAGS = 106
+  REMOVED_TAGS = 107
   
   USER_EVENT_STRINGS = {
     100 => 'changed tags',
-    101 => 'changed vacation status'
+    101 => 'changed vacation status',
+    102 => 'added expertise location',
+    103 => 'removed expertise location',
+    104 => 'added expertise county',
+    105 => 'removed expertise county',
+    106 => 'added expertise tag',
+    107 => 'removed expertise tag'
   }
   
+  def self.log_added_tags(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, ADDED_TAGS, edit_hash)
+  end
   
-  def self.log_updated_tags(user, initiator, edit_hash)
-    return self.log_user_changes(user, initiator, CHANGED_TAGS, edit_hash)
+  def self.log_removed_tags(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, REMOVED_TAGS, edit_hash)
   end
   
   def self.log_updated_vacation_status(user, initiator, edit_hash)
     return self.log_user_changes(user, initiator, CHANGED_VACATION_STATUS, edit_hash)
+  end
+  
+  def self.log_added_location(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, ADDED_LOCATION, edit_hash)
+  end
+  
+  def self.log_removed_location(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, REMOVED_LOCATION, edit_hash)
+  end
+  
+  def self.log_added_county(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, ADDED_COUNTY, edit_hash)
+  end
+  
+  def self.log_removed_county(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, REMOVED_COUNTY, edit_hash)
   end
   
   def self.log_user_changes(user, initiator, event_code, edit_hash = nil)
@@ -37,10 +68,12 @@ class UserEvent < ActiveRecord::Base
   def create_user_event_notification
     if self.creator != self.user
       case self.event_code
-      when CHANGED_TAGS
+      when ADDED_TAGS, REMOVED_TAGS
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_TAG_EDIT, delivery_time: 1.minute.from_now )
       when CHANGED_VACATION_STATUS
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_VACATION_EDIT, delivery_time: 1.minute.from_now )
+      when ADDED_LOCATION, REMOVED_LOCATION, ADDED_COUNTY, REMOVED_COUNTY
+        Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id, notification_type: Notification::AAE_EXPERT_LOCATION_EDIT, delivery_time: 1.minute.from_now )
       end
     end
   end
