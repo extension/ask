@@ -153,7 +153,7 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_added_tag(question, initiated_by, tag)
     return self.log_event({:question => question,
                            :initiated_by_id => initiated_by.id,
-                           :added_tag => tag,
+                           :changed_tag => tag,
                            :event_state => ADDED_TAG
                            })
   end
@@ -161,7 +161,7 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_deleted_tag(question, initiated_by, tag)
     return self.log_event({:question => question,
                            :initiated_by_id => initiated_by.id,
-                           :deleted_tag => tag,
+                           :changed_tag => tag,
                            :event_state => DELETED_TAG
                            })
   end
