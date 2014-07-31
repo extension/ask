@@ -406,10 +406,10 @@ ActiveRecord::Schema.define(:version => 20140730182955) do
     t.datetime "updated_at",                                            :null => false
     t.text     "updated_question_values"
     t.boolean  "is_extension",                       :default => false
-    t.text     "added_tag"
-    t.text     "deleted_tag"
+    t.string   "changed_tag"
   end
 
+  add_index "question_events", ["changed_tag"], :name => "index_question_events_on_changed_tag"
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
   add_index "question_events", ["created_at", "event_state", "previous_handling_recipient_id"], :name => "idx_handling"
   add_index "question_events", ["initiated_by_id"], :name => "idx_initiated_by"
