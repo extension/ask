@@ -1,7 +1,7 @@
 class AddDetailsToQuestionEvents < ActiveRecord::Migration
   def change
     add_column :question_events, :changed_tag, :string
-    add_index :question_events, :changed_tag
+    add_index :question_events, :event_state
     
     QuestionEvent.reset_column_information
     
