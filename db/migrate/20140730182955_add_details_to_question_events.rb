@@ -10,8 +10,8 @@ class AddDetailsToQuestionEvents < ActiveRecord::Migration
       tags_array = []
       previous_tags_array = []
 
-      tags_array << e.tags.split(',')
-      previous_tags_array << e.previous_tags.split(',')
+      tags_array = e.tags.split(',')
+      previous_tags_array = e.previous_tags.split(',')
 
       if tags_array.length > previous_tags_array.length
         # a tag was added
