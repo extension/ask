@@ -1,8 +1,4 @@
-set :deploy_to, "/services/aae/"
+set :deploy_to, "/services/ask/"
 set :branch, 'master'
-
-server 'ask.extension.org', :app, :web, :db, :primary => true
-
-if(ENV['SEED'] == 'true')
-  after "deploy:migrations", "db:seed"
-end
+set :vhost, 'ask.extension.org'
+server vhost, :app, :web, :db, :primary => true

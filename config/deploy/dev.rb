@@ -1,15 +1,8 @@
-set :deploy_to, "/services/aae/"
+set :deploy_to, "/services/ask/"
 if(branch = ENV['BRANCH'])
   set :branch, branch
 else
   set :branch, 'master'
 end
-server 'dev.ask.extension.org', :app, :web, :db, :primary => true
-
-if(ENV['REBUILD'] == 'true')
-  after "deploy:update_code", "db:rebuild"
-end
-
-if(ENV['SEED'] == 'true')
-  after "deploy:migrations", "db:seed"
-end
+set :vhost, 'dev.ask.extension.org'
+server vhost, :app, :web, :db, :primary => true
