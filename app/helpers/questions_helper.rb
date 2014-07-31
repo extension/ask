@@ -58,10 +58,10 @@ module QuestionsHelper
       message += "</span>"
       return message.html_safe
     when QuestionEvent::ADDED_TAG
-      message = "<strong #{qw}>#{initiator_full_name}</strong> added <span class='label label-default label-topic'>#{q_event.added_tag}</span> to <strong>tags</strong>  <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      message = "<strong #{qw}>#{initiator_full_name}</strong> added <span class='label label-default label-topic'>#{q_event.changed_tag}</span> to <strong>tags</strong>  <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       return message.html_safe
     when QuestionEvent::DELETED_TAG
-      message = "<strong #{qw}>#{initiator_full_name}</strong> deleted <span class='label label-default label-topic label-strike'>#{q_event.deleted_tag}</span> from <strong>tags</strong>  <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      message = "<strong #{qw}>#{initiator_full_name}</strong> deleted <span class='label label-default label-topic label-strike'>#{q_event.changed_tag}</span> from <strong>tags</strong>  <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       return message.html_safe
     when QuestionEvent::CHANGED_LOCATION
       old_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:old].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:old]}</span>"
