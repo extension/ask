@@ -5,8 +5,7 @@ class AddDetailsToQuestionEvents < ActiveRecord::Migration
     
     QuestionEvent.reset_column_information
     
-    # TAG_CHANGE = 8
-    QuestionEvent.where(event_state: 8).each do |e|
+    QuestionEvent.where(event_state: QuestionEvent::TAG_CHANGE).each do |e|
       
       tags_array = []
       previous_tags_array = []
@@ -14,18 +13,20 @@ class AddDetailsToQuestionEvents < ActiveRecord::Migration
       tags_array << e.tags.split(',')
       previous_tags_array << e.previous_tags.split(',')
 
-      if e.tags.length > e.previous_tags.length
+      if tags_array.length > previous_tags_array.length
         # a tag was added
-        # ADDED_TAG = 23
         tag = tags_array - previous_tags_array
-        e.update_column(:changed_tag,tag[0])
-        e.update_column(:event_state,23)
+        if tag.length == 1
+          e.update_column(:changed_tag,tag[0])
+          e.update_column(:event_state,QuestionEvent::ADDED_TAG)
+        end
       elsif e.previous_tags.length > e.tags.length
         # a tag was deleted
-        # DELETED_TAG = 24
         tag = previous_tags_array - tags_array
-        e.update_column(:changed_tag,tag[0])
-        e.update_column(:event_state,24)
+        if tag.length == 1
+          e.update_column(:changed_tag,tag[0])
+          e.update_column(:event_state,QuestionEvent::DELETED_TAG)
+        end
       else 
         # do nothing. not sure why or how the event was recorded
       end
