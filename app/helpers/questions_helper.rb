@@ -20,7 +20,7 @@ module QuestionsHelper
       if q_event.recipient.is_question_wrangler?
         recipient_class = "class='qw'"
       end
-      reassign_msg = "Assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      reassign_msg = "<strong #{qw}>#{initiator_full_name}</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
     when QuestionEvent::ASSIGNED_TO_GROUP
@@ -56,6 +56,12 @@ module QuestionsHelper
         message += " from #{previous_tags}"
       end
       message += "</span>"
+      return message.html_safe
+    when QuestionEvent::ADDED_TAG
+      message = "<strong #{qw}>#{initiator_full_name}</strong> added <span class='label-small-topic'>#{q_event.changed_tag}</span> <span >#{time_ago_in_words(q_event.created_at)} ago</span> <small>- #{humane_date(q_event.created_at)}</small>"
+      return message.html_safe
+    when QuestionEvent::DELETED_TAG
+      message = "<strong #{qw}>#{initiator_full_name}</strong> <span class='label-deleted'>removed</span> <span class='label-small-topic'>#{q_event.changed_tag}</span> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>- #{humane_date(q_event.created_at)}</small>"
       return message.html_safe
     when QuestionEvent::CHANGED_LOCATION
       old_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:old].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:old]}</span>"

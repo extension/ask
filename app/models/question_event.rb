@@ -36,6 +36,8 @@ class QuestionEvent < ActiveRecord::Base
   CHANGED_TO_PUBLIC = 20
   CHANGED_TO_PRIVATE = 21
   CHANGED_FEATURED = 22
+  ADDED_TAG = 23
+  DELETED_TAG = 24
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -56,7 +58,9 @@ class QuestionEvent < ActiveRecord::Base
                             EXPERT_EDIT_RESPONSE => 'expert edit of response',
                             CHANGED_TO_PUBLIC => 'changed to public by',
                             CHANGED_TO_PRIVATE => 'changed to private by',
-                            CHANGED_FEATURED => 'changed featured by'
+                            CHANGED_FEATURED => 'changed featured by',
+                            ADDED_TAG => 'tag added by',
+                            DELETED_TAG => 'tag deleted by' 
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
@@ -145,13 +149,20 @@ class QuestionEvent < ActiveRecord::Base
                            :event_state => CHANGED_FEATURED
     })
   end
-
-  def self.log_tag_change(question, initiated_by, tags, previous_tags)
+  
+  def self.log_added_tag(question, initiated_by, tag)
     return self.log_event({:question => question,
                            :initiated_by_id => initiated_by.id,
-                           :tags => tags,
-                           :previous_tags => previous_tags,
-                           :event_state => TAG_CHANGE
+                           :changed_tag => tag,
+                           :event_state => ADDED_TAG
+                           })
+  end
+  
+  def self.log_deleted_tag(question, initiated_by, tag)
+    return self.log_event({:question => question,
+                           :initiated_by_id => initiated_by.id,
+                           :changed_tag => tag,
+                           :event_state => DELETED_TAG
                            })
   end
 
