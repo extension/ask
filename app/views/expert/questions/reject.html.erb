@@ -2,7 +2,7 @@
 
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<h1><%= @page_title %> <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
+<h1><%= @page_title %> <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn btn-default" %></h1>
 
 <div class="bekind">
   <h3>Please Don't Reject Valid Questions</h3>
@@ -57,7 +57,7 @@
         <%= submit_tag 'Reject Question', :class => "btn btn-danger"%> <strong>(No information is sent to the question submitter)</strong>
     </p>
     
-    <p><%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></p>
+    <p><%= link_to "Cancel", expert_question_path(@question.id), :class => "btn btn-default" %></p>
 <% end %>
 
 
