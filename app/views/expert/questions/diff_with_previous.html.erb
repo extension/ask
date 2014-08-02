@@ -58,7 +58,7 @@
 
 <%= form_tag(restore_revision_expert_question_path(:id => @question.id, :version_id => @version.id)) do %>
   <p><% if @version == @question.versions.first %>
-      <%= submit_tag "Restore Original Question", {:class => 'btn'} %>
+      <%= submit_tag "Restore Original Question", {:class => 'btn btn-default'} %>
     <% else %>
       <%= submit_tag "Restore Revision ##{@previous_version.index + 1}", {:class => 'btn btn-primary'} %>
     <% end %>

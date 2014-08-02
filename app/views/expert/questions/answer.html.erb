@@ -8,7 +8,7 @@
 
 <h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
 
-<h1>Send an Answer <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn" %></h1>
+<h1>Send an Answer <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn btn-default" %></h1>
 
 <% if @question.assignee != current_user %>
   <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
@@ -130,7 +130,7 @@
   <br />
   <h5>No Answer?</h5>
   <p>If no one can answer this question, use the canned response to suggest their local office.</p>
-  <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn" %></p>
+  <p><%= link_to "Use canned response template", answer_expert_question_path(@question.id, :sample => Question::DECLINE_ANSWER, :status_state => Question::STATUS_NO_ANSWER), :class => "btn btn-default" %></p>
 
 </div>
 

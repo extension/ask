@@ -35,7 +35,7 @@
     	  </td>
 	      <td><%= version.changeset.keys.join(', ') %></td>	
 	      <td>
-	        <%= link_to "Compare to Previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id), :class => 'btn' %>
+	        <%= link_to "Compare to Previous", diff_with_previous_expert_question_path(:id => @question.id, :version_id => version.id), :class => 'btn btn-default' %>
     	  </td>	
           <td><%= version.reason %></td>
 	    </tr>	

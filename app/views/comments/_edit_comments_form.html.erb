@@ -12,17 +12,17 @@
     <% else %>
       <p><strong><%= current_user.public_name %></strong></p>
     <% end %>
-    
+
     <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5" %>
-    
+
     <% if @comment.ancestry.present? %>
       <%= hidden_field_tag 'parent_comment_id', @comment.ancestry %>
     <% end %>
-    
+
     <%= f.hidden_field :question_id, value: @comment.question.id %>
-    
+
     <%= f.submit "Update comment", disable_with: 'Saving...', id: 'comment-submit', class: 'btn btn-primary' %>
-    <%= link_to 'Cancel', cancel_edit_comments_path(comment_id: @comment.id), class: 'btn', remote: true %>
+    <%= link_to 'Cancel', cancel_edit_comments_path(comment_id: @comment.id), class: 'btn btn-default', remote: true %>
     <%= link_to 'delete', comment_path(@comment.id), class: "btn btn-danger pull-right", confirm: 'Are you sure you want to delete this?', method: :delete, remote: true %>
 
   <% end %>

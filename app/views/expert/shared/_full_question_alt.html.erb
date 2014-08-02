@@ -4,9 +4,9 @@
 <% hide_assignee = local_assigns[:hide_assignee].nil? ? false : hide_assignee %>
 
 <div class="incoming_question <%= question.is_being_worked_on? ? 'being_worked_on' : '' %>">
-  
+
   <div class="row">
-    
+
     <div class="col-md-12">
       <% if question.is_being_worked_on? %>
         <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
@@ -15,17 +15,17 @@
         <h3><%= format_text_for_display(question.title) -%></h3>
         <p><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
       <%- end -%>
-      
+
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
-      
+
       <% if question.status_state == Question::STATUS_REJECTED %>
         <p class="rejected"><span class="label label-danger">Rejected</span> <%= wrap_text(question.current_response) %></p>
       <% elsif question.status_state == Question::STATUS_NO_ANSWER %>
         <p>A canned response was used to answer this question</p>
       <% elsif question.status_state == Question::STATUS_CLOSED %>
-        <p><span class="label">Closed</span> because <%= wrap_text(question.current_response) %></p>
+        <p><span class="label label-default">Closed</span> because <%= wrap_text(question.current_response) %></p>
       <% elsif question.status_state == Question::STATUS_RESOLVED %>
-        <p><span class="label">Resolved</span></p>
+        <p><span class="label label-default">Resolved</span></p>
       <% elsif highlight_unanswered %>
         <p><span class="needs_an_answer">Needs an answer</span></p>
       <% end %>
@@ -50,16 +50,16 @@
           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
-      
+
       <div class="expert">
         <% if !hide_assignee %>
           <% if question.assignee_id.present? %>
-            <%= link_expert_user_avatar(question.assignee, :thumb, current_user.id == question.assignee.id ? true : false) %> <%= link_expert_user(question.assignee) %> 
+            <%= link_expert_user_avatar(question.assignee, :thumb, current_user.id == question.assignee.id ? true : false) %> <%= link_expert_user(question.assignee) %>
   	      <% else %>
   	        <p><strong>This question does not have an assignee.</strong></p>
           <% end %>
         <% end %>
-	      
+
 	      <% if !hide_groups %>
 	        <% if question.assigned_group %>
             <p><%= link_expert_group_avatar(question.assigned_group, :mini, suppress_single_badges) %> <%= link_expert_group(question.assigned_group) %></p>
@@ -68,9 +68,9 @@
           <% end %>
         <% end %>
       </div>
-      
+
     </div> <!-- end .col-md-8 -->
-  
+
   </div>
-  
+
 </div>

@@ -33,12 +33,12 @@
     <div class="well">
       <p>
     <%- if @download.available_for_download? %>
-      <%= link_to("Download",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Download",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
     <%- elsif(@download.dump_in_progress? or @show_notify) -%>
-      <%= link_to("Notify me",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Notify me",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
       <p>Export is in progress. Click "Notify me" and we'll notify you via email when it's finished</p>
     <%- elsif(!@download.dumpfile_updated?) -%>
-      <%= link_to("Generate",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Generate",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
       <p>Export not up to date. Click "Generate" to build the export, and we'll notify you via email when it's finished</p>
     <%- end -%>
       </p>
@@ -391,11 +391,11 @@
              <%- if !aeq.responses.blank? -%>
               <ul>
                 <%- if aeq.responsetype == EvaluationQuestion::SCALE -%>
-                  <li><span class="label"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
-                  <li><span class="label"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
+                  <li><span class="label label-default"><%= aeq.range_start %></span> : <%= aeq.responses[0] %></li>
+                  <li><span class="label label-default"><%= aeq.range_end %></span> : <%= aeq.responses[1] %></li>
                 <%- elsif aeq.responsetype == EvaluationQuestion::MULTIPLE_CHOICE -%>
                   <%- aeq.responses.each_with_index do |response_text,index| %>
-                    <li><span class="label"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
+                    <li><span class="label label-default"><%= aeq.reporting_response_value(response_text) %></span> : <%= response_text %></li>
                   <%- end -%>
                 <%- else -%>
                   <%- aeq.responses.each_with_index do |response_text,index| %>
