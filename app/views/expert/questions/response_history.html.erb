@@ -35,7 +35,7 @@
           <% end %>
 	      </td>
 	      <td>
-          <%= link_to "Compare to previous", diff_with_previous_response_revision_expert_question_path(:id => @question.id, :response_id => @response.id, :version_id => version.id), :class => 'btn' %>
+          <%= link_to "Compare to previous", diff_with_previous_response_revision_expert_question_path(:id => @question.id, :response_id => @response.id, :version_id => version.id), :class => 'btn btn-default' %>
 	      </td>	
 	      <td><%= version.reason %></td>
 	      <td><%= (version.notify_submitter == true) ? 'Yes' : 'No' %></td>

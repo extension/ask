@@ -9,9 +9,9 @@
 <div id="associated_group_picker" style="display:none;">
   <div class="ui-widget">
     <% if @question.assigned_group.id != Group::ORPHAN_GROUP_ID %>
-      <p><span id="remove_group_association" class="btn">Remove Group</span></p>
+      <p><span id="remove_group_association" class="btn btn-default">Remove Group</span></p>
     <% end %>
-    
+
   	<label for="group_picker">Place in a different group</label>
   	<span>(This does not reassign the question)</span>
   	<input id="group_picker" placeholder="Type and select a group" />
@@ -19,7 +19,7 @@
 </div>
 
 <script class="code" type="text/javascript">
-  
+
   $("#remove_group_association").click(function () {
     $.ajax({
       type: "POST",
@@ -31,7 +31,7 @@
 			$("#group_picker").autocomplete("close");
 			$("#group_picker").val('');
 			return false;
-    })  
+    })
     .fail(function() {
       alert("error");
       $("#group_picker").autocomplete("close");
@@ -39,12 +39,12 @@
 			return false;
     })
   });
-  
+
   $(".associated_group_picker_toggle").click(function () {
     $("#associated_group_picker").toggle();
   });
-  
-  
+
+
 		function change_group(group_id) {
 		  $.ajax({
         type: "POST",
@@ -56,7 +56,7 @@
 				$("#group_picker").autocomplete("close");
 				$("#group_picker").val('');
 				return false;
-      })  
+      })
       .fail(function() {
         alert("error");
         $("#group_picker").autocomplete("close");

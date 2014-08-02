@@ -23,12 +23,12 @@
     <div class="well">
       <p>
     <%- if @download.available_for_download? %>
-      <%= link_to("Download",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Download",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
     <%- elsif(@download.dump_in_progress? or @show_notify) -%>
-      <%= link_to("Notify me",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Notify me",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
       <p>Export is in progress. Click "Notify me" and we'll notify you via email when it's finished</p>
     <%- elsif(!@download.dumpfile_updated?) -%>
-      <%= link_to("Generate",expert_data_getfile_path(id: @download.id),class: 'btn') %>
+      <%= link_to("Generate",expert_data_getfile_path(id: @download.id),class: 'btn btn-default') %>
       <p>Export not up to date. Click "Generate" to build the export, and we'll notify you via email when it's finished</p>
     <%- end -%>
       </p>
