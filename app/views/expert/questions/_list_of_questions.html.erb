@@ -2,14 +2,14 @@
 
 <% if questions.present? && questions.count > 0 %>
   
-  <%= page_entries_info questions %>
+  <p><%= page_entries_info questions %></p>
   <%= paginate questions, :params => {:controller => 'expert/questions', :action => 'index'} %>
 
   <% questions.each do |question| %>
     <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true, :highlight_unanswered => true} %>  
   <% end %>
 
-  <%= page_entries_info questions %>
+  <p><%= page_entries_info questions %></p>
   <%= paginate questions, :params => {:controller => 'expert/questions', :action => 'index'} %>
 
 <% else %>
