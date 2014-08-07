@@ -1,13 +1,25 @@
+<ul class="nav nav-tabs">
+  <li><%= link_to "Profile", expert_user_path(@user) %></li>
+  <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'answered'}) %></li>
+  <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
+  <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'rejected'}) %></li>
+  <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+  <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
+</ul>
+
 <h1><%= link_to @user.name, expert_user_path(@user) %></h1>
 
 <h2>Group Notifications</h2>
 
-<% if current_user.id == @user.id %>
-  <%= render :partial => 'expert/settings/settings_navigation' %>
-  <div class="explanation">
+<%= render :partial => 'expert/settings/settings_navigation' %>
+<div class="explanation">
+  <% if current_user.id == @user.id %>
     <p><strong>You are currently a member of these groups.</strong> This is also where you set your notification preferences for each group. To leave a group, visit the group's homepage and click the 'Leave Group' button.</p>
-  </div>
-<% end %>
+  <% else  %>
+    <p><strong><%= @user.name %> is a member of these groups.</strong> This is also where notification preferences are set for each group. To leave a group, <%= @user.first_name %> needs to visit the group's homepage and click the 'Leave Group' button.</p>
+  <% end %>
+</div>
+
 
 <% @page_title = @user.name + " - Groups" %>
 
@@ -34,7 +46,7 @@
           <p><%= group.joined.count %> Members</p>
         </td>
         
-        <% if current_user.id == @user.id %>
+
         <td>
           <%= form_tag('/expert/users/save_notification_prefs', :class => "form-stacked no_m_t well", :method => "post") do -%>
           <ul class="notification_options">
@@ -45,7 +57,7 @@
           </ul>
           <% end %>
         </td>
-        <% end %>
+
       </tr>
     <% end %>
     </table>

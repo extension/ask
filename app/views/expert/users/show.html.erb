@@ -2,7 +2,17 @@
 
 <div id="main" class="col-md-8">
   
-  <div id="user_masthead">
+  <ul class="nav nav-tabs">
+    <li><%= link_to "Profile", expert_user_path(@user) %></li>
+    <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'answered'}) %></li>
+    <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'watched'}) %></li>
+    <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'rejected'}) %></li>
+    <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
+    <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
+  </ul>
+  
+  
+  <div id="user_masthead" class="expert-profile-nav">
     <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
     
     <h1>
@@ -50,22 +60,19 @@
     
   </div>
   
-  
-  <ul class="nav nav-tabs">
-    <li><%= link_to "Currently Assigned (#{@user.open_questions.size})", expert_user_path(@user) %></li>
-    <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_user_answered_path(@user) %></li>
-    <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
-    <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_user_rejected_path(@user) %></li>
-    <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
-    <li><%= link_to 'History/Logs', history_expert_user_path(@user) %></li>
-  </ul>
-  
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
 
 </div>
 
 
 <div id="secondary" class="col-md-4">
+  
+  <% if current_user.id != @user.id %>
+    <ul class="nav nav-tabs">
+      <li><%= link_to '<i class="fa fa-thumbs-o-up"></i> Helping hand'.html_safe, expert_edit_attributes_path() %></li>
+      <li><%= link_to 'Edit full profile', expert_profile_settings_path(@user.id) %></li>
+    </ul>
+  <% end %>
   
   <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">
@@ -76,10 +83,6 @@
   <aside>
     <% if @user.retired %>
       <h4>This account has been retired</h4>
-    <% end %>
-    
-    <% if current_user.id != @user.id %>
-      <p class="downplay">Last active: <%= get_last_active_time(@user) %> <%= link_to 'edit attributes', expert_edit_attributes_path() %></p>
     <% end %>
     
     <% if @handling_event_count[:handled] > 0 %>
@@ -102,8 +105,8 @@
       Doesn't accept automatic assignments. Questions must be directly assigned to this expert.
       <% end %>
     </p>
-    
-    <p class="downplay"><%= link_to('Participation Metrics',expert_expert_report_path(@user.id)) %></p>
+    <p class="text-muted"><i class="fa fa-clock-o"></i> Last active <%= get_last_active_time(@user) %><p>
+    <p><%= link_to('Participation Metrics',expert_expert_report_path(@user.id)) %></p>
     <p><%= link_to("People Profile","https://people.extension.org/people/#{@user.darmok_id}") %></p>
  </aside>
   

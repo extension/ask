@@ -125,6 +125,7 @@ Aae::Application.routes.draw do
     match "reports/locations_and_groups", to: "reports#locations_and_groups", :via => [:get], :as => 'reports_locations_and_groups'
     match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
     match "reports/expert_list", to: "reports#expert_list", :via => [:get], :as => 'reports_expert_list'
+    match "reports/expert_profile_list", to: "reports#expert_profile_list", :via => [:get], :as => 'reports_expert_profile_list'
     match "reports/question_list", to: "reports#question_list", :via => [:get], :as => 'reports_question_list'
     # match "reports/expert/:id/list", to: "reports#expert_list", :via => [:get], as: 'expert_list_report'
     match "reports/:action", to: "reports", :via => [:get]
@@ -149,16 +150,17 @@ Aae::Application.routes.draw do
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
     match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
-    match "settings/profile" => "settings#profile", :via => [:get, :put]
-    match "settings/location" => "settings#location", :via => [:get, :put]
-    match "settings/tags" => "settings#tags", :via => [:get, :put]
-    match "settings/assignment" => "settings#assignment", :via => [:get, :put]
     
-    match "users/:id/settings/profile" => "settings#profile", :via => [:get]
-    match "settings/profile" => "settings#profile", :via => [:get, :put]
-    match "settings/location" => "settings#location", :via => [:get, :put]
-    match "settings/tags" => "settings#tags", :via => [:get, :put]
-    match "settings/assignment" => "settings#assignment", :via => [:get, :put]
+    # shortcut URL
+    match "settings/profile" => "settings#profile", :via => [:get]
+    match "settings/location" => "settings#location", :via => [:get]
+    match "settings/tags" => "settings#tags", :via => [:get]
+    match "settings/assignment" => "settings#assignment", :via => [:get]
+    
+    match "users/:id/settings/profile" => "settings#profile", :via => [:get, :put, :post], :as => 'profile_settings'
+    match "users/:id/settings/location" => "settings#location", :via => [:get, :put, :post], :as => 'location_settings'
+    match "users/:id/settings/tags" => "settings#tags", :via => [:get, :put, :post], :as => 'tags_settings'
+    match "users/:id/settings/assignment" => "settings#assignment", :via => [:get, :put, :post], :as => 'assignment_settings'
     
     match "home" => "home#index"
     match "home/tags/:name" => "home#tags", :as => 'home_tags'

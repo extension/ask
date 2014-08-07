@@ -1,4 +1,4 @@
-<h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+<h1><%= link_to @user.name, expert_user_path(@user.id) %></h1>
 <h2>Settings > General</h2>
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
@@ -24,7 +24,7 @@
     </div>
   <% end %>
 
-<%= form_for @user, :url => expert_settings_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+<%= form_for @user, :url => expert_profile_settings_path(@user.id), :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
 
   <fieldset>
     <p class="bio">

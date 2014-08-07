@@ -9,11 +9,13 @@ class Expert::SettingsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :require_exid
   
-  def profile
+  def profile    
     
-    # @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
-    @user = User.find_by_id(params[:id])
-
+    if !params[:id].present?
+      redirect_to(expert_profile_settings_path(current_user.id))
+    end
+    
+    @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
     if request.put?
       @user.attributes = params[:user]
       
@@ -28,7 +30,7 @@ class Expert::SettingsController < ApplicationController
       end
       
       if @user.save
-        redirect_to(expert_settings_profile_path, :notice => 'Profile was successfully updated.')
+        redirect_to(expert_profile_settings_path(@user.id), :notice => 'Profile was successfully updated.')
       else
         render :action => 'profile'
       end
@@ -36,7 +38,11 @@ class Expert::SettingsController < ApplicationController
   end
   
   def tags
-    @user = current_user
+    if !params[:id].present?
+      redirect_to(expert_tags_settings_path(current_user.id))
+    end
+    
+    @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
   end
   
   def add_tag
@@ -74,13 +80,21 @@ class Expert::SettingsController < ApplicationController
   end
   
   def location
-    @user = current_user
+    if !params[:id].present?
+      redirect_to(expert_location_settings_path(current_user.id))
+    end
+    
+    @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
     @locations = Location.order('fipsid ASC')
     @object = @user
   end
   
   def assignment
-    @user = current_user
+    if !params[:id].present?
+      redirect_to(expert_assignment_settings_path(current_user.id))
+    end
+    
+    @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
     
     if request.put?
       vacation_changed = false

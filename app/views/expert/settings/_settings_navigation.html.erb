@@ -1,8 +1,8 @@
 <% @page_title = @user.name + " Profile Settings"%>
   <ul class="nav nav-tabs">
-    <li><%= link_to 'General', expert_settings_profile_path() %></li>
-    <li><%= link_to 'Locations', expert_settings_location_path() %></li>
-    <li><%= link_to 'Tags', expert_settings_tags_path() %></li>
-    <li><%= link_to 'Answering', expert_settings_assignment_path() %></li>
+    <li><%= link_to 'General', expert_profile_settings_path(@user) %></li>
+    <li><%= link_to 'Locations', expert_location_settings_path(@user) %></li>
+    <li><%= link_to 'Tags', expert_tags_settings_path(@user) %></li>
+    <li><%= link_to 'Answering', expert_assignment_settings_path(@user) %></li>
     <li><%= link_to 'Group Notifications', expert_user_groups_path(@user) %></li>
   </ul>
