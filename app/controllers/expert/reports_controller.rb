@@ -358,6 +358,33 @@ class Expert::ReportsController < ApplicationController
     @breadcrumb_display = "#{filter.capitalize} Questions for #{@expert.name} for #{@year_month}"
   end
 
+  def expert_profile_list
+    @expert = User.find(params[:id])
+    
+    if(params[:filter] and ['assigned','answered','touched', 'rejected', 'watched'].include?(params[:filter]))
+      filter = params[:filter]
+    else
+      filter = 'assigned'
+    end
+
+    case filter
+    when 'assigned'
+      @question_list = @expert.assigned_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    when 'answered'
+      @question_list = @expert.answered_questions.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    when 'rejected'
+      @question_list = @expert.rejected_questions.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    when 'watched'
+      @question_list = @expert.watched_questions.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    end
+
+    @page_title = "#{filter.capitalize} Questions for #{@expert.name} (ID##{@expert.id})"
+    @display_title = "#{filter.capitalize} Questions"
+    @breadcrumb_display = "#{filter.capitalize} Questions for #{@expert.name}"
+    # render :action => 'expert_list'
+  end
+
+
   def location_summary_by_year
     @valid_years = Question.group('YEAR(created_at)').count.keys.sort.reverse
     if(params[:year] and @valid_years.include?(params[:year].to_i))
