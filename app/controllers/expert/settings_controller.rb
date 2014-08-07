@@ -10,12 +10,21 @@ class Expert::SettingsController < ApplicationController
   before_filter :require_exid
   
   def profile
-    @user = current_user
+    
+    # @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
+    @user = User.find_by_id(params[:id])
+
     if request.put?
       @user.attributes = params[:user]
       
       if params[:delete_avatar] && params[:delete_avatar] == "1"
         @user.avatar = nil
+      end
+      
+      if @user.bio_changed?
+        change_hash = Hash.new
+        change_hash[:bio] = {:old => @user.bio_was, :new => @user.bio}
+        UserEvent.log_generic_user_event(@user, current_user, change_hash, UserEvent::UPDATED_DESCRIPTION)
       end
       
       if @user.save

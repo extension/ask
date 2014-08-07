@@ -153,6 +153,13 @@ Aae::Application.routes.draw do
     match "settings/location" => "settings#location", :via => [:get, :put]
     match "settings/tags" => "settings#tags", :via => [:get, :put]
     match "settings/assignment" => "settings#assignment", :via => [:get, :put]
+    
+    match "users/:id/settings/profile" => "settings#profile", :via => [:get]
+    match "settings/profile" => "settings#profile", :via => [:get, :put]
+    match "settings/location" => "settings#location", :via => [:get, :put]
+    match "settings/tags" => "settings#tags", :via => [:get, :put]
+    match "settings/assignment" => "settings#assignment", :via => [:get, :put]
+    
     match "home" => "home#index"
     match "home/tags/:name" => "home#tags", :as => 'home_tags'
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
