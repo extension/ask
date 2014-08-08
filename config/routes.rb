@@ -150,18 +150,18 @@ Aae::Application.routes.draw do
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
     match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
-    
+
     # shortcut URL
     match "settings/profile" => "settings#profile", :via => [:get]
-    match "settings/location" => "settings#location", :via => [:get]
+    match "settings/location" => "settings#profilelocation", :via => [:get]
     match "settings/tags" => "settings#tags", :via => [:get]
     match "settings/assignment" => "settings#assignment", :via => [:get]
-    
+
     match "users/:id/settings/profile" => "settings#profile", :via => [:get, :put, :post], :as => 'profile_settings'
-    match "users/:id/settings/location" => "settings#location", :via => [:get, :put, :post], :as => 'location_settings'
+    match "users/:id/settings/location" => "settings#profilelocation", :via => [:get, :put, :post], :as => 'location_settings'
     match "users/:id/settings/tags" => "settings#tags", :via => [:get, :put, :post], :as => 'tags_settings'
     match "users/:id/settings/assignment" => "settings#assignment", :via => [:get, :put, :post], :as => 'assignment_settings'
-    
+
     match "home" => "home#index"
     match "home/tags/:name" => "home#tags", :as => 'home_tags'
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'

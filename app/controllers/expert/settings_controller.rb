@@ -8,27 +8,27 @@ class Expert::SettingsController < ApplicationController
   layout 'expert'
   before_filter :authenticate_user!
   before_filter :require_exid
-  
-  def profile    
-    
+
+  def profile
+
     if !params[:id].present?
       redirect_to(expert_profile_settings_path(current_user.id))
     end
-    
+
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
     if request.put?
       @user.attributes = params[:user]
-      
+
       if params[:delete_avatar] && params[:delete_avatar] == "1"
         @user.avatar = nil
       end
-      
+
       if @user.bio_changed?
         change_hash = Hash.new
         change_hash[:bio] = {:old => @user.bio_was, :new => @user.bio}
         UserEvent.log_generic_user_event(@user, current_user, change_hash, UserEvent::UPDATED_DESCRIPTION)
       end
-      
+
       if @user.save
         redirect_to(expert_profile_settings_path(@user.id), :notice => 'Profile was successfully updated.')
       else
@@ -36,15 +36,15 @@ class Expert::SettingsController < ApplicationController
       end
     end
   end
-  
+
   def tags
     if !params[:id].present?
       redirect_to(expert_tags_settings_path(current_user.id))
     end
-    
+
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
   end
-  
+
   def add_tag
     params[:id].present? ? @user = User.find_by_id(params[:id]) : @user = current_user
     # record tag and log changes
@@ -54,12 +54,12 @@ class Expert::SettingsController < ApplicationController
     current_tags = @user.tags.map(&:name).join(', ')
     change_hash[:tags] = {:old => "", :new => @tag.name}
     UserEvent.log_added_tags(@user, current_user, change_hash) if previous_tags != current_tags
-    
+
     if @tag.blank?
       render :nothing => true
     end
   end
-  
+
   def remove_tag
     params[:id].present? ? @user = User.find_by_id(params[:id]) : @user = current_user
     tag = Tag.find(params[:tag_id])
@@ -70,7 +70,7 @@ class Expert::SettingsController < ApplicationController
     current_tags = @user.tags.map(&:name).join(', ')
     change_hash[:tags] = {:old => tag.name, :new => ""}
     UserEvent.log_removed_tags(@user, current_user, change_hash) if previous_tags != current_tags
-    
+
     # remove their listview prefs for this tag if it exists
     pref = @user.filter_preference
     if pref.present? && pref.setting[:question_filter][:tags].present? && pref.setting[:question_filter][:tags][0].to_i == tag.id
@@ -78,34 +78,34 @@ class Expert::SettingsController < ApplicationController
       pref.save
     end
   end
-  
-  def location
+
+  def profilelocation
     if !params[:id].present?
       redirect_to(expert_location_settings_path(current_user.id))
     end
-    
+
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
     @locations = Location.order('fipsid ASC')
     @object = @user
   end
-  
+
   def assignment
     if !params[:id].present?
       redirect_to(expert_assignment_settings_path(current_user.id))
     end
-    
+
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
-    
+
     if request.put?
       vacation_changed = false
       @user.attributes = params[:user]
       # log changes in expert history
       change_hash = Hash.new
       if @user.away_changed?
-        vacation_changed = true 
+        vacation_changed = true
         change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away}
       end
-      
+
       @user.save
       UserEvent.log_updated_vacation_status(@user, @user, change_hash) if vacation_changed
       flash[:notice] = "Preferences updated successfully!"
