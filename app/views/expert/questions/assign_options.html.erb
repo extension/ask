@@ -97,7 +97,7 @@
         <%= format_text_for_display(@user.bio) %>
       <% else %>
         <% if current_user.id == @user.id %>
-          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_settings_profile_path() %></p>
+          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_profile_settings_path(@user) %></p>
         <% else %>
           <p>This person hasn't added a description yet...</p>
         <% end %>
@@ -124,7 +124,7 @@
     <% end %>
     
     <% if @user.location %>
-      <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_settings_profile_path(), :class => "downplay" %><% end %>
+      <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_profile_settings_path(@user), :class => "downplay" %><% end %>
       <p><% if @user.county %>
         <span class="tag tag-geography"><%= link_to @user.county.name, expert_view_county_path(@user.county.id) %></span>
         <% end %>

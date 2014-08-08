@@ -140,6 +140,14 @@ module ApplicationHelper
     return return_string
   end
   
+  def navtab(tabtext,whereto)
+    if current_page?(whereto)
+      "<li class='active'>#{link_to(tabtext,whereto)}</li>".html_safe
+    else
+      "<li>#{link_to(tabtext,whereto)}</li>".html_safe
+    end
+  end
+  
   private 
   
   def get_question_filter_params(question_filter_settings)

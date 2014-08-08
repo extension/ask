@@ -32,7 +32,7 @@
         <%= format_text_for_display(@user.bio) %>
       <% else %>
         <% if current_user.id == @user.id %>
-          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_settings_profile_path() %></p>
+          <p>Please add a short description to your profile. Thanks! <%= link_to 'edit', expert_profile_settings_path(@user) %></p>
         <% else %>
           <p>This person hasn't added a description yet...</p>
         <% end %>
@@ -76,7 +76,7 @@
   
   <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">
-    <li><%= link_to 'Edit settings', expert_settings_profile_path() %></li>
+    <li><%= link_to 'Edit settings', expert_profile_settings_path(@user) %></li>
   </ul>
   <% end %>
   

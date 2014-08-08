@@ -4,7 +4,7 @@
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
 
-<%= form_for @user, :url => expert_settings_assignment_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
+<%= form_for @user, :url => expert_assignment_settings_path(@user), :html => {:class => "form-stacked no_m_t well"} do |f| %>
 
   <div class="info right">
     <h4>How else are questions assigned?</h4>
