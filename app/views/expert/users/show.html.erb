@@ -67,15 +67,13 @@
   <% if current_user.id != @user.id %>
     <ul class="nav nav-tabs">
       <li><%= link_to '<i class="fa fa-thumbs-o-up"></i> Helping hand'.html_safe, expert_edit_attributes_path() %></li>
-      <li><%= link_to 'Edit full profile', expert_profile_settings_path(@user.id) %></li>
-      <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
     </ul>
   <% end %>
   
   <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">
-    <li><%= link_to 'Edit Profile', expert_profile_settings_path(@user) %></li>
-    <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
+    <li><%= link_to 'Edit profile', expert_profile_settings_path(@user) %></li>
+    <li><%= link_to 'Profile activity', history_expert_user_path(@user) %></li>
   </ul>
   <% end %>
   
