@@ -3,8 +3,6 @@
   <li><%= link_to "Answered (#{@expert.answered_questions.size})", expert_user_answered_path(@expert) %></li>
   <li><%= link_to "Watched (#{@expert.watched_questions.size})", expert_reports_expert_profile_list_path({id: @expert.id, filter: 'watched'}) %></li>
   <li><%= link_to "Rejected (#{@expert.rejected_questions.size})", expert_reports_expert_profile_list_path({id: @expert.id, filter: 'rejected'}) %></li>
-  <li><%= link_to 'Groups', expert_user_groups_path(@expert) %></li>
-  <li><%= link_to 'Profile Activity', history_expert_user_path(@expert) %></li>
 </ul>
 
 <div class="well">

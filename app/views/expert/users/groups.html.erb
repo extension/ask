@@ -1,15 +1,6 @@
-<ul class="nav nav-tabs">
-  <li><%= link_to "Profile", expert_user_path(@user) %></li>
-  <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'answered'}) %></li>
-  <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_user_watched_path(@user) %></li>
-  <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'rejected'}) %></li>
-  <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
-  <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
-</ul>
-
 <h1><%= link_to @user.name, expert_user_path(@user) %></h1>
 
-<h2>Group Notifications</h2>
+<h2>Group Notification Preferences</h2>
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
 <div class="explanation">

@@ -1,8 +1,9 @@
 <% @page_title = @user.name + " Profile Settings"%>
-<ul class="nav nav-tabs">
-  <%= navtab('General', expert_profile_settings_path(@user)) %>
+<ul class="nav nav-tabs nav-expert-settings">
+  <%= navtab('Profile', expert_profile_settings_path(@user)) %>
   <%= navtab('Locations', expert_location_settings_path(@user)) %>
   <%= navtab('Tags', expert_tags_settings_path(@user)) %>
   <%= navtab('Answering', expert_assignment_settings_path(@user)) %>
   <%= navtab('Group Notifications', expert_user_groups_path(@user)) %>
+  <%= navtab('Profile Activity', history_expert_user_path(@user)) %>
 </ul>

@@ -7,10 +7,7 @@
     <li><%= link_to "Answered (#{@user.answered_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'answered'}) %></li>
     <li><%= link_to "Watched (#{@user.watched_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'watched'}) %></li>
     <li><%= link_to "Rejected (#{@user.rejected_questions.size})", expert_reports_expert_profile_list_path({id: @user.id, filter: 'rejected'}) %></li>
-    <li><%= link_to 'Groups', expert_user_groups_path(@user) %></li>
-    <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
   </ul>
-  
   
   <div id="user_masthead" class="expert-profile-nav">
     <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
@@ -71,12 +68,14 @@
     <ul class="nav nav-tabs">
       <li><%= link_to '<i class="fa fa-thumbs-o-up"></i> Helping hand'.html_safe, expert_edit_attributes_path() %></li>
       <li><%= link_to 'Edit full profile', expert_profile_settings_path(@user.id) %></li>
+      <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
     </ul>
   <% end %>
   
   <% if current_user.id == @user.id %>
   <ul class="nav nav-tabs">
-    <li><%= link_to 'Edit settings', expert_profile_settings_path(@user) %></li>
+    <li><%= link_to 'Edit Profile', expert_profile_settings_path(@user) %></li>
+    <li><%= link_to 'Profile Activity', history_expert_user_path(@user) %></li>
   </ul>
   <% end %>
   
