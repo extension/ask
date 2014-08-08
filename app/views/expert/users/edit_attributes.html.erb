@@ -3,7 +3,7 @@
   <p>These are common settings you might want to edit to help a fellow expert. You can also <%= link_to 'edit the entire profile', expert_profile_settings_path(@user.id) %>.</p>
 
 <div class="alert alert-warning" role="alert">
-<h2>Please edit respectfully. Edits are logged and the expert is notified of changes.</h2>
+  <h3>Please edit respectfully. Edits are logged and the expert is notified of changes.</h3>
 </div>
 <%= form_for @user, :url => expert_edit_attributes_path, :html => {:class => ""} do |f| %>
   <div class="well">
