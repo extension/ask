@@ -47,8 +47,6 @@ gem 'rmagick'
 gem 'geocoder'
 gem 'geoip'
 
-gem 'sitemap_generator'
-
 # authentication
 gem 'devise', "~> 1.5.1"
 gem 'omniauth-facebook'
