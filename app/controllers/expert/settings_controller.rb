@@ -24,7 +24,7 @@ class Expert::SettingsController < ApplicationController
       end
       
       if @user.update_attributes(params[:person])
-        what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
+        what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or ['avatar_content_type'].include?(attribute) or ['avatar_file_size'].include?(attribute) or ['avatar_updated_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
         
         UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_PROFILE)
       end

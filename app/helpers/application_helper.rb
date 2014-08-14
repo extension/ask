@@ -154,22 +154,12 @@ module ApplicationHelper
       changed_from = values[0]
       changed_to = values[1]
       case attribute
-      when 'position_id'
-        display_attribute = 'position'
-        display_from = blank_or_value(changed_from,'Position')
-        display_to = blank_or_value(changed_to,'Position')
-      when 'county_id'
-        display_attribute = 'county'
-        display_from = blank_or_value(changed_from,'County')
-        display_to = blank_or_value(changed_to,'County')
-      when 'location_id'
-        display_attribute = 'location'
-        display_from = blank_or_value(changed_from,'Location')
-        display_to = blank_or_value(changed_to,'Location')        
-      when 'institution_id'
-        display_attribute = 'institution'
-        display_from = blank_or_value(changed_from,'Community')
-        display_to = blank_or_value(changed_to,'Community')
+      when 'avatar_file_name'
+        avatar_action = (changed_from.blank?) ? "added" : "deleted"
+        return_text_lines << "avatar image #{avatar_action}"
+        break
+      when 'public_name'
+        display_attribute = 'public name'
       else
         display_attribute = attribute
         display_from = blank_or_value(changed_from)
