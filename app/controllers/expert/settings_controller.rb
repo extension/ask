@@ -22,15 +22,14 @@ class Expert::SettingsController < ApplicationController
       if params[:delete_avatar] && params[:delete_avatar] == "1"
         @user.avatar = nil
       end
-
-      if @user.bio_changed?
-        change_hash = Hash.new
-        change_hash[:bio] = {:old => @user.bio_was, :new => @user.bio}
-        UserEvent.log_generic_user_event(@user, current_user, change_hash, UserEvent::UPDATED_DESCRIPTION)
+      
+      if @user.update_attributes(params[:person])
+        what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
+        
+        UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_PROFILE)
       end
-
       if @user.save
-        redirect_to(expert_profile_settings_path(@user.id), :notice => 'Profile was successfully updated.')
+        redirect_to(expert_user_path(@user.id), :notice => 'Profile was successfully updated.')
       else
         render :action => 'profile'
       end

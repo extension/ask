@@ -22,6 +22,23 @@
         <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Added <span class="label label-default label-geography"><%= value[:new] %></span> to <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
       <% when UserEvent::REMOVED_LOCATION, UserEvent::REMOVED_COUNTY %> 
         <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Deleted <span class="label label-default label-geography label-strike"><%= value[:old] %></span> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      <%- when UserEvent::UPDATED_PROFILE -%>
+        <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Edited their profile 
+          <%= link_to("(details)".html_safe, 
+            '#',
+            id: "detailstoggler_#{event.id}", 
+            data: {toggle: 'collapse', target: "#showdetails_#{event.id}"}) %>
+        <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
+      
+          <div id="showdetails_<%= event.id %>" class="collapse">
+            <ul class='unstyled'>
+              <%- profile_changes(event.updated_user_attributes[:what_changed]).each do |change| -%>
+
+                <li><%= change %></li>
+              <%- end -%>
+            </ul>
+          </div>
+
       <% else %>
         <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Changed <strong><%= key.to_s.gsub('_', ' ').capitalize %></strong> from '<strong><%= value[:old] %></strong>' to '<strong><%= value[:new] %></strong>' <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small><p>
       <% end %>
