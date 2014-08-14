@@ -96,6 +96,13 @@ class Expert::SettingsController < ApplicationController
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
 
     if request.put?
+      @user.attributes = params[:user]
+      
+      if @user.update_attributes(params[:person])
+        what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
+        UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_ANSWERING_PREFS)
+      end
+      
       vacation_changed = false
       @user.attributes = params[:user]
       # log changes in expert history

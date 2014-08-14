@@ -153,17 +153,25 @@ module ApplicationHelper
     changes.each do |attribute,values|
       changed_from = values[0]
       changed_to = values[1]
+      display_from = blank_or_value(changed_from)
+      display_to = blank_or_value(changed_to)
       case attribute
       when 'avatar_file_name'
         avatar_action = (changed_from.blank?) ? "added" : "deleted"
         return_text_lines << "avatar image #{avatar_action}"
         break
+      when 'routing_instructions'
+        display_attribute = 'automatic assignments'
+      when 'away'
+        away_action = (changed_from.blank?) ? '<span class="label label-default">away</span>' : '<span class="label label-success">available</span>'
+        return_text_lines << "switched vacation status to #{away_action}".html_safe
+        break
       when 'public_name'
         display_attribute = 'public name'
+      when 'auto_route'
+        display_attribute = 'automatically assign questions submitted to my groups'
       else
         display_attribute = attribute
-        display_from = blank_or_value(changed_from)
-        display_to = blank_or_value(changed_to)        
       end
 
       return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
