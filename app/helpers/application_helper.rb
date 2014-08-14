@@ -156,20 +156,20 @@ module ApplicationHelper
       case attribute
       when 'position_id'
         display_attribute = 'position'
-        display_from = blank_or_name(changed_from,'Position')
-        display_to = blank_or_name(changed_to,'Position')
+        display_from = blank_or_value(changed_from,'Position')
+        display_to = blank_or_value(changed_to,'Position')
       when 'county_id'
         display_attribute = 'county'
-        display_from = blank_or_name(changed_from,'County')
-        display_to = blank_or_name(changed_to,'County')
+        display_from = blank_or_value(changed_from,'County')
+        display_to = blank_or_value(changed_to,'County')
       when 'location_id'
         display_attribute = 'location'
-        display_from = blank_or_name(changed_from,'Location')
-        display_to = blank_or_name(changed_to,'Location')        
+        display_from = blank_or_value(changed_from,'Location')
+        display_to = blank_or_value(changed_to,'Location')        
       when 'institution_id'
         display_attribute = 'institution'
-        display_from = blank_or_name(changed_from,'Community')
-        display_to = blank_or_name(changed_to,'Community')
+        display_from = blank_or_value(changed_from,'Community')
+        display_to = blank_or_value(changed_to,'Community')
       else
         display_attribute = attribute
         display_from = blank_or_value(changed_from)
