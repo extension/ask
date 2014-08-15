@@ -169,7 +169,9 @@ module ApplicationHelper
       when 'public_name'
         display_attribute = 'public name'
       when 'auto_route'
-        display_attribute = 'automatically assign questions submitted to my groups'
+        away_action = (changed_from.blank?) ? '<span class="label label-default">disabled</span>' : '<span class="label label-success">enabled</span>'
+        return_text_lines << "\"automatically assign questions submitted to my groups\" option #{away_action}".html_safe
+        break
       else
         display_attribute = attribute
       end
