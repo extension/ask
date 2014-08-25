@@ -25,8 +25,9 @@ class Expert::SettingsController < ApplicationController
       
       if @user.update_attributes(params[:person])
         what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or ['avatar_content_type'].include?(attribute) or ['avatar_file_size'].include?(attribute) or ['avatar_updated_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
-        
-        UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_PROFILE)
+        if !what_changed.blank?
+          UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_PROFILE)
+        end
       end
       if @user.save
         redirect_to(expert_user_path(@user.id), :notice => 'Profile was successfully updated.')
@@ -100,7 +101,9 @@ class Expert::SettingsController < ApplicationController
       
       if @user.update_attributes(params[:person])
         what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or ['vacated_aae_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
-        UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_ANSWERING_PREFS)
+        if !what_changed.blank?
+          UserEvent.log_generic_user_event(@user, current_user, what_changed, UserEvent::UPDATED_ANSWERING_PREFS)
+        end
       end
       
       vacation_changed = false
