@@ -159,24 +159,22 @@ module ApplicationHelper
       when 'avatar_file_name'
         avatar_action = (changed_from.blank?) ? "added" : "deleted"
         return_text_lines << "avatar image #{avatar_action}"
-        break
       when 'routing_instructions'
         display_attribute = 'automatic assignments'
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
       when 'away'
         away_action = (changed_from.blank?) ? '<span class="label label-default">away</span>' : '<span class="label label-success">available</span>'
         return_text_lines << "switched vacation status to #{away_action}".html_safe
-        break
       when 'public_name'
         display_attribute = 'public name'
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
       when 'auto_route'
         away_action = (changed_from.blank?) ? '<span class="label label-default">disabled</span>' : '<span class="label label-success">enabled</span>'
         return_text_lines << "#{away_action} \"automatically assign questions submitted to my groups\" option".html_safe
-        break
       else
         display_attribute = attribute
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
       end
-
-      return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
     end
     return_text_lines
   end
