@@ -1,4 +1,4 @@
-<h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+<h1><%= link_to @user.name, expert_user_path(@user.id) %></h1>
 
 <h2>Answering Preferences</h2>
 
@@ -19,8 +19,8 @@
       <p>
         <label>
           <%= f.check_box :away %>
-          Mark me as away (on vacation, unavailable, inactive, etc.)
-          <span>(When your "away status" is turned on, AaE questions cannot be assigned to you.)</span>
+          Mark as away (on vacation, unavailable, inactive, etc.)
+          <span>(When the "away status" is turned on, questions cannot be assigned.)</span>
         </label>
       </p>
       </div>
@@ -29,13 +29,19 @@
   
   <fieldset>
     <div>
-      <h3>Automatic assignments</h3>
-      <p>All automatic assignments come through Groups. If you don't belong to a Group, you won't receive any automatic assignments.</p>
+      
       <div class="user_assignment_prefs">
+        <h3>Automatic assignments</h3>
+        
+        <p>Automatic assignments are routed through groups. Experts who don't belong to a group won't receive any automatic assignments.</p>
         <p>
           <label>
             <%= f.check_box :auto_route %>
-            Questions submitted to my Groups can be automatically assigned to me.
+            <% if current_user.id == @user.id %>
+            My groups may automatically assign questions to me.
+            <% else %>
+            Joined groups may automatically assign questions to this expert.
+            <% end %>
             <span>(note: for some groups, instead of automatic assignments, leaders make assignments or members pick questions.)</span>
           </label>
         </p>
@@ -43,20 +49,20 @@
         
         <div class="checkbox">
           <label><%= f.radio_button :routing_instructions, 'anywhere' %>
-          My groups can assign me a question from anywhere</label>
+          Question can come from anywhere</label>
         </div>
         
         <div class="checkbox">
         <label>
           <%= f.radio_button :routing_instructions, 'locations_only' %>
-          Group questions must match my states
+          Questions must match states
         </label>
         </div>
         
         <div class="checkbox">
         <label>
           <%= f.radio_button :routing_instructions, 'counties_only' %>
-          Group questions must match my counties
+          Questions must match counties
         </label>
         </div>
 
@@ -65,7 +71,7 @@
     
     <h3>Email Signature</h3>
     <div class="form-group">
-      <%= label :signature, 'Added to your response when answering incoming questions. You can edit this on a per-response basis.' %>
+      <%= label :signature, 'Default signature added to responses. May be edited on a per-response basis.' %>
       <%= f.text_area :signature, "rows" => 3, class: 'wysiwyg form-control' %>
     </div>
     
