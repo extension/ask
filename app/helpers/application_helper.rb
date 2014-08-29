@@ -140,6 +140,52 @@ module ApplicationHelper
     return return_string
   end
   
+  def navtab(tabtext,whereto)
+    if current_page?(whereto)
+      "<li class='active'>#{link_to(tabtext,whereto)}</li>".html_safe
+    else
+      "<li>#{link_to(tabtext,whereto)}</li>".html_safe
+    end
+  end
+  
+  def profile_changes(changes)
+    return_text_lines = []
+    changes.each do |attribute,values|
+      changed_from = values[0]
+      changed_to = values[1]
+      display_from = blank_or_value(changed_from)
+      display_to = blank_or_value(changed_to)
+      case attribute
+      when 'avatar_file_name'
+        avatar_action = (changed_from.blank?) ? "added" : "deleted"
+        return_text_lines << "avatar image #{avatar_action}"
+      when 'routing_instructions'
+        display_attribute = 'automatic assignments'
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
+      when 'away'
+        away_action = (changed_from.blank?) ? '<span class="label label-default">away</span>' : '<span class="label label-success">available</span>'
+        return_text_lines << "switched vacation status to #{away_action}".html_safe
+      when 'public_name'
+        display_attribute = 'public name'
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
+      when 'auto_route'
+        away_action = (changed_from.blank?) ? '<span class="label label-default">disabled</span>' : '<span class="label label-success">enabled</span>'
+        return_text_lines << "#{away_action} \"automatically assign questions submitted to my groups\" option".html_safe
+      else
+        display_attribute = attribute
+        return_text_lines << "#{display_attribute} changed from \"#{display_from}\" to \"#{display_to}\""
+      end
+    end
+    return_text_lines
+  end
+  
+  def blank_or_value(value)
+    if(value.blank?)
+      '(blank)'
+    else
+      value
+    end
+  end
   private 
   
   def get_question_filter_params(question_filter_settings)

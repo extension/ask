@@ -1,7 +1,7 @@
 <div id="location_list">
   
   <% if @user.location %>
-    <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_settings_profile_path(), :class => "downplay" %><% end %>
+    <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_profile_settings_path(@user), :class => "downplay" %><% end %>
     <p><% if @user.county %>
       <span class="tag tag-geography"><%= link_to @user.county.name, expert_view_county_path(@user.county.id) %></span>
       <% end %>

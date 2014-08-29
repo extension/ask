@@ -1,0 +1,13 @@
+<h1><%= link_to @user.name, expert_user_path(@user.id) %></h1>
+
+<h2>Location Preferences</h2>
+
+<%= render :partial => 'expert/settings/settings_navigation' %>
+
+<div class="explanation">
+  <p><strong>These locations are used for automated assignments.</strong> To limit questions to these locations, choose that option in <%= link_to 'Answering preferences', expert_assignment_settings_path(@user) %>.</p>
+</div>
+
+<div id="loc_wrapper" class="user" data-object="user" data-id="<%= @user.id %>">
+  <%= render :partial => 'ajax/location_picker' %>
+</div>

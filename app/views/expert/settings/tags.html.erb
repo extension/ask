@@ -1,23 +1,27 @@
-<h1><%= link_to @user.name, expert_user_path(current_user.id) %></h1>
+<h1><%= link_to @user.name, expert_user_path(@user.id) %></h1>
 
-<h2>Settings > Tags</h2>
+<h2>Tag Preferences</h2>
 
 <%= render :partial => 'expert/settings/settings_navigation' %>
 
 <div class="explanation">
   <div class="bigtag"></div>
-  <h3>Your tags tell others what kind of questions you want to answer.</h3>
+  <% if current_user.id == @user.id %>
+  <h3>Tags indicate what kind of questions you want to answer.</h3>
+  <% else %>
+  <h3>Tags indicate what kind of questions <%= @user.first_name %> wants to answer.</h3>
+  <% end %>
   <p>Specifically, tags are used to make matches when reassigning questions. In addition to general terms (<span class="tag tag-topic"><%= link_to "horticulture", expert_home_tags_path("horticulture") %></span> or <span class="tag tag-topic"><%= link_to "apples", expert_home_tags_path("apples") %></span>), it's a great idea to include tags that are specific and granular (<span class="tag tag-topic"><%= link_to "spiders", expert_home_tags_path("spiders") %></span>, <span class="tag tag-topic"><%= link_to "4H", expert_home_tags_path("4H") %></span> or <span class="tag tag-topic"><%= link_to "tomatoes", expert_home_tags_path("tomatoes") %></span>)</p>
   <br class="clearing" />
 </div>
 
 <div class="formy">
-  <h2>Add Tags to Your Profile</h2>
+  <h2>Add Tags</h2>
   <h3>It's easy! Just type and select a tag.</h3>
-  <div class="ui-widget">
-  	<input id="tag_picker" placeholder="Type and select a tag" />
+  <div class="ui-widget col-lg-3 col-md-4 col-sm-6">
+  	<input id="tag_picker" class="form-control" placeholder="Type and select a tag..." />
   </div>
-
+  <br class="clearing" />
 
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @user.tags.size > 0 %>
