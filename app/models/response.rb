@@ -9,7 +9,7 @@ class Response < ActiveRecord::Base
   # subclasses
   class Response::Image < Asset
     has_attached_file :attachment,
-                      :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension",
+                      :url => "/public/uploads/:class/:attachment/:id_partition/:basename_:style.:extension",
                       :styles => Proc.new { |attachment| attachment.instance.styles }
                         attr_accessible :attachment
     # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
