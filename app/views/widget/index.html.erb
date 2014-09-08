@@ -71,6 +71,9 @@
 
     <p>
       <label for="question">Question
+        <% if @group.is_australian? %>
+          (Please include your location: region or town)
+        <% end %>
       <%= f.text_area :body, :rows => 4  %>
       </label>
     </p>
