@@ -180,7 +180,6 @@ class Expert::UsersController < ApplicationController
       end
       pref.save
     end
-    # @recent_questions = questions_based_on_pref_filter(pref)
   end
   
   def save_notification_prefs
