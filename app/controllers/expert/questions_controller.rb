@@ -13,7 +13,7 @@ class Expert::QuestionsController < ApplicationController
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
-    @recent_questions = questions_based_on_pref_filter
+    @recent_questions = filtered_questions
   end
   
   def show
