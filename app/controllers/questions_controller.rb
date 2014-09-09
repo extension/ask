@@ -11,11 +11,7 @@ class QuestionsController < ApplicationController
   before_filter :set_format, :only => [:show, :submitter_view]
   
   def index
-    if current_user
-      @recent_questions = questions_based_on_pref_filter(current_user.filter_preference).public_visible
-    else
-      @recent_questions = questions_based_on_pref_filter(nil).public_visible
-    end
+    @recent_questions = questions_based_on_pref_filter().public_visible
   end
   
   def show

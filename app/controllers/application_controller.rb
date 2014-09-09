@@ -120,7 +120,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def questions_based_on_pref_filter(filter_pref)
+  def questions_based_on_pref_filter()
 
     condition_array = Array.new
     filter_description_array = Array.new
