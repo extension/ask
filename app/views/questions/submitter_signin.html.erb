@@ -11,8 +11,8 @@
 
 <div class="col-md-12">
   <div class="well">
-  <h1>This question is not public</h1>
-  <p>If you submitted this question, you can view and edit it after confirming your email address.</p>
+    <h1>View your question</h1>
+    <p>If you submitted this question, you can view (and edit) it after confirming your email address.</p>
 
   <%= form_tag(authorize_submitter_path(:fingerprint => @question.question_fingerprint), :class => "") do %>
     <fieldset>
@@ -26,6 +26,23 @@
       <%= submit_tag 'View question', :class => "submit",:class => "btn btn-primary btn-lg"  %>
     </fieldset>
   <% end %>
+  
+    
+      <div class="help-faq">
+        <div class="help-faq-question">
+          <h4>Why do I have to provide my email address to view my question?</h4>
+          <p>We verify that your email matches the email used to submit the question in order to protect the privacy of your question.</p>
+        </div>
+        
+        <% if !@question.is_private %>
+        <div class="help-faq-question">
+          <h4>But I what if I checked the option to "make my question public" when I submitted it?</h4>
+          <p>Since your question is public, so you can just <%= link_to "view it", question_path(@question.id), :class => "" -%>, but you won't be able to edit it unless you confirm email above.</p>
+        </div>
+        <% end %>
+      </div>
+    
+    
   </div>
 </div>
 
