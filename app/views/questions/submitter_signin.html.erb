@@ -37,7 +37,7 @@
         <% if !@question.is_private %>
         <div class="help-faq-question">
           <h4>But what if I checked the option to "make my question public" when I submitted it?</h4>
-          <p>Since your question is public, so you can just <%= link_to "view it", question_path(@question.id), :class => "" -%>, but you won't be able to edit it unless you confirm your email above.</p>
+          <p>Since your question is public, you can just <%= link_to "view it", question_path(@question.id), :class => "" -%>, but you won't be able to edit it unless you confirm your email above.</p>
         </div>
         <% end %>
       </div>
