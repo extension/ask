@@ -17,6 +17,7 @@ class Expert::QuestionsController < ApplicationController
   end
   
   def show
+    @show_comment_edit_options = true
     @question = Question.find_by_id(params[:id])
     if @question.blank?
       flash[:error] = "Question not found."
