@@ -60,19 +60,17 @@ class CommentsController < ApplicationController
   def destroy
     @comment = Comment.find(params[:id])
     
-    if @comment.user_id == current_user.id
-      if @comment.persisted?
-        @comment_id = @comment.id
-        if !@comment.destroy
-          @errors = @comment.errors.full_messages.to_sentence
-        end
-      else
-        return render :nothing => true
+    if @comment.persisted?
+      @comment_id = @comment.id
+      if !@comment.destroy
+        @errors = @comment.errors.full_messages.to_sentence
       end
-    
-      respond_to do |format|
-        format.js
-      end
+    else
+      return render :nothing => true
+    end
+  
+    respond_to do |format|
+      format.js
     end
   end
   
