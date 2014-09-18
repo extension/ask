@@ -5,11 +5,17 @@
 <h1><%= @page_title %> <%= link_to "Cancel", expert_question_path(@question.id), :class => "btn btn-default" %></h1>
 
 <div class="bekind">
-  <h3>Please don't close questions that can be answered.</h3>
-  <p>If no one can answer this question within Ask an Expert, you could use the <%= link_to "canned response answer option", expert_question_path(@question, :anchor => "answer_form", :canned_response => true) %> to suggest contacting their local office.</p>
+  <h3>Please don't close valid questions that could be answered.</h3>
+  <p>If no one can answer this question within Ask an Expert, use the <%= link_to "canned response answer option", expert_question_path(@question, :anchor => "answer_form", :canned_response => true) %> to suggest contacting their local office.</p>
+  
+  <h3>What does closing a question mean?</h3>
+  <p>Closing a question means the submitter doesn't need an additional response, and the question is considered answered. The most common reason to close a question is when the submitter sends a "thank you" reply.</p>
+  
+  <h3>What do I do about spam, inappropriate content or duplicate questions?</h3>
+  <p>Use the <%= link_to raw("reject"), reject_expert_question_path(@question.id) %> option instead.</p>
 </div>
 
-<h4><strong>Note:</strong> No information is sent to the question submitter when a question is closed.</h4>
+<div class="alert alert-warning"><h4><strong>Note:</strong> No information is sent to the question submitter when a question is closed.</h4></div>
 
 
 <%= form_tag close_out_expert_question_path(@question.id) do %>
