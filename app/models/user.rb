@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
 
   # constants
   DEFAULT_TIMEZONE = 'America/New_York'
-  DEFAULT_NAME = '"No name provided"'
+  DEFAULT_NAME = '"Anonymous"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
   EMAIL_VALIDATION_REGEX = Regexp.new('\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z',Regexp::IGNORECASE)
 

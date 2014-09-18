@@ -159,7 +159,7 @@
             <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to response.resolver.name, expert_user_path(response.resolver_id) %>
           <% end %>
         <% else %>
-          <p>Anonymous Guest</p>
+          <p><%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %></p>
         <% end %>
         <p><small>Posted <%= time_ago_in_words(response.created_at) %> ago</small></p>
         <p><%= link_to 'edit', edit_response_expert_question_path(:id => @question.id, :response_id => response.id) %> | <%= link_to 'revision history', response_history_expert_question_path(:id => @question.id, :response_id => response.id) %></p>
