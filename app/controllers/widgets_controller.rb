@@ -4,13 +4,13 @@ class WidgetsController < ApplicationController
     @limit = 3
     @locations = Location.order('fipsid ASC')
     @widget_key = "aae-qw-XXXX"
-    @widget_url = questions_url + ".js?widget_key=" + @widget_key
+    @widget_url = widgets_questions_url + ".js?widget_key=" + @widget_key
   end
   
   def generate_widget
     # create a unique ID for the widget div
     @widget_key = "aae-qw-" + SecureRandom.hex(4)
-    @widget_url = questions_url + ".js?" + params[:widget_params]
+    @widget_url = widgets_questions_url + ".js?" + params[:widget_params]
     respond_to do |format|
       format.js {render :generate_widget}
     end
