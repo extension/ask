@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
 
   # constants
   DEFAULT_TIMEZONE = 'America/New_York'
-  DEFAULT_NAME = '"No name provided"'
+  DEFAULT_NAME = '"Anonymous"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
   EMAIL_VALIDATION_REGEX = Regexp.new('\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z',Regexp::IGNORECASE)
 
@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   has_many :resolved_responses, :class_name => "Response", :foreign_key => "resolver_id"
   belongs_to :location
   belongs_to :county
-  has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/system/files/:class/:attachment/:id_partition/:basename_:style.:extension"
+  has_attached_file :avatar, :styles => { :medium => "100x100#", :thumb => "40x40#", :mini => "20x20#" }, :url => "/uploads/:class/:attachment/:id_partition/:basename_:style.:extension"
 
 
   # scopes
@@ -698,7 +698,7 @@ class User < ActiveRecord::Base
         u.save
       end
     end
-  end        
+  end
 
 
   private

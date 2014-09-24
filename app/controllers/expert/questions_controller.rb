@@ -13,10 +13,11 @@ class Expert::QuestionsController < ApplicationController
     @locations = Location.order('fipsid ASC')
     @my_groups = current_user.group_memberships
     @my_tags = current_user.tags
-    @recent_questions = questions_based_on_pref_filter(current_user.filter_preference)
+    @recent_questions = filtered_questions
   end
   
   def show
+    @show_comment_edit_options = true
     @question = Question.find_by_id(params[:id])
     if @question.blank?
       flash[:error] = "Question not found."

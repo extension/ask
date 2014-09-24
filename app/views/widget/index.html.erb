@@ -71,6 +71,9 @@
 
     <p>
       <label for="question">Question
+        <% if @group.is_australian? %>
+          (Please include your location: region or town)
+        <% end %>
       <%= f.text_area :body, :rows => 4  %>
       </label>
     </p>
@@ -135,11 +138,9 @@
      <% end %>
      
      <% if @group.is_australian? %>
-      <fieldset>
        <p>
          <label><input type="checkbox" id="policy-content" class="checkbox" value="consent"> I consent to any personal information which I submit in this form being disclosed and stored as detailed below</label>
        </p>
-       </fieldset>
      <% end %>
      
      <%- if current_user and current_user.email.present? -%>

@@ -13,7 +13,7 @@
       <p><strong><%= current_user.public_name %></strong></p>
     <% end %>
 
-    <%= f.text_area :content, cols: 20, rows: 5, class: "wysihtml5" %>
+    <%= f.text_area :content, cols: 20, rows: 5, class: "form-control required wysihtml5" %>
 
     <% if @comment.ancestry.present? %>
       <%= hidden_field_tag 'parent_comment_id', @comment.ancestry %>
