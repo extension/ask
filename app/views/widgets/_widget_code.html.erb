@@ -1,0 +1,16 @@
+<!-- Ask an Expert -->
+<script type="text/javascript">
+  (function() {
+    function async_load(){
+      var aae = document.createElement('script'); aae.type = 'text/javascript'; aae.async = true;
+      aae.src = "<%= @widget_url %>";
+      var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(aae, s);
+    }
+    if (window.attachEvent)
+      window.attachEvent('onload', async_load);
+    else
+      window.addEventListener('load', async_load, false);  
+  })();
+</script>
+<div id="<%= @widget_key %>"></div>
+<!-- End Ask an Expert -->

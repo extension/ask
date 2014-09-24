@@ -3,17 +3,44 @@
 <p>Display a list of answered questions by group, location or tag</p>
 
 <div class="alert alert-warning" role="alert">This widget builder/documentation page is in progress and should not be publicized. It does not currently contain a widget builder, but widgets may be manually constructed.</div>
-
-<div class="aae-question-widget-container">
-<script type="text/javascript"
-src="<%= request.protocol + request.host_with_port %>/widgets/answered.js?location=37"></script>
 </div>
+
+<div class="col-md-6">
+  <div class="well">
+  <%= form_tag( {}, {:id => "widget_form"}) do %>
+    <%= hidden_field_tag 'widget_key', @widget_key %>
+    <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "input-mini" %></label></p>
+    <p><label>Width: <%= text_field_tag :width, @width, :size => 3, :class => "input-mini" %></label> (you can override this width with css)</p>
+    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "input-mini" %></label></p>
+  
+    <p>
+      <select id="location" name="location">
+        <option value="">Location</option>
+        <% @locations.each do |l| %>
+          <option value="<%= l.id %>"><%= l.name %></option>
+          <% end %>
+      </select>
+    </p>  
+    
+    <div id="county_selector"></div>
+    <p><label>Tags <%= text_field_tag :tags, @tags, :size => 3, :class => "" %></label></p>
+    <p style="display:none;">operator <%= text_field_tag :operator, @operator, :size => 3, :class => "input-mini" %></label></p>
+
+    <p><span id="submit-widget" class="btn btn-primary btn-large">Generate Widget</span></p>
+  <% end %>
+  </div>
+</div>
+<div class="col-md-6">
+  <div id="example-widget">
+    <%= render(:partial => 'example_widget') %>
+  </div>
+</div>
+<div class="col-md-12">
 
 <h2>Widget Code</h2>
 <p>Embed an Ask widget on your own web page using the following code snippet:</p>
-<div id="widgetcode">
-<textarea class="form-control"><script type="text/javascript" src="https://ask.extension.org/widgets/answered.js?location=37&limit=6"></script></textarea>
-</div>
+<div id="widget-code"><textarea></textarea></div>
+
 
 <h2>Widget behavior and styling</h2>
 <p>By default, five questions are returned. This can be changed with the limit parameter (i.e. limit=3). The widget markup contains css hooks to make it easier to hide or display different sections including:</p>
@@ -37,14 +64,76 @@ src="<%= request.protocol + request.host_with_port %>/widgets/answered.js?locati
   .aae_qw a:hover {text-decoration:none;}
 </pre>
 
-<style type="text/css" media="screen">
-  .aae-question-widget-container {margin:1em;}
-  .aae_qw {background:#fff; padding:20px; width:300px; border:2px solid #ccc; margin:0 0 20px;}
-  .aae_qw_subhead {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
-  .aae_qw ul {margin:0; padding:0;}
-  .aae_qw li {margin: 0 0 10px; line-height:1em;}
-  .aae_qw_view_response {font-size:12px; color:#999;}
-  .aae_qw_see_more {display:block !important; font-size:12px; color:#999;}
-  .aae_qw a:hover {text-decoration:none;}
-</style>
+
 </div>
+
+
+
+<script class="code" type="text/javascript">
+  // get the selected location
+  $('#location').change(function() {
+    $("select#location option:selected").each(function () {
+      loc_id = $(this).val()
+    });
+    showCounties(loc_id);
+  });
+   
+  var showCounties = function(locationID) {
+    $.getJSON( "/ajax/counties", {
+      location_id: locationID
+      })
+      .done(function( data ) {
+        var items = [];
+          $.each( data, function( key, val ) {
+            items.push( "<option value='" + val.id + "'>" + val.name + "</option>" );
+          });          
+          $("#county_selector").html("<select id='county' name='county'><option value=''>County</option>"+items.join( "" )+"</select>");
+      });
+   }
+
+  $('#submit-widget').click(function() {
+    generate_widget();
+  });
+  
+  $('#widget_form').keypress(function(e) {
+    if (e.keyCode === 13) {
+      generate_widget();
+    }
+  });
+
+  function generate_widget() {
+	  $.ajax({
+      type: "POST",
+      url: "<%= widgets_questions_path() %>",
+      cache: false,
+      data: $('#widget_form').serialize()
+    })
+    .done(function(data) {
+      generate_widget_snippet();
+    })
+    .fail(function() {
+      alert("problem generating widget");
+    })
+	}
+	
+	function generate_widget_snippet() {
+	  widgetKey = $('#aae_qw').attr("data-widget-key");
+    widgetParams = $('#aae_qw').attr("data-widget-params");
+      $.ajax({
+        type: "POST",
+        url: "<%= widgets_generate_widget_path() %>",
+        data: {widget_key: widgetKey, widget_params: widgetParams},
+        cache: false
+      })
+      .done(function(data) {
+      })
+      .fail(function() {
+        alert("problem generating widget snippet");
+      })
+	}
+	
+  
+  $(window).bind("load", function() {
+    // generate_widget_snippet();
+  });
+</script>
