@@ -1,11 +1,9 @@
 <div class="col-md-12">
-<h1>Ask an Expert Question Widgets</h1>
-<p>Display a list of answered questions by group, location or tag</p>
-
-<div class="alert alert-warning" role="alert">This widget builder/documentation page is in progress and should not be publicized. It does not currently contain a widget builder, but widgets may be manually constructed.</div>
-</div>
+<h1>Question Widgets</h1>
 
 <div class="col-md-6">
+  <h2>Build a Custom Widget</h2>
+  <p>Display a list of answered questions by group, location or tag</p>
   <div class="well">
   <%= form_tag( {}, {:id => "widget_form"}) do %>
     <%= hidden_field_tag 'widget_key', @widget_key %>
@@ -30,6 +28,7 @@
   <% end %>
   </div>
 </div>
+
 <div class="col-md-6">
   <div id="example-widget">
     <%= render(:partial => 'example_widget') %>
@@ -37,13 +36,13 @@
 </div>
 <div class="col-md-12">
 
-<h2>Widget Code</h2>
-<p>Embed an Ask widget on your own web page using the following code snippet:</p>
+<h2>Widget Code Snippet</h2>
+<p>Embed the Ask question above widget on your own web page using the following code snippet:</p>
 <div id="widget-code"><textarea></textarea></div>
 
 
 <h2>Widget behavior and styling</h2>
-<p>By default, five questions are returned. This can be changed with the limit parameter (i.e. limit=3). The widget markup contains css hooks to make it easier to hide or display different sections including:</p>
+<p>By default, five questions are returned. The widget markup contains css hooks to make it easier to hide or display different sections including:</p>
 <ul class="list-group">
   <li class="list-group-item">.aae_qw</li>
   <li class="list-group-item">.aae_qw_subhead</li>
