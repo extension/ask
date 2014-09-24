@@ -3,13 +3,12 @@ class WidgetsController < ApplicationController
   def index
     @limit = 3
     @locations = Location.order('fipsid ASC')
-    @widget_key = "aae-qw-XXXX"
-    @widget_url = widgets_questions_url + ".js?widget_key=" + @widget_key
+    # create a unique widget div ID to use as a hook
+    @widget_key = "aae-qw-" + SecureRandom.hex(4)
   end
   
   def generate_widget
-    # create a unique ID for the widget div
-    @widget_key = "aae-qw-" + SecureRandom.hex(4)
+    @widget_key = params[:widget_key]
     @widget_url = widgets_questions_url + ".js?" + params[:widget_params]
     respond_to do |format|
       format.js {render :generate_widget}
@@ -145,8 +144,8 @@ class WidgetsController < ApplicationController
       question_limit = 5
     else
       question_limit = params[:limit].to_i
+      new_params << "limit=#{question_limit}"
     end
-    new_params << "limit=#{question_limit}"
     
     if params[:width].blank? || params[:width].to_i <= 0
       # @width = 300
@@ -183,10 +182,10 @@ class WidgetsController < ApplicationController
     @title = "eXtension Latest Answered Questions"
     
     
-    if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
+    if params[:group].present? && params[:group].to_i > 0 && group = Group.find_by_id(params[:group])
       question_group_scope = Question.from_group(group.id)
       @title += " from #{group.name}"
-      new_params << "group_id=#{group.id}"
+      new_params << "group=#{group.id}"
     else
       question_group_scope = Question.where({})
     end
@@ -194,13 +193,13 @@ class WidgetsController < ApplicationController
     if params[:location].present? && params[:location].to_i > 0 && location = Location.find_by_id(params[:location])
       question_group_scope = question_group_scope.by_location(location)
       @title += " from #{location.name}"
-      new_params << "location_id=#{location.id}"
+      new_params << "location=#{location.id}"
     end
     
     if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
       question_group_scope = question_group_scope.by_county(county)
       @title += " from #{county.name}"
-      new_params << "county_id=#{county.id}"
+      new_params << "county=#{county.id}"
     end
     
     if params[:tags].present?
@@ -213,6 +212,7 @@ class WidgetsController < ApplicationController
       elsif params[:operator].blank? || params[:operator].downcase != 'and'
         @question_list = question_group_scope.public_visible_answered.tagged_with_any(@tag_list).order('COUNT(questions.id) DESC, resolved_at DESC').limit(question_limit)
       end
+      new_params << "tags=#{params[:tags]}"
     else
       @question_list = question_group_scope.public_visible_answered.order('resolved_at DESC').limit(question_limit)
     end
@@ -224,7 +224,6 @@ class WidgetsController < ApplicationController
     end
     
     @path_to_questions = questions_url + "?" + new_params.join("&")
-    @widget_url = questions_url + ".js?" + new_params.join("&")
     @widget_params = new_params.join("&")
     
     respond_to do |format|
