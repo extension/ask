@@ -1,21 +1,4 @@
 <h3>This is the example widget:</h3>
 <div class="aae-question-widget-container">
-  
-  <!-- Ask an Expert -->
-  <script type="text/javascript">
-    (function() {
-      function async_load(){
-        var aae = document.createElement('script'); aae.type = 'text/javascript'; aae.async = true;
-        aae.src = "<%= request.protocol + request.host_with_port %>/widgets/questions.js?widget_key=<%= @widget_key %>";
-        var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(aae, s);
-      }
-      if (window.attachEvent)
-        window.attachEvent('onload', async_load);
-      else
-        window.addEventListener('load', async_load, false);
-    })();
-  </script>
-  <div id="<%= @widget_key %>"></div>
-  <!-- End Ask an Expert -->
-  
+  <div id="<%= @widget_key %>"></div>  
 </div>

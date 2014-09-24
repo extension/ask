@@ -1,7 +1,7 @@
 class WidgetsController < ApplicationController
   
   def index
-    @limit = 5
+    @limit = 3
     @locations = Location.order('fipsid ASC')
     @widget_key = "aae-qw-XXXX"
     @widget_url = questions_url + ".js?widget_key=" + @widget_key
@@ -149,11 +149,12 @@ class WidgetsController < ApplicationController
     new_params << "limit=#{question_limit}"
     
     if params[:width].blank? || params[:width].to_i <= 0
-      @width = 300
+      # @width = 300
     else
       @width = params[:width].to_i
+      new_params << "width=#{@width}"
     end
-    new_params << "width=#{@width}"
+    
     
     if request.format == Mime::JS
       # logging of widget use

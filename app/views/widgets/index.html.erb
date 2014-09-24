@@ -10,7 +10,7 @@
   <%= form_tag( {}, {:id => "widget_form"}) do %>
     <%= hidden_field_tag 'widget_key', @widget_key %>
     <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "input-mini" %></label></p>
-    <p><label>Width: <%= text_field_tag :width, @width, :size => 3, :class => "input-mini" %></label> (you can override this width with css)</p>
+    <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "input-mini" %></label> (leave blank for auto/100%)</p>
     <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "input-mini" %></label></p>
   
     <p>
@@ -134,6 +134,6 @@
 	
   
   $(window).bind("load", function() {
-    // generate_widget_snippet();
+    generate_widget();
   });
 </script>
