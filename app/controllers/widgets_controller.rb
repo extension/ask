@@ -179,8 +179,7 @@ class WidgetsController < ApplicationController
       ##### End of Widget Logging
     end
     
-    @title = "eXtension Latest Answered Questions"
-    
+    @title = ""
     
     if params[:group].present? && params[:group].to_i > 0 && group = Group.find_by_id(params[:group])
       question_group_scope = Question.from_group(group.id)
@@ -192,19 +191,20 @@ class WidgetsController < ApplicationController
     
     if params[:location].present? && params[:location].to_i > 0 && location = Location.find_by_id(params[:location])
       question_group_scope = question_group_scope.by_location(location)
-      @title += " from #{location.name}"
       new_params << "location=#{location.id}"
-    end
-    
-    if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
-      question_group_scope = question_group_scope.by_county(county)
-      @title += " from #{county.name}"
-      new_params << "county=#{county.id}"
+      
+      if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
+        question_group_scope = question_group_scope.by_county(county)
+        @title += " from #{county.name}, #{location.name}"
+        new_params << "county=#{county.id}"
+      else
+        @title += " from #{location.name}"
+      end
     end
     
     if params[:tags].present?
       @tag_list = params[:tags].split(',')
-      @title += " in #{@tag_list.join(',')}"
+      @title += " tagged #{@tag_list.join(',')}"
       if params[:operator].present?
         if params[:operator].downcase == 'and'
           @question_list = question_group_scope.public_visible_answered.tagged_with_all(@tag_list).order('resolved_at DESC').limit(question_limit)  
@@ -218,9 +218,12 @@ class WidgetsController < ApplicationController
     end
     
     if @question_list.length == 0
-      @title = "eXtension Latest Answered Questions"
+      @no_matches = @title
+      @title = "Ask an Expert Answers"
       @tag = Tag.find_by_name("front page")
       @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
+    else
+      @title = "Ask an Expert Answers " + @title
     end
     
     @path_to_questions = questions_url + "?" + new_params.join("&")

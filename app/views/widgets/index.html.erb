@@ -7,9 +7,9 @@
   <div class="well">
   <%= form_tag( {}, {:id => "widget_form"}) do %>
     <%= hidden_field_tag 'widget_key', @widget_key %>
-    <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "input-mini" %></label></p>
-    <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "input-mini" %></label> (leave blank for auto/100%)</p>
-    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "input-mini" %></label></p>
+    <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "" %></label></p>
+    <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "" %></label> (leave blank for auto/100%)</p>
+    <p><label>Group ID: <%= text_field_tag :group, @group, :size => 3, :class => "" %></label></p>
   
     <p>
       <select id="location" name="location">
@@ -21,8 +21,8 @@
     </p>  
     
     <div id="county_selector"></div>
-    <p><label>Tags <%= text_field_tag :tags, @tags, :size => 3, :class => "" %></label></p>
-    <p style="display:none;">operator <%= text_field_tag :operator, @operator, :size => 3, :class => "input-mini" %></label></p>
+    <p><label>Tags <%= text_field_tag :tags, @tags, :size => 3, :class => "text-input-large" %></label></p>
+    <p style="display:none;">operator <%= text_field_tag :operator, @operator, :size => 3, :class => "" %></label></p>
 
     <p><span id="submit-widget" class="btn btn-primary btn-large">Generate Widget</span></p>
   <% end %>
