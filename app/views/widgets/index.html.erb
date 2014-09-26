@@ -12,8 +12,9 @@
     <p><label>Group ID: <%= text_field_tag :group, @group, :size => 3, :class => "" %></label></p>
   
     <p>
+      <label>Location: </label>
       <select id="location" name="location">
-        <option value="">Location</option>
+        <option value="">none</option>
         <% @locations.each do |l| %>
           <option value="<%= l.id %>"><%= l.name %></option>
           <% end %>
@@ -21,7 +22,16 @@
     </p>  
     
     <div id="county_selector"></div>
-    <p><label>Tags <%= text_field_tag :tags, @tags, :size => 3, :class => "text-input-large" %></label></p>
+    <label>Tags </label>
+    <div class="formy">
+      <div class="ui-widget">
+      	<input id="tag_picker" class="form-control text-input-large" placeholder="Type and select a tag..." />
+      </div>
+    </div>
+    <div class="form-group">
+    <p><%= text_field_tag :tags, @tags, :class => "form-control" %></p>
+    </div>
+    
     <p style="display:none;">operator <%= text_field_tag :operator, @operator, :size => 3, :class => "" %></label></p>
 
     <p><span id="submit-widget" class="btn btn-primary btn-large">Generate Widget</span></p>
@@ -86,7 +96,7 @@
           $.each( data, function( key, val ) {
             items.push( "<option value='" + val.id + "'>" + val.name + "</option>" );
           });          
-          $("#county_selector").html("<select id='county' name='county'><option value=''>County</option>"+items.join( "" )+"</select>");
+          $("#county_selector").html("<p><label>County:</label> <select id='county' name='county'><option value=''>none</option>"+items.join( "" )+"</select></p>");
       });
    }
 
@@ -136,4 +146,44 @@
   $(window).bind("load", function() {
     generate_widget();
   });
+  
+  // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+  var doTags = {
+    onReady: function() {
+      $("#tag_picker").autocomplete({
+        source: "/ajax/tags",
+  			minLength: 2,
+  			select: function(e, ui) {
+  			  add_tag(ui.item.name);
+  			  $("#tag_picker").val('');
+  			  return false;
+  			}
+  		}).keypress(function(e) {
+        if (e.keyCode === 13) {
+          if ($.trim(this.value) != "") {
+            add_tag(this.value);
+          } else {
+            $("#tag_picker").val('');
+    				return false;
+          }
+        }
+      }).data( "autocomplete" )._renderItem = function( ul, item ) {
+        return $( "<li></li>" )
+        .data( "item.autocomplete", item )
+        .append( "<a>"+ item.label + " <strong>(" + item.tag_count + ")</strong></a>" )
+        .appendTo( ul );
+      };
+    }
+  };
+  
+  $( document ).ready( doTags.onReady );
+  
+  function add_tag(tag) {
+    if( !$("#tags").val() ) {
+      $("#tags").val(tag);
+    } else {
+      $("#tags").val( $("#tags").val() + ", " + tag);
+    }
+	}
+	
 </script>
