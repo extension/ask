@@ -4,5 +4,4 @@ while (s.firstChild) {
   s.removeChild(s.firstChild);
 }
 s.appendChild(div);
-
-div.innerHTML = '<%= escape_javascript(render(:partial => 'widgets/questions')) %>';
+div.innerHTML = "<%= escape_javascript(render(:partial => 'widgets/questions')) %>";
