@@ -1,7 +1,7 @@
 class WidgetsController < ApplicationController
   
   def index
-    @limit = 3
+    @limit = 4
     @locations = Location.order('fipsid ASC')
     # create a unique widget div ID to use as a hook
     @widget_key = "aae-qw-" + SecureRandom.hex(4)
@@ -143,7 +143,7 @@ class WidgetsController < ApplicationController
     end
     
     if params[:limit].blank? || params[:limit].to_i <= 0
-      question_limit = 5
+      question_limit = 4
     else
       question_limit = params[:limit].to_i
       new_params << "limit=#{question_limit}"
