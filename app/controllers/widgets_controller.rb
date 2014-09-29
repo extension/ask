@@ -134,6 +134,8 @@ class WidgetsController < ApplicationController
   
   
   def questions
+    # asynchronous js loading code was taken from this tutorial:
+    # http://blog.swirrl.com/articles/creating-asynchronous-embeddable-javascript-widgets/
     new_params = []
     if params[:widget_key].present?
       @widget_key = params[:widget_key]
