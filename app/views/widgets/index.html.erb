@@ -72,7 +72,7 @@
 
 <script class="code" type="text/javascript">
   // get the selected location
-  $('#location_id').change(function() {
+  $("#location_id").change(function() {
     $("select#location_id option:selected").each(function () {
       loc_id = $(this).val()
     });
@@ -92,11 +92,11 @@
       });
    }
 
-  $('#submit-widget').click(function() {
+  $("#submit-widget").click(function() {
     generate_widget();
   });
   
-  $('#widget_form').keypress(function(e) {
+  $("#widget_form").keypress(function(e) {
     if (e.keyCode === 13) {
       generate_widget();
     }
@@ -107,7 +107,7 @@
       type: "POST",
       url: "<%= widgets_questions_path() %>",
       cache: false,
-      data: $('#widget_form').serialize()
+      data: $("#widget_form").serialize()
     })
     .done(function(data) {
       generate_widget_snippet();
@@ -119,8 +119,8 @@
 	}
 	
 	function generate_widget_snippet() {
-	  widgetKey = $('#aae_qw').attr("data-widget-key");
-    widgetParams = $('#aae_qw').attr("data-widget-params");
+	  widgetKey = $("#aae_qw").attr("data-widget-key");
+    widgetParams = $("#aae_qw").attr("data-widget-params");
       $.ajax({
         type: "POST",
         url: "<%= widgets_generate_widget_path() %>",
