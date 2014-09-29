@@ -7,6 +7,7 @@
   .aae_qw-li {margin: 0 0 10px; line-height:1em;}
   .aae_qw-view-response {font-size:12px; color:#999;}
   .aae_qw-see-more {display:block !important; font-size:12px; color:#999;}
+  .aae_qw-see-more a {text-decoration:none;}
 </style>
 <div class="aae_qw" id="aae_qw" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
   
@@ -31,7 +32,7 @@
           <% else %>
             <li class="aae_qw-li">
           <% end %>
-            <span class="aae_qw-title"><%= q.title %></span> <span class="aae_qw-view-response">view response &raquo;</span>
+            <span class="aae_qw-title"><%= raw("#{q.title.gsub(/[[:space:]]/, ' ')}") %></span> <span class="aae_qw-view-response">view response &raquo;</span>
           </li>
         <% end %>
       <% end %>
