@@ -1,47 +1,43 @@
 <style type="text/css" media="screen">
-/*  .aae-question-widget-container {outline:2px solid aqua;}*/
-/*  #our-awesome-widget-target {outline:10px solid lime;}*/
-  .aae-question-widget-container {margin:1em;}
   .aae_qw {background:#fff; padding:20px; width:<%= @width %>px; border:2px solid #ccc; margin:0 0 20px;}
-  .aae_qw_subhead {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
-  .aae_qw ul {margin:0; padding:0;}
-  .aae_qw li {margin: 0 0 10px; line-height:1em;}
-  .aae_qw_view_response {font-size:12px; color:#999;}
-  .aae_qw_see_more {display:block !important; font-size:12px; color:#999;}
-  .aae_qw a:hover {text-decoration:none;}
-  .app-location-widget-dev {background:#FFFF6D; padding:.5em;}
+  .aae_qw-app-location-widget-dev {background:#FFFF6D; padding:.5em;}
+  .aae_qw-header {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
+  .aae_qw ul {margin:0; padding:0; list-style-type: none;}
+  .aae_qw-link {text-decoration:none;}
+  .aae_qw-li {margin: 0 0 10px; line-height:1em;}
+  .aae_qw-view-response {font-size:12px; color:#999;}
+  .aae_qw-see-more {display:block !important; font-size:12px; color:#999;}
 </style>
 <div class="aae_qw" id="aae_qw" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
   
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-    <p class="app-location-widget-dev">This is a <strong>TEST</strong> widget coming from the  <strong>AaE <%= Settings.app_location.upcase %></strong> site. This should ONLY be used for TESTING purposes.</p>
+    <p class="aae_qw-app-location-widget-dev">This is a <strong>TEST</strong> widget coming from the  <strong>AaE <%= Settings.app_location.upcase %></strong> site. This should ONLY be used for TESTING purposes.</p>
   <% end %>
   
-  <h3 class="aae_qw_subhead"><%= @title %></h3>
+  <h3 class="aae_qw-header"><%= @title %></h3>
+  
   <% if @no_matches %>
-    <p class="no matches">There were no matches for <strong>questions <%= @no_matches %></strong>, but here's some other recently answered questions.</p>
+    <p class="aae_qw-no-matches">There were no matches for <strong>questions <%= @no_matches %></strong>, but here's some other recently answered questions.</p>
   <% end %>
   
-  <% if @question_list.length == 0 %>
-    <h3 class="aae_qw_no_matches">There are no matching questions at this time.</h3>
-  <% else %>
+  <% if @question_list.length > 0 %>
     <ul>
       <% @question_list.each_with_index do |q, i| %>
-        <%= link_to question_url(q.id) do %>
+        <%= link_to question_url(q.id), class: "aae_qw-link" do %>
           <% if i == 0 %>
-            <li class="first">
+            <li class="first aae_qw-li">
           <% elsif i == (@question_list.length - 1) %>
-            <li class="last">
+            <li class="last aae_qw-li">
           <% else %>
-            <li>
+            <li class="aae_qw-li">
           <% end %>
-            <span class="aae_qw_title"><%= q.title %></span> <span class="aae_qw_view_response">view response &raquo;</span>
+            <span class="aae_qw-title"><%= q.title %></span> <span class="aae_qw-view-response">view response &raquo;</span>
           </li>
         <% end %>
       <% end %>
     </ul>
   <% end %>
   
-  <p class="aae_qw_see_more"><%= link_to 'See More', @path_to_questions %></p>
+  <p class="aae_qw-see-more"><%= link_to 'See More', @path_to_questions %></p>
 </div>
 
