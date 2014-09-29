@@ -47,17 +47,14 @@ class Expert::SettingsController < ApplicationController
 
   def add_tag
     params[:id].present? ? @user = User.find_by_id(params[:id]) : @user = current_user
+    @tag = @user.set_tag(params[:tag])
+    if @tag.blank?
+      return render :nothing => true
+    end
     # record tag and log changes
     change_hash = Hash.new
-    previous_tags = @user.tags.map(&:name).join(', ')
-    @tag = @user.set_tag(params[:tag])
-    current_tags = @user.tags.map(&:name).join(', ')
     change_hash[:tags] = {:old => "", :new => @tag.name}
-    UserEvent.log_added_tags(@user, current_user, change_hash) if previous_tags != current_tags
-
-    if @tag.blank?
-      render :nothing => true
-    end
+    UserEvent.log_added_tags(@user, current_user, change_hash)
   end
 
   def remove_tag
