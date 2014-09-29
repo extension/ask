@@ -181,22 +181,22 @@ class WidgetsController < ApplicationController
     
     @title = ""
     
-    if params[:group].present? && params[:group].to_i > 0 && group = Group.find_by_id(params[:group])
+    if params[:group_id].present? && params[:group_id].to_i > 0 && group = Group.find_by_id(params[:group_id])
       question_group_scope = Question.from_group(group.id)
       @title += " from #{group.name}"
-      new_params << "group=#{group.id}"
+      new_params << "group_id=#{group.id}"
     else
       question_group_scope = Question.where({})
     end
     
-    if params[:location].present? && params[:location].to_i > 0 && location = Location.find_by_id(params[:location])
+    if params[:location_id].present? && params[:location_id].to_i > 0 && location = Location.find_by_id(params[:location_id])
       question_group_scope = question_group_scope.by_location(location)
-      new_params << "location=#{location.id}"
+      new_params << "location_id=#{location.id}"
       
-      if params[:county].present? && params[:county].to_i > 0 && county = County.find_by_id(params[:county])
+      if params[:county_id].present? && params[:county_id].to_i > 0 && county = County.find_by_id(params[:county_id])
         question_group_scope = question_group_scope.by_county(county)
         @title += " from #{county.name}, #{location.name}"
-        new_params << "county=#{county.id}"
+        new_params << "county_id=#{county.id}"
       else
         @title += " from #{location.name}"
       end

@@ -9,11 +9,11 @@
     <%= hidden_field_tag 'widget_key', @widget_key %>
     <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "" %></label></p>
     <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "" %></label> (leave blank for auto/100%)</p>
-    <p><label>Group ID: <%= text_field_tag :group, @group, :size => 3, :class => "" %></label></p>
+    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "" %></label></p>
   
     <p>
       <label>Location: </label>
-      <select id="location" name="location">
+      <select id="location_id" name="location_id">
         <option value="">none</option>
         <% @locations.each do |l| %>
           <option value="<%= l.id %>"><%= l.name %></option>
@@ -80,8 +80,8 @@
 
 <script class="code" type="text/javascript">
   // get the selected location
-  $('#location').change(function() {
-    $("select#location option:selected").each(function () {
+  $('#location_id').change(function() {
+    $("select#location_id option:selected").each(function () {
       loc_id = $(this).val()
     });
     showCounties(loc_id);
@@ -96,7 +96,7 @@
           $.each( data, function( key, val ) {
             items.push( "<option value='" + val.id + "'>" + val.name + "</option>" );
           });          
-          $("#county_selector").html("<p><label>County:</label> <select id='county' name='county'><option value=''>none</option>"+items.join( "" )+"</select></p>");
+          $("#county_selector").html("<p><label>County:</label> <select id='county_id' name='county_id'><option value=''>none</option>"+items.join( "" )+"</select></p>");
       });
    }
 

@@ -179,7 +179,19 @@ class ApplicationController < ActionController::Base
       @tag_pref = @tag.id
       filter_description_array << "Tag: #{@tag.name}"
       q = q.tagged_with(@tag.id)
+    elsif params[:tags].present?
+      @tag_list = params[:tags].split(',')
+      if params[:operator].present?
+        if params[:operator].downcase == 'and'
+          q = q.tagged_with_all(@tag_list)
+          filter_description_array << "Tags: #{@tag_list.join(" and ")}"
+        end
+      elsif params[:operator].blank? || params[:operator].downcase != 'and'
+        q = q.tagged_with_any(@tag_list)
+        filter_description_array << "Tags: #{@tag_list.join(" or ")}"
+      end
     end
+
 
     condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
     filter_description_array.empty? ? @filter_string = nil : @filter_string = filter_description_array.join(' | ')
