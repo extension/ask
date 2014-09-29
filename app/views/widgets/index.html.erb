@@ -9,7 +9,7 @@
     <%= hidden_field_tag 'widget_key', @widget_key %>
     <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "" %></label></p>
     <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "" %></label> (leave blank for auto/100%)</p>
-    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "" %></label></p>
+    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "" %></label> (get this from your group page)</p>
   
     <p>
       <label>Location: </label>
@@ -41,13 +41,14 @@
 
 <div class="col-md-6">
   <div id="example-widget">
+    <h3>Example Widget</h3>
     <%= render(:partial => 'example_widget') %>
   </div>
 </div>
 <div class="col-md-12">
 
 <h2>Widget Code Snippet</h2>
-<p>Embed the Ask question above widget on your own web page using the following code snippet:</p>
+<p>The following code snippet will embed the example widget displayed above. Include this code on your page where you want the widget to appear.</p>
 <div id="widget-code"><textarea></textarea></div>
 
 
