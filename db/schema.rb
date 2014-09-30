@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140730182955) do
+ActiveRecord::Schema.define(:version => 20140930142350) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -148,13 +148,13 @@ ActiveRecord::Schema.define(:version => 20140730182955) do
   add_index "downloads", ["label", "filterclass", "filter_id"], :name => "download_ndx"
 
   create_table "evaluation_answers", :force => true do |t|
-    t.integer  "evaluation_question_id", :null => false
-    t.integer  "user_id",                :null => false
-    t.integer  "question_id",            :null => false
+    t.integer  "evaluation_question_id",              :null => false
+    t.integer  "user_id",                             :null => false
+    t.integer  "question_id",                         :null => false
     t.text     "response"
-    t.integer  "value"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.integer  "value",                  :limit => 8
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
   end
 
   add_index "evaluation_answers", ["evaluation_question_id", "user_id", "question_id"], :name => "eq_u_q_ndx", :unique => true
@@ -465,8 +465,8 @@ ActiveRecord::Schema.define(:version => 20140730182955) do
     t.integer  "location_id"
     t.boolean  "spam_legacy",              :default => false, :null => false
     t.string   "user_ip",                  :default => "",    :null => false
-    t.string   "user_agent",               :default => "",    :null => false
-    t.string   "referrer",                 :default => "",    :null => false
+    t.text     "user_agent",                                  :null => false
+    t.text     "referrer",                                    :null => false
     t.integer  "status_state",                                :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
@@ -647,7 +647,7 @@ ActiveRecord::Schema.define(:version => 20140730182955) do
 
   create_table "widget_logs", :force => true do |t|
     t.string   "referrer_host"
-    t.string   "referrer_url"
+    t.text     "referrer_url"
     t.string   "base_widget_url"
     t.string   "widget_url"
     t.string   "widget_fingerprint"
