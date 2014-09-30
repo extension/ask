@@ -465,8 +465,8 @@ ActiveRecord::Schema.define(:version => 20140930142350) do
     t.integer  "location_id"
     t.boolean  "spam_legacy",              :default => false, :null => false
     t.string   "user_ip",                  :default => "",    :null => false
-    t.text     "user_agent",                                  :null => false
-    t.text     "referrer",                                    :null => false
+    t.text     "user_agent"
+    t.text     "referrer"
     t.integer  "status_state",                                :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
