@@ -1,50 +1,181 @@
 <div class="col-md-12">
-<h1>Ask an Expert Question Widgets</h1>
-<p>Display a list of answered questions by group, location or tag</p>
+<h1>Question Widgets</h1>
 
-<div class="alert alert-warning" role="alert">This widget builder/documentation page is in progress and should not be publicized. It does not currently contain a widget builder, but widgets may be manually constructed.</div>
+<div class="col-md-6">
+  <h2>Build a Custom Widget</h2>
+  <p>Display a list of answered questions by group, location or tag</p>
+  <div class="well">
+  <%= form_tag( {}, {:id => "widget_form"}) do %>
+    <%= hidden_field_tag 'widget_key', @widget_key %>
+    <p><label>Number of questions: <%= text_field_tag :limit, @limit, :size => 3, :class => "" %></label></p>
+    <p><label>Width (pixels): <%= text_field_tag :width, @width, :size => 3, :class => "" %></label> (leave blank for auto/100%)</p>
+    <p><label>Group ID: <%= text_field_tag :group_id, @group_id, :size => 3, :class => "" %></label> (get this from your group page)</p>
+  
+    <p>
+      <label>Location: </label>
+      <select id="location_id" name="location_id">
+        <option value="">none</option>
+        <% @locations.each do |l| %>
+          <option value="<%= l.id %>"><%= l.name %></option>
+          <% end %>
+      </select>
+    </p>  
+    
+    <div id="county_selector"></div>
+    <label>Tags </label>
+    <div class="formy">
+      <div class="ui-widget">
+      	<input id="tag_picker" class="form-control text-input-large" placeholder="Type and select a tag..." />
+      </div>
+    </div>
+    <div class="form-group">
+    <p><%= text_field_tag :tags, @tags, :class => "form-control" %></p>
+    </div>
+    
+    <p style="display:none;">operator <%= text_field_tag :operator, @operator, :size => 3, :class => "" %></label></p>
 
-<div class="aae-question-widget-container">
-<script type="text/javascript"
-src="<%= request.protocol + request.host_with_port %>/widgets/answered.js?location=37"></script>
+    <p><span id="submit-widget" class="btn btn-primary btn-large">Generate Widget</span></p>
+  <% end %>
+  </div>
 </div>
 
-<h2>Widget Code</h2>
-<p>Embed an Ask widget on your own web page using the following code snippet:</p>
-<div id="widgetcode">
-<textarea class="form-control"><script type="text/javascript" src="https://ask.extension.org/widgets/answered.js?location=37&limit=6"></script></textarea>
+<div class="col-md-6">
+  <div id="example-widget">
+    <h3>Example Widget</h3>
+    <%= render(:partial => 'example_widget') %>
+  </div>
 </div>
+<div class="col-md-12">
+
+<h2>Widget Code Snippet</h2>
+<p>The following code snippet will embed the example widget displayed above. Include this code on your page where you want the widget to appear.</p>
+<div id="widget-code"><textarea></textarea></div>
+
 
 <h2>Widget behavior and styling</h2>
-<p>By default, five questions are returned. This can be changed with the limit parameter (i.e. limit=3). The widget markup contains css hooks to make it easier to hide or display different sections including:</p>
+<p>By default, four questions are returned.</p>
+<p>If there are no question matches, we indicate there are no matches and display the most recent questions instead.</p>
+<p>The widget includes very minimal styling. This is by design so that it can inherit the styles from your site.</p>
+<p>The widget markup contains granular css hooks to make it easier to style, hide or display different sections including:</p>
 <ul class="list-group">
-  <li class="list-group-item">.aae_qw</li>
-  <li class="list-group-item">.aae_qw_subhead</li>
-  <li class="list-group-item">.aae_qw_no_matches</li>
-  <li class="list-group-item">.aae_qw_title</li>
-  <li class="list-group-item">.aae_qw_view_response</li>
-  <li class="list-group-item">.aae_qw_see_more</li>
+  <li class="list-group-item code">.aae_qw <span class="text-muted">(the containing div)</span></li>
+  <li class="list-group-item code">.aae_qw-header</li>
+  <li class="list-group-item code">.aae_qw-no-matches</li>
+  <li class="list-group-item code">.aae_qw-link <span class="text-muted">(contains the question title and "view response")</span></li> 
+  <li class="list-group-item code">.aae_qw-title</li>
+  <li class="list-group-item code">.aae_qw-view-response</li>
+  <li class="list-group-item code">.aae_qw-see-more</li>
 </ul>
 
-<p>The example at the top of this page has been wrapped in a div.aae-question-widget-container and are styled with the following css:</p>
-<pre>
-  .aae-question-widget-container {margin:1em;}
-  .aae_qw {background:#fff; padding:20px; width:300px; border:2px solid #ccc; margin:0 0 20px;}
-  .aae_qw_subhead {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
-  .aae_qw ul {margin:0; padding:0;}
-  .aae_qw li {margin: 0 0 10px; line-height:1em;}
-  .aae_qw_view_response {font-size:12px; color:#999;}
-  .aae_qw a:hover {text-decoration:none;}
-</pre>
-
-<style type="text/css" media="screen">
-  .aae-question-widget-container {margin:1em;}
-  .aae_qw {background:#fff; padding:20px; width:300px; border:2px solid #ccc; margin:0 0 20px;}
-  .aae_qw_subhead {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
-  .aae_qw ul {margin:0; padding:0;}
-  .aae_qw li {margin: 0 0 10px; line-height:1em;}
-  .aae_qw_view_response {font-size:12px; color:#999;}
-  .aae_qw_see_more {display:block !important; font-size:12px; color:#999;}
-  .aae_qw a:hover {text-decoration:none;}
-</style>
 </div>
+
+
+<script class="code" type="text/javascript">
+  // get the selected location
+  $("#location_id").change(function() {
+    $("select#location_id option:selected").each(function () {
+      loc_id = $(this).val()
+    });
+    showCounties(loc_id);
+  });
+   
+  var showCounties = function(locationID) {
+    $.getJSON( "/ajax/counties", {
+      location_id: locationID
+      })
+      .done(function( data ) {
+        var items = [];
+          $.each( data, function( key, val ) {
+            items.push( "<option value='" + val.id + "'>" + val.name + "</option>" );
+          });          
+          $("#county_selector").html("<p><label>County:</label> <select id='county_id' name='county_id'><option value=''>none</option>"+items.join( "" )+"</select></p>");
+      });
+   }
+
+  $("#submit-widget").click(function() {
+    generate_widget();
+  });
+  
+  $("#widget_form").keypress(function(e) {
+    if (e.keyCode === 13) {
+      generate_widget();
+    }
+  });
+
+  function generate_widget() {
+	  $.ajax({
+      type: "POST",
+      url: "<%= widgets_questions_path() %>",
+      cache: false,
+      data: $("#widget_form").serialize()
+    })
+    .done(function(data) {
+      generate_widget_snippet();
+      $(".aae-question-widget-container").hide().fadeIn();
+    })
+    .fail(function() {
+      alert("problem generating widget");
+    })
+	}
+	
+	function generate_widget_snippet() {
+	  widgetKey = $("#aae_qw").attr("data-widget-key");
+    widgetParams = $("#aae_qw").attr("data-widget-params");
+      $.ajax({
+        type: "POST",
+        url: "<%= widgets_generate_widget_path() %>",
+        data: {widget_key: widgetKey, widget_params: widgetParams},
+        cache: false
+      })
+      .done(function(data) {
+      })
+      .fail(function() {
+        alert("problem generating widget snippet");
+      })
+	}
+	
+  
+  $(window).bind("load", function() {
+    generate_widget();
+  });
+  
+  // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+  var doTags = {
+    onReady: function() {
+      $("#tag_picker").autocomplete({
+        source: "/ajax/tags",
+  			minLength: 2,
+  			select: function(e, ui) {
+  			  add_tag(ui.item.name);
+  			  $("#tag_picker").val('');
+  			  return false;
+  			}
+  		}).keypress(function(e) {
+        if (e.keyCode === 13) {
+          if ($.trim(this.value) != "") {
+            add_tag(this.value);
+          } else {
+            $("#tag_picker").val('');
+    				return false;
+          }
+        }
+      }).data( "autocomplete" )._renderItem = function( ul, item ) {
+        return $( "<li></li>" )
+        .data( "item.autocomplete", item )
+        .append( "<a>"+ item.label + " <strong>(" + item.tag_count + ")</strong></a>" )
+        .appendTo( ul );
+      };
+    }
+  };
+  
+  $( document ).ready( doTags.onReady );
+  
+  function add_tag(tag) {
+    if( !$("#tags").val() ) {
+      $("#tags").val(tag);
+    } else {
+      $("#tags").val( $("#tags").val() + ", " + tag);
+    }
+	}
+	
+</script>
