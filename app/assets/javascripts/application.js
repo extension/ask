@@ -30,7 +30,6 @@
 //= require jqplot-plugins/jqplot.canvasAxisTickRenderer
 //= require jqplot-plugins/jqplot.cursor
 //= require jqplot-plugins/jqplot.pointLabels
-//= require bootstrap-wysihtml5
 //= require alerts.js
 //= require jquery.validate
 //= require submittable
