@@ -119,8 +119,8 @@
 	}
 	
 	function generate_widget_snippet() {
-	  widgetKey = $("#aae_qw").attr("data-widget-key");
-    widgetParams = $("#aae_qw").attr("data-widget-params");
+	  widgetKey = $("#aae_qw_hook").attr("data-widget-key");
+    widgetParams = $("#aae_qw_hook").attr("data-widget-params");
       $.ajax({
         type: "POST",
         url: "<%= widgets_generate_widget_path() %>",

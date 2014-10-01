@@ -9,7 +9,7 @@
   .aae_qw-see-more {display:block !important; font-size:12px; color:#999;}
   .aae_qw-see-more a {text-decoration:none;}
 </style>
-<div class="aae_qw" id="aae_qw" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
+<div class="aae_qw" id="aae_qw_hook" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
   
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
     <p class="aae_qw-app-location-widget-dev">This is a <strong>TEST</strong> widget coming from the  <strong>AaE <%= Settings.app_location.upcase %></strong> site. This should ONLY be used for TESTING purposes.</p>
