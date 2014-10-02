@@ -7,6 +7,7 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= stylesheet_link_tag    "application-print", :media => "print" %>
   <%= javascript_include_tag "application" %>
+  <!--[if !IE 8]><!--><%= javascript_include_tag    "bootstrap-wysihtml5" %><!--<![endif]-->
   <%= csrf_meta_tags %>
   <%= render(:partial => 'home/google_analytics') %>
 </head>
