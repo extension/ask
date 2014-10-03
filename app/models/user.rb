@@ -245,6 +245,13 @@ class User < ActiveRecord::Base
     return self.retired
   end
 
+  def available?
+    if self.away == true || self.retired == true
+      return false
+    end
+    return true
+  end
+
   def previously_assigned(question)
     find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
     !find_question.blank?
