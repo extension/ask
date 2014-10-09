@@ -53,7 +53,7 @@
     <div class="needs-attention">
       <% if @question.responses.count > 0 %>
       <h2>This question needs handling because the submitter sent the last response.</h2>
-      <p>They might just be saying "thanks," but this question needs a response or should be <%= link_to raw("closed"), close_out_expert_question_path(@question.id) %>. Otherwise the last expert will continue to get a daily notification to answer it.</p>
+      <p>They might just be saying "thanks," but this question needs a response or should be <%= link_to "closed", close_out_expert_question_path(@question.id) %>. Otherwise the last expert will continue to get a daily notification to answer it.</p>
       <% else %>
         <p>This question needs handling. Please answer or close it.</p>
       <% end %>
