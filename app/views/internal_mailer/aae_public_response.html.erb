@@ -2,58 +2,34 @@
 
 <tr>
   <td class="content padding">
-    <h3>A Question Assigned to You Has a New Response</h3>
-    <div class="response"><%= format_text_for_display(@response.body) %></div>
-    <div class="signature"><%= format_text_for_display(@response.signature) %></div>
-        
-    <% if @response.images.size > 0 %>
-      <p class="contains_images">
-        <strong>Note:</strong> <%= @response.images.size > 1 ? "This response contains images." : "This response contains an image." %> You can <%= link_to("view them on the question page", expert_question_url(@question)) -%>.
-      </p>
-    <% end %>
-    
-    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
-    
-    <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question.id), :class => "action" %> as soon as possible. Thanks for your help!</p>
+    <h3>Hi there! Someone replied to you!</h3>
+    <h3>They might just be saying "thanks," but you need to <%= link_to("reply to or close the question", expert_question_url(@question), :class => "action") -%>, or you'll continue to get a daily notification about it.</h3>
   </td>
 </tr>
 
 <tr>
   <td class="content padding question_block">
-    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
-    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
-    <p class="meta">Submitted <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
-    <% if !@question.is_private %>
-      <p class="tag">
-        <span class="tag tag-public">Public</span>
+    <p><strong>Their response:</strong></p>
+    <div class="response"><%= format_text_for_display(@response.body) %></div>
+    <div class="signature"><%= format_text_for_display(@response.signature) %></div>
+    <% if @response.images.size > 0 %>
+      <p class="contains_images">
+        <strong>Note:</strong> <%= @response.images.size > 1 ? "This response contains images." : "This response contains an image." %>
       </p>
-    <% end %>
-    <p class="tag">
-      <% if @question.location.present? %>
-        <% if @question.county.present? %>
-          <span class="tag tag-geography"><%= @question.county.name %></span>
-        <% end %>
-          <span class="tag tag-geography"><%= @question.location.name %></span>
-      <% else %>
-          <span class="tag tag-geography">No Location</span>
-      <% end %>
-    </p>
-        
-    <% if @question.tags.size > 0 %>
-      <p class="tag">
-        <% @question.tags.each do |tag| %>
-          <span class="tag tag-topic"><%= tag.name %></span>
-        <% end %>
-      </p>
-    <% else %>
-      <p class="actions">This question needs tags. <%= link_to("Can you help tag it?", expert_question_url(@question), :class => "action") -%></p>
     <% end %>
   </td>
 </tr>
 
 <tr>
   <td class="content padding">
-    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>    
+    <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
+    <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question.id), :class => "action" %> as soon as possible. Thanks for your help!</p>
+  </td>
+</tr>
+
+<tr>
+  <td class="content padding">
+    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>
   </td>
 </tr>
 

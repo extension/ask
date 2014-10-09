@@ -6,7 +6,7 @@
 
 class Webmail::ExamplesController < ApplicationController
   skip_before_filter :set_yolo
-  
+
   def index
   end
 
@@ -14,103 +14,103 @@ class Webmail::ExamplesController < ApplicationController
     mail = GroupMailer.group_user_join(user: User.first, group: Group.last, new_member:User.first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def group_user_left
     mail = GroupMailer.group_user_left(user: User.first, group: Group.last, former_member:User.first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def group_leader_join
     mail = GroupMailer.group_leader_join(user: User.first, group: Group.last, new_leader:User.first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def group_leader_left
     mail = GroupMailer.group_leader_left(user: User.first, group: Group.last, former_leader:User.first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_assignment
     mail = InternalMailer.aae_assignment(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_assignment_group
     mail = InternalMailer.aae_assignment_group(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_reassignment
     mail = InternalMailer.aae_reassignment(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_daily_summary
     mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last,Group.find(Group::QUESTION_WRANGLER_GROUP_ID)], cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_public_edit
     mail = InternalMailer.aae_public_edit(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_public_response
-    mail = InternalMailer.aae_public_response(user: User.first, response: Response.last, cache_email: false)
+    mail = InternalMailer.aae_public_response(user: User.first, response: Response.non_expert.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_internal_comment
     mail = InternalMailer.aae_internal_comment(user: User.first, question: Question.last, internal_comment_event: QuestionEvent.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_reject
     mail = InternalMailer.aae_reject(user: User.first, rejected_event: QuestionEvent.where(event_state:QuestionEvent::REJECTED).first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_expert_tag_edit
     mail = InternalMailer.aae_expert_tag_edit(user: current_user, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_expert_vacation_edit
     mail = InternalMailer.aae_expert_vacation_edit(user: current_user, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_expert_location_edit
     mail = InternalMailer.aae_expert_location_edit(user: current_user, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_expert_handling_reminder
     mail = InternalMailer.aae_expert_handling_reminder(user: current_user, question: Question.offset(rand(Question.count)).first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_response_edit
     mail = InternalMailer.aae_response_edit(user: current_user, question: Question.last, response: Response.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def public_expert_response_edit
     mail = PublicMailer.expert_response_edit(user: current_user, question: Question.last, response: Response.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def public_expert_response
     mail = PublicMailer.public_expert_response(user: User.first, question: Question.answered.last, expert: User.offset(rand(User.count)).first, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def public_submission_acknowledgement
     mail = PublicMailer.public_submission_acknowledgement(user: User.first, question: Question.last, cache_email: false)
     if(mail.multipart?)
       if(params[:view] == 'text')
         if(params[:wordwrap] == 'no')
-          return(render_text_mail(get_text_part(mail),false))          
+          return(render_text_mail(get_text_part(mail),false))
         else
           return(render_text_mail(get_text_part(mail)))
         end
@@ -121,7 +121,7 @@ class Webmail::ExamplesController < ApplicationController
       return render_mail(mail)
     end
   end
-  
+
   def public_evaluation_request
     show_example_survey = !(params[:example_survey] and ['f','false','no','0'].include?(params[:example_survey].downcase))
     mail = PublicMailer.public_evaluation_request(user: User.first, question: Question.answered.last, cache_email: false, example_survey: show_example_survey)
@@ -132,24 +132,24 @@ class Webmail::ExamplesController < ApplicationController
     mail = PublicMailer.public_comment_reply(user: User.first, comment: Comment.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def public_comment_submit
     mail = PublicMailer.public_comment_submit(user: User.first, comment: Comment.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def aae_comment
     mail = InternalMailer.aae_comment(user: User.first, question: Question.last, comment: Comment.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   def internal_aae_question_activity
     mail = InternalMailer.aae_question_activity(user: User.first, question: Question.last, cache_email: false)
     return render_mail(mail)
   end
-  
+
   protected
-  
+
   def render_mail(mailpart)
     # send it through the inline style processing
     inlined_content = InlineStyle.process(mailpart.body.to_s,ignore_linked_stylesheets: true)
@@ -199,5 +199,5 @@ class Webmail::ExamplesController < ApplicationController
       end
     end
   end
-  
+
 end
