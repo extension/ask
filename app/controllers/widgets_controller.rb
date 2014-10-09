@@ -225,7 +225,7 @@ class WidgetsController < ApplicationController
       @tag = Tag.find_by_name("front page")
       @question_list = Question.public_visible_answered.tagged_with(@tag.id).order('questions.updated_at DESC').limit(question_limit)
     else
-      @title = "Ask an Expert Answers " + @title
+      @title = "eXtension Ask an Expert Answers " + @title
     end
 
     @path_to_questions = questions_url + "?" + new_params.join("&")
