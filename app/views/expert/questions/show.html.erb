@@ -2,7 +2,7 @@
 
 
 <div id="show_question_wrapper">
-  
+
   <div id="show_question_header">
     <div id="working_on_this_banner">
       <%= render :partial => 'working_on_this_banner' %>
@@ -13,12 +13,12 @@
     </div>
 
     <div id="main_question_meta">
-      <p>Asked 
+      <p>Asked
         <% if @original_group.present? %>
-          to <%= link_to @original_group.name, expert_group_path(@original_group.id) %> 
+          to <%= link_to @original_group.name, expert_group_path(@original_group.id) %>
         <% end %>
 
-        <%= time_ago_in_words(@question.created_at) %> ago 
+        <%= time_ago_in_words(@question.created_at) %> ago
 
         <% if @question.submitter %>
           by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %> who has <%= link_to "submitted  #{@question.submitter.submitted_questions.length} questions", expert_user_submitted_path(@question.submitter) %>.
@@ -45,12 +45,24 @@
       </div>
     <% end%>
   </div>
-  
-  
-  
+
+
+
 <div id="main" class="col-sm-8 col-md-8">
+  <% if @question.needs_response? %>
+    <div class="needs-attention">
+      <% if @question.responses.count > 0 %>
+      <h2>This question needs handling because the submitter sent the last response.</h2>
+      <p>They might just be saying "thanks," but we need to reply to or <%= link_to raw("close"), close_out_expert_question_path(@question.id) %> the question. Otherwise the last expert will continue to get a daily notification to answer it.</p>
+      <% else %>
+        <p>This question needs handling. Please answer or close it.</p>
+      <% end %>
+    </div>
+  <% end %>
+
     <% if @question.status_state != Question::STATUS_REJECTED %>
     <p class="response_count">
+
       <% if @question.status_state == Question::STATUS_RESOLVED %>
     	  <strong>Answered</strong> with <%= @question_responses.size == 1 ? "#{@question_responses.size} response" : "#{@question_responses.size} responses" %>
     	<% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
@@ -64,15 +76,15 @@
           <% end %>
           "<%= wrap_text(@question.current_response) %>"
     	<% else %>
-    	  <strong>Needs a response</strong>
-    	<% end %>
-      <% if @question.comments.size > 0 %> - <%= @question.comments.size == 1 ? "1 Comment" : "#{@question.comments.size} Comments"%><% end %>
+        <%= pluralize(@question.responses.count, 'responses') %>
+      <% end %>
+      <% if @question.comments.size > 0 %> - <%= pluralize(@question.comments.count, 'comment') %><% end %>
     </p>
     <% end %>
 
     <%= render :partial => 'question_main' %>
-    
-    
+
+
     <div id="inline_question_actions">
       <% if @question.status_state == Question::STATUS_REJECTED %>
       <% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
@@ -84,7 +96,7 @@
   	<% elsif @question.status_state == Question::STATUS_CLOSED %>
   	   	<h3>This question has been closed</h3>
         <p>
-          <strong>Closed by: </strong> 
+          <strong>Closed by: </strong>
           <% if @question.current_resolver_id == User.system_user_id %>
             System
           <% else %>
@@ -107,9 +119,9 @@
   	      <p><%= @question.assignee.name %> is working on this question right now.</p>
   	    </div>
   	  <% else %>
-        
-        
-        
+
+
+
         <div id="answer_form">
           <div class="title_block">
             <h2>Send an Answer</h2>
@@ -117,15 +129,15 @@
               <p>NOTE: If you respond to this account review request, the person submitting the account access request will get an e-mail notification with your response.</p>
             <% end %>
           </div>
-        
-          
+
+
           <%= render :partial => 'answer_form' %>
         </div>
       <% end %>
        <% end %>
     </div>
-    
-    
+
+
     <% if @question.comments.size > 0 %>
     <div class="title_block">
       <h2>Comments</h2>
@@ -135,8 +147,8 @@
       <%= render :partial => 'comments/comments_list', :locals => {:comment_list => @question.comments, :parent_comment => nil} %>
 	  </div>
 	  <% end %>
-	  
-	  
+
+
     <div id="history">
       <%= render :partial => 'history' %>
     </div>
@@ -144,11 +156,11 @@
 
 
 <div id="secondary" class="col-sm-4 col-md-4">
-  
+
   <div id="question_assignment">
     <%= render :partial => 'question_assignment' %>
   </div>
-  
+
   <% if @question.submitter.present? && @question.submitter.submitted_questions.length > 1 %>
   <aside class="nobg dontprintme related_questions">
     <h4>Other Questions From This Person</h4>
@@ -159,14 +171,14 @@
     <% end %>
   </aside>
   <% end %>
-  
+
   <aside class="nobg dontprintme related_questions">
     <h4>Related Questions</h4>
     <% @question.similar_questions.each do |question,score| %>
       <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
     <% end %>
   </aside>
-  
+
 </div>
 <br class="clearing" />
 </div>
@@ -176,7 +188,7 @@
     $('#new-comments-form .wysihtml5').wysihtml5({toolbar: { "fa": true, "image": false}});
     var highlightedComment = window.location.hash;
     $(highlightedComment).closest(".cc-comment").addClass("cc-highlight");
-    
+
     $(".comment-timestamp").click(function() {
       $(".cc-comment").removeClass("cc-highlight");
       $(this).closest(".cc-comment").addClass("cc-highlight");
