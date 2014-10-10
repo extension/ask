@@ -74,7 +74,7 @@ gem 'diffy'
 gem "rails_config"
 
 # exception notification
-gem 'airbrake'
+gem 'honeybadger'
 
 # comment and threaded discussion support
 gem 'ancestry'

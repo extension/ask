@@ -35,3 +35,4 @@ akismet_host: 'https://ask.extension.org'
 sitemap_dir: 'notset'
 downloads_data_dir: 'notset'
 sidekiq_enabled: true
+honeybadger_api_key: 'use_local_settings'
