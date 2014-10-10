@@ -9,11 +9,11 @@ class QuestionsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :set_yolo, only: [:account_review_request]
   layout 'public'
   before_filter :set_format, :only => [:show, :submitter_view]
-  
+
   def index
     @recent_questions = filtered_questions.public_visible
   end
-  
+
   def show
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question
@@ -231,7 +231,7 @@ class QuestionsController < ApplicationController
           return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
-        notify_airbrake(e)
+        notify_honeybadger(e)
         flash[:warning] = "An internal error has occurred. Please check back later."
         @host_name = request.host_with_port
 
