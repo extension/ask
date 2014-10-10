@@ -6,7 +6,7 @@ class NotificationJob < Struct.new (:notification_id)
   end
 
   def error(job, exception)
-    Airbrake.notify(exception)
+    Honeybadger.notify(exception)
   end
 
 end
