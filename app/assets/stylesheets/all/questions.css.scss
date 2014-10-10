@@ -121,3 +121,6 @@ div.rejected {padding:1em; @include rounded10; margin-bottom:2em; background:#F5
 .ui-menu-item {cursor:pointer;}
 .not_available {background:#eee !important; color:#666 !important; cursor:default;}
 .not_available:hover {background:#eee !important; color:#666 !important; cursor:default;}
+.needs-attention {background:#FFFDDF; color:#363955; padding:1em; margin-bottom:1em;}
+.needs-attention p {font-size:1.4em; line-height:1.4em;}
+.needs-attention h3 {color:#666;}
