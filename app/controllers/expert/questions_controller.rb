@@ -448,38 +448,24 @@ class Expert::QuestionsController < ApplicationController
     end
   end
 
-  def assign_to_wrangler
-    if params[:id].present? && question = Question.find_by_id(params[:id])
-      recipient = question.assign_to_question_wrangler(current_user)
-      # re-open the question if it's reassigned after resolution
-      if question.status_state == Question::STATUS_RESOLVED || question.status_state == Question::STATUS_NO_ANSWER
-        question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
-        QuestionEvent.log_reopen(question, recipient, current_user, Question::WRANGLER_REASSIGN_COMMENT)
-      end
-    else
-      flash[:error] = "Question specified does not exist."
-      return redirect_to expert_home_url
-    end
-
-    flash[:notice] = "Question successfully assigned to a question wrangler!"
-    redirect_to expert_question_url(question)
-  end
-
   def wrangle
     if params[:id].present? && @question = Question.find_by_id(params[:id])
       if request.post?
-        recipient = @question.assign_to_question_wrangler(current_user)
+        if (message = params[:wrangle_reason]).present?
+          params[:wrangle_reason].present? ? wrangle_reason = params[:wrangle_reason] : wrangle_reason = nil
+          recipient = @question.assign_to_question_wrangler(current_user, wrangle_reason)
           # re-open the question if it's reassigned after resolution
           if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
             @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
-            QuestionEvent.log_reopen(@question, recipient, current_user, Question::WRANGLER_REASSIGN_COMMENT)
-            flash[:notice] = "Question successfully assigned to a question wrangler!"
-            redirect_to expert_question_url(@question)
-          else
-            flash.now[:error] = "Please document a reason for rejecting this question"
-            render nil
-            return
+            QuestionEvent.log_reopen(@question, recipient, current_user, Question::WRANGLER_REASSIGN_COMMENT + wrangle_reason)
           end
+        else
+          flash.now[:error] = "Please add a reason for handing off this question."
+          render nil
+          return
+        end
+        flash[:notice] = "Question handed off to a question wrangler"
+        redirect_to expert_question_url(@question)
       end
     else
       flash[:error] = "Question specified does not exist."

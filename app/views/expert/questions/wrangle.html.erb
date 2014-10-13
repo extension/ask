@@ -6,7 +6,7 @@
 
 <h2>Reason for handing off this question</h2>
 <h3>(This will help us make better assignments in the future)</h3>
-<%= form_tag reject_expert_question_path(@question) do %>
+<%= form_tag wrangle_expert_question_path(@question) do %>
 
     <div class="radio_options">
     <p>
@@ -38,8 +38,8 @@
     </div>
 
     <p>
-      <label for="reject_message">Reason</label>
-      <%= text_field_tag :reject_message, "", {:id => "message", class: 'form-control'} %>
+      <label for="wrangle_reason">Reason</label>
+      <%= text_field_tag :wrangle_reason, "", {:id => "message", class: 'form-control'} %>
     </p>
 
     <p><%= submit_tag 'Assign to a Question Wrangler', :class => "btn btn-primary"%></p>

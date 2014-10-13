@@ -770,9 +770,9 @@ class Question < ActiveRecord::Base
   end
 
   # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by)
+  def assign_to_question_wrangler(assigned_by, comment)
     assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
-    comment = WRANGLER_REASSIGN_COMMENT
+    comment = WRANGLER_REASSIGN_COMMENT + " Reason: \"#{comment}\""
     assign_to(assignee, assigned_by, comment)
     self.save
     return assignee
