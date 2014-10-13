@@ -1,0 +1,60 @@
+<% @page_title = "Hand off to a Question Wrangler" %>
+
+<h3><%= link_to "Question ##{@question.id}", expert_question_url(@question) %></h3>
+
+<h1><%= @page_title %> <%= link_to "Cancel", reassign_expert_question_url(@question), :class => "btn btn-default" %></h1>
+
+<h2>Reason for handing off this question</h2>
+<h3>(This will help us make better assignments in the future)</h3>
+<%= form_tag reject_expert_question_path(@question) do %>
+
+    <div class="radio_options">
+    <p>
+      <label>
+        <%= radio_button_tag :wrangle_reason, "Not my area of expertise", false %>
+        Not my area of expertise
+      </label>
+    </p>
+    <p>
+      <label>
+        <%= radio_button_tag :wrangle_reason, "Not my geographic area", false %>
+        Not my geographic area
+      </label>
+    </p>
+
+    <p>
+      <label>
+        <%= radio_button_tag :wrangle_reason, "I'm too busy right now", false %>
+        I'm too busy right now
+      </label>
+    </p>
+
+    <p>
+      <label>
+        <%= radio_button_tag :wrangle_reason, "", false %>
+        Other
+      </label>
+    </p>
+    </div>
+
+    <p>
+      <label for="reject_message">Reason</label>
+      <%= text_field_tag :reject_message, "", {:id => "message", class: 'form-control'} %>
+    </p>
+
+    <p><%= submit_tag 'Assign to a Question Wrangler', :class => "btn btn-primary"%></p>
+
+    <p><%= link_to "Cancel", reassign_expert_question_url(@question), :class => "btn btn-default" %></p>
+<% end %>
+
+
+
+<script class="code" type="text/javascript">
+
+  $('.radio_options input').change(function() {
+    var value = $(this).val();
+    $("#message").val(value);
+    $("#message").focus();
+  });
+
+</script>
