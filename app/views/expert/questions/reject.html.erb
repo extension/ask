@@ -26,14 +26,14 @@
         Inappropriate Content
       </label>
     </p>
-    
+
     <p>
       <label>
         <%= radio_button_tag :rejection_reason, "Duplicate of #", false %>
         Duplicate
       </label>
     </p>
-    
+
     <p>
       <label>
         <%= radio_button_tag :rejection_reason, "Submitter email invalid", false %>
@@ -48,22 +48,22 @@
       </label>
     </p>
     </div>
-    
+
     <p>
       <label for="reject_message">Reason</label>
-      <%= text_field_tag :reject_message, "", {:id => "message", class: 'form-control'} %>  
+      <%= text_field_tag :reject_message, "", {:id => "message", class: 'form-control'} %>
     </p>
     <p>
         <%= submit_tag 'Reject Question', :class => "btn btn-danger"%> <strong>(No information is sent to the question submitter)</strong>
     </p>
-    
+
     <p><%= link_to "Cancel", expert_question_path(@question.id), :class => "btn btn-default" %></p>
 <% end %>
 
 
 
 <script class="code" type="text/javascript">
-  
+
   $('.radio_options input').change(function() {
     var value = $(this).val();
     $("#message").val(value);
@@ -71,6 +71,3 @@
   });
 
 </script>
-
-
-
