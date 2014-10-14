@@ -777,7 +777,7 @@ class Question < ActiveRecord::Base
   # for the 'Hand off to a Question Wrangler' functionality
   def assign_to_question_wrangler(assigned_by, comment, exclude_current_assignee)
     assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, exclude_current_assignee))
-    comment = " Reason: \"#{comment}\""
+    comment = "\"#{comment}\""
     assign_to(assignee, assigned_by, comment, false, nil, false, true)
     self.save
     return assignee

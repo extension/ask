@@ -20,7 +20,7 @@ module QuestionsHelper
       if q_event.recipient.is_question_wrangler?
         recipient_class = "class='qw'"
       end
-      comment = " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
+      comment = "<span class=\"comment\">Reason: #{q_event.response}</span>" if q_event.response
       reassign_msg = "#{question_context} <strong #{qw}>#{initiator_full_name}</strong> handed off to a Question Wrangler. <strong>System</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> #{comment}"
       return reassign_msg.html_safe
     when QuestionEvent::ASSIGNED_TO
