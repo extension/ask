@@ -61,10 +61,11 @@ class QuestionEvent < ActiveRecord::Base
                             CHANGED_TO_PRIVATE => 'changed to private by',
                             CHANGED_FEATURED => 'changed featured by',
                             ADDED_TAG => 'tag added by',
-                            DELETED_TAG => 'tag deleted by'
+                            DELETED_TAG => 'tag deleted by',
+                            PASSED_TO_WRANGLER => 'handed off to'
                           }
 
-  HANDLING_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
+  HANDLING_EVENTS = [ASSIGNED_TO, PASSED_TO_WRANGLER, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
   SIGNIFICANT_EVENTS = [REJECTED,NO_ANSWER,EXPERT_EDIT_QUESTION,EXPERT_EDIT_RESPONSE,CHANGED_TO_PUBLIC,CHANGED_TO_PRIVATE]
 
   # reporting
