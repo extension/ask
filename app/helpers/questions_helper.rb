@@ -12,7 +12,7 @@ module QuestionsHelper
       initiator_full_name = "anonymous"
     end
 
-    question_context = (show_question_id ? link_to('#'+q_event.question.id.to_s, expert_question_path(:id => q_event.question.id)) : "Question")
+    question_context = (show_question_id ? link_to('#'+q_event.question.id.to_s, expert_question_path(:id => q_event.question.id)) : "")
 
     case q_event.event_state
     when QuestionEvent::PASSED_TO_WRANGLER
@@ -20,8 +20,8 @@ module QuestionsHelper
       if q_event.recipient.is_question_wrangler?
         recipient_class = "class='qw'"
       end
-      comment = " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
-      reassign_msg = "<strong #{qw}>#{initiator_full_name}</strong> handed off to a Question Wrangler. <strong>System</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> #{comment}"
+      comment = "<span class=\"comment\">Reason: #{q_event.response}</span>" if q_event.response
+      reassign_msg = "#{question_context} <strong #{qw}>#{initiator_full_name}</strong> handed off to a Question Wrangler. <strong>System</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> #{comment}"
       return reassign_msg.html_safe
     when QuestionEvent::ASSIGNED_TO
       recipient_class = ""
@@ -44,7 +44,7 @@ module QuestionsHelper
     when QuestionEvent::RESOLVED
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::NO_ANSWER
-      return "#{question_context} response \"No answer available\" was sent from <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
+      return "#{question_context} Response \"No answer available\" was sent from <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CLOSED
       close_msg = "Question Closed Out by <strong #{qw}>#{initiator_full_name}</strong><span> #{humane_date(q_event.created_at)}</span>"
       close_msg += " <span class=\"comment\">#{q_event.response}</span>"
