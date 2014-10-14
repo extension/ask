@@ -637,7 +637,7 @@ class Question < ActiveRecord::Base
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.
-  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false)
+  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false, wrangler_handoff = false)
     raise ArgumentError unless user and user.instance_of?(User)
 
     # don't bother doing anything if this is assignment to the person already assigned unless it's
@@ -655,7 +655,12 @@ class Question < ActiveRecord::Base
     # update and log
     self.update_attributes(:assignee_id => user.id, :working_on_this => nil)
 
-    QuestionEvent.log_assignment(self,user,assigned_by,comment)
+    if wrangler_handoff
+      QuestionEvent.log_wrangler_handoff(self,user,assigned_by,comment)
+    else
+      QuestionEvent.log_assignment(self,user,assigned_by,comment)
+    end
+
     # if this is a reopen reassignment due to the public user commenting on the sq
     if public_comment
       asker_comment = public_comment.body
@@ -770,10 +775,10 @@ class Question < ActiveRecord::Base
   end
 
   # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by)
-    assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county))
-    comment = WRANGLER_REASSIGN_COMMENT
-    assign_to(assignee, assigned_by, comment)
+  def assign_to_question_wrangler(assigned_by, comment, exclude_current_assignee)
+    assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, exclude_current_assignee))
+    comment = " Reason: \"#{comment}\""
+    assign_to(assignee, assigned_by, comment, false, nil, false, true)
     self.save
     return assignee
   end

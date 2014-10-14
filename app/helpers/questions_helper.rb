@@ -1,5 +1,5 @@
 module QuestionsHelper
-  
+
   def stringify_question_event(q_event, show_question_id=false)
     if q_event.initiator.present? && (q_event.initiator.id == User.system_user_id)
       initiator_full_name = "System"
@@ -11,11 +11,19 @@ module QuestionsHelper
     else
       initiator_full_name = "anonymous"
     end
-    
+
     question_context = (show_question_id ? link_to('#'+q_event.question.id.to_s, expert_question_path(:id => q_event.question.id)) : "Question")
-    
+
     case q_event.event_state
-    when QuestionEvent::ASSIGNED_TO 
+    when QuestionEvent::PASSED_TO_WRANGLER
+      recipient_class = ""
+      if q_event.recipient.is_question_wrangler?
+        recipient_class = "class='qw'"
+      end
+      comment = " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
+      reassign_msg = "<strong #{qw}>#{initiator_full_name}</strong> handed off to a Question Wrangler. <strong>System</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small> #{comment}"
+      return reassign_msg.html_safe
+    when QuestionEvent::ASSIGNED_TO
       recipient_class = ""
       if q_event.recipient.is_question_wrangler?
         recipient_class = "class='qw'"
@@ -33,7 +41,7 @@ module QuestionsHelper
       msg = "Group changed from <strong>#{previous_group_link}</strong> to <strong>#{changed_group_link}</strong> by <strong #{qw}>#{initiator_full_name}</strong>"
       msg += " <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       return msg.html_safe
-    when QuestionEvent::RESOLVED 
+    when QuestionEvent::RESOLVED
       return "Resolved by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::NO_ANSWER
       return "#{question_context} response \"No answer available\" was sent from <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
@@ -68,20 +76,20 @@ module QuestionsHelper
       old_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:old].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:old]}</span>"
       new_county = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_county][:new].strip == '' ? 'All Counties' : q_event.updated_question_values[:changed_county][:new]}</span>"
       new_location = "<span class=\"tag tag-geography\">#{q_event.updated_question_values[:changed_location][:new].strip == '' ? 'No Location' : q_event.updated_question_values[:changed_location][:new]}</span>"
-      
+
       message = "Location edited by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       message += "<span class=\"history_of_tags\">Changed from "
-            
+
       if q_event.updated_question_values[:changed_location][:old] == ''
         old_location = "<span class=\"tag tag-geography\">No Location</span>"
         old_county = ""
       end
-      
+
       if q_event.updated_question_values[:changed_location][:new] == ''
         new_location = "<span class=\"tag tag-geography\">No Location</span>"
         new_county = ""
       end
-      
+
       message += "#{old_county} #{old_location} to #{new_county} #{new_location}"
       message += "</span>"
       return message.html_safe
@@ -105,7 +113,7 @@ module QuestionsHelper
       return "#{question_context} made public by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     when QuestionEvent::CHANGED_TO_PRIVATE
       return "#{question_context} made private by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
-    when QuestionEvent::INTERNAL_COMMENT 
+    when QuestionEvent::INTERNAL_COMMENT
       comment_msg = "Note posted by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       comment_msg = comment_msg + " <span class=\"comment\">#{format_text_for_display(q_event.response)}</span>" if q_event.response
       return comment_msg.html_safe
@@ -113,5 +121,5 @@ module QuestionsHelper
       return "Question #{q_event.question.id.to_s} #{QuestionEvent::EVENT_TO_TEXT_MAPPING[q_event.event_state] ||= nil} #{((q_event.recipient) ? q_event.recipient.name : '')} by #{initiator_full_name} <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>".html_safe
     end
   end
-  
+
 end

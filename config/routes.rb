@@ -62,6 +62,8 @@ Aae::Application.routes.draw do
         post 'reject'
         get  'reassign'
         post 'reassign'
+        get  'wrangle'
+        post 'wrangle'
         post 'reactivate'
         get  'close_out'
         post 'close_out'
@@ -210,7 +212,7 @@ Aae::Application.routes.draw do
   match "widgets/questions" => "widgets#questions", :via => [:get, :post]
   match "widgets/generate_widget" => "widgets#generate_widget", :via => [:get, :post]
   match "widgets" => "widgets#index"
-  
+
 
   # requires that if there is a parameter after the /ask, that it is in hexadecimal representation
   match "ask/:fingerprint" => "questions#submitter_view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get, :post], :as => 'submitter_view'
