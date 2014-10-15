@@ -57,8 +57,7 @@ class Question < ActiveRecord::Base
 
   ## constants
   ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
-	TITLE_MAX_LENGTH = 100
-  NEW_CONSTANT_TO_TEST_TABS = 5
+  TITLE_MAX_LENGTH = 100
 
   # status numbers (for status_state)
   STATUS_SUBMITTED = 1
