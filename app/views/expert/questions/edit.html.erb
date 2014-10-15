@@ -18,7 +18,7 @@
     	  <fieldset>
           <p>
             <%= f.label :title, 'Title' %>
-            <%= f.text_field :title, {:maxlength => Question::QUESTION_TITLE_MAX_LENGTH, :type => "text", :class => "input-lg form-control required"} %>
+            <%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", :class => "input-lg form-control required"} %>
           </p>
       
           <p>
