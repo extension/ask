@@ -2,18 +2,18 @@
   <div class="editpitch">
     <h3>Need to clarify or correct your question?</h3>
     <p>Your question is editable until one of our experts responds.</p>
-    <span class="edit_question_toggle btn btn-primary">Edit my question</span> 
+    <span class="edit_question_toggle btn btn-primary">Edit my question</span>
   </div>
 
   <div id="edit_question">
     <h2>Edit Your Question</h2>
 	  <%= form_for @question, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
-	    
+
 	    <fieldset>
-	      <p><%= f.text_field :title, {:type => "text", class: 'col-md-6'} %></p>
-	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'col-md-6 wysiwyg' %></p>
+        <p><%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", class: 'col-md-6 form-control'} %></p>
+	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'col-md-6 wysiwyg form-control' %></p>
 	    </fieldset>
-	    
+
 		  <div id="aae_image_div">
 			<h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
@@ -21,7 +21,7 @@
 			  <%= f.fields_for :images, image do |image_fields| %>
 			    <% if image.persisted? %>
 			      <p>
-			      Delete <%= image_fields.check_box :_destroy %> 
+			      Delete <%= image_fields.check_box :_destroy %>
 			      <%= image_tag image.url(:thumb) %>
 			      </p>
                 <% else %>
@@ -32,8 +32,8 @@
 			  <% end %>
 			<% end %>
 		  </div>
-		  		
-	      <%= submit_tag "Save changes", :class => 'btn btn-primary' %>    
+
+	      <%= submit_tag "Save changes", :class => 'btn btn-primary' %>
 	      <%= link_to_function "Cancel", "$('#edit_question').hide()" %>
 	      </p>
 	  <% end %>
@@ -43,7 +43,7 @@
 
 <script class="code" type="text/javascript">
   $("#edit_question").hide();
-  
+
   $(".edit_question_toggle").click(function () {
     $("#edit_question").toggle();
   });
