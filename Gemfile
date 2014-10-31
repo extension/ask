@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 source 'https://engineering.extension.org/rubygems'
 
-gem 'rails', "3.2.18"
+gem 'rails', "3.2.20"
 
 # Gems used only for assets and not required
 # in production environments by default.
