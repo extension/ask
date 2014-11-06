@@ -79,7 +79,7 @@ class UserEvent < ActiveRecord::Base
     if self.creator != self.user
       case self.event_code
       when ADDED_TAGS, REMOVED_TAGS
-        if !Notification.pending_tag_edit_notification?(self.id)
+        if !Notification.pending_tag_edit_notification?(self)
           Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id,
                               notification_type: Notification::AAE_EXPERT_TAG_EDIT, delivery_time: 1.minute.from_now )
         end
@@ -87,7 +87,7 @@ class UserEvent < ActiveRecord::Base
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id,
                             notification_type: Notification::AAE_EXPERT_VACATION_EDIT, delivery_time: 1.minute.from_now )
       when ADDED_LOCATION, REMOVED_LOCATION, ADDED_COUNTY, REMOVED_COUNTY
-        if !Notification.pending_location_edit_notification?(self.id)
+        if !Notification.pending_location_edit_notification?(self)
           Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id,
                               notification_type: Notification::AAE_EXPERT_LOCATION_EDIT, delivery_time: 1.minute.from_now )
         end
