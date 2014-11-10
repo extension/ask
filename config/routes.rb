@@ -42,6 +42,9 @@ Aae::Application.routes.draw do
       get 'ask'
       post 'ask'
       get 'widget'
+      get 'ask_widget'
+      post 'ask_widget'
+      post 'ask_ajax'
     end
   end
 
