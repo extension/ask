@@ -453,8 +453,7 @@ class Expert::QuestionsController < ApplicationController
       if request.post?
         if (message = params[:wrangle_reason]).present?
           params[:wrangle_reason].present? ? wrangle_reason = params[:wrangle_reason] : wrangle_reason = nil
-          current_assignee = [@question.assignee]
-          recipient = @question.assign_to_question_wrangler(current_user, wrangle_reason, current_assignee)
+          recipient = @question.assign_to_question_wrangler(current_user, wrangle_reason)
           # re-open the question if it's reassigned after resolution
           if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
             @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)

@@ -275,6 +275,18 @@ class Notification < ActiveRecord::Base
   end   
   
   def self.pending_activity_notification?(notifiable)
-    Notification.where(notifiable_id: notifiable.id, notification_type: AAE_QUESTION_ACTIVITY, delivery_time: Time.now..Settings.activity_notification_interval.from_now).size > 0
+    Notification.where(notifiable_id: notifiable.id, notification_type: AAE_QUESTION_ACTIVITY,
+                       delivery_time: Time.now..Settings.activity_notification_interval.from_now).size > 0
   end
+ 
+  def self.pending_tag_edit_notification?(user_event)
+     Notification.where(notification_type: AAE_EXPERT_TAG_EDIT, recipient_id: user_event.user.id,
+                        delivery_time: Settings.user_event_notification_interval.ago..Time.zone.now + 1.minute).size > 0
+  end
+
+  def self.pending_location_edit_notification?(user_event)
+     Notification.where(notification_type: AAE_EXPERT_LOCATION_EDIT, recipient_id: user_event.user.id,
+                        delivery_time: Settings.user_event_notification_interval.ago..Time.zone.now + 1.minute).size > 0
+  end
+
 end
