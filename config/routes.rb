@@ -267,6 +267,7 @@ Aae::Application.routes.draw do
   match 'widget/create_from_widget' => 'widget#create_from_widget', :via => :post
   # get counties for widget
   match 'widget/get_counties/:location_id' => 'widget#get_counties', :via => :get
+  match 'widget/ajax_counties/:location_id' => 'widget#ajax_counties', :via => :get
 
   # webmail routes
   scope "webmail" do

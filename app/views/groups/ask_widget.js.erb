@@ -23,10 +23,38 @@ if (window.jQuery === undefined || window.jQuery.fn.jquery !== '1.8.2') {
     (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
 } else {
     jQuery = window.jQuery;
-    // main();
+    main();
 }
 
 function scriptLoadHandler() {
     jQuery = window.jQuery.noConflict(true);
-    // main();
+    main();
+}
+
+
+
+function main() {
+    jQuery(document).ready(function($) {
+        jQuery("#question_location_id").change(function() {
+          var location_id = jQuery('select#question_location_id :selected').val();
+          if(location_id == "") {
+            jQuery("#county_list").html("");
+          } else {
+            jQuery.ajax({
+              url: "<%= root_url %>/widget/ajax_counties/" + location_id,
+              dataType: "jsonp",
+              success: function( json ) {
+                console.log("The request is successful!");
+                $.each(json, function(i, value) {
+                  $('#county_list').append($('<option>').text(value).attr('value', value));
+                });
+              },
+              complete: function( xhr, status ) {
+                console.log("The request is complete!");
+              }
+            });
+          }
+          return false;
+        });
+    });
 }
