@@ -44,31 +44,9 @@ class WidgetController < ApplicationController
   end
 
   def ajax_counties
-    if params[:term]
-      like= "%".concat(params[:term].concat("%"))
-      counties = County.where("name like ?", like).where(:location_id => params[:location_id])
-    else
-      counties = County.where(:location_id => params[:location_id])
-    end
+    counties = County.where(:location_id => params[:location_id])
     list = counties.map {|c| Hash[ id: c.id, label: c.name, name: c.name]}
-    # render json: list
     render json: list, callback: params[:callback]
-  end
-
-  def get_counties_list
-    render :partial => "counties"
-    respond_to do |format|
-      # shows the widget generator form for the client
-      format.html
-      # deliver the bootstrapping Javascript
-      # format.js { render "bootstrap", formats: [:js] }
-      # deliver the rendered events as JSONP response to the widget
-      format.json {
-        search = Search.new(q: params[:q], per: params[:limit])
-        # render json: search.events, callback: params[:callback]
-        render :json => response.to_json, :callback => params['callback']
-      }
-    end
   end
 
 end

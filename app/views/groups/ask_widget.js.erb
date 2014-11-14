@@ -45,8 +45,10 @@ function main() {
               dataType: "jsonp",
               success: function( json ) {
                 console.log("The request is successful!");
-                $.each(json, function(i, value) {
-                  $('#county_list').append($('<option>').text(value).attr('value', value));
+                $('#question_county_id').empty();
+                $('#question_county_id').append($('<option>').text("Entire state").attr('value', ''));
+                $.each(json, function(i, item) {
+                  $('#question_county_id').append($('<option>').text(item.name).attr('value', item.id));
                 });
               },
               complete: function( xhr, status ) {
