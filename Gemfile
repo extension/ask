@@ -90,6 +90,8 @@ gem "htmlentities"
 
 # search on solr
 gem "sunspot_rails"
+# rake progress
+gem "progress_bar"
 
 # used to post-process mail to convert styles to inline
 gem "csspool"
