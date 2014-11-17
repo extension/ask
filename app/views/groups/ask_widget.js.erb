@@ -35,12 +35,12 @@ function scriptLoadHandler() {
 
 function main() {
     jQuery(document).ready(function($) {
-        jQuery("#question_location_id").change(function() {
-          var location_id = jQuery('select#question_location_id :selected').val();
+        $("#question_location_id").change(function() {
+          var location_id = $('select#question_location_id :selected').val();
           if(location_id == "") {
-            jQuery("#county_list").html("");
+            $("#county_list").html("");
           } else {
-            jQuery.ajax({
+            $.ajax({
               url: "<%= root_url %>/widget/ajax_counties/" + location_id,
               dataType: "jsonp",
               success: function( json ) {

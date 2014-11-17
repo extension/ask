@@ -27,6 +27,11 @@ class GroupsController < ApplicationController
     params[:fingerprint] = @group.widget_fingerprint
     @question = Question.new
 
+    # display three image fields for question submitter
+    3.times do
+      @question.images.build
+    end
+
     respond_to do |format|
       format.js {render :ask_widget}
     end
@@ -198,7 +203,6 @@ class GroupsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html
       format.json
     end
 

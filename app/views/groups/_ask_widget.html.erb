@@ -18,7 +18,7 @@
 
 
 
-  <%= form_for @question, :url => ask_ajax_group_url(), :html => {:remote => true, :multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+  <%= form_for @question, :url => ask_ajax_group_url(), :html => {:remote => true, :multipart => true, :class => ""} do |f| %>
 
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 
