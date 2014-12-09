@@ -40,6 +40,7 @@
         </style>
 
         <%= javascript_include_tag "application" %>
+				<%= javascript_include_tag "iframeResizer.contentWindow.min" %>
 </head>
 
 <body>
@@ -160,6 +161,10 @@
 
     <script class="code" type="text/javascript">
       $(document).ready(function () {
+
+
+
+
 
         <% if @group.is_australian? %>
           $('#ask_submit').prop('disabled', true);
