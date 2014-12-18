@@ -2,26 +2,26 @@
   <%= link_to question_path(question.id) do %>
     <h1 class="article_title"><%= format_text_for_display(question.title) -%></h1>
     <p class="question_body"><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
-    
+
     <% if question.responses.size > 0 %>
     <p><span class="response_count">Answered</span></p>
     <% end %>
-    
+
     <% if question.comments.size > 0 %>
       <p><span class="response_count"><%= question.comments.size %> <%= question.comments.size > 1 ? "Comments" : "Comment" %> </span></p>
     <% end %>
   <%- end -%>
-  
+
   <% if question.images.size > 0 %>
-    
+
     <div class="images_wrapper clearfix">
       <% question.images.each do |image| %>
-        <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>  
+        <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>  
           <div class="question_image_wrapper">
             <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size150w" %></a>
           </div>
-          
-          
+
+
           <div id="myModal<%= image.id %>" class="modal fade">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -35,16 +35,16 @@
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal -->
-          
+
         <% else %>
           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
       <br class="clearing" />
     </div>
-    
+
   <% end %>
-  
+
     <p>
       <% if question.location.present? %>
         <% if question.county.present? %>
