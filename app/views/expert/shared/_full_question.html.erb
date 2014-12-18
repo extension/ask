@@ -35,7 +35,7 @@
         <div class="images_wrapper clearfix">
         <% question.images.each do |image| %>
           <% if image.persisted? %>
-            <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+            <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
             <div class="question_image_wrapper">
               <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
             </div>
