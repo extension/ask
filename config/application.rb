@@ -19,10 +19,10 @@ module Aae
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
     config.autoload_paths += Dir["#{config.root}/app/models/**/"]
-    config.autoload_paths += Dir["#{config.root}/lib/"] 
+    config.autoload_paths += Dir["#{config.root}/lib/"]
 
     # autoload lib/validators
-    config.autoload_paths += Dir["#{config.root}/lib/validators/**/"] 
+    config.autoload_paths += Dir["#{config.root}/lib/validators/**/"]
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -41,7 +41,7 @@ module Aae
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
-    
+
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
@@ -65,6 +65,8 @@ module Aae
     #get rid of pesky app errors
     config.action_dispatch.ip_spoofing_check = false
 
+    config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
+    
     # see https://github.com/rack/rack/issues/337
     config.middleware.use ::Rack::Robustness do |g|
       g.no_catch_all
@@ -72,6 +74,6 @@ module Aae
       g.content_type 'text/plain'
       g.body{ |ex| ex.message }
       g.ensure(true) { |ex| env['rack.errors'].write(ex.message) }
-    end    
+    end
   end
 end
