@@ -254,6 +254,8 @@ Aae::Application.routes.draw do
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
   # route for current url structure for accessing a widget
   match 'widget/tracking/:fingerprint' => "widget#index", :via => :get, :as => 'group_widget'
+  # route for js loaded widget
+  match 'widget/js_widget/:fingerprint' => "widget#js_widget", :via => :get, :as => 'js_widget'
   # recognize widget/index as well
   match 'widget/index/:fingerprint' => "widget#index", :via => :get
   # Route for named/tracked widget w/ no location *unused is a catcher for /location and /location/county for

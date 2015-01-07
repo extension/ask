@@ -1,24 +1,15 @@
 var div = document.createElement('div');
-var s = document.getElementById("<%= @widget_key %>");
+var s = document.getElementById("<%= @group.widget_fingerprint %>");
 while (s.firstChild) {
   s.removeChild(s.firstChild);
 }
 s.appendChild(div);
 div.innerHTML = '<style type="text/css" media="screen">#aae-qw-afa5b7ef {border: 1px solid red;}</style>';
-div.innerHTML += "<iframe id=\"aae-qw-afa5b7ef-iframe\" width=\"100%\" style=\"border:0;\" src=\"http://aae.dev/widget/tracking/84fe81f9d46eaa9293e5e4a9eb73a97bd547116c\"></iframe>"
-// div.innerHTML += "<iframe width=\"100%\" style=\"border:0;\" src=\"http://localhost:8888/widget/content.html\"></iframe>"
-
-
-
+div.innerHTML += "<iframe id=\"aae-qw-afa5b7ef-iframe\" width=\"100%\" style=\"border:0;\" src=\"<%= js_widget_url(@group.widget_fingerprint) %>\"></iframe>"
 
 var script_tag = document.createElement('script');
 script_tag.setAttribute("type","text/javascript");
 script_tag.setAttribute("src", "<%= root_url %>/assets/iframeResizer.min.js");
-// (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
-
-
-
-
 
 
     if (script_tag.readyState) {
@@ -38,15 +29,5 @@ iFrameResize({
         log                     : true,                  // Enable console logging
         enablePublicMethods     : true,                  // Enable methods within iframe hosted page
         checkOrigin: false
-      });      
-
+      });
 }
-
-
-
-
-
-
-
-
-console.log("main");

@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>eXtension: Ask an Expert</title>
+    <style type="text/css" media="screen">
+
+        </style>
+
+        <%= javascript_include_tag "application" %>
+				<%= javascript_include_tag "iframeResizer.contentWindow.min" %>
+</head>
+
+<body>
+
+    <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
+    <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+
+    <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
+    <h2>Ask an Expert</h2>
+
+    <div class="grid_16" id="content_area">
+    <% flash_names = [:notice, :warning, :message, :error]
+          flash_names.each do |flash_type|
+             if flash[flash_type] %>
+                <div id='flash_notice' class='<%= flash[:notice]? "notice" : "warning" %>'>
+                    <p><%= flash[flash_type] %></p>
+                </div>
+            <% end %>
+    <% end %>
+    </div><!-- .grid_16 -->
+
+    <% if @group.widget_show_title %>
+    <p>
+      <label for="title">Give your question a title
+      <%= f.text_field(:title, { :type => "text", :maxlength => Question::TITLE_MAX_LENGTH }) %>
+      </label>
+    </p>
+    <% end %>
+
+    <p>
+      <label for="question">Question
+        <% if @group.is_australian? %>
+          (Please include your location: region or town)
+        <% end %>
+      <%= f.text_area :body, :rows => 4  %>
+      </label>
+    </p>
+
+    <% if @group.widget_show_location %>
+        <p>
+          <label>Location and County
+            <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : @group.widget_location_id)) %>
+          </label>
+        </p>
+
+        <p id="county_list">
+          <% if (current_location && current_location.counties.size > 0 ) || (@group.widget_location &&  @group.widget_location.counties.size > 0) %>
+            <label>
+              	<%= f.select(:county_id,
+                options_for_select(get_county_options(current_location || @group.widget_location), current_county.present? ? current_county.id : @group.widget_county_id)) %>
+            </label>
+          <% end %>
+        </p>
+    <% end %>
+
+    <% if @group.widget_upload_capable? %>
+      <p>
+      <label>Image (optional)</label>
+      <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+
+      <%= f.fields_for :images do |image_form| %>
+          <p>
+            <%= image_form.file_field :attachment %>
+          </p>
+      <% end %>
+      </p>
+    <% end %>
+
+    <br />
+
+    <%- if !current_user or !current_user.email.present? -%>
+    <p>
+        <label for="email">Email
+        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
+        </label>
+    </p>
+    <%- end -%>
+
+
+    <% if @group.widget_public_option %>
+       <fieldset>
+       <p>
+         <label for="is_public">
+         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
+         Share my question on Ask an Expert
+  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
+         </label>
+       </p>
+       </fieldset>
+     <% end %>
+
+     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+       <div id="app_location" class="demo">
+         <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
+       </div>
+     <% end %>
+
+     <% if @group.is_australian? %>
+       <p>
+         <label><input type="checkbox" id="policy-content" class="checkbox" value="consent"> I consent to any personal information which I submit in this form being disclosed and stored as detailed below</label>
+       </p>
+     <% end %>
+
+
+     <%- if current_user and current_user.email.present? -%>
+        <p>Your answer will be sent to <%= current_user.email %></p>
+      <% end %>
+
+    <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
+
+    <% if @group.is_australian? %>
+     <p class="text-muted text-italic text-legal"><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/", :target => "_blank" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy", :target => "_blank" %>.</small></p>
+		<% else %>
+			<p class="text-muted text-italic text-legal"><small>By submitting a question, you agree to the eXtension <%= link_to "Terms of Use", "http://www.extension.org/main/termsofuse", :target => "_blank" %>.</small></p>
+    <% end %>
+
+    <% end %>
+
+    <script class="code" type="text/javascript">
+      $(document).ready(function () {
+
+
+
+
+
+        <% if @group.is_australian? %>
+          $('#ask_submit').prop('disabled', true);
+          $("#policy-content").on("change", function(e){
+            if($('#policy-content').prop("checked")) {
+              $('#ask_submit').prop('disabled', false);
+            } else {
+              $('#ask_submit').prop('disabled', true);
+            }
+          });
+        <% end %>
+
+
+        $("#question_location_id").change(function() {
+          var location_id = $('select#question_location_id :selected').val();
+          if(location_id == "") {
+            $("#county_list").html("");
+          } else {
+            jQuery.get('/widget/get_counties/' + location_id, function(data){
+                $("#county_list").html(data);
+            })
+          }
+          return false;
+        });
+      });
+    </script>
+
+</body>
+</html>
