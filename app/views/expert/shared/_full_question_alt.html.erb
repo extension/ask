@@ -31,7 +31,7 @@
       <% end %>
 
       <% question.images.each do |image| %>
-        <% if File.exists?(Rails.root.join("public#{image.url(:original,false)}")) %>
+        <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
 
           <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.url(:thumb), :class => "size100w" %></a>
 
