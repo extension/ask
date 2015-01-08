@@ -147,6 +147,9 @@ class QuestionsController < ApplicationController
         return render(:template => '/widget/status', :layout => false)
       end
 
+      # save the referrer so it doesn't get overwritten if the form is refreshed because of errors
+      @widget_parent_url = (params[:widget_parent_url]) ? params[:widget_parent_url] : ''
+
       begin
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
@@ -179,7 +182,7 @@ class QuestionsController < ApplicationController
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-        @question.widget_parent_url = (params[:widget_parent_url]) ? params[:widget_parent_url] : ''
+        @question.widget_parent_url = @widget_parent_url
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
 
