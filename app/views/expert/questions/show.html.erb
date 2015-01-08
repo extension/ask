@@ -18,8 +18,8 @@
           to <%= link_to @original_group.name, expert_group_path(@original_group.id) %>
         <% end %>
 
-        <% if @question.referrer? %>
-          from a widget embedded on <%= @question.referrer %>
+        <% if @question.widget_parent_url? %>
+          from a widget embedded on <%= @question.widget_parent_url %>
         <% end %>
 
 

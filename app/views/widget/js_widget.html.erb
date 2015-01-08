@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>eXtension: Ask an Expert</title>
-    <style type="text/css" media="screen">
-
-        </style>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>eXtension: Ask an Expert</title>
+	<style type="text/css" media="screen">
+	body {margin-bottom: 10px;}
+		.feedback-block {border: 1px solid #666; background: #e5e5e5; padding:.25em 1em;}
+	</style>
 
         <%= javascript_include_tag "application" %>
 				<%= javascript_include_tag "iframeResizer.contentWindow.min" %>
@@ -18,21 +17,20 @@
     <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
 		<%= hidden_field_tag(:widget_type, "js_widget") %>
-		<%= hidden_field_tag(:widget_location, @widget_location) %>
+		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
     <h2>Ask an Expert</h2>
 
-    <div class="grid_16" id="content_area">
     <% flash_names = [:notice, :warning, :message, :error]
           flash_names.each do |flash_type|
              if flash[flash_type] %>
-                <div id='flash_notice' class='<%= flash[:notice]? "notice" : "warning" %>'>
+                <div class='feedback-block' class='<%= flash[:notice]? "notice" : "warning" %>'>
+									<p>.feedback-block div</p>
                     <p><%= flash[flash_type] %></p>
                 </div>
             <% end %>
     <% end %>
-    </div><!-- .grid_16 -->
 
     <% if @group.widget_show_title %>
     <p>

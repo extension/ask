@@ -179,7 +179,7 @@ class QuestionsController < ApplicationController
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-        # @question.widget_parent_url = (@widget_parent_url) ? @widget_parent_url : ''
+        @question.widget_parent_url = (params[:widget_parent_url]) ? params[:widget_parent_url] : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
 
@@ -227,7 +227,9 @@ class QuestionsController < ApplicationController
 
         if @question.blank?
           @question = Question.new
-          @question.images.build
+          3.times do
+            @question.images.build
+          end
         end
 
         if(@group.is_bonnie_plants?)
@@ -246,7 +248,9 @@ class QuestionsController < ApplicationController
 
         if @question.blank?
           @question = Question.new
-          @question.images.build
+          3.times do
+            @question.images.build
+          end
         end
 
         if(@group.is_bonnie_plants?)
@@ -261,7 +265,11 @@ class QuestionsController < ApplicationController
       end
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
-      return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      if params[:widget_type] == "js_widget"
+        return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      else
+        return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      end
     end
   end
 
