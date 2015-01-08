@@ -9,7 +9,7 @@ div.innerHTML += "<iframe id=\"aae-iframe-<%= @group.widget_fingerprint %>\" wid
 
 var script_tag = document.createElement('script');
 script_tag.setAttribute("type","text/javascript");
-script_tag.setAttribute("src", "<%= root_url %>/javascripts/iframeResizer.min.js");
+script_tag.setAttribute("src", '<%= "#{request.protocol}#{request.host_with_port}#{asset_path('iframeResizer.js')}" %>');
 
 
     if (script_tag.readyState) {
