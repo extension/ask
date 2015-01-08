@@ -37,6 +37,7 @@ class WidgetController < ApplicationController
 
   def js_widget
     @group = Group.find_by_widget_fingerprint(params[:fingerprint])
+    @widget_parent_url = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
 
     if !@group.blank?
       if !@group.widget_active?

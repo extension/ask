@@ -17,6 +17,8 @@
 
     <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+		<%= hidden_field_tag(:widget_type, "js_widget") %>
+		<%= hidden_field_tag(:widget_location, @widget_location) %>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
     <h2>Ask an Expert</h2>

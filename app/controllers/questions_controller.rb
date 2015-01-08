@@ -179,6 +179,7 @@ class QuestionsController < ApplicationController
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+        # @question.widget_parent_url = (@widget_parent_url) ? @widget_parent_url : ''
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
 
@@ -211,7 +212,11 @@ class QuestionsController < ApplicationController
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
-          return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          if params[:widget_type] == "js_widget"
+            return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          else
+            return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          end
         else
           raise InternalError
         end
@@ -228,7 +233,11 @@ class QuestionsController < ApplicationController
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
-          return render(:template => 'widget/index', :layout => false)
+          if params[:widget_type] == "js_widget"
+            return render(:template => 'widget/js_widget', :layout => false)
+          else
+            return render(:template => 'widget/index', :layout => false)
+          end
         end
       rescue Exception => e
         notify_honeybadger(e)
@@ -243,7 +252,11 @@ class QuestionsController < ApplicationController
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
-          return render(:template => 'widget/index', :layout => false)
+          if params[:widget_type] == "js_widget"
+            return render(:template => 'widget/js_widget', :layout => false)
+          else
+            return render(:template => 'widget/index', :layout => false)
+          end
         end
       end
     else
