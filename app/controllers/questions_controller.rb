@@ -207,7 +207,7 @@ class QuestionsController < ApplicationController
 
         # validate question
         if !@question.valid?
-          @argument_errors = ("Errors occurred when saving: " + @question.errors.full_messages.join(' '))
+          @argument_errors = ("We ran into a problem: " + @question.errors.full_messages.join(' '))
           raise ArgumentError
         end
 
@@ -216,7 +216,7 @@ class QuestionsController < ApplicationController
           session[:submitter_id] = @submitter.id
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
           if params[:widget_type] == "js_widget"
-            return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+            return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint, :widget_parent_url => @widget_parent_url), :layout => false
           else
             return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
           end
@@ -269,7 +269,7 @@ class QuestionsController < ApplicationController
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
       if params[:widget_type] == "js_widget"
-        return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+        return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint, :widget_parent_url => @widget_parent_url), :layout => false
       else
         return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
       end
