@@ -587,17 +587,21 @@ class Question < ActiveRecord::Base
       if group_assignees.length > 0
         if (group.ignore_county_routing == true) && self.location.present?
           assignee = pick_user_from_list(group_assignees.with_expertise_location(self.location.id))
+          reason_assigned = "You chose to accept questions based on location (#{self.location.name})"
         else
           if self.county.present?
             assignee = pick_user_from_list(group_assignees.with_expertise_county(self.county.id))
+            reason_assigned = "You chose to accept questions based on location (#{self.county.name})"
           end
           if !assignee && self.location.present?
             assignee = pick_user_from_list(group_assignees.with_expertise_location_all_counties(self.location.id))
+            reason_assigned = "You chose to accept questions based on location (all counties in #{self.location.name})"
           end
         end
 
         if !assignee
           assignee = pick_user_from_list(group_assignees.active.route_from_anywhere)
+          reason_assigned = "You chose to accept questions from anywhere"
         end
         # still aint got no one? assign to a group leader
         if !assignee
@@ -609,23 +613,27 @@ class Question < ActiveRecord::Base
 
           if group_leaders.length > 0
             assignee = pick_user_from_list(group_leaders)
+            reason_assigned = "You are a group leader"
           # still aint got no one? really?? Wrangle that bad boy.
           else
             assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
+            reason_assigned = "You are a Question Wrangler"
           end
         end
       # if individual assignment is turned on for the group and there are no active assignees, wrangle it
       else
         assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
+        reason_assigned = "You are a Question Wrangler"
       end
     else
       # send to the question wrangler group if the location of the question is not in the location of the group and
       # the group is not receiving questions from outside their defined locations.
       assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
+      reason_assigned = "You are a Question Wrangler"
     end
 
     if assignee
-      assign_to(assignee, system_user, nil)
+      assign_to(assignee, system_user, "Reason assigned: " + reason_assigned)
     else
       return
     end

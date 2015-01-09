@@ -27,6 +27,12 @@ class ApplicationController < ActionController::Base
     current_user.present? ? current_user.id : session[:submitter_id]
   end
 
+  def append_info_to_payload(payload)
+    super
+    payload[:ip] = request.remote_ip
+    payload[:auth_id] = current_user.id if current_user
+  end
+
   # additional tracking information for papertrail
   def info_for_paper_trail
     { :ip_address => request.remote_ip, :reason => params[:reason], :notify_submitter => params[:notify_submitter].present? ? params[:notify_submitter] : false }
