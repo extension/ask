@@ -4,7 +4,7 @@ while (s.firstChild) {
   s.removeChild(s.firstChild);
 }
 s.appendChild(div);
-div.innerHTML = '<style type="text/css" media="screen">#aae-iframe-<%= @group.widget_fingerprint %> {border: 1px solid #ccc; padding-bottom:10px;}</style>';
+div.innerHTML = '<style type="text/css" media="screen">#aae-iframe-<%= @group.widget_fingerprint %> {border: 2px solid lime;}</style>';
 div.innerHTML += "<iframe id=\"aae-iframe-<%= @group.widget_fingerprint %>\" width=\"100%\"  src=\"<%= js_widget_url(@group.widget_fingerprint) %>\"></iframe>"
 
 var script_tag = document.createElement('script');
