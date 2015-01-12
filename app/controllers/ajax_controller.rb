@@ -43,6 +43,10 @@ class AjaxController < ApplicationController
         name = expert_or_group.name
         if expert_or_group.available?
           availability = "available"
+        elsif expert_or_group.retired?
+          availability = "not_available"
+          name += " (Retired)"
+          results["availability"] = "not_available" 
         else
           availability = "not_available"
           name += " (Not available)"
