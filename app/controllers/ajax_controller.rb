@@ -49,7 +49,7 @@ class AjaxController < ApplicationController
           results["availability"] = "not_available" 
         else
           availability = "not_available"
-          name += " (Not available)"
+          name += " (away)"
           results["availability"] = "not_available"
         end
         results["markup_block"] = "<a class='#{availability}'>#{view_context.get_avatar_for_user(expert_or_group, :thumb).html_safe} #{name} #{title} #{county} #{location}</a>"
