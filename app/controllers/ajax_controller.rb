@@ -43,13 +43,13 @@ class AjaxController < ApplicationController
         name = expert_or_group.name
         if expert_or_group.available?
           availability = "available"
-        elsif expert_or_group.away?
+        elsif expert_or_group.retired?
           availability = "not_available"
-          name += " (away)"
+          name += " (account is retired)"
           results["availability"] = "not_available" 
         else
           availability = "not_available"
-          name += " (account is retired)"
+          name += " (away)"
           results["availability"] = "not_available"
         end
         results["markup_block"] = "<a class='#{availability}'>#{view_context.get_avatar_for_user(expert_or_group, :thumb).html_safe} #{name} #{title} #{county} #{location}</a>"
