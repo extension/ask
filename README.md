@@ -1,4 +1,4 @@
-# aae
+# Ask An Expert
 
 ## Description
 AaE (Ask an Expert) is an application used to provide a framework for receiving questions from the public and allowing eXtension experts (and possibly others) to respond and conduct a conversation with our clients (the public) to answer their questions and provide them assistance. This also includes a widget framework that allows people in eXtension to create their own AaE widgets to install on their own websites so people can interact with our Ask an Expert System from other sites besides our public site. This application in particular starts the split from darmok (which at the time of this writing includes the public site, aae, and the people applications all in one codebase) to make up the 2.0 version of AaE.  
