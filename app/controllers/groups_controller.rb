@@ -73,6 +73,9 @@ class GroupsController < ApplicationController
               # message could be an array, but not going to be for User
               @question.errors[attribute] = message
             end
+            3.times do
+              @question.images.build
+            end
             return
           end
         end
