@@ -11,6 +11,7 @@
 		.feedback-block.warning {background:yellow;}
 		.feedback-block.notice {background:#5cb85c; color:#fff;}
 		.well {margin-bottom:0;}
+		.aae-logo {padding:10px; background-color:#fff;}
 	</style>
 </head>
 
@@ -21,7 +22,7 @@
 		<%= hidden_field_tag(:widget_type, "js_widget") %>
 		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
 
-		<p><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></p>
+		<p class="aae-logo"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></p>
 
     <% flash_names = [:notice, :warning, :message, :error]
           flash_names.each do |flash_type|
