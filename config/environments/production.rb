@@ -52,6 +52,7 @@ Aae::Application.configure do
   config.assets.precompile += %w( application-print.css )
   config.assets.precompile += %w( public.css )
   config.assets.precompile += %w( ie8.css )
+  config.assets.precompile += %w( iframeResizer.js )
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false

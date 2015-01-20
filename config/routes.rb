@@ -42,6 +42,9 @@ Aae::Application.routes.draw do
       get 'ask'
       post 'ask'
       get 'widget'
+      get 'ask_widget'
+      post 'ask_widget'
+      post 'ask_ajax'
     end
   end
 
@@ -251,6 +254,8 @@ Aae::Application.routes.draw do
   match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
   # route for current url structure for accessing a widget
   match 'widget/tracking/:fingerprint' => "widget#index", :via => :get, :as => 'group_widget'
+  # route for js loaded widget
+  match 'widget/js_widget/:fingerprint' => "widget#js_widget", :via => :get, :as => 'js_widget'
   # recognize widget/index as well
   match 'widget/index/:fingerprint' => "widget#index", :via => :get
   # Route for named/tracked widget w/ no location *unused is a catcher for /location and /location/county for
@@ -264,6 +269,7 @@ Aae::Application.routes.draw do
   match 'widget/create_from_widget' => 'widget#create_from_widget', :via => :post
   # get counties for widget
   match 'widget/get_counties/:location_id' => 'widget#get_counties', :via => :get
+  match 'widget/ajax_counties/:location_id' => 'widget#ajax_counties', :via => :get
 
   # webmail routes
   scope "webmail" do

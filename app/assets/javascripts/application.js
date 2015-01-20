@@ -35,3 +35,4 @@
 //= require submittable
 //= require bootstrap_hacks
 //= require select2
+//= require iframeResizer.contentWindow

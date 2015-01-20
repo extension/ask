@@ -1,82 +1,57 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>eXtension: Ask an Expert</title>
-    <style type="text/css" media="screen">
-        <!--
-       body {font-size: 62.5%;}
-       body, html {margin:0; font-family: "Arial", "sans-serif"; color: #222; line-height:120%; background:transparent;}
-       p {font-size:1.2em;line-height:1.3em;margin:0 0 .1em;}
-
-       #myForm {margin:0; border: 1px solid #888;padding: .5em 1em 0;background: #eee;}
-       h1 {margin:0;padding:0;float:right;height: 40px;width: 98px;text-indent:-3000px;background: transparent url('<%= (request.ssl? ? 'https' : 'http' ) + "://#{@host_name}/#{asset_path('ex_logo_micro_wR.png')}" %>') 0 0 no-repeat; background-size: 98px 40px;}
-       h1 a {display:block;height:40px;}
-       h2 {margin:0 0 .25em;font-size: 1.7em;line-height:100%;font-weight: normal;color:#000;}
-
-       #myFormOutput p {margin: 1em 0;color:#008000;font-weight: bold;font-size:1.3em;}
-       #myFormOutput p#red {color: #ff0000;}
-
-       fieldset {margin: 1em 0 .5em;border:0;padding:0;color:#666;}
-       textarea, input, select {width: 95%;margin: 0 0 7px;}
-       input, select {max-width: 20em;}
-       input, textarea {padding: .15em .3em;}
-       p.submit input {width:auto; margin-bottom:4px;}
-       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em; color:#000;}
-       label small {color:#555; font-weight:normal; font-size:.9em;}
-       span {line-height: 100%;display: block;font-weight:normal;color: #888;}
-       label .checkbox {float:left; width:auto; margin-right:1em;}
-        .label {float:left;}
-       #flash_notice {float:left; padding:6px; margin:10px 0; font-size:12px; color:#fff;}
-       #flash_notice.notice {background:#5cb85c;}
-       #flash_notice.warning {background:#a94442;}
-       #app_location {background:yellow; padding:1em; margin-bottom:1em;}
-       fieldset {margin:1em 0 2em;}
-       .text-italic {font-style:italic;}
-       .text-legal {line-height:1.2em;}
-       	-->
-        </style>
-
-        <%= javascript_include_tag "application" %>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>eXtension: Ask an Expert</title>
+	<%= javascript_include_tag "application" %>
+	<%= stylesheet_link_tag    "public", :media => "all" %>
+	<style type="text/css" media="screen">
+		body {background:none;}
+		.feedback-block {background: #e5e5e5; padding:.5em 1em; margin:1em;}
+		.feedback-block.warning {background:yellow;}
+		.feedback-block.notice {background:#5cb85c; color:#fff;}
+		.well {margin-bottom:0;}
+		.aae-logo {padding:10px; background-color:#fff;}
+		#app_location {background: yellow; padding: 1em; margin-bottom: 1em;}
+	</style>
 </head>
 
 <body>
 
-    <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
+    <%= form_for @question, :html => {:multipart => true, :id => "myForm", :class => "form-stacked no_m_t well"} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+		<%= hidden_field_tag(:widget_type, "js_widget") %>
+		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
 
-    <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
-    <h2>Ask an Expert</h2>
+		<p class="aae-logo"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></p>
 
-    <div class="grid_16" id="content_area">
+		<%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+			<div id="app_location" class="demo">
+				<p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
+			</div>
+		<% end %>
+
     <% flash_names = [:notice, :warning, :message, :error]
           flash_names.each do |flash_type|
              if flash[flash_type] %>
-                <div id='flash_notice' class='<%= flash[:notice]? "notice" : "warning" %>'>
+                <div class='feedback-block <%= flash[:notice]? "notice" : "warning" %>'>
                     <p><%= flash[flash_type] %></p>
                 </div>
             <% end %>
     <% end %>
-    </div><!-- .grid_16 -->
 
     <% if @group.widget_show_title %>
-    <p>
-      <label for="title">Give your question a title
-      <%= f.text_field(:title, { :type => "text", :maxlength => Question::TITLE_MAX_LENGTH }) %>
-      </label>
-    </p>
+		<p>
+			<%= f.label :title, 'Give your question a title' %>
+			<%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", :class => "form-control required"} %>
+		</p>
     <% end %>
 
-    <p>
-      <label for="question">Question
-        <% if @group.is_australian? %>
-          (Please include your location: region or town)
-        <% end %>
-      <%= f.text_area :body, :rows => 4  %>
-      </label>
-    </p>
+		<p>
+			<%= f.label :body, "Question  #{@group.is_australian? ? "(Please include your location: region or town)" : ""}" %>
+			<%= f.text_area :body, :rows => 6, :class => "form-control required wysiwyg" %>
+		</p>
+
 
     <% if @group.widget_show_location %>
         <p>
@@ -120,21 +95,14 @@
 
 
     <% if @group.widget_public_option %>
-       <fieldset>
-       <p>
+
+				<div class="checkbox">
          <label for="is_public">
          <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
          Share my question on Ask an Expert
-  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
+  	      <span class="help-block">Sharing your question may help others learn from the answer.</span>
          </label>
-       </p>
-       </fieldset>
-     <% end %>
-
-     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-       <div id="app_location" class="demo">
-         <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
-       </div>
+			</div>
      <% end %>
 
      <% if @group.is_australian? %>
@@ -148,7 +116,7 @@
         <p>Your answer will be sent to <%= current_user.email %></p>
       <% end %>
 
-    <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
+		<p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary btn-orange btn-lg" %></p>
 
     <% if @group.is_australian? %>
      <p class="text-muted text-italic text-legal"><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/", :target => "_blank" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy", :target => "_blank" %>.</small></p>

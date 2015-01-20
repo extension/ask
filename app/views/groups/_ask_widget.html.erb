@@ -1,0 +1,105 @@
+<style type="text/css" media="screen">
+  .aae_qw {background:#fff; padding:20px; width:<%= @width %>px; border:2px solid #ccc; margin:0 0 20px;}
+  .aae_qw-app-location-widget-dev {background:#FFFF6D; padding:.5em;}
+  .aae_qw-header {display:block !important; font-size:1.2em; margin:0 0 1em; line-height:1.2em;}
+  .aae_qw ul {margin:0; padding:0; list-style-type: none;}
+  .aae_qw-link {text-decoration:none;}
+  .aae_qw-li {margin: 0 0 10px; line-height:1em;}
+  .aae_qw-view-response {font-size:12px; color:#999;}
+  .aae_qw-see-more {display:block !important; font-size:12px; color:#999;}
+  .aae_qw-see-more a {text-decoration:none;}
+</style>
+
+<div class="aae_qw" id="aae_qw_hook" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
+
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <p class="aae_qw-app-location-widget-dev">This is a <strong>TEST</strong> widget coming from the  <strong>AaE <%= Settings.app_location.upcase %></strong> site. This should ONLY be used for TESTING purposes.</p>
+  <% end %>
+
+
+
+  <%= form_for @question, :url => ask_ajax_group_url(), :html => {:remote => true, :multipart => true, :class => ""} do |f| %>
+
+    <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+
+    <fieldset>
+      <p>
+        <%= f.label :title, 'Give your question a title' %>
+        <%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", :class => "form-control required"} %>
+      </p>
+
+      <p>
+        <%= f.label :body, 'Question' %>
+        <%= f.text_area :body, :rows => 6, :class => "form-control required wysiwyg" %>
+      </p>
+
+      <%- if !current_user or !current_user.email.present? -%>
+      <p>
+        <%= f.label :email, 'Email' %>
+        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off", :class => "required" }) %>
+      </p>
+      <%- end -%>
+    </fieldset>
+
+    <% if @group.widget_public_option %>
+      <div class="checkbox">
+        <label for="is_public">
+          <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
+          <span class="help-block">Share your question with the public at ask.extension.org so others can learn from the answer.</span>
+        </label>
+
+      </div>
+    <% end %>
+
+    <%- if @group.ask_form_show_location -%>
+      <fieldset>
+        <p>
+          <%= f.label :location_id, 'Location and County (optional)' %>
+          <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil), {}, {:class => "form-control"}) %>
+        </p>
+
+        <p id="county_list">
+          <% if current_location.present? %>
+            <%= f.label :county_id %>
+            <%= f.select(:county_id, options_for_select(get_county_options(current_location), current_county.present? ? current_county.id : nil),{}, {:class => "form-control"}) %>
+          <% end %>
+        </p>
+      </fieldset>
+    <%- end -%>
+
+
+    <% if @group.widget_upload_capable? %>
+      <fieldset>
+        <p>
+          <label>Image (optional)</label>
+          <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+          <%= f.fields_for :images do |image_form| %>
+            <%= image_form.file_field :attachment  %>
+          <% end %>
+        </p>
+      </fieldset>
+    <% end %>
+
+    <% if @group.is_australian? %>
+    <fieldset>
+      <div class="well well-sm">
+      <label class="checkbox-inline">
+        <input type="checkbox" id="policy-content" value="consent"> I consent to any personal information which I submit in this form being disclosed and stored as detailed below</label>
+      </div>
+    </fieldset>
+    <% end %>
+
+    <p><%= submit_tag "Submit your Question", :id => "ask_submit", remote: true, :data_disable_with => "Submitting...", :class => "btn btn-primary btn-orange btn-lg" %></p>
+
+    <%- if current_user and current_user.email.present? -%>
+      <p>Your answer will be sent to <%= current_user.email %></p>
+    <% end %>
+
+
+    <% if @group.is_australian? %>
+     <p class="text-muted text-italic text-legal"><small>The email address you provide and any other personal information you include in your question will be stored with eXtension. eXtension is a non-profit service hosted in the United States of America. Australian parties will handle your personal information with the <%= link_to "eXtensionAUS privacy policy", "http://www.extensionaus.com.au/privacy/" %>. eXtension in the United States will handle your personal information in accordance with the <%= link_to "eXtension privacy policy", "http://www.extension.org/main/privacy" %>.</small></p>
+    <% end %>
+
+
+  <% end %>
+</div>

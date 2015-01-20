@@ -6,40 +6,148 @@
 
 class GroupsController < ApplicationController
   layout 'public'
-  
+
   before_filter :set_format, :only => [:ask]
-  
+
   def show
     @group = Group.find(params[:id])
     @group_tags = @group.tags
     @open_questions_col_one = @group.questions.public_visible.find(:all, :limit => 5, :order => 'created_at DESC')
     @open_questions_col_two = @group.questions.public_visible.find(:all, :limit => 5, :offset => 5, :order => 'created_at DESC')
   end
-  
-  def ask
+
+  def ask_widget
+    # asynchronous js loading code was taken from this tutorial:
+    # http://blog.swirrl.com/articles/creating-asynchronous-embeddable-javascript-widgets/
+    if params[:widget_key].present?
+      @widget_key = params[:widget_key]
+    end
+
     @group = Group.find(params[:id])
     params[:fingerprint] = @group.widget_fingerprint
     @question = Question.new
-    
+
     # display three image fields for question submitter
     3.times do
       @question.images.build
     end
-    
+
+    respond_to do |format|
+      format.js {render :ask_widget}
+    end
+  end
+
+
+  def ask
+    @group = Group.find(params[:id])
+    params[:fingerprint] = @group.widget_fingerprint
+    @question = Question.new
+
+    # display three image fields for question submitter
+    3.times do
+      @question.images.build
+    end
+
     if request.post?
-      # check for the existence of the question parameter, if not present, the form parameters are not being passed 
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed
       if params[:question].blank?
-        flash[:error] = "The question form is not complete. Please fill out all fields."  
+        flash[:error] = "The question form is not complete. Please fill out all fields."
         return redirect_to root_url
       end
-        
+
       begin
         @question = Question.new(params[:question])
       rescue
         flash[:error] = "Invalid Parameters."
         return redirect_to root_url
       end
-      
+
+      if current_user and current_user.email.present?
+        @submitter = current_user
+      else
+        if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
+          @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
+          if !@submitter.valid?
+            # TODO: to be sure there's a better way to combine errors?
+            @submitter.errors.each do |attribute,message|
+              # message could be an array, but not going to be for User
+              @question.errors[attribute] = message
+            end
+            3.times do
+              @question.images.build
+            end
+            return
+          end
+        end
+      end
+
+      @question.submitter = @submitter
+      @question.assigned_group = @group
+      @question.original_group_id = @group.id
+      @question.user_ip = request.remote_ip
+      @question.user_agent = request.env['HTTP_USER_AGENT']
+      @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+      @question.status = Question::SUBMITTED_TEXT
+      @question.status_state = Question::STATUS_SUBMITTED
+
+      # record the original location and county
+      @question.original_location = @question.location
+      @question.original_county = @question.county
+
+      if !@group.widget_public_option
+        @question.is_private = true
+        # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
+        # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what
+        # the submitter wanted, we default to the safest thing, privacy by the submitter.
+        @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+      elsif params[:is_public].present? && params[:is_public] == '1'
+        # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public
+        @question.is_private = false
+        @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
+      else
+        @question.is_private = true
+        @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
+      end
+
+      if @question.save
+        if(!@question.spam?)
+          session[:question_id] = @question.id
+          session[:submitter_id] = @submitter.id
+          redirect_to(@question, :notice => 'Question was successfully created.')
+        else
+          redirect_to(root_url)
+        end
+      end
+    end
+  end
+
+
+  def ask_ajax
+    @group = Group.find(params[:id])
+    params[:fingerprint] = @group.widget_fingerprint
+    @question = Question.new
+
+    # display three image fields for question submitter
+    3.times do
+      @question.images.build
+    end
+
+    if request.post?
+      # check for the existence of the question parameter, if not present, the form parameters are not being passed
+      if params[:question].blank?
+        flash[:error] = "The question form is not complete. Please fill out all fields."
+        # return redirect_to root_url
+        return render :layout => false
+      end
+
+      begin
+        @question = Question.new(params[:question])
+      rescue
+        flash[:error] = "Invalid Parameters."
+        # return redirect_to root_url
+        return render :layout => false
+      end
+
       if current_user and current_user.email.present?
         @submitter = current_user
       else
@@ -55,7 +163,7 @@ class GroupsController < ApplicationController
           end
         end
       end
-      
+
       @question.submitter = @submitter
       @question.assigned_group = @group
       @question.original_group_id = @group.id
@@ -64,42 +172,49 @@ class GroupsController < ApplicationController
       @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
       @question.status = Question::SUBMITTED_TEXT
       @question.status_state = Question::STATUS_SUBMITTED
-      
+
       # record the original location and county
       @question.original_location = @question.location
       @question.original_county = @question.county
-      
+
       if !@group.widget_public_option
         @question.is_private = true
         # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
-        # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what 
+        # so we default to the submitter marking private and this way, it cannot be overridden by an expert, when we don't know what
         # the submitter wanted, we default to the safest thing, privacy by the submitter.
         @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
       elsif params[:is_public].present? && params[:is_public] == '1'
-        # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public 
+        # For UX, the input label is the opposite of the flag. If the checkbox is checked, the question is public
         @question.is_private = false
         @question.is_private_reason = Question::PRIVACY_REASON_PUBLIC
       else
         @question.is_private = true
         @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
       end
-      
+
       if @question.save
         if(!@question.spam?)
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
-          redirect_to(@question, :notice => 'Question was successfully created.')
+          # redirect_to(@question, :notice => 'Question was successfully created.')
+          return render :layout => false
         else
-          redirect_to(root_url)
+          # redirect_to(root_url)
+          return render :layout => false
         end
       end
     end
+
+    respond_to do |format|
+      format.json
+    end
+
   end
 
   # convenience method to redirect to a widget page for the group
   def widget
     @group = Group.find(params[:id])
     return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
-  end  
-  
+  end
+
 end

@@ -75,6 +75,11 @@
   <p>Embed an Ask widget on your own web page using the following code snippet:</p>
   <div id="widgetcode"><textarea class="form-control"><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
 
+
+  <h4>NEW — Widget Code (JS)</h4>
+  <p>The code snippet below is for a more advanced version of the Ask widget which offers better design, multiple image uploads, dynamic resizing and captures the URL of widget's parent page. Add the following code on your page where you want the widget to appear:</p>
+  <div id="widgetcode2"><textarea><%= render partial: 'expert/groups/widget_code' %></textarea></div>
+
 </div>
 
 <%- end -%>

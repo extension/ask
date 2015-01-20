@@ -1,0 +1,33 @@
+var div = document.createElement('div');
+var s = document.getElementById("<%= @group.widget_fingerprint %>");
+while (s.firstChild) {
+  s.removeChild(s.firstChild);
+}
+s.appendChild(div);
+div.innerHTML = '<style type="text/css" media="screen">#aae-iframe-<%= @group.widget_fingerprint %> {border: 0;}</style>';
+div.innerHTML += "<iframe id=\"aae-iframe-<%= @group.widget_fingerprint %>\" width=\"100%\"  src=\"<%= js_widget_url(@group.widget_fingerprint) %>\"></iframe>"
+
+var script_tag = document.createElement('script');
+script_tag.setAttribute("type","text/javascript");
+script_tag.setAttribute("src", '<%= "#{request.protocol}#{request.host_with_port}#{asset_path('iframeResizer.js')}" %>');
+
+
+    if (script_tag.readyState) {
+      script_tag.onreadystatechange = function () { // For old versions of IE
+          if (this.readyState == 'complete' || this.readyState == 'loaded') {
+              scriptLoadHandler();
+          }
+      };
+    } else {
+      script_tag.onload = scriptLoadHandler;
+    }
+    (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
+
+function scriptLoadHandler() {
+
+iFrameResize({
+        log                     : true,                  // Enable console logging
+        enablePublicMethods     : true,                  // Enable methods within iframe hosted page
+        checkOrigin: false
+      });
+}

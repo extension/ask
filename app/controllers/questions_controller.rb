@@ -147,6 +147,9 @@ class QuestionsController < ApplicationController
         return render(:template => '/widget/status', :layout => false)
       end
 
+      # save the referrer so it doesn't get overwritten if the form is refreshed because of errors
+      @widget_parent_url = (params[:widget_parent_url]) ? params[:widget_parent_url] : ''
+
       begin
         # setup the question to be saved and fill in attributes with parameters
         # remove all whitespace in question before putting into db.
@@ -179,6 +182,7 @@ class QuestionsController < ApplicationController
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+        @question.widget_parent_url = @widget_parent_url
         @question.status = Question::SUBMITTED_TEXT
         @question.status_state = Question::STATUS_SUBMITTED
 
@@ -203,7 +207,7 @@ class QuestionsController < ApplicationController
 
         # validate question
         if !@question.valid?
-          @argument_errors = ("Errors occurred when saving: " + @question.errors.full_messages.join(' '))
+          @argument_errors = ("We ran into a problem: " + @question.errors.full_messages.join(' '))
           raise ArgumentError
         end
 
@@ -211,7 +215,11 @@ class QuestionsController < ApplicationController
           session[:question_id] = @question.id
           session[:submitter_id] = @submitter.id
           flash[:notice] = "Thank You! You can expect a response emailed to the address you provided."
-          return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          if params[:widget_type] == "js_widget"
+            return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint, :widget_parent_url => @widget_parent_url), :layout => false
+          else
+            return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+          end
         else
           raise InternalError
         end
@@ -222,13 +230,19 @@ class QuestionsController < ApplicationController
 
         if @question.blank?
           @question = Question.new
-          @question.images.build
+          3.times do
+            @question.images.build
+          end
         end
 
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
-          return render(:template => 'widget/index', :layout => false)
+          if params[:widget_type] == "js_widget"
+            return render(:template => 'widget/js_widget', :layout => false)
+          else
+            return render(:template => 'widget/index', :layout => false)
+          end
         end
       rescue Exception => e
         notify_honeybadger(e)
@@ -237,18 +251,28 @@ class QuestionsController < ApplicationController
 
         if @question.blank?
           @question = Question.new
-          @question.images.build
+          3.times do
+            @question.images.build
+          end
         end
 
         if(@group.is_bonnie_plants?)
           return render(:template => 'widget/bonnie_plants', :layout => false)
         else
-          return render(:template => 'widget/index', :layout => false)
+          if params[:widget_type] == "js_widget"
+            return render(:template => 'widget/js_widget', :layout => false)
+          else
+            return render(:template => 'widget/index', :layout => false)
+          end
         end
       end
     else
       flash[:notice] = 'Bad request. Only POST requests are accepted.'
-      return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      if params[:widget_type] == "js_widget"
+        return redirect_to js_widget_url(:fingerprint => @group.widget_fingerprint, :widget_parent_url => @widget_parent_url), :layout => false
+      else
+        return redirect_to group_widget_url(:fingerprint => @group.widget_fingerprint), :layout => false
+      end
     end
   end
 
