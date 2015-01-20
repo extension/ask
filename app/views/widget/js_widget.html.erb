@@ -12,6 +12,7 @@
 		.feedback-block.notice {background:#5cb85c; color:#fff;}
 		.well {margin-bottom:0;}
 		.aae-logo {padding:10px; background-color:#fff;}
+		#app_location {background: yellow; padding: 1em; margin-bottom: 1em;}
 	</style>
 </head>
 
@@ -23,6 +24,12 @@
 		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
 
 		<p class="aae-logo"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></p>
+
+		<%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+			<div id="app_location" class="demo">
+				<p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
+			</div>
+		<% end %>
 
     <% flash_names = [:notice, :warning, :message, :error]
           flash_names.each do |flash_type|
@@ -96,12 +103,6 @@
   	      <span class="help-block">Sharing your question may help others learn from the answer.</span>
          </label>
 			</div>
-     <% end %>
-
-     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-       <div id="app_location" class="demo">
-         <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Ask form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Ask form.</p>
-       </div>
      <% end %>
 
      <% if @group.is_australian? %>
