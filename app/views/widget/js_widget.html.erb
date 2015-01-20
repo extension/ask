@@ -88,15 +88,14 @@
 
 
     <% if @group.widget_public_option %>
-       <fieldset>
-       <p>
+
+				<div class="checkbox">
          <label for="is_public">
          <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
          Share my question on Ask an Expert
-  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
+  	      <span class="help-block">Sharing your question may help others learn from the answer.</span>
          </label>
-       </p>
-       </fieldset>
+			</div>
      <% end %>
 
      <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
