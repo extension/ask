@@ -40,12 +40,10 @@
             <% end %>
     <% end %>
 
-    <% if @group.widget_show_title %>
 		<p>
 			<%= f.label :title, 'Give your question a title' %>
 			<%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", :class => "form-control required"} %>
 		</p>
-    <% end %>
 
 		<p>
 			<%= f.label :body, "Question  #{@group.is_australian? ? "(Please include your location: region or town)" : ""}" %>

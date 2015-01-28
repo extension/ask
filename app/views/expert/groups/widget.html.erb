@@ -57,8 +57,8 @@
 
 	<p>
       <label>
-        <%= f.check_box 'widget_show_title' %>  Display Title Field for widgets
-		    <span>(Title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %>. If no title field is provided, a title is created from the first 80 characters of the question.)</span>
+        <%= f.check_box 'widget_show_title' %>  Display title field on first generation widgets
+		    <span>(This preference only applies to the first generation widget, which is being phased out. The title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %> and the current generation widget.)</span>
       </label>
 	</p>
 
