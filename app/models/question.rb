@@ -202,7 +202,7 @@ class Question < ActiveRecord::Base
 
   ## validations
   validates :body, :presence => true
-  validates_length_of :body, :maximum => 10000, :message => "To Long"
+  validates_length_of :body, :maximum => 10000, :message => "Too Long"
   validate :validate_attachments
 
   ## filters
