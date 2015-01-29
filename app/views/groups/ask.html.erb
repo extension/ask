@@ -1,10 +1,15 @@
 <div class="col-md-8">
   <h1 class="article_title">Ask a Question</h1>
-    
+  <% if request.fullpath == "/ask" %>
+    <aside>
+    <p class="visible-xs visible-sm">Ask an Expert is a site where you can get expert answers and help from Cooperative Extension/University staff and volunteers from across the United States.</p>
+    </aside>
+  <% end %>
+
   <% if !@group.widget_active? %>
     <h3>This group is not accepting questions at the current time</h3>
   <% else %>
-  
+
     <%- if @question.errors.any? -%>
     <div class="alert alert-error">
       <h3>We ran into an issue trying to submit your question:</h3>
@@ -15,7 +20,7 @@
       </ul>
     </div>
     <%- end -%>
-  
+
     <%= render(:partial => 'groups/form') %>
   <% end %>
 </div>
@@ -26,11 +31,11 @@
     <h3 class="stylized">Ask an Expert is a site where you can get expert answers and help from Cooperative Extension/University staff and volunteers from across the United States.</h3>
     </aside>
   <% else %>
-    
+
     <%= link_public_group_avatar(@group) %>
 
     <h3>
-      <%= link_to @group.name, group_path(@group.id) %> 
+      <%= link_to @group.name, group_path(@group.id) %>
       <% if current_user && current_user.has_exid? %>
         <%= link_to "expert view", expert_group_path(@group.id), :class => "btn btn-default" %>
       <% end %>
@@ -40,6 +45,6 @@
       <h3>About this group</h3>
       <p><%= format_text_for_display(@group.description) %></p>
     <% end %>
-    
+
   <% end %>
 </div>
