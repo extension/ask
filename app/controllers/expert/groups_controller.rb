@@ -202,7 +202,7 @@ class Expert::GroupsController < ApplicationController
 
   def widget
     @group = Group.find_by_id(params[:id])
-    @widget_url = ask_widget_group_url + ".js?" + @group.widget_fingerprint
+    @widget_url = ask_widget_group_url + ".js"
     if request.put?
       @group.attributes = params[:group]
       change_hash = Hash.new

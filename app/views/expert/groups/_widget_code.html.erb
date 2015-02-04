@@ -1,4 +1,4 @@
-<!-- Ask an Expert Group <%= @group.id %> -->
+<!-- Ask an Expert widget -->
 <script type="text/javascript">
   (function() {
     function async_load(){
@@ -12,5 +12,5 @@
       window.addEventListener('load', async_load, false);
   })();
 </script>
-<div id="<%= @group.widget_fingerprint %>"></div>
-<!-- End Ask an Expert Group <%= @group.id %> -->
+<div id="aae-<%= @group.id %>"></div>
+<!-- End Ask an Expert widget -->

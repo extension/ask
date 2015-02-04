@@ -1,5 +1,5 @@
 var div = document.createElement('div');
-var s = document.getElementById("<%= @group.widget_fingerprint %>");
+var s = document.getElementById("<%= @widget_div_id %>");
 while (s.firstChild) {
   s.removeChild(s.firstChild);
 }
