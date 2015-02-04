@@ -23,6 +23,10 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @question = Question.new
 
+    # the initial iteration of the widget snippet included both group ID and
+    # fingerprint in the url. The fingerprint was removed to simplify the code, but some
+    # widgets had already been installed. Once all first iteration widgets have
+    # been accounted for, the fingerprint check can be removed
     @widget_div_id = params.has_key?(@group.widget_fingerprint) ? @group.widget_fingerprint : "aae-#{@group.id}"
 
     # display three image fields for question submitter
