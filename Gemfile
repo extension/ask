@@ -134,6 +134,9 @@ gem 'rack-robustness'
 # terse logging
 gem 'lograge'
 
+# remove emoji
+gem 'demoji'
+
 group :development do
   # require the powder gem
   gem 'powder'
