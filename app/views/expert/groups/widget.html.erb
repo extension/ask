@@ -71,14 +71,55 @@
     <p><%= submit_tag "Save Changes", :class => "btn btn-primary btn-large" %></p>
   </fieldset>
 
-  <h4>Widget iFrame Code</h4>
-  <p>Embed an Ask widget on your own web page using the following code snippet:</p>
-  <div id="widgetcode"><textarea class="form-control"><%= h('<iframe width="80%" style="border:0;" src="' + group_widget_url(@group.widget_fingerprint) + '" height="400px"></iframe>') %></textarea></div>
-
-
-  <h4>NEW — Widget Code (JS)</h4>
-  <p>The code snippet below is for a more advanced version of the Ask widget which offers better design, multiple image uploads, dynamic resizing and captures the URL of widget's parent page. Add the following code on your page where you want the widget to appear:</p>
+  <h4>Widget Code Snippet (Released February 2015)</h4>
+  <p>The code snippet below contains enhancements over the previous version of the Ask widget. New features include better design, multiple image uploads, dynamic resizing and it captures the URL of widget's parent page. Add the following code to your page where you want the widget to appear:</p>
   <div id="widgetcode2"><textarea><%= render partial: 'expert/groups/widget_code' %></textarea></div>
+
+  <h4>Widget Look and Feel</h4>
+  <p>This is a generic example of what the widget looks like.</p>
+  <p><span class="cursor widget_example-wrapper" data-toggle="modal" data-target="#myModal"><%= image_tag("widget_example.png", :class => "widget_example") %></span></p>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Generic Widget Example</h4>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      <div class="modal-body">
+        <%= image_tag("widget_example.png") %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <h4>Promoting Ask an Expert</h4>
+  <p>You can use this graphic to link to your Ask form or Ask widget.</p>
+  <p><%= image_tag("Ask_An_Expert_logo_color.png", :class => "ask-an-expert-button", :alt =>"Ask an Expert") %></p>
+
+  <p>You may right click to save the image above. Note that the graphic is scaled down via CSS in order to look sharp on high resolution screens. This is accomplished by adding <code class="simple-code">class="ask-an-expert-button"</code> to the  &#60;img&#62; tag and including the following stylesheet rule: </p>
+  <p>
+    <pre class="css-snippet">
+    .ask-an-expert-button {
+      width: 180px !important;
+      margin: 0 0 2em;
+      display: block;
+    }</pre></p>
+  <h4>Where should your graphic link?</h4>
+  <p>If you have embeded a widget on your own site, you'll probably want to point to that page. If you are not installing a widget and instead plan to point directly to an Ask form hosted on ask.extension.org, then make sure you are pointing to your group's Ask form, which is: <strong><%= ask_group_url(@group.id) %></strong></p>
+
+  <h4>Additional Graphic Formats</h4>
+  <p>Vector art files are available if you need a larger resolution image. <i class="fa fa-download"></i> <%= link_to 'Download ask-an-expert-logo.zip', "http://about.extension.org/wp-content/uploads/2015/02/ask-an-expert-logo.zip" %></p>
+
+
 
 </div>
 
