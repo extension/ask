@@ -72,8 +72,34 @@
   </fieldset>
 
   <h4>Widget Code Snippet (Released February 2015)</h4>
-  <p>The code snippet below contains enhancements over the previous version of the Ask widget. New features include better design, multiple image uploads, dynamic resizing and captures the URL of widget's parent page. Add the following code to your page where you want the widget to appear:</p>
+  <p>The code snippet below contains enhancements over the previous version of the Ask widget. New features include better design, multiple image uploads, dynamic resizing and it captures the URL of widget's parent page. Add the following code to your page where you want the widget to appear:</p>
   <div id="widgetcode2"><textarea><%= render partial: 'expert/groups/widget_code' %></textarea></div>
+
+  <h4>Widget Look and Feel</h4>
+  <p>This is a generic example of what the widget looks like.</p>
+  <p><span class="cursor widget_example-wrapper" data-toggle="modal" data-target="#myModal"><%= image_tag("widget_example.png", :class => "widget_example") %></span></p>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Generic Widget Example</h4>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      <div class="modal-body">
+        <%= image_tag("widget_example.png") %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
   <h4>Promoting Ask an Expert</h4>
   <p>You can use this graphic to link to your Ask form or Ask widget.</p>
@@ -92,6 +118,7 @@
 
   <h4>Additional Graphic Formats</h4>
   <p>Vector art files are available if you need a larger resolution image. <i class="fa fa-download"></i> <%= link_to 'Download ask-an-expert-logo.zip', "http://about.extension.org/wp-content/uploads/2015/02/ask-an-expert-logo.zip" %></p>
+
 
 
 </div>
