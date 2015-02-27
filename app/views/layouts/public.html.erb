@@ -9,7 +9,7 @@
   <meta property="og:type" content="<%= (@page_type == "article") ? "article" : "website" %>"/>
   <meta property="og:title" content="<%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %>"/>
   <meta property="og:description" content="<%= @page_meta_description ? @page_meta_description : "Ask an Expert offers one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States." %>"/>
-  <meta property="og:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>"/>  
+  <meta property="og:image" content="<%= image_path("#{root_url}assets/extension_logo.jpg") %>"/>
   <% if @question %>
     <% @question.images.each do |image| %>
       <% if image.persisted? %>
@@ -33,13 +33,13 @@
   <%= render(:partial => 'home/google_analytics') %>
 </head>
 <body id="public" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
-  
+
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
     <div id="app_location" class="demo">
       <p>This is the <strong>AaE <%= Settings.app_location.upcase %></strong> site. Feel free to test/play. Note: The data on this site is regularly deleted/refreshed, and all notifications are turned off. Visit <%= link_to("Ask an Expert", "http://ask.extension.org") -%>.</p>
     </div>
   <% end %>
-  
+
   <div class='nonmobile hidden-xs'>
   <% if current_user and current_user.has_exid? %>
     <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
@@ -47,21 +47,21 @@
     <script src="https://www.extension.org/javascripts/global_nav_public.js" type="text/javascript"></script>
   <% end %>
   </div>
-  
+
   <% if current_user %>
     <% if current_user.has_exid? %>
-    
+
       <div class="navbar expert-navbar">
         <div class="container expert-navbar-container">
         <div class="pull-right">
           <%= link_expert_user_avatar(current_user, :thumb) %>
-        
+
         <div class="btn-group">
-          
+
           <span class="btn dropdown-toggle expert-dropdown-options" data-toggle="dropdown">
             <span class="hidecompact420"><%= current_user.name %></span> <span class="caret"></span>
           </span>
-          
+
           <ul class="dropdown-menu dropdown-menu-right">
             <li><%= link_to "My Dashboard", expert_home_path() %></li>
             <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
@@ -81,19 +81,19 @@
 
     <% end %>
   <% end %>
-  
-  
+
+
   <div class="container container-main">
     <div id="flash_notification_wrapper" class="flash_notification_wrapper">
       <%= flash_notifications -%>
     </div>
- 
- 
+
+
     <div class="navbar masthead">
-      
+
       <span class="navbar-toggle btn btn-default mobile-menu-search-btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search'></i> <i class='fa fa-bars'></i></span>
       <a class="navbar-brand" href="/"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></a>
-      
+
       <div id="app-navbar" class="navbar-collapse collapse">
 
             <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
@@ -117,7 +117,7 @@
                 <li><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%></li>
               <% end %>
             </ul>
-            
+
             <div class="global-nav-mobile visible-xs">
             <% if current_user and current_user.has_exid? %>
               <script src="https://www.extension.org/javascripts/global_nav_internal.js" type="text/javascript"></script>
@@ -125,7 +125,7 @@
               <script src="https://www.extension.org/javascripts/global_nav_public.js" type="text/javascript"></script>
             <% end %>
             </div>
-            
+
         </div><!--/.navbar-collapse -->
 
 </div>
@@ -133,10 +133,10 @@
       <div class="row">
       <%= yield :layout %>
       </div>
-      
+
       <div class="row">
         <div class="col-md-9">
-      
+
         </div>
       <div class="col-md-3">
       <% if !@sponsors.blank? %>
@@ -146,23 +146,24 @@
       <% end %>
       </div>
       </div>
-      
-      
-      
+
+
+
       <hr class="noprint" />
-      
+
       <footer>
         <span id="extension_icon_512" class="pull-left noprint"><%= image_tag "extension_logo.jpg", :class => "hidden-xs", :id => "extension_logo", :alt => "eXtension" %></span>
         <ul class="footer-links list-inline noprint">
           <li><%= link_to "Institutional Partners", "http://www.extension.org/main/partners" %></li>
           <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
-          <li><%= link_to "Contact Us", home_about_path() %></li>
+          <li><%= link_to "Contact Us", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></li>
           <li><%= link_to "Disclaimer", "http://www.extension.org/main/disclaimer" %></li>
           <li><%= link_to("Terms of Use","http://www.extension.org/main/termsofuse")%></li>
+          <li><%= link_to("Widgets",widgets_path() )%></li>
         </ul>
         <p>&copy; <%= Time.now.utc.year %> eXtension. All rights reserved.</p>
       </footer>
-      
+
 
     </div> <!-- /container -->
 
@@ -173,7 +174,7 @@
   });
 </script>
 
-  
+
 
 </body>
 </html>
