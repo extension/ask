@@ -13,7 +13,7 @@
       <% end %>
       <%= link_to expert_question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
-        <p><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
+        <p><%= format_text_for_display(question.body).html_safe -%></p>
       <%- end -%>
 
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
