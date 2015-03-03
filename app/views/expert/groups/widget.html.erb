@@ -1,17 +1,17 @@
 <h1><%= link_to @group.name, expert_group_path() %></h1>
 <p id="aaeid">Group #<%= @group.id %></p>
 
-<h2>Settings > Ask Form and Widget</h2>
+<h2>Settings > Question Form and Widget</h2>
 
 <%= render :partial => 'expert/groups/settings_navigation' %>
 
 <div class="explanation">
   <h3>Groups have two ways to accept questions:</h3>
   <ul>
-    <li>Via the <%= link_to "Group Ask form", ask_group_url(@group.id) %></li>
-    <li>Via an embedded Ask widget on your own web pages (code snippet is below.)</li>
+    <li>Via the group <%= link_to "Question form", ask_group_url(@group.id) %></li>
+    <li>Via an embedded Question widget on your own web pages (code snippet is below.)</li>
   </ul>
-  <h5>The link to this Group's Ask form is: <%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h5>
+  <h5>The link to this group's Question form is: <%= link_to ask_group_url(@group.id), ask_group_url(@group.id) %></h5>
 </div>
 
 <%= form_for @group, :url => expert_group_widget_path, :html => {:class => "form-stacked no_m_t well"} do |f| %>
@@ -19,11 +19,11 @@
   <div class="form_subgroup">
 
     <fieldset>
-      <h3>Ask Form and Widget Options</h3>
+      <h3>Question Form and Widget Options</h3>
 		<p>
         <label>
           <%= f.check_box :widget_active %>  Active
-			    <span>(If this option is unchecked, the Group's widget and Ask form are disabled. The widget code should be removed from any web page.)</span>
+			    <span>(If this option is unchecked, the group's Question form and widget are disabled. The widget code should be removed from any web page.)</span>
         </label>
 		</p>
 
@@ -42,7 +42,7 @@
 
 	<p>
         <label>
-          <%= f.check_box 'widget_show_location', @group.assignment_outside_locations == false ? {disabled: true} : {disabled: false} %>  Enable location option for widgets
+          <%= f.check_box 'widget_show_location', @group.assignment_outside_locations == false ? {disabled: true} : {disabled: false} %>  Enable location option for the widget
           <% if @group.assignment_outside_locations == false %>
             <span>This option is locked because the "Questions must come from this group's locations" <%= link_to 'assignment preference', expert_group_assignment_options_path %> is selected.</span>
           <% end %>
@@ -51,14 +51,14 @@
 
 <p>
       <label>
-        <%= f.check_box 'ask_form_show_location' -%>  Enable location option for the <%= link_to "Ask form", ask_group_url(@group.id) -%>
+        <%= f.check_box 'ask_form_show_location' -%>  Enable location option for the <%= link_to "Question form", ask_group_url(@group.id) -%>
       </label>
 </p>
 
 	<p>
       <label>
         <%= f.check_box 'widget_show_title' %>  Display title field on first generation widgets
-		    <span>(This preference only applies to the first generation widget, which is being phased out. The title field is always displayed on the <%= link_to "Ask form", ask_group_url(@group.id) %> and the current generation widget.)</span>
+		    <span>(This preference only applies to the first generation widget, which is being phased out. The title field is always displayed on the <%= link_to "Question form", ask_group_url(@group.id) %> and the current generation widget.)</span>
       </label>
 	</p>
 
@@ -72,7 +72,7 @@
   </fieldset>
 
   <h4>Widget Code Snippet (Released February 2015)</h4>
-  <p>The code snippet below contains enhancements over the previous version of the Ask widget. New features include better design, multiple image uploads, dynamic resizing and it captures the URL of widget's parent page. Add the following code to your page where you want the widget to appear:</p>
+  <p>The code snippet below contains enhancements over the previous version of the Question widget. New features include better design, multiple image uploads, dynamic resizing and it captures the URL of widget's parent page. Add the following code to your page where you want the widget to appear:</p>
   <div id="widgetcode2"><textarea><%= render partial: 'expert/groups/widget_code' %></textarea></div>
 
   <h4>Widget Look and Feel</h4>
@@ -102,7 +102,7 @@
 
 
   <h4>Promoting Ask an Expert</h4>
-  <p>You can use this graphic to link to your Ask form or Ask widget.</p>
+  <p>You can use this graphic to link to your Question form or widget.</p>
   <p><%= image_tag("Ask_An_Expert_logo_color.png", :class => "ask-an-expert-button", :alt =>"Ask an Expert") %></p>
 
   <p>You may right click to save the image above. Note that the graphic is scaled down via CSS in order to look sharp on high resolution screens. This is accomplished by adding <code class="simple-code">class="ask-an-expert-button"</code> to the  &#60;img&#62; tag and including the following stylesheet rule: </p>
@@ -114,7 +114,7 @@
       display: block;
     }</pre></p>
   <h4>Where should your graphic link?</h4>
-  <p>If you have embeded a widget on your own site, you'll probably want to point to that page. If you are not installing a widget and instead plan to point directly to an Ask form hosted on ask.extension.org, then make sure you are pointing to your group's Ask form, which is: <strong><%= ask_group_url(@group.id) %></strong></p>
+  <p>If you have embeded a widget on your own site, you'll probably want to point to that page. If you are not installing a widget and instead plan to point directly to an Question form hosted on ask.extension.org, then make sure you are pointing to your group's Question form, which is: <strong><%= ask_group_url(@group.id) %></strong></p>
 
   <h4>Additional Graphic Formats</h4>
   <p>Vector art files are available if you need a larger resolution image. <i class="fa fa-download"></i> <%= link_to 'Download ask-an-expert-logo.zip', "http://about.extension.org/wp-content/uploads/2015/02/ask-an-expert-logo.zip" %></p>

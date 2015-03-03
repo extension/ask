@@ -1,7 +1,7 @@
 <% @page_title = @group.name %>
 
 <% if !@group.group_active? %>
-  <h3 class="inactive_notice">This group is currently inactive. It cannot be assigned questions and the group's Ask form and widgets are disabled. You can change the group's status to active on the <%= link_to 'General Settings', expert_group_profile_path() %> page.</h3>
+  <h3 class="inactive_notice">This group is currently inactive. It cannot be assigned questions and the group's Question form and widgets are disabled. You can change the group's status to active on the <%= link_to 'General Settings', expert_group_profile_path() %> page.</h3>
 <% end %>
 
 <ul class="nav nav-tabs">
@@ -25,12 +25,12 @@
       <%= format_text_for_display(@group.description) %>
     <% else %>
       <p class="needs_description">This group hasn't added a description yet...</p>
-    <% end  %>    
+    <% end  %>
   </div>
-  
-  
-  
-  
+
+
+
+
   <%= render :partial => 'question_list', :locals => {:questions => @questions, :question_count => @question_count} %>
 
 </div>

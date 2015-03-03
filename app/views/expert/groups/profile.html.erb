@@ -22,7 +22,7 @@
 
 
 <%= form_for @group, :url => expert_group_profile_path, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
-  
+
   <fieldset>
     <p><%= f.label :avatar, 'Profile Avatar' %> Avatars are formatted to fit a square. Uploaded images must be at least 100 x 100px. Recommended size is 250 x 250px.</p>
     <p class="clearing">
@@ -32,45 +32,45 @@
           <label>
             <%= check_box_tag 'delete_avatar' %>
             Remove avatar
-          </label> 
+          </label>
         </p>
       <% end %>
       <%= f.file_field :avatar %>
     </p>
   </fieldset>
-  
+
   <fieldset>
     <p>
       <%= f.label :name, 'Group Name' %>
       <%= f.text_field :name,  :class => "form-control" %>
     </p>
-    
+
     <p>
       <%= f.label :description do %>
       About this Group <span>(This description displays on your <%= link_to "Group Profile", expert_group_path() %> and <%= link_to "Public Profile", group_path(@group.id) %>)</span>
       <% end %>
       <%= f.text_area :description, :rows => "4",  :class => "form-control wysiwyg" %>
     </p>
-    
+
     <p>
-        <label>        
+        <label>
           <%= f.check_box 'group_active' %>  This group is active
-			    <span>(Inactivate groups cannot be assigned questions. The group's Ask form and widgets are disabled. Groups with no members will set to inactive.)</span>
+			    <span>(Inactivate groups cannot be assigned questions. The group's Question form and widgets are disabled. Groups with no members will set to inactive.)</span>
         </label>
     </p>
 
     <p>
-        <label>        
+        <label>
           <%= f.check_box 'is_test' %>  This is a test group
 			    <span>(This option prevents this group from appearing on the public Ask an Expert site)</span>
         </label>
     </p>
   </fieldset>
-      
+
   <fieldset>
     <p><%= f.submit "Save Changes", :class => "btn large btn-primary" %></p>
   </fieldset>
-    
+
 <% end %>
 
 </div>
