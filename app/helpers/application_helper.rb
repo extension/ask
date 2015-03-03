@@ -2,16 +2,18 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 module ApplicationHelper
-  
+
   def format_text_for_display(content)
     if content
       content = content.gsub(/[[:space:]]/, ' ')
     end
-    return simple_format(content)
+    # if content was actually html - this is just insane
+    # see config/initializers/oh_the_insanity.rb
+    return simple_insanity(content)
   end
 
   def humane_date(time)
@@ -37,7 +39,7 @@ module ApplicationHelper
       end
     end
   end
-  
+
   def get_last_active_time(user)
     if user.last_active_at.present?
       if user.last_active_at.to_s == Date.today.to_s
@@ -49,7 +51,7 @@ module ApplicationHelper
       return 'No activity to date'
     end
   end
-  
+
   def flash_notifications
     message = flash[:error] || flash[:notice] || flash[:warning] || flash[:success]
     return_string = ''
@@ -77,7 +79,7 @@ module ApplicationHelper
   def link_expert_user(user)
     return link_to(user.name, expert_user_url(user.id), {:title => user.name, :class => (user.away ? "on_vacation" : "")}).html_safe + raw(user.is_question_wrangler? ? ' <i class="icon-qw"></i>' : '') + raw(user.away ? ' <span class="on_vacation">(Not available)</span>' : '')
   end
-  
+
   def link_expert_group(group)
     return link_to(group.name, expert_group_url(group.id), {:title => group.name}).html_safe
   end
@@ -97,7 +99,7 @@ module ApplicationHelper
   def link_expert_group_avatar(group, image_size = :medium, suppress_single = false)
     return link_to(get_avatar_for_group(group, image_size), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress" : "suppress")}).html_safe
   end
-  
+
   def link_expert_group_avatar_group_label(group, image_size = :medium, suppress_single = false)
     return link_to(get_avatar_for_group(group, image_size, group_label = true), expert_group_url(group.id), {:title => group.name, :class => "#{image_size} " + (suppress_single ? "suppress_single" : "")}).html_safe
   end
@@ -108,7 +110,7 @@ module ApplicationHelper
         when :thumb     then image_size_in_px = "40x40"
         when :mini     then image_size_in_px = "20x20"
     end
-    
+
     group_label = group_label ? raw("<span class=\"group_label\">Group</span>") : ""
     show_badge = show_badge ? (group.open_questions.length > 0 ? raw("<span class=\"badge count_#{group.open_questions.length}\">#{group.open_questions.length}</span>") : "") : ""
 
@@ -127,9 +129,9 @@ module ApplicationHelper
         when :thumb     then image_size_in_px = "40x40"
         when :mini      then image_size_in_px = "20x20"
     end
-    
+
     show_badge = show_badge ? (user.open_questions.length > 0 ? raw("<span class=\"badge count_#{user.open_questions.length}\">#{user.open_questions.length}</span>") : "") : ""
-    
+
     if user.avatar.present?
       return_string = raw("<span class=\"avatar_with_badge\">") + image_tag(user.avatar.url(image_size), :size => image_size_in_px, :class => "#{image_size}") + show_badge + raw("</span>")
     else
@@ -139,7 +141,7 @@ module ApplicationHelper
 
     return return_string
   end
-  
+
   def navtab(tabtext,whereto)
     if current_page?(whereto)
       "<li class='active'>#{link_to(tabtext,whereto)}</li>".html_safe
@@ -147,7 +149,7 @@ module ApplicationHelper
       "<li>#{link_to(tabtext,whereto)}</li>".html_safe
     end
   end
-  
+
   def profile_changes(changes)
     return_text_lines = []
     changes.each do |attribute,values|
@@ -178,7 +180,7 @@ module ApplicationHelper
     end
     return_text_lines
   end
-  
+
   def blank_or_value(value)
     if(value.blank?)
       '(blank)'
@@ -186,17 +188,17 @@ module ApplicationHelper
       value
     end
   end
-  private 
-  
+  private
+
   def get_question_filter_params(question_filter_settings)
     return_params = Hash.new
-    
+
     question_filter_settings.each do |key, value|
       case key
         when :groups
           return_params.merge!({group_id: value.first}) if value.present?
         when :locations
-          return_params.merge!({location_id: value.first}) if value.present? 
+          return_params.merge!({location_id: value.first}) if value.present?
         when :counties
           return_params.merge!({county_id: value.first}) if value.present?
         when :tags
@@ -207,8 +209,8 @@ module ApplicationHelper
           # return_params.merge!({status: value.first}) if value.present?
       end
     end
-    
+
     return return_params
   end
-  
+
 end
