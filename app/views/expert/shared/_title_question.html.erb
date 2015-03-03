@@ -3,20 +3,17 @@
 <% highlight_unanswered = local_assigns[:highlight_unanswered].nil? ? false : highlight_unanswered %>
 
 <div class="incoming_question title_only">
-  
+
   <div class="row">
-  
-      
-      <%= link_to expert_question_path(question.id) do %>
-        <h3><%= format_text_for_display(question.title) -%></h3>
-      <%- end -%>
-      
+
+    <h3><%= link_to format_text_for_display(question.title), expert_question_path(question.id) %></h3>
+
       <% if highlight_unanswered && (question.responses.size == 0) %>
         <h4><span class="needs_an_answer">Needs an answer</span></h4>
       <% end %>
 
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
-      
+
       <% question.images.each do |image| %>
         <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
 
@@ -37,16 +34,16 @@
           <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
         <% end %>
       <% end %>
-      
-    
+
+
       <% if show_assignments %>
       <div class="expert">
         <% if question.assignee_id.present? %>
-          <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %> 
+          <%= link_expert_user_avatar(question.assignee, :thumb, suppress_single_badges) %> <%= link_expert_user(question.assignee) %>
 	      <% else %>
 	        <p><strong>This question does not have an assignee.</strong></p>
         <% end %>
-	
+
 	      <% if question.assigned_group %>
           <p><%= link_expert_group_avatar(question.assigned_group, :mini, suppress_single_badges) %> <%= link_expert_group(question.assigned_group) %></p>
 	      <% else %>
@@ -54,7 +51,7 @@
         <% end %>
       </div>
       <% end %>
-  
+
   </div>
-  
+
 </div>
