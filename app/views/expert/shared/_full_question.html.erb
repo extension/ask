@@ -11,10 +11,9 @@
       <% if question.is_being_worked_on? %>
         <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
       <% end %>
-      <%= link_to expert_question_path(question.id) do %>
-        <h3><%= format_text_for_display(question.title) -%></h3>
-        <p><%= Question.html_to_pretty_text(question.body).html_safe -%></p>
-      <%- end -%>
+
+        <h3><%= link_to format_text_for_display(question.title), expert_question_path(question.id) %></h3>
+        <p><%= format_text_for_display(question.body).html_safe -%></p>
 
       <%= render :partial => 'expert/shared/question_meta_data', :locals => {:question => question} %>
 

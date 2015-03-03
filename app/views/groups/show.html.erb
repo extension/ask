@@ -4,10 +4,10 @@
     <%= link_to "expert view", expert_group_path(@group.id), :class => "btn btn-default" %>
   </p>
   <% end %>
-  
-  <div id="groupmasthead">  
+
+  <div id="groupmasthead">
     <h1><%= link_public_group_avatar(@group) %> <%= @group.name %></h1>
-    
+
     <% if  @group.description? %>
       <div class="aboutme">
         <%= format_text_for_display(@group.description) %>
@@ -19,7 +19,7 @@
 <% if @group.widget_active %>
   <div class="tagline col-md-12">
     <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large pull-right hidden-xs" %>
-  
+
     <div><%= link_to('Ask a question to this group', ask_group_path(@group.id), :class => "moreaboutpitch hidden-xs") %> <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large visible-xs" %></div>
 </div>
 <% end %>
@@ -31,18 +31,15 @@
     <h1 class="subhead_style">Questions asked to this group</h2>
   <% end %>
 </div>
-  
+
 <div class="col-md-6">
   <% if @open_questions_col_one.size > 0 %>
     <% @open_questions_col_one.each do |q| %>
       <div class="incoming_question">
-      <%= link_to question_path(q.id) do %>
-                  
-          <h1 class="article_title"><%= format_text_for_display(q.title) -%></h1>
-          <p class="question_body"><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
-
-      <% end %>
+        <h1 class="article_title"><%= link_to format_text_for_display(q.title), question_path(q.id) %></h1>
+        <p class="question_body"><%= format_text_for_display(q.body).html_safe -%></p>
       </div>
+      
       <p>
         <% if q.location.present? %>
           <% if q.county.present? %>
@@ -67,14 +64,13 @@
 <div class="col-md-6">
   <% if @open_questions_col_two.size > 0 %>
     <% @open_questions_col_two.each do |q| %>
-      <div class="incoming_question">
-      <%= link_to question_path(q.id) do %>
-                  
-          <h1 class="article_title"><%= format_text_for_display(q.title) -%></h1>
-          <p class="question_body"><%= Question.html_to_pretty_text(q.body).html_safe -%></p>
 
-      <% end %>
+      <div class="incoming_question">
+        <h1 class="article_title"><%= link_to format_text_for_display(q.title), question_path(q.id) %></h1>
+        <p class="question_body"><%= format_text_for_display(q.body).html_safe -%></p>
       </div>
+
+
       <p>
         <% if q.location.present? %>
           <% if q.county.present? %>
