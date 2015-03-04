@@ -260,11 +260,37 @@ class Notification < ActiveRecord::Base
   end
   
   def process_aae_expert_away_reminder
-    #15 day reminder
-    User.where("DATE(vacated_aae_at) = '#{15.days.ago.to_date.to_s(:db)}'").each{|user| InternalMailer.aae_expert_away_reminder(user: user, away_date: user.vacated_aae_at)}
+    #2 week reminder
+    two_week_vacators = User.where("DATE(vacated_aae_at) <= '#{2.weeks.ago.to_date.to_s(:db)}' AND
+                first_aae_away_reminder = false AND
+                second_aae_away_reminder = false")
 
     #one month reminder
-    User.where("DATE(vacated_aae_at) = '#{1.month.ago.to_date.to_s(:db)}'").each{|user| InternalMailer.aae_expert_away_reminder(user: user, away_date: user.vacated_aae_at)}
+    one_month_vacators = User.where("DATE(vacated_aae_at) <= '#{4.weeks.ago.to_date.to_s(:db)}' AND
+                second_aae_away_reminder = false")
+
+    # loop through all the experts who have opted out of receiving questions according to said criteria above
+    two_week_vacators.each do |vacator|
+      begin
+        InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
+      rescue Exception => e
+        $stderr.puts "Unable to deliver aae reminder email for expert #{vacator.email}, #{e.message}"
+        next
+      end
+      
+      vacator.update_attribute(:first_aae_away_reminder, true)
+    end
+
+    one_month_vacators.each do |vacator|
+      begin
+        InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
+      rescue Exception => e
+        $stderr.puts "Unable to deliver aae reminder email for expert #{vacator.email}, #{e.message}"
+        next
+      end
+      
+      vacator.update_attribute(:second_aae_away_reminder, true)
+    end
   end
 
   def queue_delayed_notifications
