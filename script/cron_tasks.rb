@@ -34,17 +34,17 @@ class CronTasks < Thor
     end
     
     def create_daily_summary_notification
-      Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, notifiable_type: 'Summary Notification', delivery_time: Settings.daily_summary_delivery_time)
+      Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
     
     def create_daily_handling_reminder_notification
-      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, notifiable_type: 'Hadling Reminder', delivery_time: Settings.daily_handling_reminder_delivery_time)
+      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
     end
 
     def create_daily_away_reminder_notification
-      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, notifiable_type: 'Away Reminder', delivery_time: Settings.daily_away_reminder_delivery_time)
+      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_away_reminder_delivery_time)
       puts "Created notification for daily away reminder emails"
     end
     
