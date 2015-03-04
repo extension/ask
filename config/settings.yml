@@ -18,6 +18,7 @@ geoname_data_file: 'notset'
 default_display_timezone: 'Eastern Time (US & Canada)'
 daily_summary_delivery_time: '11:30:00'
 daily_handling_reminder_delivery_time: '11:40:00'
+daily_away_reminder_delivery_time: '11:50:00'
 activity_notification_interval: 28800.0
 user_event_notification_interval: 300.0
 expert_response_edit_interval: 900.0

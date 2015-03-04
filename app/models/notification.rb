@@ -46,6 +46,7 @@ class Notification < ActiveRecord::Base
   AAE_EXPERT_RESPONSE_EDIT = 1017
   AAE_DATA_DOWNLOAD_AVAILABLE = 1018
   AAE_EXPERT_LOCATION_EDIT = 1019
+  AAE_EXPERT_AWAY_REMINDER = 1020
 
     
   ##########################################
@@ -121,6 +122,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_response_edit_to_submitter
     when AAE_DATA_DOWNLOAD_AVAILABLE
       process_aae_data_download_available
+    when AAE_EXPERT_AWAY_REMINDER
+      process_aae_expert_away_reminder
     else
       # nothing
     end
@@ -256,6 +259,14 @@ class Notification < ActiveRecord::Base
     Question.submitted.where("last_assigned_at < ?", 3.days.ago).each{|question| InternalMailer.aae_expert_handling_reminder(user: question.assignee, question: question).deliver unless (question.assignee.nil? || question.assignee.away?)}
   end
   
+  def process_aae_expert_away_reminder
+    #15 day reminder
+    User.where("DATE(vacated_aae_at) = '#{15.days.ago.to_date.to_s(:db)}'").each{|user| InternalMailer.aae_expert_away_reminder(user: user, away_date: user.vacated_aae_at)}
+
+    #one month reminder
+    User.where("DATE(vacated_aae_at) = '#{1.month.ago.to_date.to_s(:db)}'").each{|user| InternalMailer.aae_expert_away_reminder(user: user, away_date: user.vacated_aae_at)}
+  end
+
   def queue_delayed_notifications
     delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
     self.update_attribute(:delayed_job_id, delayed_job.id)

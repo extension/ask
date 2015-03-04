@@ -42,6 +42,11 @@ class CronTasks < Thor
       Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
     end
+
+    def create_daily_away_reminder_notification
+      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_away_reminder_delivery_time)
+      puts "Created notification for daily away reminder emails"
+    end
     
     def clean_up_mailer_caches
       MailerCache.delete_all(["created_at < ?", 2.months.ago])
@@ -78,6 +83,7 @@ class CronTasks < Thor
     create_evaluation_notifications
     create_daily_summary_notification
     create_daily_handling_reminder_notification
+    create_daily_away_reminder_notification
     clean_up_mailer_caches
     check_dj_queue
   end
@@ -89,6 +95,12 @@ class CronTasks < Thor
     flag_accounts_for_search_update
   end 
 
+  desc "test_away", "test away reminder"
+  method_option :environment,:default => 'development', :aliases => "-e", :desc => "Rails environment"
+  def test_away
+    load_rails(options[:environment])
+    create_daily_away_reminder_notification
+  end 
 end
 
 CronTasks.start
