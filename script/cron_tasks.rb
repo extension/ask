@@ -34,17 +34,17 @@ class CronTasks < Thor
     end
     
     def create_daily_summary_notification
-      Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
+      Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, notifiable_type: 'Summary Notification', delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
     
     def create_daily_handling_reminder_notification
-      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
+      Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, notifiable_type: 'Hadling Reminder', delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
     end
 
     def create_daily_away_reminder_notification
-      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_away_reminder_delivery_time)
+      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, notifiable_type: 'Away Reminder', delivery_time: Settings.daily_away_reminder_delivery_time)
       puts "Created notification for daily away reminder emails"
     end
     
@@ -95,11 +95,15 @@ class CronTasks < Thor
     flag_accounts_for_search_update
   end 
 
-  desc "test_away", "test away reminder"
+  #debug block; test a specific cron task in development 
+  desc "debug", "Test a specific cron task in your development environment"
   method_option :environment,:default => 'development', :aliases => "-e", :desc => "Rails environment"
-  def test_away
+  def debug
     load_rails(options[:environment])
-    create_daily_away_reminder_notification
+    #add your specific cron task you would like to test here
+    #ie, to test create_daily_away_reminder_notification just uncomment out the line below
+    #create_daily_away_reminder_notification
+    #then run 'script/cron_tasks.rb debug' in development to test
   end 
 end
 
