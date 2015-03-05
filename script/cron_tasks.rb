@@ -9,6 +9,21 @@ require 'thor'
 class CronTasks < Thor
   include Thor::Actions
 
+
+  # lists the method names that can run be run individually
+  # there's probably a way to do this by enumerating the
+  # instance methods that are in this no_tasks secion
+  # and pulling out "load_rails" but that seems like
+  # overkill - so just add additional tasks here
+  # that are allowed to run individually
+  RUNNABLE_TASKS = ['create_evaluation_notifications',
+                    'create_daily_summary_notification',
+                    'create_daily_handling_reminder_notification',
+                    'create_daily_away_reminder_notification',
+                    'clean_up_mailer_caches',
+                    'check_dj_queue',
+                    'flag_accounts_for_search_update']
+
   # these are not the tasks that you seek
   no_tasks do
     # load rails based on environment
@@ -95,16 +110,18 @@ class CronTasks < Thor
     flag_accounts_for_search_update
   end 
 
-  #debug block; test a specific cron task in development 
-  desc "debug", "Test a specific cron task in your development environment"
-  method_option :environment,:default => 'development', :aliases => "-e", :desc => "Rails environment"
-  def debug
+  desc "single", "Run a specific task"
+  method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
+  # newlines are a little meh, but it works okay
+  method_option :task, :required => true, :aliases => "-t", :desc => "Task name to run\n\nRunnable tasks are: #{RUNNABLE_TASKS.join(', ')}"
+  def single
     load_rails(options[:environment])
-    #add your specific cron task you would like to test here
-    #ie, to test create_daily_away_reminder_notification just uncomment out the line below
-    #create_daily_away_reminder_notification
-    #then run 'script/cron_tasks.rb debug' in development to test
-  end 
+    if(!RUNNABLE_TASKS.include?(options[:task]))
+      say "#{options[:task]} is not a runnable tasks.\n\nRunnable tasks are #{RUNNABLE_TASKS.join(', ')}"
+      exit(1)
+    end
+    self.send(options[:task])
+  end
 end
 
 CronTasks.start
