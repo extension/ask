@@ -4,12 +4,11 @@
   <td class="content padding">
     <h3>Your Status is set to 'Away'</h3>
     
-    <p>Hello <%= @user.name %>, This is a friendly reminder that we have not seen you in a while in the Ask an Expert application. Your account is set to NOT receive questions from the Ask an Expert application in the Ask an Expert preferences.</p>
+    <p>Hello <%= @user.first_name %>. This is a friendly reminder that we have not seen you in a while in the Ask an Expert application. Your account is set to NOT receive questions from the Ask an Expert application in the Ask an Expert preferences.</p>
 
+    <p>You opted out of receiving questions on <%= @away_date %>.</p>
 
-    <p>You have opted out of receiving questions since <%= @away_date %></p>
-    
-    <p>You can uncheck this option and continue receiving questions by going to: <%= expert_edit_attributes_url(@user) %></p>
+    <p>You can uncheck this option and continue receiving questions by going to: <%= link_to "Answering Preferences", expert_edit_attributes_url(@user) %></p>
   </td>
 </tr>
 

@@ -407,7 +407,11 @@ class InternalMailer < ActionMailer::Base
 
   def aae_expert_away_reminder(options = {})
     @user = options[:user]
-    @away_date = @user.vacated_aae_at
+    if @user.vacated_aae_at
+      @away_date = @user.vacated_aae_at.strftime('%B %d, %Y')
+    else
+      @away_date = "<away date>"
+    end
     @subject = "Reminder: Your status is set to away!"
 
     if(!@user.email.blank?)

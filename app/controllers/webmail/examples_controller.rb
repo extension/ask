@@ -90,6 +90,11 @@ class Webmail::ExamplesController < ApplicationController
     return render_mail(mail)
   end
 
+  def internal_aae_expert_away_reminder
+    mail = InternalMailer.aae_expert_away_reminder(user: current_user, cache_email: false)
+    return render_mail(mail)
+  end
+
   def internal_aae_response_edit
     mail = InternalMailer.aae_response_edit(user: current_user, question: Question.last, response: Response.last, cache_email: false)
     return render_mail(mail)
