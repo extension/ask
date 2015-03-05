@@ -47,12 +47,12 @@ class CronTasks < Thor
       end
       puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
-    
+
     def create_daily_summary_notification
       Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
-    
+
     def create_daily_handling_reminder_notification
       Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
@@ -62,7 +62,7 @@ class CronTasks < Thor
       Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_away_reminder_delivery_time)
       puts "Created notification for daily away reminder emails"
     end
-    
+
     def clean_up_mailer_caches
       MailerCache.delete_all(["created_at < ?", 2.months.ago])
       puts "Cleaned up Mailer Caches more than 2 months old"
@@ -80,6 +80,8 @@ class CronTasks < Thor
       end
       Sunspot.commit
     end
+
+
 
   end
 
@@ -108,7 +110,7 @@ class CronTasks < Thor
   def hourly
     load_rails(options[:environment])
     flag_accounts_for_search_update
-  end 
+  end
 
   desc "single", "Run a specific task"
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
