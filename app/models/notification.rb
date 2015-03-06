@@ -271,24 +271,12 @@ class Notification < ActiveRecord::Base
 
     # loop through all the experts who have opted out of receiving questions according to said criteria above
     two_week_vacators.each do |vacator|
-      begin
-        InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
-      rescue Exception => e
-        $stderr.puts "Unable to deliver aae reminder email for expert #{vacator.email}, #{e.message}"
-        next
-      end
-      
+      InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
       vacator.update_attribute(:first_aae_away_reminder, true)
     end
 
     one_month_vacators.each do |vacator|
-      begin
-        InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
-      rescue Exception => e
-        $stderr.puts "Unable to deliver aae reminder email for expert #{vacator.email}, #{e.message}"
-        next
-      end
-      
+      InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
       vacator.update_attribute(:second_aae_away_reminder, true)
     end
   end
