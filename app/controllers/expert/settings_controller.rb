@@ -95,7 +95,13 @@ class Expert::SettingsController < ApplicationController
 
     if request.put?
       @user.attributes = params[:user]
-      
+
+      #set away reminders to false when user unchecks away status
+      if @user.away == false
+        @user.first_aae_away_reminder = false
+        @user.second_aae_away_reminder = false
+      end
+
       if @user.update_attributes(params[:person])
         what_changed = @user.previous_changes.reject{|attribute,value| (['updated_at'].include?(attribute) or ['vacated_aae_at'].include?(attribute) or (value[0].blank? and value[1].blank?))}
         if !what_changed.blank?
