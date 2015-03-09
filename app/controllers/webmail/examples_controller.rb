@@ -5,6 +5,7 @@
 # see LICENSE file
 
 class Webmail::ExamplesController < ApplicationController
+  before_filter :authenticate_user!
   skip_before_filter :set_yolo
 
   def index
