@@ -87,10 +87,6 @@ class Expert::SettingsController < ApplicationController
   end
 
   def assignment
-    if !params[:id].present?
-      redirect_to(expert_assignment_settings_path(current_user.id))
-    end
-
     @user = (params[:id].present? ? User.find_by_id(params[:id]) : current_user)
 
     if request.put?
@@ -115,7 +111,7 @@ class Expert::SettingsController < ApplicationController
       @user.save
       UserEvent.log_updated_vacation_status(@user, @user, change_hash) if vacation_changed
       flash[:notice] = "Preferences updated successfully!"
-      render nil
+      redirect_to(expert_assignment_settings_path(@user))
     end
   end
 
