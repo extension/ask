@@ -108,12 +108,9 @@ class Expert::SettingsController < ApplicationController
         change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away}
       end
 
-      if @user.away_was == false
-        flash[:notice] = "Preferences updated successfully!"
-      end
-
       @user.save
       UserEvent.log_updated_vacation_status(@user, @user, change_hash) if vacation_changed
+      flash[:notice] = "Preferences updated successfully!"
       redirect_to(expert_assignment_settings_url(@user))
     end
   end
