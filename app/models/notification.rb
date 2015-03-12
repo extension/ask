@@ -46,6 +46,7 @@ class Notification < ActiveRecord::Base
   AAE_EXPERT_RESPONSE_EDIT = 1017
   AAE_DATA_DOWNLOAD_AVAILABLE = 1018
   AAE_EXPERT_LOCATION_EDIT = 1019
+  AAE_EXPERT_AWAY_REMINDER = 1020
 
     
   ##########################################
@@ -121,6 +122,8 @@ class Notification < ActiveRecord::Base
       process_aae_expert_response_edit_to_submitter
     when AAE_DATA_DOWNLOAD_AVAILABLE
       process_aae_data_download_available
+    when AAE_EXPERT_AWAY_REMINDER
+      process_aae_expert_away_reminder
     else
       # nothing
     end
@@ -256,6 +259,28 @@ class Notification < ActiveRecord::Base
     Question.submitted.where("last_assigned_at < ?", 3.days.ago).each{|question| InternalMailer.aae_expert_handling_reminder(user: question.assignee, question: question).deliver unless (question.assignee.nil? || question.assignee.away?)}
   end
   
+  def process_aae_expert_away_reminder
+    #2 week reminder
+    two_week_vacators = User.valid_users.exid_holder.where("DATE(vacated_aae_at) <= '#{2.weeks.ago.to_date.to_s(:db)}' AND
+                first_aae_away_reminder = false AND
+                second_aae_away_reminder = false")
+
+    #one month reminder
+    one_month_vacators = User.valid_users.exid_holder.where("DATE(vacated_aae_at) <= '#{4.weeks.ago.to_date.to_s(:db)}' AND
+                second_aae_away_reminder = false")
+
+    # loop through all the experts who have opted out of receiving questions according to said criteria above
+    two_week_vacators.each do |vacator|
+      InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
+      vacator.update_attribute(:first_aae_away_reminder, true)
+    end
+
+    one_month_vacators.each do |vacator|
+      InternalMailer.aae_expert_away_reminder(user: vacator, away_date: vacator.vacated_aae_at).deliver
+      vacator.update_attribute(:second_aae_away_reminder, true)
+    end
+  end
+
   def queue_delayed_notifications
     delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
     self.update_attribute(:delayed_job_id, delayed_job.id)

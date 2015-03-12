@@ -5,6 +5,7 @@
 # see LICENSE file
 
 class Webmail::ExamplesController < ApplicationController
+  before_filter :authenticate_user!
   skip_before_filter :set_yolo
 
   def index
@@ -87,6 +88,11 @@ class Webmail::ExamplesController < ApplicationController
 
   def internal_aae_expert_handling_reminder
     mail = InternalMailer.aae_expert_handling_reminder(user: current_user, question: Question.offset(rand(Question.count)).first, cache_email: false)
+    return render_mail(mail)
+  end
+
+  def internal_aae_expert_away_reminder
+    mail = InternalMailer.aae_expert_away_reminder(user: current_user, cache_email: false)
     return render_mail(mail)
   end
 

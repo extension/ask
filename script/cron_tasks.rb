@@ -9,6 +9,21 @@ require 'thor'
 class CronTasks < Thor
   include Thor::Actions
 
+
+  # lists the method names that can run be run individually
+  # there's probably a way to do this by enumerating the
+  # instance methods that are in this no_tasks secion
+  # and pulling out "load_rails" but that seems like
+  # overkill - so just add additional tasks here
+  # that are allowed to run individually
+  RUNNABLE_TASKS = ['create_evaluation_notifications',
+                    'create_daily_summary_notification',
+                    'create_daily_handling_reminder_notification',
+                    'create_daily_away_reminder_notification',
+                    'clean_up_mailer_caches',
+                    'check_dj_queue',
+                    'flag_accounts_for_search_update']
+
   # these are not the tasks that you seek
   no_tasks do
     # load rails based on environment
@@ -32,17 +47,22 @@ class CronTasks < Thor
       end
       puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
-    
+
     def create_daily_summary_notification
       Notification.create(notification_type: Notification::AAE_DAILY_SUMMARY, created_by:1, recipient_id: 1, delivery_time: Settings.daily_summary_delivery_time)
       puts "Created notification for daily summary emails"
     end
-    
+
     def create_daily_handling_reminder_notification
       Notification.create(notification_type: Notification::AAE_EXPERT_HANDLING_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_handling_reminder_delivery_time)
       puts "Created notification for daily handling reminder emails"
     end
-    
+
+    def create_daily_away_reminder_notification
+      Notification.create(notification_type: Notification::AAE_EXPERT_AWAY_REMINDER, created_by:1, recipient_id: 1, delivery_time: Settings.daily_away_reminder_delivery_time)
+      puts "Created notification for daily away reminder emails"
+    end
+
     def clean_up_mailer_caches
       MailerCache.delete_all(["created_at < ?", 2.months.ago])
       puts "Cleaned up Mailer Caches more than 2 months old"
@@ -61,6 +81,8 @@ class CronTasks < Thor
       Sunspot.commit
     end
 
+
+
   end
 
 
@@ -78,6 +100,7 @@ class CronTasks < Thor
     create_evaluation_notifications
     create_daily_summary_notification
     create_daily_handling_reminder_notification
+    create_daily_away_reminder_notification
     clean_up_mailer_caches
     check_dj_queue
   end
@@ -87,8 +110,20 @@ class CronTasks < Thor
   def hourly
     load_rails(options[:environment])
     flag_accounts_for_search_update
-  end 
+  end
 
+  desc "single", "Run a specific task"
+  method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
+  # newlines are a little meh, but it works okay
+  method_option :task, :required => true, :aliases => "-t", :desc => "Task name to run\n\nRunnable tasks are: #{RUNNABLE_TASKS.join(', ')}"
+  def single
+    load_rails(options[:environment])
+    if(!RUNNABLE_TASKS.include?(options[:task]))
+      say "#{options[:task]} is not a runnable tasks.\n\nRunnable tasks are #{RUNNABLE_TASKS.join(', ')}"
+      exit(1)
+    end
+    self.send(options[:task])
+  end
 end
 
 CronTasks.start
