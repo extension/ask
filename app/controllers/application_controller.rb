@@ -127,9 +127,17 @@ class ApplicationController < ActionController::Base
   end
 
   def filtered_questions
-
     condition_array = Array.new
     filter_description_array = Array.new
+
+    if params[:user_location_id].present?
+      @location = Location.find_by_id(params[:user_location_id])
+      @location_pref = @location.id
+      condition_array << "questions.location_id = #{@location.id}"
+      filter_description_array << "#{@location.name}"
+    end      
+
+    end
 
     if params[:status].present?
       @status = params[:status]
