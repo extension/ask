@@ -16,7 +16,7 @@
     <%= select_tag "group_id", options_from_collection_for_select(@my_groups, "id", "name", @group_pref), {:prompt => "All groups", :name => "group_id", :class => "form-control"} %>
     <%= select_tag "tag_id", options_from_collection_for_select(@my_tags, "id", "name", @tag_pref), {:prompt => "All tags (from your tag list)", :name => "tag_id", :class => "form-control"} %>
     <div id="user_location_picker">
-      <%= select_tag "user_location_id", options_from_collection_for_select(@locations, "id", "name", @location_pref), {:prompt => "User by Location", :name => "user_location_id", :class => "form-control"} %>
+      <%= select_tag "expert_location_id", options_from_collection_for_select(@locations, "id", "name", @expert_location_pref), {:prompt => "Expert Location", :name => "expert_location_id", :class => "form-control"} %>
     </div>
     <span id="clearfilter" class="cursor downplay btn btn-default">clear filter</span>
   </div>
