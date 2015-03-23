@@ -127,7 +127,6 @@ class ApplicationController < ActionController::Base
   end
 
   def filtered_questions
-
     condition_array = Array.new
     filter_description_array = Array.new
 
@@ -161,6 +160,13 @@ class ApplicationController < ActionController::Base
       @group_pref = @group.id
       condition_array << "questions.assigned_group_id = #{@group.id}"
       filter_description_array << "Group: #{@group.name}"
+    end
+
+    if params[:expert_location_id].present?
+      @expert_location = Location.find_by_id(params[:expert_location_id])
+      @expert_location_pref = @expert_location.id
+      condition_array << "users.location_id = #{@expert_location.id}"
+      filter_description_array << "Expert Location: #{@expert_location.name}"
     end
 
     q = Question
@@ -198,6 +204,9 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    if @expert_location
+      q = q.joins(:assignee)
+    end
 
     condition_array.empty? ? condition_string = nil : condition_string = condition_array.join(' AND ')
     filter_description_array.empty? ? @filter_string = nil : @filter_string = filter_description_array.join(' | ')
