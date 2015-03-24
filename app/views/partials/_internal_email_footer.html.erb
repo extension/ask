@@ -5,7 +5,7 @@
       <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" class="footer">
         <tr>
           <td class="bgcolor">
-            <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. Change your <%= link_to "answering preferences", expert_settings_assignment_url() %> or your <%= link_to "group notification settings", expert_user_groups_url(@user) %>.</p>
+            <p>This email was sent to <%= @user.email %>. You received this email because you have an account at <%= root_url %>. Change your <%= link_to "answering preferences", expert_settings_assignment_url(:utm_source => "answering preferences", :utm_medium => "email", :utm_campaign => action_name) %> or your <%= link_to "group notification settings", expert_user_groups_url(@user, :utm_source => "group notification settings", :utm_medium => "email", :utm_campaign => action_name) %>.</p>
           </td>
         </tr>
         <tr class="options">
@@ -13,9 +13,9 @@
             <%- if @mailer_cache -%>
               <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
             <%- else -%>
-              <a href="">View in a browser</a> 
+              <a href="">View in a browser</a>
             <%- end -%>
-              <%= link_to "Change your email settings", expert_settings_assignment_url() %>
+              <%= link_to "Change your email settings", expert_settings_assignment_url(:utm_source => "email settings", :utm_medium => "email", :utm_campaign => action_name) %>
           </td>
         </tr>
         <tr><td>&nbsp;</td></tr>
@@ -23,6 +23,6 @@
     </td>
   </tr>
 </table>
-</div>  
+</div>
 </body>
 </html>
