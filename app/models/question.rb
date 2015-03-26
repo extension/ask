@@ -602,7 +602,7 @@ class Question < ActiveRecord::Base
 
         if !assignee
           assignee = pick_user_from_list(group_assignees.active.route_from_anywhere)
-          reason_assigned = "You chose to accept questions from #{group.name.titleize} Group"
+          reason_assigned = "You chose to accept questions from #{group.name} group"
         end
         # still aint got no one? assign to a group leader
         if !assignee
