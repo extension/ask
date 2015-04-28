@@ -156,7 +156,6 @@ class Question < ActiveRecord::Base
   belongs_to :initial_response,  class_name: 'Response', :foreign_key => "initial_response_id"
   belongs_to :initial_responder, :class_name => "User", :foreign_key => "initial_responder_id"
 
-  has_many :comments
   has_many :ratings
   has_many :responses
   accepts_nested_attributes_for :responses
@@ -669,13 +668,6 @@ class Question < ActiveRecord::Base
       QuestionEvent.log_wrangler_handoff(self,user,assigned_by,comment)
     else
       QuestionEvent.log_assignment(self,user,assigned_by,comment)
-    end
-
-    # if this is a reopen reassignment due to the public user commenting on the sq
-    if public_comment
-      asker_comment = public_comment.body
-    else
-      asker_comment = nil
     end
 
     # if this is being assigned to an expert who is resolving the question, do not notify that expert, the question will be resolved

@@ -4,11 +4,11 @@
 
 <div id="main" class="col-sm-8 col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
-    
+
     <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
-    
+
     <div id="question">
-      
+
       <div class="infobar bordered clearfix">
         <span class="text-muted"><small>Asked <%= humane_date(@question.created_at) %></small></span>
         <% if !@question.is_private %>
@@ -16,19 +16,19 @@
         <% end %>
       </div>
 
-    <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>  
-      
+    <div class="question_body" itemprop="description"><%= format_text_for_display(@question.body) %></div>
+
     <% if @question.images.size > 0 %>
 
-      <div class="images_wrapper clearfix"> 
+      <div class="images_wrapper clearfix">
       <% @question.images.each do |image| %>
         <% if image.persisted? %>
           <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
           <div class="question_image_wrapper">
             <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
           </div>
-        
-          
+
+
           <div id="myModal<%= image.id %>" class="modal fade">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -42,12 +42,12 @@
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal -->
-          
+
           <% else %>
            <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
           <% end %>
         <% end %>
-      <% end %>  
+      <% end %>
       <br class="clearing" />
     </div>
 
@@ -72,9 +72,9 @@
         <% end %>
       </p>
     </div>
-    
+
   </div>
-  
+
 
   <%- if current_user and current_user.id == @question.submitter_id -%>
     <%= render :partial => 'question_edit' %>
@@ -90,10 +90,10 @@
         <div class="response">
           <%= format_text_for_display(response.body) %>
         </div>
-        
+
          <% if response.images.size > 0 %>
 
-            <div class="images_wrapper clearfix"> 
+            <div class="images_wrapper clearfix">
             <% response.images.each do |image| %>
               <% if image.persisted? %>
                 <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
@@ -123,25 +123,25 @@
                  <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
                 <% end %>
               <% end %>
-            <% end %>  
+            <% end %>
             <br class="clearing" />
           </div>
 
         <% end %>
 
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         <div class="author" itemprop="author">
           <% if response.resolver_id %>
             <%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to link_public_user(response.resolver) %>
           <% else %>
             <p>Anonymous Guest</p>
           <% end %>
-          
+
           <p><small><%= link_to "Replied #{humane_date(response.created_at)}", question_path(@question, :anchor => "view-response-#{response.id}"), {:class => "response-timestamp text-muted", :title => "Link to this response"} %></small></p>
         </div>
       </div>
@@ -158,11 +158,11 @@
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
-	        
+
 	        <%= r_form.fields_for :images do |image_form| %>
 			      <p><%= image_form.file_field :attachment %></p>
           <% end %>
-          
+
           <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
           <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
         <% end %>
@@ -178,31 +178,13 @@
     </div>
   <% end %>
 
-
-
-<%= render :partial => 'comments' %>
-
-<% if !@question.is_private %>
-<% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) || (current_user and current_user.id == @question.submitter_id) %>
-  <div>
-	<p id='comment_notification_pref'>
-	<% if @comment_notification_pref == true %>
-    <%= button_to 'Unsubscribe from comments', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'no'), method: :post, :class => "btn btn-default btn-sm" %>
-	<% else %>
-    <%= button_to 'Subscribe to comments', comment_notification_subscription_user_url(id: current_user.present? ? current_user.id : @authenticated_submitter.id, fingerprint: @question.question_fingerprint, subscribe: 'yes'), method: :post, :class => "btn btn-small" %>
-	<% end %>
- 	</p>
-  </div>
-<% end %>
-<% end %>
-
 </div>
 
-<div class="col-sm-4 col-sm-offset-0 col-md-3 col-md-offset-1">  
+<div class="col-sm-4 col-sm-offset-0 col-md-3 col-md-offset-1">
   <% if current_user && current_user.has_exid? %>
       <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" %></p>
   <% end %>
-  
+
   <% if @question.status_state == Question::STATUS_REJECTED %>
     <aside class="public_rejected">
       <h3>This question has been rejected</h3>
@@ -210,36 +192,36 @@
     </aside>
   <% elsif @question.status_state != Question::STATUS_REJECTED %>
     <aside>
-      
+
       <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
           <h5>Answered by</h5>
         <% else %>
           <h5>Assigned to</h5>
         <% end %>
-        
-        
+
+
         <% if @question.assignee.present? %>
           <%= link_public_user_avatar(@question.assignee, :thumb) %> <%= link_to link_public_user(@question.assignee) %>
         <% elsif @question.assigned_group.present? %>
           <%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %>
         <% end %>
-        
+
         <% if @question_responses.size > 0 and @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
     	      <a href="#submitter_followup"><p class="additional_comment_toggle btn">Reply to the expert</p></a>
     	  <% end %>
-      
+
     <% if !@question.assignee.blank? %>
       <% if @question.assigned_group %>
         <h5>This question is grouped with</h5>
         <p><%= link_public_group_avatar(@question.assigned_group, :thumb) %> <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %></p>
       <% end %>
     <% end %>
-    
+
     <p class="text-muted">Ask an Expert is made up of groups and individual experts.</p>
     <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn orange lg" %></p>
   </aside>
   <% end %>
-    
+
   <% if @question.public_similar_questions.count > 0 %>
   <aside>
     <h4 class="subhead_style">Related Questions</h4>
@@ -248,13 +230,13 @@
     <% end %>
   </aside>
   <% end %>
-  
+
 </div>
 
 <script class="code" type="text/javascript">
-  
+
   $("#additional_comment").hide();
-  
+
   $(".additional_comment_toggle").click(function () {
     $("#additional_comment").toggle();
   });

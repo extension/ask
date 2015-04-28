@@ -18,8 +18,6 @@ class QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     return record_not_found if !@question
     @question_responses = @question.responses
-    @comment = Comment.new
-    @question_comments = @question.comments
 
     ga_tracking = []
 
@@ -51,14 +49,10 @@ class QuestionsController < ApplicationController
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
-      comment_pref = current_user.get_pref(Preference::NOTIFICATION_COMMENTS)
-      @comment_notification_pref = (comment_pref.present? && comment_pref.value == false) ? false : true
     elsif (@authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id))
       setup_images_for_edit
       @private_view = false
       @viewer = current_user
-      comment_pref = @authenticated_submitter.get_pref(Preference::NOTIFICATION_COMMENTS)
-      @comment_notification_pref = (comment_pref.present? && comment_pref.value == false) ? false : true
     end
 
     if( @viewer)

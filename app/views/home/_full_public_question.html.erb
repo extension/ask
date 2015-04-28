@@ -6,10 +6,6 @@
     <p><span class="response_count"><%= link_to "Answered", question_path(question.id) %></span></p>
   <% end %>
 
-  <% if question.comments.size > 0 %>
-    <p><span class="response_count"><%= question.comments.size %> <%= question.comments.size > 1 ? "Comments" : "Comment" %> </span></p>
-  <% end %>
-
   <% if question.images.size > 0 %>
 
     <div class="images_wrapper clearfix">
