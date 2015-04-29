@@ -114,7 +114,7 @@
                 <li><%= link_to(current_user.public_name, nonexid_profile_edit_path()) %></li>
                 <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
               <% elsif !current_user %>
-                <li><%= link_to("Sign in", new_user_session_path(:redirect_to => request.fullpath) )%></li>
+                <li><%= link_to("Sign in", authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => request.fullpath) )%></li>
               <% end %>
             </ul>
 

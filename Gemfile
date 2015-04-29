@@ -76,9 +76,6 @@ gem "rails_config"
 # exception notification
 gem 'honeybadger'
 
-# comment and threaded discussion support
-gem 'ancestry'
-
 # auto strip spaces out of attributes of models
 gem "auto_strip_attributes", "~> 2.0"
 

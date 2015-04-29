@@ -19,23 +19,10 @@ Aae::Application.routes.draw do
     end
   end
 
-  resources :comments, :only => [:create, :update, :destroy, :show, :edit] do
-    collection do
-      get 'cancel_edit'
-      get 'cancel_reply'
-      get 'reply'
-      post 'reply'
-    end
-  end
-
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
 
-  resources :users do
-    member do
-      post 'comment_notification_subscription'
-    end
-  end
+  resources :users, :only => [:show]
 
   resources :groups do
     member do

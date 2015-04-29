@@ -139,7 +139,6 @@ class Download < ActiveRecord::Base
       'submitter_is_extension',
       'aae_version',
       'source',
-      'comment_count',
       'submitter_response_count',
       'expert_response_count',
       'expert_responders',

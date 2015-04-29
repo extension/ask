@@ -9,7 +9,7 @@ class QuestionDataCache < ActiveRecord::Base
   serialize :data_values
   attr_accessible :question_id, :data_values, :question, :version
 
-  CURRENT_VERSION = 2
+  CURRENT_VERSION = 3
 
   belongs_to :question
 
@@ -48,7 +48,6 @@ class QuestionDataCache < ActiveRecord::Base
     data << question.submitter_is_extension?
     data << question.aae_version
     data << question.source
-    data << question.comments.count
     data << question.responses.non_expert.count
     data << question.responses.expert.count
     data << question.responses.expert.count('distinct(resolver_id)')
@@ -83,7 +82,7 @@ class QuestionDataCache < ActiveRecord::Base
     EvaluationQuestion.order(:id).active.each do |aeq|
       eval_columns << "evaluation_#{aeq.id}_response"
       eval_columns << "evaluation_#{aeq.id}_value"
-    end    
+    end
     eval_count = question.evaluation_answers.count
     if(eval_count > 0)
       data << eval_count
