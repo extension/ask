@@ -9,7 +9,7 @@ class QuestionDataCache < ActiveRecord::Base
   serialize :data_values
   attr_accessible :question_id, :data_values, :question, :version
 
-  CURRENT_VERSION = 2
+  CURRENT_VERSION = 3
 
   belongs_to :question
 
