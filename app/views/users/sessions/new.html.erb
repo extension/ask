@@ -1,39 +1,14 @@
 <div id="sign_in" class="col-md-12">
-  
-  <h2>Sign In</h2>  
-  
+
+  <h2>Sign-in for eXtension Experts</h2>
+
   <div class="sign_in_group">
   <p>
-    <h4>eXtension experts should sign in with their eXtension account.</h4>
     <%= link_to authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
-      <%= image_tag("extension_logo.jpg", :size => "50x50", :class => "size50x50") %>
-      <span class="btn btn-default">Sign in with eXtension</span>
-    <% end %>
-  </p>
-  </div>
-  
-  <div class="sign_in_group">
-    <h4>These  sign-in options allow visitors to post comments on questions.</h4>
-  <p>
-    <%= link_to authmap_omniauth_authorize_path(:twitter, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
-	    <%= image_tag("twitter_newbird_boxed_whiteonblue.png", :size => "50x50", :class => "size50x50") %>    
-      <span class="btn btn-default">Sign in with Twitter</span>
+      <span class="btn btn-primary">Sign in with your eXtension account</span>
     <% end %>
   </p>
   
-  <p>
-    <%= link_to authmap_omniauth_authorize_path(:facebook, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>  
-    <%= image_tag("f_logo.jpg", :size => "50x50", :class => "size50x50") %>
-    <span class="btn btn-default">Sign in with Facebook</span>
-    <% end %>
-  </p>
-  
-  <p>
-    <%= link_to authmap_omniauth_authorize_path(:google, :redirect_to => (params[:redirect_to].present?) ? params[:redirect_to] : session[:user_return_to]) do %>
-      <%= image_tag("Google_logo.png", :size => "50x50", :class => "size50x50") %>
-      <span class="btn btn-default">Sign in with Google</span>
-    <% end %>
-  </p>
   </div>
 
 </div>
@@ -44,9 +19,7 @@
   $(document).ready(function() {
     $('.signup_option a').one('click', function() {
       $(this).after('<%= image_tag("spinner.gif", :size => "54x55", class: "spinner") %>');
-    });    
+    });
   });
 
 </script>
-
-
