@@ -155,6 +155,9 @@ class User < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
 
+  # does not pass email information back.
+  validates :email, :presence => true, :email => true
+
   # filters
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
