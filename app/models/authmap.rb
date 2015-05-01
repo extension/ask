@@ -3,20 +3,7 @@ class Authmap < ActiveRecord::Base
   belongs_to :user
   validates :authname, :uniqueness => {:scope => :source}
   
-  
-  def self.find_for_twitter_oauth(omniauth_auth_hash, logged_in_user=nil)
-    return process_user_info(omniauth_auth_hash, logged_in_user)
-  end
-  
-  def self.find_for_facebook_oauth(omniauth_auth_hash, logged_in_user=nil)
-    return process_user_info(omniauth_auth_hash, logged_in_user)
-  end
-  
   def self.find_for_people_openid(omniauth_auth_hash, logged_in_user=nil)
-    return process_user_info(omniauth_auth_hash, logged_in_user)
-  end
-  
-  def self.find_for_google_openid(omniauth_auth_hash, logged_in_user=nil)
     return process_user_info(omniauth_auth_hash, logged_in_user)
   end
   
