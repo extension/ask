@@ -39,7 +39,6 @@ class User < ActiveRecord::Base
 
   # associations
   has_many :authmaps
-  has_many :comments
   has_many :user_locations
   has_many :user_counties
   has_many :preferences, :as => :prefable
