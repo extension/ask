@@ -43,10 +43,6 @@ class AjaxController < ApplicationController
         name = expert_or_group.name
         if expert_or_group.available?
           availability = "available"
-        elsif expert_or_group.retired?
-          availability = "not_available"
-          name += " (account is retired)"
-          results["availability"] = "not_available" 
         else
           availability = "not_available"
           name += " (away)"
@@ -67,12 +63,14 @@ class AjaxController < ApplicationController
       groups_including = Group.where(group_active: true).pattern_search(params[:term]).limit(9)
       groups = (groups_starting_with + groups_including).uniq.take(9)
 
-      experts_starting_with = User.exid_holder.not_blocked.pattern_search(params[:term], "prefix").limit(18 - groups.length)
-      experts_including = User.exid_holder.not_blocked.pattern_search(params[:term]).limit(18 - groups.length)
+      experts_starting_with = User.exid_holder.not_blocked.not_retired.pattern_search(params[:term], "prefix").limit(18 - groups.length)
+      experts_including = User.exid_holder.not_blocked.not_retired.pattern_search(params[:term]).limit(18 - groups.length)
       experts = (experts_starting_with + experts_including).uniq.take(9)
     else
+      # this conditional should not be triggered during normal app usage, but
+      # return something for testing
       groups = Group.where(group_active: true).order('created_at DESC').limit(6)
-      experts = User.exid_holder.active.not_blocked.order('created_at DESC').limit(6)
+      experts = User.exid_holder.active.not_blocked.not_retired.order('created_at DESC').limit(6)
     end
 
     combined_array = groups + experts
