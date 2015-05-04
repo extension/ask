@@ -39,7 +39,6 @@ class User < ActiveRecord::Base
 
   # associations
   has_many :authmaps
-  has_many :comments
   has_many :user_locations
   has_many :user_counties
   has_many :preferences, :as => :prefable
@@ -156,21 +155,12 @@ class User < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
 
-  # validation should not happen when someone initially signs in with a twitter account and does not have an email address initially b/c twitter
   # does not pass email information back.
-  validates :email, :presence => true, :email => true, unless: Proc.new { |u| u.first_authmap_twitter? }
+  validates :email, :presence => true, :email => true
 
   # filters
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
-
-  # the first authmap is twitter if either it's a new record and we're saving the first authmap to it or
-  # more than one authmap exists for the user and the first one is the twitter authmap
-  def first_authmap_twitter?
-    twitter_authmap = self.authmaps.detect{|am| am.source == 'twitter'}
-    twitter_authmap.present? && (self.authmaps.length == 1 || (self.authmaps.order(:created_at).first.id == twitter_authmap.id))
-  end
-
 
   def self.by_question_event_count(event_state,options = {})
     with_scope do
@@ -563,99 +553,6 @@ class User < ActiveRecord::Base
     .joins(:question_events)
     .where("question_events.initiated_by_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
-  end
-
-  # this instance method used to merge two user accounts into one account, particularly used
-  # when merging two accounts created for the same user resulting from a user using
-  # more than one method of authentication (eg. twitter, eXtension, etc.).
-  # right now, this is meant to be run in the console.
-  def merge_account_with(user_id, respect_email_consistency = false)
-    if self.id == user_id
-      puts 'Cannot merge an account with itself.'
-      return
-    end
-
-    user_to_merge_with = User.find_by_id(user_id)
-    if user_to_merge_with.blank?
-      puts 'User to merge with does not exist'
-      return
-    end
-
-    if respect_email_consistency == true && self.email.strip != user_to_merge_with.email.strip
-      puts 'User to merge with does not have the same email address as user. This is an error because respect_email_consistency is on'
-      return
-    end
-
-    # we're keeping the first user account created and merging the later one with it
-    # along with destroying the later account when the merging is complete
-    if user_to_merge_with.created_at >= self.created_at
-      user_to_keep = self
-      user_to_remove = user_to_merge_with
-    else
-      user_to_keep = user_to_merge_with
-      user_to_remove = self
-    end
-
-    User.reflect_on_all_associations.each do |association_to_user|
-      # make sure we have the field we need to use for the user for the associated tables
-      if !association_to_user.options[:foreign_key].blank?
-        key_of_user = association_to_user.options[:foreign_key]
-      else
-        key_of_user = nil
-      end
-
-      additional_conditions = ''
-
-      case association_to_user.macro
-      when :has_many || :has_one
-        # in the case of :has_one, I think it's pretty rare to see the :as option get used,
-        # but I'm going to cover it along with :has_many anyways
-
-        # we are not including the 'through' relationships
-        # we are relying on the 'through' table to be a separate association defined on the user model, and since this 'through' table is
-        # the table that holds the user association, it would be a duplicate pass through for a through relationship, so we skip the 'through' relationships here.
-
-        # for example:
-        # has_many :taggings, :as => :taggable, dependent: :destroy
-        # has_many :tags, :through => :taggings
-        # the taggings association will cycle through this loop and do the options[:as] condition,
-        # the tags association is through taggings, and since it's part of that same association as taggings,
-        # and taggings has already been processed (or will be), the taggings table is the only table needing updating.
-        next if !association_to_user.options[:through].blank?
-
-        if !association_to_user.options[:as].blank?
-          # get the class name of the associated table and the user key (eg. prefable_id)
-          key_of_user = "#{association_to_user.options[:as]}_id"
-          model_to_use = association_to_user.klass
-          # need to get the type on a polymorphic association (eg. prefable_type)
-          additional_conditions = " AND #{association_to_user.options[:as]}_type = 'User'"
-        else
-          # the code below also works for the :class_name option b/c klass is pulling the target model
-          key_of_user = "user_id" if key_of_user.blank?
-          model_to_use = association_to_user.klass
-        end
-
-        model_to_use.where("#{key_of_user} = #{user_to_remove.id}" + "#{additional_conditions}").update_all(key_of_user.to_sym => user_to_keep.id)
-      when :has_and_belongs_to_many
-        join_table = association_to_user.options[:join_table]
-        if !association_to_user.options[:foreign_key].blank?
-          key_of_user = association_to_user.options[:foreign_key]
-        else
-          key_of_user = 'user'
-        end
-        # do raw sql here to update a join table without having to instantiate the objects and do AR (delete old and add new) operations
-        # that triggers callbacks.
-        connection.execute("UPDATE #{join_table} SET #{key_of_user} = #{user_to_keep.id} WHERE #{key_of_user} = #{user_to_remove.id}")
-      end
-    end
-
-    # if the user record from eXtension authentication is the user record to be removed,
-    # then transfer the darmok_id to the remaining user account if the darmok id doesn't exist for it, b/c that's needed for sync with people.
-    if user_to_remove.darmok_id.present? && user_to_keep.darmok_id.blank?
-      User.where("id = #{user_to_keep.id}").update_all(:darmok_id => user_to_remove.darmok_id)
-    end
-
-    user_to_remove.destroy
   end
 
   def self.demographics_data_csv(filename)

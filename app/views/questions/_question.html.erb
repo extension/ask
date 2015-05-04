@@ -149,9 +149,9 @@
 
     <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
 	    <div id="submitter_followup">
-	      <p class="additional_comment_toggle btn btn-primary btn-large">Post a response to the expert</p>
+	      <p class="additional_response_toggle btn btn-primary btn-large">Post a response to the expert</p>
 	    </div>
-	    <div id="additional_comment">
+	    <div id="additional_response">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
           <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
@@ -164,7 +164,7 @@
           <% end %>
 
           <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
-          <%= link_to_function "Cancel", "$('#additional_comment').hide()" %>
+          <%= link_to_function "Cancel", "$('#additional_response').hide()" %>
         <% end %>
 	    </div>
     <% end %>
@@ -207,7 +207,7 @@
         <% end %>
 
         <% if @question_responses.size > 0 and @authenticated_submitter and @authenticated_submitter.id == @question.submitter_id and session[:question_id] == @question.id %>
-    	      <a href="#submitter_followup"><p class="additional_comment_toggle btn">Reply to the expert</p></a>
+    	      <a href="#submitter_followup"><p class="additional_response_toggle btn">Reply to the expert</p></a>
     	  <% end %>
 
     <% if !@question.assignee.blank? %>
@@ -235,10 +235,10 @@
 
 <script class="code" type="text/javascript">
 
-  $("#additional_comment").hide();
+  $("#additional_response").hide();
 
-  $(".additional_comment_toggle").click(function () {
-    $("#additional_comment").toggle();
+  $(".additional_response_toggle").click(function () {
+    $("#additional_response").toggle();
   });
 
 
