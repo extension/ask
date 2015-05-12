@@ -200,7 +200,7 @@ Aae::Application.routes.draw do
   match "widgets/front_porch" => "widgets#front_porch", :via => [:get]
   match "widgets/answered" => "widgets#answered", :via => [:get, :post]
   match "widgets/questions" => "widgets#questions", :via => [:get, :post]
-  match "widgets/generate_widget" => "widgets#generate_widget", :via => [:get, :post]
+  match "widgets/generate_widget_snippet" => "widgets#generate_widget_snippet", :via => [:post]
   match "widgets" => "widgets#index"
 
 
