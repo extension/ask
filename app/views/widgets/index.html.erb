@@ -102,6 +102,9 @@
     }
   });
 
+  // The data submitted through widget_form is used to both render the
+  // example widget and generate the corresponding widget code snippet.
+  // A widget_key is required because that's how the dom is accessed.
   function generate_widget() {
 	  $.ajax({
       type: "POST",
@@ -110,11 +113,14 @@
       data: $("#widget_form").serialize()
     })
     .done(function(data) {
+      // The example widget rendered without error so generate the corresponding widget code snippet
       generate_widget_snippet();
       $(".aae-question-widget-container").hide().fadeIn();
     })
-    .fail(function() {
-      alert("problem generating widget");
+    .fail(function(json, responseText) {
+      feedbackMessage = $.parseJSON(json.responseText).message;
+      $(".aae-question-widget-container").html("<p class='alert alert-danger'>"+feedbackMessage+"</p>");
+      generate_widget_snippet(); // clear out the code snippet by failing it
     })
 	}
 
@@ -123,14 +129,15 @@
     widgetParams = $("#aae_qw_hook").attr("data-widget-params");
       $.ajax({
         type: "POST",
-        url: "<%= widgets_generate_widget_path() %>",
+        url: "<%= widgets_generate_widget_snippet_path() %>",
         data: {widget_key: widgetKey, widget_params: widgetParams},
         cache: false
       })
       .done(function(data) {
       })
-      .fail(function() {
-        alert("problem generating widget snippet");
+      .fail(function(json, responseText) {
+        feedbackMessage = $.parseJSON(json.responseText).message
+        $("#widget-code").html("<p class='alert alert-danger'>"+feedbackMessage+"</p>");
       })
 	}
 
