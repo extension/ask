@@ -1,3 +1,5 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
 #
@@ -31,11 +33,8 @@ class Question < ActiveRecord::Base
     end
 
     def resize
-      if self.attachment_file_size > 5000000
-        "1000x1000>"
-      else
-        " "
-      end
+      # resize all images to a reasonable file size and so paperclip can fix orientation
+      "4800x4800>"
     end
   end
 
