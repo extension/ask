@@ -1,7 +1,7 @@
 <% @page_title = "Reply to question ##{@question.id}"%>
 
 <div id="main" class="col-md-8">
-  
+
   <div id="working_on_this_banner">
     <%= render :partial => 'working_on_this_banner' %>
   </div>
@@ -13,7 +13,7 @@
 <% if @question.assignee != current_user %>
   <p><%= link_to "Assign this Question to Me", assign_expert_question_path(:id => @question.id, :redirect_to_answer => true, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %></p>
 <% else %>
-  
+
   <div id="working_on_this_answer_page">
     <%= render :partial => 'working_on_this_sidebar' %>
   </div>
@@ -21,7 +21,7 @@
 <% end %>
 
 <div id="response_form">
-  
+
     <%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]), :multipart => true) do %>
     <div id="email_content">
         <div class="headerinfo">
@@ -30,48 +30,48 @@
         </div>
         <div class="bodyinfo">
             <p>There is a response to the question you asked via eXtension's 'Ask an Expert' tool!</p>
-            
+
             <p><%= link_to("View your Question and Response", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
 
             <p>Please don't reply to this no-reply email. Instead, click the link above to send a reply. Thanks!</p>
             <br />
-            
+
             <p>Your question:<br /><%= format_text_for_display(@question.body) %></p>
 
             <p><label for="current_response">Response:</label>
-            
+
             <!-- TODO: Change this from current_response to something else to be determined. Maybe all official responses can be inserted here. -->
             <% if (@sampletext || @related_question) %>
                 <% @answer = (@sampletext ? @sampletext : @question.current_response)%>
             <% end %>
-            
+
             <%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 6}) %>
             </p>
-            
+
             <div id="add_images">
               <label>Images (optional)</label>
-                <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+                <p><em>You can upload .jpg .png or .gif.</em></p>
 	            <% (1..@image_count).each do |counter| %>
 	              <p>
       	          <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
       	        </p>
       	      <% end %>
             </div>
-            
+
             <p><%= text_area_tag 'signature', @signature, {"rows" => 3, class: 'wysiwyg'} %>
               <small class="downplay block">You can edit your default signature in your 'Answering' settings</small></p>
-            
+
             <p class="save_it"><%= submit_tag 'Send Reply', :class => "btn btn-primary" %></p>
-            
+
             <p>Thank you for using our 'Ask an Expert' system.</p>
             <p>Have another question? Please ask!
                 <br />http://www.extension.org/ask/</p>
-            
+
             <div class="legal">
               <p>***PLEASE DO NOT REPLY TO THIS MESSAGE***</p/>
-            
+
                 <p><%= render(partial: 'partials/expert_disclaimer') %></p>
-            
+
                 <p><span class="helptext">-- end of email message --</span></p>
             </div>
         </div>
@@ -88,21 +88,21 @@
   <aside>
     <h3>Your response will be sent via email and posted to the submitter's AaE question page</h3>
   </aside>
-  
+
   <h5>Question Details</h5>
-  
-  <p>Asked 
+
+  <p>Asked
     <% if @original_group.present? %>
       to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
     <% end %>
 
-    <%= time_ago_in_words(@question.created_at) %> ago 
+    <%= time_ago_in_words(@question.created_at) %> ago
 
     <% if @question.submitter %>
       by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
     <% end %>
   </p>
-  
+
   <p>
     <% if @question.location.present? %>
       <% if @question.county.present? %>
@@ -115,7 +115,7 @@
       <span class="label label-inverse"><%= link_to "No Location" %></span>
     <% end %>
   </p>
-  
+
   <div id="tags">
 
   <% if @question.tags.size > 0 %>
@@ -144,5 +144,5 @@
       $(elem).wysihtml5({toolbar: { "fa": true, "image": false}});
     });
   }
-  
+
 </script>

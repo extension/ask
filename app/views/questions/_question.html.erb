@@ -157,7 +157,7 @@
           <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
 	        <%= hidden_field_tag :question_id, @question.id %>
           <h3>You can include up to 3 images</h3>
-	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+	        <p><em>You can upload .jpg .png or .gif.</em></p>
 
 	        <%= r_form.fields_for :images do |image_form| %>
 			      <p><%= image_form.file_field :attachment %></p>

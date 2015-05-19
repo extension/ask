@@ -16,7 +16,7 @@
 
 		  <div id="aae_image_div">
 			<h3>You can include up to 3 images</h3>
-	        <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+	        <p><em>You can upload .jpg .png or .gif.</em></p>
 			<% @question.images.each do |image| %>
 			  <%= f.fields_for :images, image do |image_fields| %>
 			    <% if image.persisted? %>
