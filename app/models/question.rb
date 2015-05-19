@@ -1,3 +1,5 @@
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
 #
@@ -9,26 +11,32 @@ class Question < ActiveRecord::Base
     has_attached_file :attachment,
                       :url => "/uploads/:class/:attachment/:id_partition/:basename_:style.:extension",
                       :styles => Proc.new { |attachment| attachment.instance.styles }
-                        attr_accessible :attachment
+    attr_accessible :attachment
+
     # http://www.ryanalynporter.com/2012/06/07/resizing-thumbnails-on-demand-with-paperclip-and-rails/
     def dynamic_style_format_symbol
         URI.escape(@dynamic_style_format).to_sym
-      end
+    end
 
-      def styles
-        unless @dynamic_style_format.blank?
-          { dynamic_style_format_symbol => @dynamic_style_format }
-        else
-          { :medium => "300x300>", :thumb => "100x100>" }
-        end
-      end
-
-      def dynamic_attachment_url(format)
-        @dynamic_style_format = format
-        attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
-        attachment.url(dynamic_style_format_symbol)
+    def styles
+      unless @dynamic_style_format.blank?
+        { dynamic_style_format_symbol => @dynamic_style_format }
+      else
+        { :original => resize, :medium => "300x300>", :thumb => "100x100>" }
       end
     end
+
+    def dynamic_attachment_url(format)
+      @dynamic_style_format = format
+      attachment.reprocess!(dynamic_style_format_symbol) unless attachment.exists?(dynamic_style_format_symbol)
+      attachment.url(dynamic_style_format_symbol)
+    end
+
+    def resize
+      # resize all images to a reasonable file size and so paperclip can fix orientation
+      "4800x4800>"
+    end
+  end
 
   ## includes
   include MarkupScrubber
@@ -818,7 +826,6 @@ class Question < ActiveRecord::Base
 
   def validate_attachments
     allowable_types = ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png']
-    images.each {|i| self.errors[:base] << "Image is over 5MB" if i.attachment_file_size > 5.megabytes}
     images.each {|i| self.errors[:base] << "Image is not correct file type (.jpg, .png, or .gif allowed)" if !allowable_types.include?(i.attachment_content_type)}
   end
 

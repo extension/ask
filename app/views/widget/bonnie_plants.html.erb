@@ -75,7 +75,7 @@
         <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
         </label>
     </p>
-    
+
     <p>
         <label for="email_confirmation">Confirm Your Email:
         <%= text_field_tag(:email_confirmation, @email_confirmation, { :type => "email", :autocapitalize => "off" }) %>
@@ -104,7 +104,7 @@
     <% if @group.widget_upload_capable? %>
       <p>
       <label>Image (optional)</label>
-      <p><em>You can upload .jpg .png or .gif. Max size of 5MB each.</em></p>
+      <p><em>You can upload .jpg .png or .gif.</em></p>
       <%= f.fields_for :images do |image_form| %>
           <p>
             <%= image_form.file_field :attachment %>
@@ -128,12 +128,12 @@
 		</label>
 	  </p>
 	<% end %>
-    
+
     <%- if current_user and current_user.email.present? -%>
        <p>Your answer will be sent to <%= current_user.email %></p>
      <% end %>
-  
-  
+
+
     <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :disable_with => "Submitting..." %></p>
     <% end %>
 
