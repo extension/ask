@@ -66,7 +66,7 @@ module Aae
     config.action_dispatch.ip_spoofing_check = false
 
     config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
-    
+
     # see https://github.com/rack/rack/issues/337
     config.middleware.use ::Rack::Robustness do |g|
       g.no_catch_all
@@ -75,5 +75,8 @@ module Aae
       g.body{ |ex| ex.message }
       g.ensure(true) { |ex| env['rack.errors'].write(ex.message) }
     end
+
+    # block bad behavior
+    config.middleware.use Rack::Attack
   end
 end
