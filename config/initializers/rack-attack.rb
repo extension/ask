@@ -2,7 +2,8 @@ class Rack::Attack
 
   # blacklist some google appengine requests for now
   blacklist('block some google appengine requests') do |req|
-    req.user_agent =~ %r{appid: s~gardenanswers}
+    regex = Regexp.new(Settings.block_user_agent_regex)
+    req.user_agent =~ regex
   end
 
 end
