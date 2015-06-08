@@ -212,6 +212,8 @@ GEM
     quiet_assets (1.0.1)
       railties (~> 3.1)
     rack (1.4.5)
+    rack-attack (4.3.0)
+      rack
     rack-cache (1.2)
       rack (>= 0.4)
     rack-contrib (1.1.0)
@@ -353,6 +355,7 @@ DEPENDENCIES
   progress_bar
   pry
   quiet_assets
+  rack-attack
   rack-robustness
   rails (= 3.2.21)
   rails3-generators
@@ -370,3 +373,6 @@ DEPENDENCIES
   turn
   uglifier (>= 1.0.3)
   useragent
+
+BUNDLED WITH
+   1.10.3

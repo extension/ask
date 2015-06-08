@@ -134,6 +134,9 @@ gem 'lograge'
 # remove emoji
 gem 'demoji'
 
+# additional help in blocking apps
+gem 'rack-attack'
+
 group :development do
   # require the powder gem
   gem 'powder'
