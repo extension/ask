@@ -24,6 +24,7 @@
       <th>Name</th>
       <th>Primary Location</th>
       <th>Accepts Questions from</th>
+      <th>Auto-assignments</th>
       <th>Handling Rate</th>
       <th>Last Active</th>
       <th>Last touched a question</th>
@@ -57,6 +58,7 @@
         States only
         <% end %>
       </td>
+      <td><%= member.auto_route? ? "Accepts automatic assignments" : "Doesn't accept automatic assignments" %></td>
       <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %> <%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
       <td><span class="downplay">last active <%= get_last_active_time(member) %></span></td>
       <td><span class="downplay"><%= !member.last_question_touched.blank? ? "#{time_ago_in_words(member.last_question_touched)} ago" : "No handling activity" %></td>
