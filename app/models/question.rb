@@ -870,17 +870,25 @@ class Question < ActiveRecord::Base
     users.sort! { |a, b| a.open_questions.length <=> b.open_questions.length }
 
     questions_floor = users[0].open_questions.length
+    # p "questions_floor: #{questions_floor}"
 
     # who all matches the least amt. of questions assigned
     possible_users = users.select { |u| u.open_questions.length == questions_floor }
+    # p "possible_users default order:"
+    # possible_users.each {|e| puts e.id }
 
     return nil if !possible_users or possible_users.length == 0
     return possible_users[0] if possible_users.length == 1
 
+    possible_users.sort! { |a, b| a.last_question_touched <=> b.last_question_touched }
+    # p "possible_users sorted by last touched:"
+    # possible_users.each {|e| puts e.login, e.id }
+
     # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
     # so if all experts that made the cut have zero questions assigned, pick a random person in that group to assign to
     if questions_floor == 0
-      return possible_users.sample
+      # return possible_users.sample
+      return possible_users.first
     end
 
     assignment_dates = Hash.new
