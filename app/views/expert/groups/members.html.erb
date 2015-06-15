@@ -24,7 +24,9 @@
       <th>Name</th>
       <th>Primary Location</th>
       <th>Accepts Questions from</th>
-      <th>Auto-assignments</th>
+      <%- if @group.individual_assignment -%>
+        <th>Auto-assignments</th>
+      <%- end -%>
       <th>Handling Rate</th>
       <th>Last Active</th>
       <th>Last touched a question</th>
@@ -58,7 +60,21 @@
         States only
         <% end %>
       </td>
-      <td><%= member.auto_route? ? "Accepts automatic assignments" : "Doesn't accept automatic assignments" %></td>
+      <%- if @group.individual_assignment -%>
+      <td>
+        <%- if member.auto_route? %>
+          Accepts automatic assignments
+        <%- else -%>
+          <span class="group-member-warning">This group cannot automatically assign questions to this person because <strong>they don't accept automatic assignments</strong>.</span>
+        <%- end -%>
+
+        <%- if member.auto_route? && !@group.assignment_outside_locations -%>
+          <%- if (member.expertise_locations & @group.expertise_locations).empty? %>
+            <p><span class="group-member-warning">This group cannot automatically assign questions to this person because <strong>their expertise locations don't match this group's expertise locations</strong>.</span></p>
+          <%- end -%>
+        <%- end -%>
+      </td>
+      <%- end -%>
       <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %> <%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
       <td><span class="downplay">last active <%= get_last_active_time(member) %></span></td>
       <td><span class="downplay"><%= !member.last_question_touched.blank? ? "#{time_ago_in_words(member.last_question_touched)} ago" : "No handling activity" %></td>
