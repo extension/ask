@@ -595,7 +595,7 @@ class Question < ActiveRecord::Base
       if group_assignees.length > 0
         if (group.ignore_county_routing == true) && self.location.present?
           assignee = pick_user_from_list(group_assignees.with_expertise_location(self.location.id))
-          reason_assigned = "You chose to accept questions based on location (#{self.location.name})"
+          reason_assigned = "The question location (#{self.location.name}) matched the member's expertise location. Note: This group ignores counties when automatically assigning questions."
         else
           if self.county.present?
             assignee = pick_user_from_list(group_assignees.with_expertise_county(self.county.id))
@@ -637,7 +637,7 @@ class Question < ActiveRecord::Base
       # send to the question wrangler group if the location of the question is not in the location of the group and
       # the group is not receiving questions from outside their defined locations.
       assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
-      reason_assigned = "You are a Question Wrangler"
+      reason_assigned = "This question's location did not match the group's location so it was assigned to a Question Wrangler"
     end
 
     if assignee
@@ -870,6 +870,7 @@ class Question < ActiveRecord::Base
     users.sort! { |a, b| a.open_questions.length <=> b.open_questions.length }
 
     questions_floor = users[0].open_questions.length
+    # p "questions_floor: #{questions_floor}"
 
     # who all matches the least amt. of questions assigned
     possible_users = users.select { |u| u.open_questions.length == questions_floor }
@@ -880,7 +881,8 @@ class Question < ActiveRecord::Base
     # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
     # so if all experts that made the cut have zero questions assigned, pick a random person in that group to assign to
     if questions_floor == 0
-      return possible_users.sample
+      possible_users.sort! { |a, b| a.last_question_touched <=> b.last_question_touched }
+      return possible_users.first
     end
 
     assignment_dates = Hash.new

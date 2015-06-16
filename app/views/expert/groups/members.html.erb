@@ -3,7 +3,7 @@
 <div class="explanation">
   <h2>What Are Group Leaders?</h2>
   <p>Group leadership is a self-serve option. Anyone can choose to take a more active role in a group by becoming a leader.</p>
-  
+
   <ul>
     <li>Leaders are identified as a point person for a group.</li>
     <li>Leaders receive notifications when a member or leader joins or leaves.</li>
@@ -13,7 +13,7 @@
   <div id="leadership_options">
     <%= render :partial => 'leadership_options' %>
   </div>
-  
+
 </div>
 
 <p><%= link_to 'CSV Email Download', email_csv_expert_group_path(@group, format: "csv") %></p>
@@ -24,30 +24,34 @@
       <th>Name</th>
       <th>Primary Location</th>
       <th>Accepts Questions from</th>
+      <%- if @group.individual_assignment -%>
+        <th>Auto-assignments</th>
+      <%- end -%>
       <th>Handling Rate</th>
       <th>Last Active</th>
+      <th>Last touched a question</th>
       <th>Notified on every question</th>
       <th>Receives daily summary</th>
     </tr>
   </thead>
   <tbody>
-  
+
 <% @group_members.each do |member| %>
-  <tr>
+  <tr class="<%= member.away? ? "member-away" : "" %>">
       <td>
-        <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> 
+        <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %>
         <% if member.leader_of_group(@group)%><strong><i class="icon-user"></i> Leader</strong><% end %>
       </td>
       <td>
         <% if member.location %>
           <% if member.county %>
-            <%= member.county.name %>, 
+            <%= member.county.name %>,
           <% end %>
           <%= member.location.abbreviation %>
         <% end %>
       </td>
       <td>
-        <% case member.routing_instructions 
+        <% case member.routing_instructions
            when "anywhere" %>
         Anywhere
         <% when "counties_only" %>
@@ -56,8 +60,24 @@
         States only
         <% end %>
       </td>
+      <%- if @group.individual_assignment -%>
+      <td>
+        <%- if member.auto_route? %>
+          Accepts automatic assignments
+        <%- else -%>
+          <span class="group-member-warning">This group cannot automatically assign questions to this person because <strong>they don't accept automatic assignments</strong>.</span>
+        <%- end -%>
+
+        <%- if member.auto_route? && !@group.assignment_outside_locations -%>
+          <%- if (member.expertise_locations & @group.expertise_locations).empty? %>
+            <p><span class="group-member-warning">This group cannot automatically assign questions to this person because <strong>their expertise locations don't match this group's expertise locations</strong>.</span></p>
+          <%- end -%>
+        <%- end -%>
+      </td>
+      <%- end -%>
       <td><p class="handling_rate"><%= display_handling_rate(@handling_rates[member.id]) %> <%= display_handling_rate_bar(@handling_rates[member.id]) %></p></td>
       <td><span class="downplay">last active <%= get_last_active_time(member) %></span></td>
+      <td><span class="downplay"><%= !member.last_question_touched.blank? ? "#{time_ago_in_words(member.last_question_touched)} ago" : "No handling activity" %></td>
       <td><% if member.send_incoming_notification?(@group) %>Notified on every question<% end %></td>
       <td><% if member.send_daily_summary?(@group) %>Receives daily summary<% end %></td>
   </tr>

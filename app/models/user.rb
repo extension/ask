@@ -477,6 +477,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  def last_question_touched
+    last_touched = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
+    if(!last_touched.blank?)
+      last_touched
+    else
+      nil
+    end
+  end
+
   def daily_summary_group_list
     list = []
     self.group_memberships.each{|group| list.push(group) if (send_daily_summary?(group) and group.include_in_daily_summary?)}
