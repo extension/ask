@@ -22,7 +22,6 @@ class Group < ActiveRecord::Base
   has_many :members, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'member' and users.retired = 0"
   has_many :leaders, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'leader' and users.retired = 0"
   has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0 and users.auto_route = 1"
-  has_many :active_connections, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0"
   # these are not relevant right now, but we might use some of this in the future
   # has_many :invited, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'invited' and users.retired = 0"
   # has_many :interest, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'interest' and users.retired = 0"
@@ -191,7 +190,7 @@ class Group < ActiveRecord::Base
 
   def incoming_notification_list(users_to_exclude=[])
     list = []
-    self.active_connections.each{|assignee| list.push(assignee) if assignee.send_incoming_notification?(self.id)}
+    self.joined.active.each{|assignee| list.push(assignee) if assignee.send_incoming_notification?(self.id)}
     if !users_to_exclude.nil?
       list = list - users_to_exclude
     end
