@@ -1,0 +1,38 @@
+<div class="col-md-10 col-md-offset-1">
+
+  <h1>Tag edit</h1>
+
+  <div class="alert alert-info">
+    <p>Tag ID: <%= @tag.id %></p>
+    <h1>Tag name</h1>
+    <h2><span class="tag-monospace">"<%= @tag.name %>"</span></h2>
+    <br />
+    <h2>Number of time used: <%= @expert_total_count + @group_total_count + @question_total_count %></h2>
+    <ul class="tag-replacement-list">
+      <li>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</li>
+      <li>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</li>
+      <li>Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</li>
+    </ul>
+  </div>
+
+  <div>
+    <%= form_tag({controller: "home", action: "tag_edit_confirmation"}, method: "post", class: "") do %>
+      <%= hidden_field_tag('current_tag',@tag.name) %>
+
+      <div class="form-group">
+        <h3><label for="replacement_tag" class="control-label">Replacement tag</label></h3>
+        <%= text_field_tag("replacement_tag",@replacement_tag_placeholder, class: 'form-control input-lg input-xl' ) -%>
+        <p class="help-block">(The placeholder tag above has been normalized to remove any underscores and consolidate spaces)</p>
+      </div>
+
+    <div class="form-group">
+      <p><%= submit_tag "Preview change", :class => "btn btn-default btn-lg btn-primary" %> <%= link_to "Cancel", expert_home_tags_path(@tag.name), :class => "btn btn-link" %></p>
+    </div>
+    <%- end # end form -%>
+
+  </div>
+
+
+
+
+</div>

@@ -156,6 +156,9 @@ Aae::Application.routes.draw do
 
     match "home" => "home#index"
     match "home/tags/:name" => "home#tags", :as => 'home_tags'
+    match "home/edit_taggings" => "home#edit_taggings", :as => 'edit_taggings'
+    match "home/tag_edit/:name" => "home#tag_edit", :as => 'tag_edit'
+    match "home/tag_edit_confirmation" => "home#tag_edit_confirmation", :as => 'tag_edit_confirmation'
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
