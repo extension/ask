@@ -96,6 +96,7 @@ class Expert::HomeController < ApplicationController
 
     if @replacement_tag
       if (@current_tag.id == @replacement_tag.id)
+        flash[:warning] = "The replacement tag is the same as the current tag."
         return redirect_to expert_tag_edit_path(@current_tag.name)
       end
       @replacement_tag_count = Question.tagged_with(@replacement_tag.id).order("questions.status_state ASC").count + User.tagged_with(@replacement_tag.id).count + Group.tagged_with(@replacement_tag.id).count
