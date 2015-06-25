@@ -111,12 +111,9 @@ class Expert::HomeController < ApplicationController
     @current_tag = Tag.find_by_id(params[:current_tag_id])
     @replacement_tag = Tag.find_or_create_by_name(Tag.normalizename(params[:replacement_tag]))
     if @current_tag != @replacement_tag
-      current_taggings = Tagging.where('tag_id = ?',@current_tag.id)
-      current_taggings.each do |tagging|
-        tagging.update_attributes(tag_id: @replacement_tag.id)
-      end
-
-      # need to delete @current_tag taggings
+      @current_tag.replace_with_tag(@replacement_tag)
+      # @current_tag is destroyed, but the object is frozen,
+      # so we can still stick it in the flash message
       flash[:success] = "All instances of '#{@current_tag.name}' have been updated"
 
       return redirect_to expert_home_tags_path(@replacement_tag.name)
