@@ -133,7 +133,7 @@ class Expert::HomeController < ApplicationController
   def tag_delete
     tag = Tag.find(params[:tag_id])
     if !tag.blank?
-      tag.delete
+      tag.destroy
       flash[:success] = "The tag '#{tag.name}' has been deleted"
     end
     return redirect_to expert_home_managetags_path
