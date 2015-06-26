@@ -76,9 +76,10 @@ class Expert::HomeController < ApplicationController
     @tag = Tag.find_by_name(params[:name])
     @replacement_tag_placeholder = Tag.normalizename(@tag.name)
     if @tag
-      @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
+      @question_total_count = Question.tagged_with(@tag.id).count
       @expert_total_count = User.tagged_with(@tag.id).count
       @group_total_count = Group.tagged_with(@tag.id).count
+      @total_items_tagged = @question_total_count + @expert_total_count + @group_total_count
     else
       @tag = false
       @tag_name = params[:name]
@@ -120,6 +121,15 @@ class Expert::HomeController < ApplicationController
     else
 
     end
+  end
+
+  def tag_delete
+    tag = Tag.find(params[:tag_id])
+    if !tag.blank?
+      tag.delete
+      flash[:success] = "The tag '#{tag.name}' has been deleted"
+    end
+    return redirect_to expert_home_managetags_path
   end
 
   def users_by_tag
