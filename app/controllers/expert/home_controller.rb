@@ -74,6 +74,13 @@ class Expert::HomeController < ApplicationController
 
   def tag_edit
     @tag = Tag.find_by_name(params[:name])
+    if !@tag
+      @tag = Tag.find(params[:name])
+    end
+    if !@tag
+      return redirect_to expert_home_managetags_path()
+    end
+
     @replacement_tag_placeholder = Tag.normalizename(@tag.name)
     if @tag
       @question_total_count = Question.tagged_with(@tag.id).count
