@@ -9,6 +9,9 @@ class TagEditLog < ActiveRecord::Base
   ## attributes
   attr_accessible :activitycode, :affected, :description, :user_id
 
+  serialize :description
+  serialize :affected
+
   ## activity codes
   TAG_DELETED                         = 1
   TAG_EDITED                          = 2
