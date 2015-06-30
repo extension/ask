@@ -11,8 +11,11 @@ class Expert::TagsController < ApplicationController
 
   def index
     @tags_total_count = Tag.used_at_least_once.length
-    @tags = Tag.used_at_least_once.order('tags.name ASC').page(params[:page]).per(50)
+    # @tags = Tag.used_at_least_once.order('tags.name ASC').page(params[:page]).per(50)
+    @tags = Tag.used_at_least_once.order('tags.name ASC').limit(20)
     @tag_edit_logs = TagEditLog.order("created_at DESC").limit(10)
+    @unused_tag_count = Tag.not_used.length
+    @longest_tags = Tag.order("LENGTH(name) desc").limit(10)
   end
 
 
@@ -90,6 +93,15 @@ class Expert::TagsController < ApplicationController
       TagEditLog.log_deleted_tags(current_user, change_hash)
       flash[:success] = "The tag '#{tag.name}' has been deleted"
     end
+    return redirect_to expert_tags_path
+  end
+
+  def delete_unused_tags
+    unused_tags_count = 0
+    unused_tags = Tag.not_used
+    unused_tags_count = unused_tags.length
+    unused_tags.destroy_all
+    flash[:success] = "#{unused_tags_count} unused tags were deleted"
     return redirect_to expert_tags_path
   end
 

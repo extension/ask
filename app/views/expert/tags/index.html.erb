@@ -1,12 +1,29 @@
 <div class="row">
 
   <div class="col-md-12">
-    <h1>All Tags (<%= number_with_delimiter(@tags_total_count, :delimiter => ',') %>)</h1>
+    <h1>Tag Management</h1>
+    <h2><%= number_with_delimiter(@tags_total_count, :delimiter => ',') %> used at least once</h2>
   </div>
 
+  <% if @unused_tag_count > 0 %>
+  <%= form_tag({controller: "tags", action: "delete_unused_tags"}, method: "post", class: "") do %>
+    <div class="form-group">
+      <p><%= submit_tag "Delete #{@unused_tag_count} unused tags", :class => "btn btn-default btn-danger pull-right" %></p>
+    </div>
+  <%- end # end form -%>
+  <% end %>
+
 <div class="col-md-6">
-  <h3>These tags are used at least once on a Question, Group or Expert</h3>
-  <%= paginate @tags %>
+  <h3>Longest tags</h3>
+
+  <div id="tag_list">
+  <% @longest_tags.each do |long_tag| %>
+    <p><span class="tag tag-topic"><%= link_to long_tag.name, expert_show_tag_path(long_tag.name) %></span> <%= number_with_delimiter(long_tag.taggings.count, :delimiter => ',') %></p>
+  <% end %>
+  </div>
+
+
+  <h3>Alphabetic tags</h3>
 
   <div id="tag_list">
   <% @tags.each do |tag| %>
