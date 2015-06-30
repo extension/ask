@@ -1,0 +1,30 @@
+<div class="row">
+
+  <div class="col-md-12">
+    <h1>All Tags (<%= number_with_delimiter(@tags_total_count, :delimiter => ',') %>)</h1>
+  </div>
+
+<div class="col-md-6">
+  <h3>These tags are used at least once on a Question, Group or Expert</h3>
+  <%= paginate @tags %>
+
+  <div id="tag_list">
+  <% @tags.each do |tag| %>
+    <p><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> <%= number_with_delimiter(tag.tag_count, :delimiter => ',') %></p>
+  <% end %>
+  </div>
+
+</div>
+
+<div class="col-md-6">
+  <h3>Recent tag management activity</h3>
+  <% @tag_edit_logs.each do |edit_log| %>
+    <% expert = link_to edit_log.expert.name, expert_user_path(edit_log.expert.id) %>
+    <% case edit_log.activitycode %>
+    <% when TagEditLog::TAG_EDITED %>
+      <p><%= expert %> edited a tag <%= edit_log.description %></p>
+    <% when TagEditLog::TAG_DELETED %>
+      <p><%= expert %> deleted a tag <%= edit_log.description %></p>
+    <% end %>
+  <% end %>
+</div>

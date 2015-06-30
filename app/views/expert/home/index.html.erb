@@ -110,7 +110,7 @@
         <% if tag.open_question_count > 0 %>
         <div class="group_in_group_list active">
           <h4>
-            <span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> 
+            <span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> 
             <strong><%= link_to "#{tag.open_question_count} unanswered", expert_questions_path(:status => "unanswered", :tag_id => tag.id)%></strong>
           </h4>
           <br class="clearing" />

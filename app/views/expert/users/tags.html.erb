@@ -1,6 +1,6 @@
 <h1><%= link_expert_user_avatar(@user, :thumb) %> <%= link_to @user.name, expert_user_path(@user.id) %> answers tagged with '<%= @tag.name %>'</h1>
 
-<h3><%= link_to "View everything tagged '#{@tag.name}'", expert_home_tags_path(:name => @tag.name) %></h3>
+<h3><%= link_to "View everything tagged '#{@tag.name}'", expert_show_tag_path(:name => @tag.name) %></h3>
 
 
 <% if @questions.size > 0 %>

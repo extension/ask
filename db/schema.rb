@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150108161507) do
+ActiveRecord::Schema.define(:version => 20150629205720) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -535,6 +535,15 @@ ActiveRecord::Schema.define(:version => 20150108161507) do
   add_index "responses", ["question_id"], :name => "idx_question_id"
   add_index "responses", ["resolver_id"], :name => "idx_resolver_id"
   add_index "responses", ["submitter_id"], :name => "idx_submitter_id"
+
+  create_table "tag_edit_logs", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "activitycode"
+    t.text     "description"
+    t.text     "affected"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"

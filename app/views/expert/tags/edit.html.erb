@@ -16,7 +16,7 @@
   </div>
 
   <div>
-    <%= form_tag({controller: "home", action: "tag_edit_confirmation"}, method: "post", class: "") do %>
+    <%= form_tag({controller: "tags", action: "edit_confirmation"}, method: "post", class: "") do %>
       <%= hidden_field_tag('current_tag',@tag.name) %>
 
       <div class="form-group">
@@ -28,7 +28,7 @@
     <div class="form-group">
       <p>
         <%= submit_tag "Preview change", :class => "btn btn-default btn-lg btn-primary" %>
-        <%= link_to "Cancel", expert_home_tags_path(@tag.name), :class => "btn btn-default" %>
+        <%= link_to "Cancel", expert_show_tag_path(@tag.name), :class => "btn btn-default" %>
         <a class="btn btn-default pull-right" role="button" data-toggle="collapse" href="#deleteOption" aria-expanded="false" aria-controls="deleteOption"><i class='fa fa-trash-o'></i> View delete option</a>
       </p>
     </div>
@@ -42,7 +42,7 @@
         <h2>Delete this tag</h2>
         <h3>The tag "<%= @tag.name %>" will be deleted from <%= @total_items_tagged %> items</h3>
         <br />
-        <%= form_tag({controller: "home", action: "tag_delete"}, method: "post", class: "") do %>
+        <%= form_tag({controller: "tags", action: "tag_delete"}, method: "post", class: "") do %>
           <%= hidden_field_tag('current_tag',@tag.name) %>
           <div class="form-group">
             <%= hidden_field_tag('tag_id',@tag.id) %>
