@@ -14,7 +14,7 @@
     <h1>Everything tagged '<%= @tag.name %>'</h1>
 
     <h2>
-      <% if @unanswered_questions_count %>
+      <% if @unanswered_questions_count > 0 %>
         <%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :tag_id => @tag.id)%>
       <% else %>
 

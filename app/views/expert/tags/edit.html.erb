@@ -42,7 +42,7 @@
         <h2>Delete this tag</h2>
         <h3>The tag "<%= @tag.name %>" will be deleted from <%= @total_items_tagged %> items</h3>
         <br />
-        <%= form_tag({controller: "tags", action: "tag_delete"}, method: "post", class: "") do %>
+        <%= form_tag({controller: "tags", action: "delete"}, method: "post", class: "") do %>
           <%= hidden_field_tag('current_tag',@tag.name) %>
           <div class="form-group">
             <%= hidden_field_tag('tag_id',@tag.id) %>

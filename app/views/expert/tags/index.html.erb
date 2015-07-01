@@ -6,7 +6,7 @@
   </div>
 
   <% if @unused_tag_count > 0 %>
-  <%= form_tag({controller: "tags", action: "delete_unused_tags"}, method: "post", class: "") do %>
+  <%= form_tag({controller: "tags", action: "delete_unused"}, method: "post", class: "") do %>
     <div class="form-group">
       <p><%= submit_tag "Delete #{@unused_tag_count} unused tags", :class => "btn btn-default btn-danger pull-right" %></p>
     </div>

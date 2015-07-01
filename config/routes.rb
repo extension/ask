@@ -177,8 +177,8 @@ Aae::Application.routes.draw do
     match "tags" => "tags#index"
     match "tags/edit_taggings" => "tags#edit_taggings", :as => 'edit_taggings'
     match "tags/edit/:name" => "tags#edit", :as => 'tag_edit'
-    match "tags/tag_delete" => "tags#tag_delete", :as => 'tag_delete'
-    match "tags/delete_unused_tags" => "tags#delete_unused_tags", :as => 'delete_unused_tags'
+    match "tags/delete" => "tags#delete", :as => 'delete'
+    match "tags/delete_unused" => "tags#delete_unused", :as => 'delete_unused'
     match "tags/edit_confirmation" => "tags#edit_confirmation", :as => 'tag_edit_confirmation'
     match "tags/:name" => "tags#show", :as => 'show_tag'
 
