@@ -44,7 +44,7 @@ class Tag < ActiveRecord::Base
   def tagged_objects_hash
     returnhash = {}
     # get a hash of affected objects
-    self.taggings.each do |tagging|
+    Tagging.where(tag_id: self.id).all.each do |tagging|
       if(returnhash[tagging.taggable_type])
         returnhash[tagging.taggable_type].push(tagging.taggable_id)
       else
