@@ -67,8 +67,8 @@ class Expert::TagsController < ApplicationController
     @current_tag = Tag.find_by_id(params[:current_tag_id])
     @replacement_tag = Tag.find_or_create_by_name(Tag.normalizename(params[:replacement_tag]))
     if @current_tag != @replacement_tag
-      affected_objects_mysql_result = @current_tag.replace_with_tag(@replacement_tag)
-      affected_objects_hash = Hash[affected_objects_mysql_result.map {|key, value| [key, value]}]
+      affected_objects_hash = @current_tag.tagged_objects_hash
+      @current_tag.replace_with_tag(@replacement_tag)
 
       # record tag and log changes
       change_hash = Hash.new
