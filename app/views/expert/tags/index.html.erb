@@ -39,12 +39,19 @@
     <ul>
     <% @tag_edit_logs.each do |edit_log| %>
       <% expert = link_to edit_log.expert.name, expert_user_path(edit_log.expert.id) %>
+      <li>
       <% case edit_log.activitycode %>
       <% when TagEditLog::TAG_EDITED %>
-        <li><%= expert %> changed "<span class="edited-tag"><%= edit_log.description[:tags][:old] %></span>" to "<span class="edited-tag"><%= edit_log.description[:tags][:new] %></span>" <small class="muted"><%= humane_date(edit_log.created_at) %></small></li>
+        <%= expert %> changed "<span class="edited-tag"><%= edit_log.description[:tags][:old] %></span>" to "<span class="edited-tag"><%= edit_log.description[:tags][:new] %></span>"
       <% when TagEditLog::TAG_DELETED %>
-        <li><%= expert %> deleted the tag "<span class="deleted-tag"><%= edit_log.description[:tags][:old] %></span>" <small class="muted"><%= humane_date(edit_log.created_at) %></small></li>
+        <%= expert %> deleted the tag "<span class="deleted-tag"><%= edit_log.description[:tags][:old] %></span>"
       <% end %>
+      which affected
+      <%= edit_log.affected['Question'].present? ? edit_log.affected['Question'].length : "0" %> questions,
+      <%= edit_log.affected['User'].present? ? edit_log.affected['User'].length : "0" %> people and
+      <%= edit_log.affected['Group'].present? ? edit_log.affected['Group'].length : "0" %> groups.
+      <small class="muted"><%= humane_date(edit_log.created_at) %></small>
+      </li>
     <% end %>
     </ul>
   </div>
