@@ -37,7 +37,7 @@ class Tag < ActiveRecord::Base
   def replace_with_tag(replacement_tag)
     connection.clear_query_cache
     # update but ignore existing key constraints
-    connection.execute("UPDATE IGNORE taggings SET tag_id = #{replacement_tag.id} WHERE tag_id = #{self.id}")
+    self.connection.execute("UPDATE IGNORE taggings SET tag_id = #{replacement_tag.id} WHERE tag_id = #{self.id}")
     self.destroy # should clean up stragglers
   end
 
