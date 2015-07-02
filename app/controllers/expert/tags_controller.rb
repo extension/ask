@@ -55,7 +55,7 @@ class Expert::TagsController < ApplicationController
         flash[:warning] = "The replacement tag is the same as the current tag."
         return redirect_to expert_tag_edit_path(@current_tag.name)
       end
-      @replacement_tag_count = Question.tagged_with(@replacement_tag.id).order("questions.status_state ASC").count + User.tagged_with(@replacement_tag.id).count + Group.tagged_with(@replacement_tag.id).count
+      @replacement_tag_count = Tagging.where(tag_id: @replacement_tag.id).count
     end
 
     @question_total_count = Question.tagged_with(@current_tag.id).order("questions.status_state ASC").count
