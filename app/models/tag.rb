@@ -35,16 +35,22 @@ class Tag < ActiveRecord::Base
   end
 
   def replace_with_tag(replacement_tag)
-    affected_objects_mysql_result = self.select_tagged_objects
     # update but ignore existing key constraints
     connection.execute("UPDATE IGNORE taggings SET tag_id = #{replacement_tag.id} WHERE tag_id = #{self.id}")
     self.destroy # should clean up stragglers
-    return affected_objects_mysql_result
   end
 
-  def select_tagged_objects
-    # get a list of affected objects for logging
-    mysql_result = connection.execute("SELECT `taggable_id`, `taggable_type` FROM `taggings` WHERE `tag_id` = #{self.id}")
-    return mysql_result
+  def tagged_objects_hash
+    returnhash = {}
+    # get a hash of affected objects
+    self.taggings.each do |tagging|
+      if(returnhash[tagging.taggable_type])
+        returnhash[tagging.taggable_type].push(tagging.taggable_id)
+      else
+        returnhash[tagging.taggable_type] = [tagging.taggable_id]
+      end
+    end
+    returnhash
   end
+
 end
