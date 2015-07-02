@@ -19,19 +19,20 @@ class TagEditLog < ActiveRecord::Base
   # associations
   belongs_to :expert, :class_name => "User", :foreign_key => "user_id"
 
-  def self.log_edited_tags(user, edit_hash)
-    return self.log_tag_change(user, TAG_EDITED, edit_hash)
+  def self.log_edited_tags(user, edit_hash, affected_objects_hash)
+    return self.log_tag_change(user, TAG_EDITED, edit_hash, affected_objects_hash)
   end
 
-  def self.log_deleted_tags(user, edit_hash)
-    return self.log_tag_change(user, TAG_DELETED, edit_hash)
+  def self.log_deleted_tags(user, edit_hash, affected_objects_hash)
+    return self.log_tag_change(user, TAG_DELETED, edit_hash, affected_objects_hash)
   end
 
-  def self.log_tag_change(user, activity_code, edit_hash = nil)
+  def self.log_tag_change(user, activity_code, edit_hash, affected_objects_hash)
     log_attributes = {}
     log_attributes[:user_id] = user.id
     log_attributes[:activitycode] = activity_code
     log_attributes[:description] = edit_hash
+    log_attributes[:affected] = affected_objects_hash
 
     return TagEditLog.create(log_attributes)
   end

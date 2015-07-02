@@ -67,12 +67,13 @@ class Expert::TagsController < ApplicationController
     @current_tag = Tag.find_by_id(params[:current_tag_id])
     @replacement_tag = Tag.find_or_create_by_name(Tag.normalizename(params[:replacement_tag]))
     if @current_tag != @replacement_tag
-      @current_tag.replace_with_tag(@replacement_tag)
+      affected_objects_mysql_result = @current_tag.replace_with_tag(@replacement_tag)
+      affected_objects_hash = Hash[affected_objects_mysql_result.map {|key, value| [key, value]}]
 
       # record tag and log changes
       change_hash = Hash.new
       change_hash[:tags] = {:old => @current_tag.name, :new => @replacement_tag.name}
-      TagEditLog.log_edited_tags(current_user, change_hash)
+      TagEditLog.log_edited_tags(current_user, change_hash, affected_objects_hash)
 
       # @current_tag is destroyed, but the object is frozen,
       # so we can still stick it in the flash message
@@ -87,10 +88,12 @@ class Expert::TagsController < ApplicationController
   def delete
     tag = Tag.find(params[:tag_id])
     if !tag.blank?
+      affected_objects_mysql_result = tag.select_tagged_objects
+      affected_objects_hash = Hash[affected_objects_mysql_result.map {|key, value| [key, value]}]
       tag.destroy
       change_hash = Hash.new
       change_hash[:tags] = {:old => tag.name, :new => ""}
-      TagEditLog.log_deleted_tags(current_user, change_hash)
+      TagEditLog.log_deleted_tags(current_user, change_hash, affected_objects_hash)
       flash[:success] = "The tag '#{tag.name}' has been deleted"
     end
     return redirect_to expert_tags_path

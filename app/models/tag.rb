@@ -34,11 +34,17 @@ class Tag < ActiveRecord::Base
               .select("tags.*, COUNT(taggings.id) AS open_question_count")
   end
 
-
   def replace_with_tag(replacement_tag)
-    # step one, update but ignore existing key constraints
+    affected_objects_mysql_result = self.select_tagged_objects
+    # update but ignore existing key constraints
     connection.execute("UPDATE IGNORE taggings SET tag_id = #{replacement_tag.id} WHERE tag_id = #{self.id}")
     self.destroy # should clean up stragglers
+    return affected_objects_mysql_result
   end
 
+  def select_tagged_objects
+    # get a list of affected objects for logging
+    mysql_result = connection.execute("SELECT `taggable_id`, `taggable_type` FROM `taggings` WHERE `tag_id` = #{self.id}")
+    return mysql_result
+  end
 end
