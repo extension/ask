@@ -43,7 +43,7 @@
       <% when TagEditLog::TAG_EDITED %>
         <li><%= expert %> changed "<span class="edited-tag"><%= edit_log.description[:tags][:old] %></span>" to "<span class="edited-tag"><%= edit_log.description[:tags][:new] %></span>" <small class="muted"><%= humane_date(edit_log.created_at) %></small></li>
       <% when TagEditLog::TAG_DELETED %>
-        <li><%= expert %> deleted the tag "<span class="edited-tag"><%= edit_log.description[:tags][:old] %></span>" <small class="muted"><%= humane_date(edit_log.created_at) %></small></li>
+        <li><%= expert %> deleted the tag "<span class="deleted-tag"><%= edit_log.description[:tags][:old] %></span>" <small class="muted"><%= humane_date(edit_log.created_at) %></small></li>
       <% end %>
     <% end %>
     </ul>
