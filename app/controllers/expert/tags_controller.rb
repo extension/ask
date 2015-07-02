@@ -88,8 +88,7 @@ class Expert::TagsController < ApplicationController
   def delete
     tag = Tag.find(params[:tag_id])
     if !tag.blank?
-      affected_objects_mysql_result = tag.select_tagged_objects
-      affected_objects_hash = Hash[affected_objects_mysql_result.map {|key, value| [key, value]}]
+      affected_objects_hash = tag.tagged_objects_hash
       tag.destroy
       change_hash = Hash.new
       change_hash[:tags] = {:old => tag.name, :new => ""}
