@@ -8,7 +8,7 @@ class AjaxController < ApplicationController
   include ActionView::Helpers::NumberHelper
   def tags
     if params[:term]
-      search_term = Tag.normalizename(params[:term])
+      search_term = Tag.normalizename(params[:term].strip)
       tags = Tag.used_at_least_once.where("name like ?", "%#{search_term}%").limit(12)
     else
       tags = Tag.used_at_least_once.order('created_at DESC').limit(12)
@@ -20,12 +20,14 @@ class AjaxController < ApplicationController
 
     tag_count_description = "not used yet"
 
-    param_tag = Tag.used_at_least_once.find_by_name(search_term)
-    if param_tag
-      tag_count_description = number_with_delimiter(param_tag.tag_count, :delimiter => ',')
-    end
+    if (!search_term.blank?)
+      param_tag = Tag.used_at_least_once.find_by_name(search_term)
+      if param_tag
+        tag_count_description = number_with_delimiter(param_tag.tag_count, :delimiter => ',')
+      end
 
-    list.unshift(Hash[id: nil, label: search_term, name: search_term, tag_count: tag_count_description])
+      list.unshift(Hash[id: nil, label: search_term, name: search_term, tag_count: tag_count_description])
+    end
     render json: list
   end
 

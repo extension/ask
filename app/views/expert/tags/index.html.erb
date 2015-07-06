@@ -1,0 +1,58 @@
+<div class="row">
+
+  <div class="col-md-12">
+    <h1>Tag Management</h1>
+    <h2><%= number_with_delimiter(@tags_total_count, :delimiter => ',') %> used at least once</h2>
+  </div>
+
+  <% if @unused_tag_count > 0 %>
+  <%= form_tag({controller: "tags", action: "delete_unused"}, method: "post", class: "") do %>
+    <div class="form-group">
+      <p><%= submit_tag "Delete #{@unused_tag_count} unused tags", :class => "btn btn-default btn-danger pull-right" %></p>
+    </div>
+  <%- end # end form -%>
+  <% end %>
+
+<div class="col-md-6">
+  <h3>Longest tags</h3>
+
+  <div id="tag_list">
+  <% @longest_tags.each do |long_tag| %>
+    <p><span class="tag tag-topic"><%= link_to long_tag.name, expert_show_tag_path(long_tag.name) %></span> <%= number_with_delimiter(long_tag.taggings.count, :delimiter => ',') %></p>
+  <% end %>
+  </div>
+
+
+  <h3>Alphabetic tags</h3>
+
+  <div id="tag_list">
+  <% @tags.each do |tag| %>
+    <p><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> <%= number_with_delimiter(tag.tag_count, :delimiter => ',') %></p>
+  <% end %>
+  </div>
+
+</div>
+
+<div class="col-md-6">
+  <h3>Recent tag management activity</h3>
+  <div id="history">
+    <ul>
+    <% @tag_edit_logs.each do |edit_log| %>
+      <% expert = link_to edit_log.expert.name, expert_user_path(edit_log.expert.id) %>
+      <li>
+      <% case edit_log.activitycode %>
+      <% when TagEditLog::TAG_EDITED %>
+        <%= expert %> changed "<span class="edited-tag"><%= edit_log.description[:tags][:old] %></span>" to "<span class="edited-tag"><%= edit_log.description[:tags][:new] %></span>"
+      <% when TagEditLog::TAG_DELETED %>
+        <%= expert %> deleted the tag "<span class="deleted-tag"><%= edit_log.description[:tags][:old] %></span>"
+      <% end %>
+      which affected
+      <%= edit_log.affected['Question'].present? ? edit_log.affected['Question'].length : "0" %> questions,
+      <%= edit_log.affected['User'].present? ? edit_log.affected['User'].length : "0" %> people and
+      <%= edit_log.affected['Group'].present? ? edit_log.affected['Group'].length : "0" %> groups.
+      <small class="muted"><%= humane_date(edit_log.created_at) %></small>
+      </li>
+    <% end %>
+    </ul>
+  </div>
+</div>

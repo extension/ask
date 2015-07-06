@@ -61,7 +61,7 @@
     <div id="tags">
       <% if @question.tags.size > 0 %>
         <% @question.tags.each do |tag| %>
-          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(:name => tag.name) %></span></p>
+          <p class="tagwrapper" id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(:name => tag.name) %></span></p>
         <% end %>
       <% end %>
     </div>

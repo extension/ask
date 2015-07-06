@@ -11,7 +11,7 @@
   <% else %>
   <h3>Tags indicate what kind of questions <%= @user.first_name %> wants to answer.</h3>
   <% end %>
-  <p>Specifically, tags are used to make matches when reassigning questions. In addition to general terms (<span class="tag tag-topic"><%= link_to "horticulture", expert_home_tags_path("horticulture") %></span> or <span class="tag tag-topic"><%= link_to "apples", expert_home_tags_path("apples") %></span>), it's a great idea to include tags that are specific and granular (<span class="tag tag-topic"><%= link_to "spiders", expert_home_tags_path("spiders") %></span>, <span class="tag tag-topic"><%= link_to "4H", expert_home_tags_path("4H") %></span> or <span class="tag tag-topic"><%= link_to "tomatoes", expert_home_tags_path("tomatoes") %></span>)</p>
+  <p>Specifically, tags are used to make matches when reassigning questions. In addition to general terms (<span class="tag tag-topic"><%= link_to "horticulture", expert_show_tag_path("horticulture") %></span> or <span class="tag tag-topic"><%= link_to "apples", expert_show_tag_path("apples") %></span>), it's a great idea to include tags that are specific and granular (<span class="tag tag-topic"><%= link_to "spiders", expert_show_tag_path("spiders") %></span>, <span class="tag tag-topic"><%= link_to "4H", expert_show_tag_path("4H") %></span> or <span class="tag tag-topic"><%= link_to "tomatoes", expert_show_tag_path("tomatoes") %></span>)</p>
   <br class="clearing" />
 </div>
 
@@ -26,7 +26,7 @@
 <div id="tag_list" style="margin-top:1em; font-size:1.2em;">
 <% if @user.tags.size > 0 %>
   <% @user.tags.each do |tag| %>
-    <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_home_tags_path(tag.name) %></span> <span class="removetag">[x]</span></p>
+    <p id="tag_<%= tag.id %>"><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> <span class="removetag">[x]</span></p>
   <% end %>
 <% end %>
 </div>
@@ -46,7 +46,7 @@
 				$("#tag_picker").autocomplete("close");
 				$("#tag_picker").val('');
 				return false;
-      })  
+      })
       .fail(function() {
         alert("error");
         $("#tag_picker").autocomplete("close");

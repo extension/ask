@@ -5,7 +5,7 @@
   <li><a href="#expert_results">Experts</a></li>
   <li><a href="#group_results">Groups</a></li>
   <% if !@number_passed && @user_email != true %>
-    <li><%= link_to "See what's tagged '#{params[:q]}'", expert_home_tags_path(:name => params[:q]) %></li>
+    <li><%= link_to "See what's tagged '#{params[:q]}'", expert_show_tag_path(:name => params[:q]) %></li>
   <% end %>
 
   <% if @user_email == true && @user_email_id.present? %>

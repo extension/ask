@@ -155,7 +155,6 @@ Aae::Application.routes.draw do
     match "users/:id/settings/assignment" => "settings#assignment", :via => [:get, :put, :post], :as => 'assignment_settings'
 
     match "home" => "home#index"
-    match "home/tags/:name" => "home#tags", :as => 'home_tags'
     match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
     match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
     match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
@@ -171,10 +170,18 @@ Aae::Application.routes.draw do
     match "home/answered" => "home#answered"
     match "home/unanswered" => "home#unanswered"
     match "home/dashboard" => "home#dashboard"
-    match "home/managetags" => "home#managetags"
     match "home/locations/:id" => "home#locations", :as => 'view_location'
     match "home/county/:id" => "home#county", :as => 'view_county'
     match 'home/get_counties/:location_id' => 'home#get_counties', :via => :get
+
+    match "tags" => "tags#index"
+    match "tags/edit_taggings" => "tags#edit_taggings", :as => 'edit_taggings'
+    match "tags/edit/:name" => "tags#edit", :as => 'tag_edit'
+    match "tags/delete" => "tags#delete", :as => 'delete'
+    match "tags/delete_unused" => "tags#delete_unused", :as => 'delete_unused'
+    match "tags/edit_confirmation" => "tags#edit_confirmation", :as => 'tag_edit_confirmation'
+    match "tags/:name" => "tags#show", :as => 'show_tag'
+
     match "groups/add_tag" => "groups#add_tag", :via => [:post]
     match "groups/remove_tag" => "groups#remove_tag", :via => [:post]
     match "questions" => "questions#index"
