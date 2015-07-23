@@ -334,7 +334,7 @@ DEPENDENCIES
   geoip
   honeybadger
   htmlentities
-  inline-style (= 0.5.2ex)
+  inline-style (= 0.5.2ex)!
   jqtools-rails
   jquery-rails
   kaminari
@@ -373,3 +373,6 @@ DEPENDENCIES
   turn
   uglifier (>= 1.0.3)
   useragent
+
+BUNDLED WITH
+   1.10.6

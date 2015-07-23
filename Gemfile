@@ -1,5 +1,4 @@
 source 'http://rubygems.org'
-source 'https://engineering.extension.org/rubygems'
 
 gem 'rails', "3.2.21"
 
@@ -92,7 +91,8 @@ gem "progress_bar"
 
 # used to post-process mail to convert styles to inline
 gem "csspool"
-gem "inline-style", "0.5.2ex"
+gem "inline-style", "0.5.2ex", source: 'https://engineering.extension.org/rubygems'
+
 
 # auto_link replacement
 gem "rinku", :require => 'rails_rinku'
