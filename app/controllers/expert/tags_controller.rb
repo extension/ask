@@ -13,6 +13,7 @@ class Expert::TagsController < ApplicationController
     @tags_total_count = Tag.used_at_least_once.length
     # @tags = Tag.used_at_least_once.order('tags.name ASC').page(params[:page]).per(50)
     @tags = Tag.used_at_least_once.order('tags.name ASC').limit(25)
+    @recent_tags = Tag.used_at_least_once.order('tags.created_at DESC').limit(25)
     @tag_edit_logs = TagEditLog.order("created_at DESC").limit(25)
     @unused_tag_count = Tag.not_used.length
     @longest_tags = Tag.order("LENGTH(name) desc").limit(10)
