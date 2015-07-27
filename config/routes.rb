@@ -216,6 +216,7 @@ Aae::Application.routes.draw do
   match "questions/authorize_submitter" => "questions#authorize_submitter", :via => :post, :as => 'authorize_submitter'
 
   match "home/about" => "home#about", :via => :get
+  match "home/accept_questions" => "home#accept_questions", :via => :get
   match "home/unanswered" => "home#unanswered", :via => :get
   match "home/change_yolo" => "home#change_yolo", :via => [:post]
   match "home/locations/:id" => "home#locations", :as => 'view_location'

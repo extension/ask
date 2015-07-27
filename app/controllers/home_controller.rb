@@ -16,7 +16,7 @@ class HomeController < ApplicationController
       # @questions_in_location = Question.public_visible_answered.where("location_id = ?", current_location.id).limit(6)
     end
   end
-  
+
   def unanswered
     @unanswered_questions = Question.public_visible_unanswered.page(params[:page]).order('created_at DESC')
     @recent_photo_questions = Question.public_visible_with_images_unanswered.order('questions.created_at DESC').limit(6)
@@ -26,6 +26,12 @@ class HomeController < ApplicationController
   end
 
   def private_page
+  end
+
+  def accept_questions
+    if current_user
+      @my_groups = current_user.group_memberships
+    end
   end
 
   def about
@@ -48,7 +54,7 @@ class HomeController < ApplicationController
     @county = County.find_by_id(params[:id])
     return record_not_found if (!@county)
     @location = Location.find_by_id(@county.location_id)
-  
+
     @questions = Question.public_visible.where("county_id = ?", @county.id).order("questions.status_state DESC").limit(8)
     @question_total_count = Question.public_visible.where("county_id = ?", @county.id).count
     @experts = User.not_retired.with_expertise_county(@county.id).order("users.last_active_at ASC").limit(8)
@@ -56,17 +62,17 @@ class HomeController < ApplicationController
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
   end
-  
+
   def questions_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
     @questions = Question.public_visible.tagged_with(@tag.id).not_rejected.page(params[:page]).order("questions.created_at DESC")
   end
-  
+
   def county_options_list
     render partial: 'county_select'
   end
-  
+
   def change_yolo
     if(@yolo)
       if(params[:location_id])
@@ -82,7 +88,7 @@ class HomeController < ApplicationController
       end
 
       @yolo.save
-      
+
       if current_location
         @groups = Group.public_visible.with_expertise_location(current_location.id).limit(6)
       end
@@ -90,4 +96,3 @@ class HomeController < ApplicationController
   end
 
 end
-
