@@ -340,3 +340,16 @@ ul.extension_global_nav a:focus {color:#FFFF6D !important;background: #272E5A; o
 .ask-an-expert-button {width: 180px; margin: 0 0 2em; display: block;}
 
 .get-a-widget {margin:2em 0;}
+
+
+
+.group_in_group_list {padding:1em 1em 0; border-bottom:1px solid #e5e5e5; clear:left;}
+.group_in_group_list.inactive_group {padding:1em 1em .5em;}
+.group_in_group_list h4 {margin:0;}
+.group_in_group_list.downplay {padding-top:.75em; padding-bottom:0;}
+.group_in_group_list.downplay p {padding-bottom:0; margin-bottom:0 !important;}
+.group_in_group_list.downplay .avatar_with_badge {margin-bottom:0;}
+.group_list_avatar {float:left; margin-right:1em;}
+.inactive_group {background:#eee; padding:1em 1em 1em 0;}
+.inactive_group, .inactive_group a {color:#999;}
+.inactive_group img {opacity:0.4; filter:alpha(opacity=40);}

@@ -1,0 +1,52 @@
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Enable Question Submissions on Your Site</h1>
+
+        <div class="alert alert-info">
+          <h3>Create a question widget and enable question submissions on your own site.</h3>
+          <p>Ask an Expert is organized by groups, and each group has a unique question widget. You can get the widget code from your group and install in on your web page.</p>
+        </div>
+
+
+        <% if current_user && current_user.has_exid? %>
+
+        <h2>You belong to these groups</h2>
+        <h4>Vist the group settings page to get the widget code</h4>
+        <% if @my_groups.size == 0 %>
+          <p>You currently are not a member any groups.</p>
+        <% else %>
+          <% @my_groups.each do |group| %>
+            <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+              <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+              <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+              <% if !group.group_active? %></p>
+                <p>Inactive Group</p>
+              <% else %>
+                <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>
+                  <p><%= link_to 'Create a Question Submission widget for this group', expert_group_widget_path(group), :class => "btn btn-default" %></p>
+              <% end %>
+
+            </div>
+          <% end %>
+        <% end %>
+
+          <% else %>
+            <p>To get the widget code for one of your groups, please <%= link_to("Sign in with your eXtension account", authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => request.fullpath), :class => "btn btn-default" )%></p>
+          <% end %>
+
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4></h4>
+
+      </div>
+    </div>
+
+  </div>
+</div>
