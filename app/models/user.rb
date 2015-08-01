@@ -477,12 +477,19 @@ class User < ActiveRecord::Base
     end
   end
 
-  def last_question_touched
+  def last_question_touched(for_sort = false)
     last_touched = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
     if(!last_touched.blank?)
       last_touched
     else
-      nil
+      # if they've never touched a question, we can't return nil when sorting
+      # because nil can't be used in a sort - so let's return the created_at
+      # for the first question_event ever
+      if(for_sort)
+        QuestionEvent.first.created_at
+      else
+        nil
+      end
     end
   end
 

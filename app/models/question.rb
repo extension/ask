@@ -655,7 +655,10 @@ class Question < ActiveRecord::Base
   # to the assignee letting them know that the question has been assigned to
   # them.
   def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false, wrangler_handoff = false)
-    raise ArgumentError unless user and user.instance_of?(User)
+    if(!user and !user.instance_of?(User))
+      raise AssignmentError, 'Invalid user provided to assign_to'
+    end
+
 
     # don't bother doing anything if this is assignment to the person already assigned unless it's
     # a question that's been responded to by the public after it's been resolved that then gets
@@ -693,7 +696,9 @@ class Question < ActiveRecord::Base
   # Assigns the question to the group, logs the assignment, and sends an email
   # to the group members signed up for notifications notifying them that a question has been assigned to their group
   def assign_to_group(group, assigned_by, comment)
-    raise ArgumentError unless group and group.instance_of?(Group)
+    if(!group and !group.instance_of?(Group))
+      raise AssignmentError, 'Invalid group provided to assign_to_group'
+    end
 
     # don't bother doing anything if this is an assignment to the group already assigned.
     # if it has an assignee, we need to take the assignee off and log this change.
@@ -879,9 +884,11 @@ class Question < ActiveRecord::Base
     return possible_users[0] if possible_users.length == 1
 
     # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
-    # so if all experts that made the cut have zero questions assigned, pick a random person in that group to assign to
+    # so if all experts that made the cut have zero questions assigned, pick the person who hasn't had a question
+    # in a while, returning the start of AaE time if they've never touched one
+    # jayoung => this is slow, slow, slow and more slow, this whole thing needs to be re-examined
     if questions_floor == 0
-      possible_users.sort! { |a, b| a.last_question_touched <=> b.last_question_touched }
+      possible_users.sort! { |a, b| a.last_question_touched(true) <=> b.last_question_touched(true) }
       return possible_users.first
     end
 
