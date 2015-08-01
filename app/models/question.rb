@@ -884,9 +884,11 @@ class Question < ActiveRecord::Base
     return possible_users[0] if possible_users.length == 1
 
     # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
-    # so if all experts that made the cut have zero questions assigned, pick a random person in that group to assign to
+    # so if all experts that made the cut have zero questions assigned, pick the person who hasn't had a question
+    # in a while, returning the start of AaE time if they've never touched one
+    # jayoung => this is slow, slow, slow and more slow, this whole thing needs to be re-examined
     if questions_floor == 0
-      possible_users.sort! { |a, b| a.last_question_touched <=> b.last_question_touched }
+      possible_users.sort! { |a, b| a.last_question_touched(true) <=> b.last_question_touched(true) }
       return possible_users.first
     end
 
