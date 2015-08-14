@@ -29,7 +29,7 @@
 
 
 <script class="code" type="text/javascript">
-  
+
   // get the selected location
   $('#location_option').change(function() {
      var str = "";
@@ -40,7 +40,7 @@
      newLocation(id);
      $('#your_locations').slideDown().fadeOut('slow');
    });
-  
+
   // get the partial which acts as a template
    var newLocation = function(locationID) {
      $.ajax({
@@ -56,20 +56,20 @@
            });
          }
      });
-   }  
-  
+   }
+
   // Pick individual counties
   $(document).ready(function(){
   $(".countyfield:not(.ui-autocomplete-input)").live("focus", function (event) { // http://stackoverflow.com/a/6193792/823202
     inputField = $(this);
     $(this).autocomplete({
       source: function(request, response) {
-        $.getJSON("/ajax/counties", { 
+        $.getJSON("/ajax/counties", {
           term: request.term,
-          location_id: inputField.closest(".location_block").attr("id").replace('location_', '') }, 
+          location_id: inputField.closest(".location_block").attr("id").replace('location_', '') },
           response);},
       minLength: 1,
-      select: function(name, ui) { 
+      select: function(name, ui) {
         $.ajax({
           type: "POST",
           url: "<%= ajax_add_county_path %>",
@@ -82,13 +82,13 @@
           $('.show_edited_counties').prepend('<li>'+ui.item.name+' <span id="county_'+ui.item.id+'" class="removecounty btn">X</span></li>');
           $('.pick_counties').html("done").removeClass("pick_counties").addClass("done_picking_counties");
           $('.new_location_close').html("done").removeClass("new_location_close").addClass("done_picking_counties");
-        })  
+        })
         .fail(function() { alert("error"); })
         }
     });
   });
   });
- 
+
   // Add all counties
   $("#loc_wrapper").on("click", ".add_all_counties", function(){
     location_block = $(this).closest(".location_block")
@@ -108,8 +108,8 @@
         });
       });
     })
-  });  
-  
+  });
+
   var showLocation = function(locationID, callback) {
     $.ajax({
         url: "/ajax/show_location",
@@ -118,12 +118,12 @@
         data: {requested_location: locationID,object_type: $("#loc_wrapper").data("object"), object_id: $("#loc_wrapper").data("id")},
         success: function(html){
           $("#location_"+locationID).html(html);
-          
+
           callback();
         }
     });
   }
-  
+
   var resetPicker = function() {
      $('#location_picker').slideDown();
      $('#location_option').val("");
@@ -140,7 +140,7 @@
 
    // initialize
    resetPicker();
-   
+
    var editLocation = function(locationID) {
      $.ajax({
          url: "/ajax/edit_location",
@@ -152,25 +152,25 @@
          }
      });
    }
-   
-  
-  
+
+
+
   $("#loc_wrapper").on("click", ".edit_location", function(e){
     var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
     editLocation(locationID);
   });
-  
+
   $("#loc_wrapper").on("click", ".edit_location_close", function(e){
     var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
     showLocation(locationID);
   });
-  
+
   $("#loc_wrapper").on("click", ".new_location_close", function(e){
     $(this).closest(".location_block").fadeOut('fast', function() {
       resetPickerOnCancel();
     });
   });
-  
+
   $("#loc_wrapper").on("click", ".done_picking_counties", function(e){
     var locationID = $(this).closest(".location_block").attr("id").replace('location_', '')
     var location_block = $(this).closest(".location_block");
@@ -180,21 +180,21 @@
       location_block.removeClass("new_location");
     });
   });
-  
+
   $(".cancel_location").live("click", function(event) {
       event.stopPropagation();
       $(this).closest(".location_block").remove();
       resetPicker();
   });
-    
+
   $("body").on("click", ".pick_counties", function(){
     var picker = $(this).next(".county_picker").show();
     $(".countyfield", picker).focus();
   });
-  
-  
 
-  
+
+
+
   // delete locations
   $("#loc_wrapper").on("click", ".removestate", function(){
     var locationBlock = $(this).closest("div");
@@ -208,7 +208,7 @@
       locationBlock.fadeOut(500);
     })
   });
-  
+
   // delete counties
   $("#loc_wrapper").on("click", ".removecounty", function(){
     var countyItem = $(this).closest("li");
