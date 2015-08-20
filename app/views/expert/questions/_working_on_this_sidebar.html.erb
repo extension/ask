@@ -6,7 +6,6 @@
       <div id="working_on_this" class="currently">
         <h3>We've got you currently working on this question.</h3>
         <p><small>(<%= time_ago_in_words(@question.working_on_this) %> left)</small></p>
-        <p><span class="btn take_question">Give me another 2 hours</span></p>
       </div>
     <% else %>
       <div id="working_on_this">
@@ -24,7 +23,7 @@
       </div>
     <% end %>
   <% end %>
-  
+
   <script class="code" type="text/javascript">
     $("#working_on_this").on("click", ".take_question", function(){
       $.ajax({
@@ -36,6 +35,6 @@
       })
     });
   </script>
-  
+
 <% end %>
 <% end %>
