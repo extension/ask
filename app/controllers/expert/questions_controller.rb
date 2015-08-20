@@ -386,7 +386,7 @@ class Expert::QuestionsController < ApplicationController
       QuestionEvent.log_working_on(@question, current_user)
     end
 
-    @question.working_on_this = Time.now + 2.hour
+    @question.working_on_this = Time.now + 24.hour
     @question.save
   end
 
