@@ -57,8 +57,12 @@
   <% if @question.needs_response? %>
     <div class="needs-attention">
       <% if @question.responses.count > 0 %>
-      <h2>This question needs handling because the submitter sent the last response.</h2>
-      <p>They might just be saying "thanks," but this question needs a response or should be <%= link_to "closed", close_out_expert_question_path(@question.id) %>. Otherwise the last expert will continue to get a daily notification to answer it.</p>
+        <% if @question.responses.last.resolver_id %>
+          <p>This question needs handling. Please answer, reassign or close it.</p>
+        <% else %>
+          <h2>This question needs handling because the submitter sent the last response.</h2>
+          <p>They might just be saying "thanks," but this question needs a response or should be <%= link_to "closed", close_out_expert_question_path(@question.id) %>. Otherwise the last expert will continue to get a daily notification to answer it.</p>
+        <% end %>
       <% else %>
         <p>This question needs handling. Please answer, reassign or close it.</p>
       <% end %>
@@ -94,7 +98,7 @@
       <% elsif @question.status_state == Question::STATUS_NO_ANSWER %>
   	   <h3>A canned response was used to answer this question</h3>
   	   <div class="question_actions">
-         <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+         <p><%= link_to "Add an additional response", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %> (Reopen and assign to me.)</p>
        </div>
 
   	<% elsif @question.status_state == Question::STATUS_CLOSED %>
@@ -113,7 +117,8 @@
   	<% elsif @question.status_state == Question::STATUS_RESOLVED %>
   	    <h3>This question has been resolved</h3>
   	    <div class="question_actions last">
-          <p><%= link_to "Reopen by reassigning", reassign_expert_question_path(@question.id), :class => "btn btn-primary" %></p>
+          <p><%= link_to "Add an additional response", assign_expert_question_path(:id => @question.id, :assignee_id => current_user.id), :method => :post, :class => "btn-primary btn" %> (Reopen and assign to me.)</p>
+
         </div>
 
   	<% else %>
