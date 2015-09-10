@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150629205720) do
+ActiveRecord::Schema.define(:version => 20150910180743) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -540,9 +540,9 @@ ActiveRecord::Schema.define(:version => 20150629205720) do
     t.integer  "user_id"
     t.integer  "activitycode"
     t.text     "description"
-    t.text     "affected"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.text     "affected",     :limit => 16777215
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   create_table "taggings", :force => true do |t|
