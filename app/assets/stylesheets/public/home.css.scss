@@ -209,24 +209,6 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 }
 
 
-.global-nav-mobile .extension_global_nav li ul li {
-  display:block !important;
-  padding:0;
-  text-align:left;
-
-}
-.global-nav-mobile .extension_global_nav li ul li a {
-   padding:10px;
-/*   outline:1px solid lime;*/
-   display:block;
-}
-
-.app-navbar-list {
-
-}
-
-
-
 @media screen and (min-width: 767px) {
   .navbar-brand img {width:360px;}
 }
@@ -326,7 +308,6 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 #widget-code { margin:1em 0; padding:.5em 0;}
 #widget-code textarea {padding:.5em;font-family:monospace;font-size:12px;color:#0d027e;line-height:1.2em;overflow:auto;height:300px; width:100%}
 
-ul.extension_global_nav a:focus {color:#FFFF6D !important;background: #272E5A; outline:0;}
 .navbar-brand-dashboard:focus {color:#fff;}
 /*.expert-navbar-container a.thumb:focus .avatar_with_badge {background: #ffff00;}*/
 .help-faq {margin-top:2em;}

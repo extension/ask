@@ -1,8 +1,7 @@
 @import "_variables";
 
 body#public {
-  .extension_global_nav {background:#333;}
-  .navbar-inner {border-radius:0} 
+  .navbar-inner {border-radius:0}
   .formy {border:1px solid #E3E3E3; padding:1em; background:#fff; margin-bottom:2em;}
   #submitter_followup {margin:2em 0; font-size:1.8em;}
   #additional_response h2 {margin-bottom:1em;}
@@ -14,8 +13,8 @@ body#public {
   .group_in_group_list.inactive_group {padding:1em 1em .5em;}
   .group_in_group_list h4 {margin:0;};
     #location_list {padding:0; margin:3em 0;}
-    
-  
+
+
   #user_masthead {margin:0 0 .75em; border-bottom:1px solid #e5e5e5; padding-bottom:1em;}
 	#user_masthead a.medium {float:left; margin: 0 1.5em 2.5em 0;}
   .aboutme {clear:both; line-height:1.5em; margin:1em 0 .65em; color: #201B1B !important; font-family: Georgia, serif; font-size:1.3em;}
@@ -26,15 +25,15 @@ body#public {
   #localization {background:#eee; padding:2em;}
   #recent_photo_questions {background:#eee; padding:2em; margin-bottom:2em;}
   .navbar .nav > li > a {color:#fff; text-shadow:none;}
-  
+
   .public_bio {font-size:1.35em; line-height:1.4em; font-family: Georgia, serif;}
   #extension_logo img {width:200px; height:auto; margin-right:.25em;}
   #ask_an_expert_logo img {width:200px; height:auto;}
-  
+
   #publicbar h1 {float:left;}
   #publicbar.navbar-inner {background: #f47B28; border-radius:0; padding:0; border:0;}
   #searchform input, #searchform .btn  {margin:0;}
-  
+
   #searchform span  {margin:0;
   display: inline-block;
   padding: 4px 12px 4px 0;
@@ -48,7 +47,7 @@ body#public {
   .navbar-inner{ filter:none;}
 /*  #publicbar.navbar-inner .container {height:80px !important;}*/
   .question_body {font-size:1.5em; line-height:1.6em; font-family: Georgia, serif;}
-  
+
   #publicbar .nav .active > a,
 	#publicbar .nav .active > a:hover {
 	  color:#fff;
@@ -59,7 +58,7 @@ body#public {
     text-shadow:none;
 	}
 	#publicbar .navbar-brand {color:#000;}
-	
+
 	#expertbar {border-bottom: 2px solid #000 !important; padding-top:.5em; padding-bottom:.75em;}
 	#expertbar a.navbar-brand {font-size:1.4em; }
 	#expertbar a:hover {color:#fff !important; text-decoration:none;}
@@ -67,7 +66,7 @@ body#public {
 	#expertbar.navbar-inner {min-height:35px; height:35px;}
 	.logout {margin-left:1em;}
 	ul.navavatar.loggedin li.username {padding-left:0;padding-right:0;}
-  
+
   #app_location.demo {background:#FFFF7E;}
   #content_wrapper {margin:3em 1.5em 1em;}
   .avatar {display:block; width:40px; height:40px; background:#bbb; border:1px solid #888;}
@@ -75,24 +74,24 @@ body#public {
 
 	a.navbar-brand {color:#fff !important; text-shadow:none;}
 /*  .navbar {height:80px !important;}*/
-	
+
 	.navavatar {float:right; /*padding:.5em 2em; */color:#fff;}
 	.navavatar a {color:#fff;}
 	.navlink {color:#fff;}
 	.navavatar.loggedin img {border:#888 1px solid;}
 	.navavatar.loggedin {padding-top:0;}
   ul.navavatar.loggedin > li {height:30px; line-height:30px;}
-  
+
 	.incoming_question a {color:#16426D;}
-	
+
 	#content_wrapper h3.main {margin-bottom:1em;}
 	.container-fluid {max-width:1180px; margin: 0 auto;}
 	.right {float:right;}
-	
+
 	.public_rejected {border:1px solid #ff0000; background:#fff;}
 	.public_rejected {color:#ff0000;}
 	textarea {width:40em; max-width:95%;}
-	
+
 	.smallish {color:#888;}
 	.tag {background:#BDC9B0; @include rounded3; color:#888; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
 	.tag a {padding:.1em .35em; background:#BDC9B0; @include rounded3; color:#888;}
@@ -103,17 +102,17 @@ body#public {
 	.tag-topic,
 	.tag-topic a {background:#C2E5EC; color:#1F5983;}
 	.tag-topic a:hover {background:#2C1946; color:#fff;}
-	
+
 	#publicbar.navbar-inner form {border:0;}
 	#publicbar.navbar-inner a:hover {background:none;}
-	
+
 /*  #publicbar{outline:1px solid yellow;}*/
   #publicbar .container {border-top:1px solid #F47B28;}
-	
+
 	@media screen and (max-width: 979px) {
 		#app_location {height:auto;margin-left:-1em;margin-right:-1em;}
 		#search_field {width:20em}
-	}	
+	}
 	@media screen and (min-width: 979px) {
 	  #publicbar .navbar-brand {font-size:2.5em;}
 		.navbar #publicbar .container {width: 940px; padding:2em;}
@@ -141,5 +140,3 @@ body#public {
     .navbar-brand {padding-left:20px;}
 	}
 }
-
-
