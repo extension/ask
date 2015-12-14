@@ -285,7 +285,7 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]
-    if create_attributes[:event_state] == ASSIGNED_TO || create_attributes[:event_state] == ASSIGNED_TO_GROUP
+    if create_attributes[:event_state] == ASSIGNED_TO || create_attributes[:event_state] == ASSIGNED_TO_GROUP || create_attributes[:event_state] == PASSED_TO_WRANGLER
       question.update_column(:last_assigned_at, time_of_this_event)
     end
 
