@@ -9,9 +9,9 @@ class AjaxController < ApplicationController
   def tags
     if params[:term]
       search_term = Tag.normalizename(params[:term].strip)
-      tags = Tag.used_at_least_once.where("name like ?", "%#{search_term}%").limit(12)
+      tags = Tag.used_at_least_once.where("name like ?", "%#{search_term}%").order("tag_count DESC").limit(12)
     else
-      tags = Tag.used_at_least_once.order('created_at DESC').limit(12)
+      tags = Tag.used_at_least_once.order("tag_count DESC").limit(12)
     end
     list = []
     tags.each do |t|

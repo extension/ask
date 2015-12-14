@@ -13,13 +13,13 @@ body#public {
 
 .incoming_question a {
   text-decoration:none;
-} 
+}
 
 .incoming_question p.question_body {
   font-size: 1.3em;
   line-height: 1.4em;
   font-family: Georgia, serif;
-} 
+}
 .incoming_question h3 p {
   line-height: 1.2em;
 /*  color: #161F21;*/
@@ -27,9 +27,9 @@ body#public {
 }
 
 @media screen and (max-width: 480px) {
-  .incoming_question p.question_body {font-size: 1.2em;} 
+  .incoming_question p.question_body {font-size: 1.2em;}
   .incoming_question h3 p {line-height: 1.2em; font-size: .9em;}
-  
+
 }
 
 .response_count {font-weight:bold; font-size:1.1em; background:#fff; padding:.2em .5em; color:#555;}
@@ -49,18 +49,13 @@ body#public {
   display:block !important;
   padding:0;
   text-align:left;
-  
+
 }
 .global-nav-internal-mobile .internal_nav li ul li a {
-   padding:10px; 
+   padding:10px;
    display:block;
 }
 
-.app-navbar-items li {display:inline-block; 
+.app-navbar-items li {display:inline-block;
 /*  outline: 1px solid lime;*/
   }
-
-
-
-/*override global nav styles*/
-ul.extension_global_nav .group {padding:0 !important; border-right:0 !important; margin:0 !important}

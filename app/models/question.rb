@@ -133,7 +133,7 @@ class Question < ActiveRecord::Base
   and therefore we cannot provide you with a timely answer. Instead,
   if you live in the United States, please consider contacting the
   Cooperative Extension office closest to you. Simply go to
-  http://www.extension.org, drop in your zip code and choose the
+  http://articles.extension.org, drop in your zip code and choose the
   office that is most convenient for you.  We apologize that we
   can't help you right now,  but please come back to eXtension to
   check in as we grow and add experts.
