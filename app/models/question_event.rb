@@ -67,6 +67,7 @@ class QuestionEvent < ActiveRecord::Base
 
   HANDLING_EVENTS = [ASSIGNED_TO, PASSED_TO_WRANGLER, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
   SIGNIFICANT_EVENTS = [REJECTED,PASSED_TO_WRANGLER,NO_ANSWER,EXPERT_EDIT_QUESTION,EXPERT_EDIT_RESPONSE,CHANGED_TO_PUBLIC,CHANGED_TO_PRIVATE]
+  UPDATE_LAST_ASSIGNED_AT_EVENTS = [ASSIGNED_TO, ASSIGNED_TO_GROUP, PASSED_TO_WRANGLER]
 
   # reporting
   YEARWEEK_ACTIVE = "YEARWEEK(#{self.table_name}.created_at,3)"
@@ -285,7 +286,7 @@ class QuestionEvent < ActiveRecord::Base
   def self.log_event(create_attributes = {})
     time_of_this_event = Time.now.utc
     question = create_attributes[:question]
-    if create_attributes[:event_state] == ASSIGNED_TO || create_attributes[:event_state] == ASSIGNED_TO_GROUP
+    if UPDATE_LAST_ASSIGNED_AT_EVENTS.include?(create_attributes[:event_state])
       question.update_column(:last_assigned_at, time_of_this_event)
     end
 
