@@ -23,7 +23,11 @@
 		<%= hidden_field_tag(:widget_type, "js_widget") %>
 		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
 
-		<p class="aae-logo"><%= image_tag "aae_logo_small.png", :class => "hidden-xs", :alt => "eXtension" %><%= image_tag "aae_logo_mobile.png", :class => "visible-xs", :alt => "eXtension" %></p>
+		<div class="widget-logos">
+			<%= image_tag "cooperative_extension_500w.png", :class => "widget-coopex-logo", :alt => "eXtension" %>
+			<%= image_tag "aae_logo.png", :class => "widget-aae-logo", :alt => "eXtension" %>
+			<br class="clearing" />
+		</div>
 
 		<%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
 			<div id="app_location" class="demo">
