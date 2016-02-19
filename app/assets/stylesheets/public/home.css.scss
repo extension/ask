@@ -208,9 +208,22 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   margin-bottom:20px;
 }
 
+.coopex {width: 300px; height: auto;
+  float:right;
+  padding-right: 10px;
+  padding-top: 10px;
+// outline:1px solid lime;
+}
+.widget-logos {background: #fff; padding: 10px; text-align:center; margin-bottom:20px;}
+.widget-coopex-logo {float:right; width: 220px;}
+.widget-aae-logo {float:left; width: 300px;}
+.clearing {clear:both;}
 
 @media screen and (min-width: 767px) {
   .navbar-brand img {width:360px;}
+  .coopex {width: 240px;padding-right: 10px;padding-top: 10px;
+  // outline:1px solid lime;
+  }
 }
 
 @media screen and (min-width: 767px) and (max-width: 979px) {
@@ -252,6 +265,11 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   .footer-links li {display:block; padding:0; border-right:0;}
   .footer-links li a {display:block; padding:5px 10px;}
   #searchform {float:left !important;}
+  .coopex {width: 180px; float:right; padding-right: 10px;padding-top: 10px;
+  // outline:1px solid yellow;
+  }
+  .navbar-brand.ex_logo {padding-left:0;}
+  .navbar-brand.ex_logo img {width:250px;}
 }
 
 
@@ -280,6 +298,12 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
 @media screen and (max-width: 450px) {
   .navavatar.loggedin.publicuser {display:block;float:none;}
   .hidecompact420 {display:none;}
+  .coopex {width: 200px; float:left; padding-right: 10px;padding-top: 10px;
+  // outline:1px solid blue;
+  }
+  .coopex-widget-logo {outline: 1px solid blue; text-align:center;}
+  .coopex-widget-logo .coopex {outline: 1px solid red; margin: 0 auto; float: none;}
+
 }
 @media screen and (max-width: 480px) {
   .flash_notification_wrapper {margin-left:-26px; margin-right:-26px;}
@@ -296,6 +320,9 @@ ul.navavatar>li {float:left; list-style:none; margin:0;padding:0; height:40px; l
   .navbar-brand {padding-left:0;}
   .navbar-brand-dashboard {padding-left:20px;}
   #expert_navbar-inner a.navbar-brand {font-size:15px;}
+  .navbar-brand.ex_logo img {width:250px;}
+  .widget-coopex-logo {float:none; width: 160px; padding-bottom:10px;}
+  .widget-aae-logo {float:none; width: 240px;}
 }
 
 
