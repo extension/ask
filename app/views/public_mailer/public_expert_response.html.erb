@@ -4,15 +4,15 @@
   <tr>
     <td class="please_dont_reply"><strong>Please don't reply to this email.</strong> <%= link_to("Reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
   </tr>
-  
+
   <td class="content padding">
     <h3>Here's the response to your question:</h3>
     <div class="response"><%= format_text_for_display(@response.body) %></div>
     <div class="signature"><%= format_text_for_display(@response.signature) %></div>
-    
+
     <% if @response.images.size > 0 %>
       <p class="contains_images">
-        <strong>Note:</strong> <%= @response.images.size > 1 ? "This response contains images." : "This response contains an image." %> You can <%= link_to("view them on the question page", expert_question_url(@question)) -%>.
+        <strong>Note:</strong> <%= @response.images.size > 1 ? "This response contains images." : "This response contains an image." %> You can <%= link_to("view them on the question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.
       </p>
     <% end %>
 
