@@ -152,6 +152,7 @@ group :development do
   #gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
+  gem 'active_record_query_trace'
 end
 
 group :test do
