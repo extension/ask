@@ -252,7 +252,7 @@ class Question < ActiveRecord::Base
     with_scope do
       question_id_records = self.joins(:question_events)
       .where("question_events.event_state = #{QuestionEvent::RESOLVED}")
-      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month).pluck(:question_id)
+      .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month).pluck('questions.id')
 
       if question_id_records.length > 0
         return Question.where("id IN (#{question_id_records.join(',')})")
