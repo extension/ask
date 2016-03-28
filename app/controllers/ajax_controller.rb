@@ -61,13 +61,28 @@ class AjaxController < ApplicationController
     if params[:term]
       search_term = params[:term]
 
-      groups_starting_with = Group.where(group_active: true).pattern_search(params[:term], "prefix").limit(9)
-      groups_including = Group.where(group_active: true).pattern_search(params[:term]).limit(9)
-      groups = (groups_starting_with + groups_including).uniq.take(9)
+      groups_solr = Group.search do
+                      fulltext(params[:term]) do
+                        fields(:name)
+                      end
+                      with :group_active, true
+                      paginate :page => 1, :per_page => 9
+                    end
+      groups = groups_solr.results
 
-      experts_starting_with = User.exid_holder.not_blocked.not_retired.pattern_search(params[:term], "prefix").limit(18 - groups.length)
-      experts_including = User.exid_holder.not_blocked.not_retired.pattern_search(params[:term]).limit(18 - groups.length)
-      experts = (experts_starting_with + experts_including).uniq.take(9)
+      experts_solr = User.search do
+                fulltext(params[:term]) do
+                  fields(:name)
+                  fields(:login)
+                end
+                with :is_blocked, false
+                with :retired, false
+                with :kind, 'User'
+                order_by :last_active_at, :desc
+                paginate :page => 1, :per_page => 18 - groups.size
+              end
+      experts = experts_solr.results
+
     else
       # this conditional should not be triggered during normal app usage, but
       # return something for testing

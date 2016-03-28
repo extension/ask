@@ -16,9 +16,9 @@ class User < ActiveRecord::Base
 
   # sunspot/solr search
   searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
-    text :name
+    text :name, :as => :name_textp
     text :bio
-    text :login
+    text :login, :as => :login_textp
     text :email
     text :tag_fulltext
     boolean :retired
