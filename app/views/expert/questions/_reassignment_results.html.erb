@@ -6,11 +6,11 @@
 
        <div class="assignment_match <% @filter_terms.count %>">
         <div class="row">
-        
+
           <div class="col-md-4">
           <%= link_to link_expert_group_avatar_group_label(group, :thumb), group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %> <%= link_to group.name, group_assign_options_expert_question_path(:id => @question.id, :group_id => group.id) %>
           </div>
-          
+
           <div class="col-md-8">
           <table class="table table-bordered">
           <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
@@ -19,13 +19,13 @@
 	          <% else %>
 	            <td class="nomatch"><i>no</i></td>
 	          <% end %>
-	          
+
 	          <% if @question.county.present? && group_expertise_counties.include?(@question.county) %>
 	            <td class="match location_match"><em class="matching_term">Co.</em> <i>yes</i></td>
 	          <% else %>
 	            <td class="nomatch"><i>no</i></td>
 	          <% end %>
-            
+
             <% @filter_terms.to_enum.with_index(1).each do |term, index| %>
   	          <% if group_tags.map(&:name).include?(term) %>
   	            <td class="match tag_match"><em class="matching_term"><%= term %></em> <i>yes</i></td>
@@ -48,17 +48,17 @@
         <% expert_expertise_counties = expert.expertise_counties %>
         <% expert_expertise_locations = expert.expertise_locations %>
         <% expert_tags = expert.tags %>
-        
+
         <div class="assignment_match <% @filter_terms.count %>">
         <div class="row">
-        
+
             <div class="col-md-4">
             <%= link_to get_avatar_for_user(expert, :thumb), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %> <%= link_to raw(expert_user(expert)), assign_options_expert_question_path(:id => @question.id, :expert_id => expert.id) %>
             <div class="expert_meta">
               <% if expert.title.present? %>
                 <p><%= expert.title %></p>
               <% end %>
-              <p><%= (expert.county.present? ? "#{expert.county.name}, " : "") + (expert.location.present? ? "#{expert.location.abbreviation}" : "") %></p>
+              <p><%= (expert.county_id.present? ? "#{county_names[expert.county_id]}, " : "") + (expert.location_id.present? ? "#{location_names[expert.location_id]}" : "") %></p>
             </div>
             <% if display_handling_rate(@handling_rates[expert.id]).to_i > 0 %>
               <span class="handling_rate"><%= display_handling_rate(@handling_rates[expert.id]) %></span>
@@ -68,11 +68,11 @@
             <% end %>
             <span class="downplay">last active <%= get_last_active_time(expert) %></span>
             </div>
-            
+
             <div class="col-md-8">
             <table class="table table-bordered">
             <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
-              
+
               <% if @question.location.present? && expert_expertise_locations.include?(@question.location) %>
   	            <td class="match location_match"><em class="matching_term"><%= @question.location.abbreviation %> <i>yes</i></td>
   	          <% else %>

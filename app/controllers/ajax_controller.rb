@@ -40,8 +40,8 @@ class AjaxController < ApplicationController
 
       if expert_or_group.class.name == "User"
         title = expert_or_group.title.present? ? "<br />#{expert_or_group.title}"  : ""
-        county = expert_or_group.county.present? ? "#{expert_or_group.county.name}, " : ""
-        location = expert_or_group.location.present? ? expert_or_group.location.name : ""
+        county = expert_or_group.county_id.present? ? "#{county_names[expert_or_group.county_id]}, " : ""
+        location = expert_or_group.location_id.present? ? location_names[expert_or_group.location_id] : ""
         name = expert_or_group.name
         if expert_or_group.available?
           availability = "available"

@@ -39,15 +39,13 @@
         <h1 class="article_title"><%= link_to format_text_for_display(q.title), question_path(q.id) %></h1>
         <p class="question_body"><%= format_text_for_display(q.body).html_safe -%></p>
       </div>
-      
+
       <p>
-        <% if q.location.present? %>
-          <% if q.county.present? %>
-            <span class="tag tag-geography"><%= "#{q.county.name}" %></span>
+        <% if q.location_id.present? %>
+          <% if q.county_id.present? %>
+            <span class="tag tag-geography"><%= "#{county_names[q.county_id]}" %></span>
           <% end %>
-          <% if q.location.present? %>
-            <span class="tag tag-geography"><%= q.location.name %></span>
-          <% end %>
+          <span class="tag tag-geography"><%= location_names[q.location_id] %></span>
         <% end %>
 
       <% if q.tags.size > 0 %>
