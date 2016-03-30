@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160330155628) do
+ActiveRecord::Schema.define(:version => 20160330180547) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -486,6 +486,7 @@ ActiveRecord::Schema.define(:version => 20160330155628) do
     t.datetime "featured_at"
     t.boolean  "submitter_is_extension",   :default => false
     t.text     "widget_parent_url"
+    t.text     "cached_tag_hash"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"

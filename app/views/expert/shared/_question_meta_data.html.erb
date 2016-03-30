@@ -25,12 +25,13 @@
     <span class="label label-inverse"><%= link_to "No Location" %></span>
   <% end %>
 
-  <% if question.tags.size > 0 %>
-    <% question.tags.each do |tag| %>
+  <%- cached_tag_hash = question.cached_tags -%>
+  <% if !cached_tag_hash.blank? %>
+    <% cached_tag_hash.each do |tag_id,tag_name| %>
       <% if question.assigned_group %>
-        <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag.id) %></span>
+        <span class="tag tag-topic"><%= link_to tag_name, questions_by_tag_expert_groups_path(:group_id => question.assigned_group.id, :tag_id => tag_id) %></span>
       <% else %>
-        <span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(:name => tag.name) %></span>
+        <span class="tag tag-topic"><%= link_to tag_name, expert_show_tag_path(:name => tag_name) %></span>
       <% end %>
     <% end %>
   <% else %>
