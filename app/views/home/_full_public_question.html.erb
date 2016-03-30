@@ -40,12 +40,12 @@
   <% end %>
 
     <p>
-      <% if question.location.present? %>
-        <% if question.county.present? %>
-          <span class="tag tag-geography"><%= "#{question.county.name}" %></span>
+      <% if question.location_id.present? %>
+        <% if question.county_id.present? %>
+          <span class="tag tag-geography"><%= "#{county_names[question.county_id]}" %></span>
         <% end %>
-        <% if question.location.present? %>
-          <span class="tag tag-geography"><%= question.location.name %></span>
+        <% if question.location_id.present? %>
+          <span class="tag tag-geography"><%= location_names[question.location_id] %></span>
         <% end %>
       <% end %>
 

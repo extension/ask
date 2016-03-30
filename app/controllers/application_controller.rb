@@ -13,6 +13,9 @@ class ApplicationController < ActionController::Base
   helper_method :current_county
   helper_method :time_period_to_s
   helper_method :humanize_bytes
+  helper_method :location_names
+  helper_method :location_abbreviations
+  helper_method :county_names
 
   before_filter :set_time_zone_from_user, :set_last_active_at_for_user, :check_retired
 
@@ -257,6 +260,24 @@ class ApplicationController < ActionController::Base
       s.sub(/\.?0*$/,units[e])
     else
       defaultstring
+    end
+  end
+
+  def location_names(cache_options = {})
+    Rails.cache.fetch('location_names', cache_options) do
+      Hash[Location.all.map{|l| [l.id,l.name]}]
+    end
+  end
+
+  def location_abbreviations(cache_options = {})
+    Rails.cache.fetch('location_names', cache_options) do
+      Hash[Location.all.map{|l| [l.id,l.abbreviation]}]
+    end
+  end
+
+  def county_names(cache_options = {})
+    Rails.cache.fetch('county_names', cache_options) do
+      Hash[County.all.map{|l| [l.id,l.name]}]
     end
   end
 
