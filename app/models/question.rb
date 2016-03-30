@@ -1253,7 +1253,7 @@ class Question < ActiveRecord::Base
   end
 
   def cached_tags(forceupdate = false)
-    if(self.cached_tag_hash.blank? or forceupdate)
+    if(self.cached_tag_hash.nil? or forceupdate)
       update_hash = Hash[self.tags.map{|t| [t.id,t.name]}]
       self.update_column(:cached_tag_hash,update_hash.to_yaml)
       update_hash
