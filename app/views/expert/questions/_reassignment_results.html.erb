@@ -45,9 +45,9 @@
 
 <% if @experts.size > 0 %>
       <% @experts.each do |expert| %>
-        <% expert_expertise_counties = expert.expertise_counties %>
-        <% expert_expertise_locations = expert.expertise_locations %>
-        <% expert_tags = expert.tags %>
+        <%- expert_expertise_location_ids = expert.expertise_locations.map(&:id)
+            expert_expertise_county_ids = expert.expertise_counties.map(&:id)
+            expert_tags = expert.tags -%>
 
         <div class="assignment_match <% @filter_terms.count %>">
         <div class="row">
@@ -73,13 +73,13 @@
             <table class="table table-bordered">
             <tr class="matching_wrapper term_count_<%= @filter_terms_count %>">
 
-              <% if @question.location.present? && expert_expertise_locations.include?(@question.location) %>
+              <% if @question.location_id.present? && expert_expertise_location_ids.include?(@question.location_id) %>
   	            <td class="match location_match"><em class="matching_term"><%= @question.location.abbreviation %> <i>yes</i></td>
   	          <% else %>
   	            <td class="nomatch"><i>no</i></td>
   	          <% end %>
 
-  	          <% if @question.county.present? && expert_expertise_counties.include?(@question.county) %>
+  	          <% if @question.county_id.present? && expert_expertise_county_ids.include?(@question.county_id) %>
   	            <td class="match location_match"><em class="matching_term">Co.</em> <i>yes</i></td>
   	          <% else %>
   	            <td class="nomatch"><i>no</i></td>

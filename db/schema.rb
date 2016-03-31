@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150910180743) do
+ActiveRecord::Schema.define(:version => 20160330180547) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -35,6 +35,8 @@ ActiveRecord::Schema.define(:version => 20150910180743) do
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
   end
+
+  add_index "assets", ["type", "assetable_id", "assetable_type"], :name => "assetable_ndx"
 
   create_table "authmaps", :force => true do |t|
     t.integer  "user_id",    :null => false
@@ -484,6 +486,7 @@ ActiveRecord::Schema.define(:version => 20150910180743) do
     t.datetime "featured_at"
     t.boolean  "submitter_is_extension",   :default => false
     t.text     "widget_parent_url"
+    t.text     "cached_tag_hash"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -494,7 +497,7 @@ ActiveRecord::Schema.define(:version => 20150910180743) do
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
   add_index "questions", ["evaluation_sent"], :name => "evaluation_flag_ndx"
   add_index "questions", ["initial_response_id", "initial_response_time", "initial_response_at", "initial_responder_id"], :name => "initial_response_ndx"
-  add_index "questions", ["is_private"], :name => "fk_is_private"
+  add_index "questions", ["is_private", "created_at"], :name => "private_flag_ndx"
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
   add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"

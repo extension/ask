@@ -7,9 +7,10 @@
   <% else %>
   <% end %>
 
-  <% if question.tags.size > 0 %>
-    <% question.tags.each do |tag| %>
-      <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_path(:name => tag.name) %></span>
+  <%- cached_tag_hash = question.cached_tags -%>
+  <% if !cached_tag_hash.blank? %>
+    <% cached_tag_hash.each do |tag_id,tag_name| %>
+      <span class="tag tag-topic"><%= link_to tag_name, questions_by_tag_path(:name => tag_name) %></span>
     <% end %>
   <% end %>
 

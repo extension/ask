@@ -149,7 +149,7 @@ group :development do
   gem 'net-http-spy'
 
   # pretty error handling
-  #gem 'better_errors'
+  gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'active_record_query_trace'

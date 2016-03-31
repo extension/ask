@@ -571,10 +571,11 @@ class Expert::QuestionsController < ApplicationController
     @current_tags = @question.tags.collect{|t| t.name}.join(', ')
     QuestionEvent.log_added_tag(@question, current_user, @tag.name) if @previous_tags != @current_tags
     if @tag.blank?
-      render :json => { :success => false }
+      return render :json => { :success => false }
     elsif @tag.name == "front page"
       @question.touch
     end
+    @question.cached_tags(true)
   end
 
   def remove_tag
@@ -584,6 +585,7 @@ class Expert::QuestionsController < ApplicationController
     @question.tags.delete(tag)
     @current_tags = @question.tags.collect{|t| t.name}.join(', ')
     QuestionEvent.log_deleted_tag(@question, current_user, tag.name) if @previous_tags != @current_tags
+    @question.cached_tags(true)
   end
 
   def reassign

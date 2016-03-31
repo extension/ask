@@ -47,6 +47,7 @@ class Question < ActiveRecord::Base
   extend YearWeek
 
   ## attributes
+  serialize :cached_tag_hash
   rakismet_attrs :author_email => :email, :content => :body
   has_paper_trail :on => [:update], :only => [:title, :body]
 
@@ -1250,6 +1251,17 @@ class Question < ActiveRecord::Base
     end
     qdc.data_values
   end
+
+  def cached_tags(forceupdate = false)
+    if(self.cached_tag_hash.nil? or forceupdate)
+      update_hash = Hash[self.tags.map{|t| [t.id,t.name]}]
+      self.update_column(:cached_tag_hash,update_hash.to_yaml)
+      update_hash
+    else
+      self.cached_tag_hash
+    end
+  end
+
 
 
 
