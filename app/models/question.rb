@@ -472,6 +472,35 @@ class Question < ActiveRecord::Base
 
   end
 
+  def self.asked_answered_metrics_for_date_range(start_date,end_date)
+    asked_answered = {}
+    asked    = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .count('DISTINCT(questions.id)')
+
+    submitters = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .count('DISTINCT(questions.submitter_id)')
+
+    answered = Question.not_rejected.joins(:question_events => :initiator) \
+               .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+               .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s)
+               .count('DISTINCT(questions.id)')
+
+    experts = QuestionEvent.joins(:initiator).handling_events \
+    .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s)
+               .count('DISTINCT(question_events.initiated_by_id)')
+
+      asked_answered = {:asked => asked || 0,
+                        :submitters => submitters|| 0,
+                        :answered => answered|| 0,
+                        :experts => experts|| 0 }
+
+    asked_answered
+
+  end
+
+
 
   ## instance methods
 
