@@ -500,6 +500,26 @@ class Question < ActiveRecord::Base
 
   end
 
+  def self.expert_submitter_metrics_for_date_range(start_date,end_date)
+    expert_ids = QuestionEvent.joins(:initiator).handling_events \
+    .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s) \
+    .pluck('question_events.initiated_by_id').uniq
+    previous_expert_ids = QuestionEvent.joins(:initiator).handling_events \
+    .where("DATE(question_events.created_at) <= ?",start_date.to_s) \
+    .pluck('question_events.initiated_by_id').uniq
+    submitter_ids = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .pluck('questions.submitter_id')
+    previous_submitter_ids = Question.not_rejected \
+              .where("DATE(questions.created_at) <= ?",start_date.to_s) \
+              .pluck('questions.submitter_id')
+
+              {:experts => expert_ids.size || 0,
+                                :new_experts => (expert_ids - previous_expert_ids).size || 0,
+                                :submitters => submitter_ids.size|| 0,
+                                :new_submitters => (submitter_ids - previous_submitter_ids).size|| 0 }
+
+  end
 
 
   ## instance methods
