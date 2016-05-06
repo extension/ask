@@ -122,10 +122,9 @@ class Question < ActiveRecord::Base
   END_TEXT
 
   PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
-  This question has been assigned to you because a new comment has been
-  posted to an expert's response or open question who has marked aae
-  vacation status. Please reply using the link below or close the
-  question out if no reply is needed. Thank You.
+  This question has been assigned to you because the submitter posted a new
+  comment and the previously assigned expert is not available. Please reply
+  using the link below or close the question out if no reply is needed. Thank You.
   END_TEXT
 
   DECLINE_ANSWER = <<-END_TEXT.gsub(/\s+/, " ").strip
