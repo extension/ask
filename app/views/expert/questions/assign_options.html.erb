@@ -2,7 +2,7 @@
 
 <div id="main" class="col-md-6">
   <h1>Assign to <%= link_expert_user(@user) %></h1>
-  
+
   <% if @user.away %>
     <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
   <% end %>
@@ -26,14 +26,14 @@
   <div id="reassign_question">
     <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
     <div class="question_body"><%= format_text_for_display(@question.body) %></div>
-  
 
-    <p>Asked 
+
+    <p>Asked
       <% if @original_group.present? %>
         to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
       <% end %>
 
-      <%= time_ago_in_words(@question.created_at) %> ago 
+      <%= time_ago_in_words(@question.created_at) %> ago
 
       <% if @question.submitter %>
         by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
@@ -67,21 +67,21 @@
 
 
 <div id="secondary" class="col-md-6">
-  
+
   <div id="user_masthead" class="reassign well">
     <%= link_expert_user_avatar(@user, :medium, current_user.id == @user.id ? true : false) %>
-    
+
     <h1>
       <span class="<%= @user.is_question_wrangler? ? 'qw_large' : '' %>"><%= @user.name %></span> <%= @user.retired ? "(Retired Account)" : "" %>
     </h1>
     <% if @user.title.present? %>
       <h3 class="expert_title"><%= @user.title %></h3>
     <% end %>
-    
+
     <% if @user.away %>
       <div id="on_vacation"><i class="icon-exclamation-sign"></i> This expert's availability is set to "Away"</div>
     <% end %>
-    
+
     <p>
       <% if @user.routing_instructions == "anywhere" %>
         Accepts questions from anywhere.
@@ -91,7 +91,7 @@
         Prefers questions that match counties.
       <% end %>
     </p>
-    
+
     <div class="aboutme">
       <% if @user.bio %>
         <%= format_text_for_display(@user.bio) %>
@@ -101,11 +101,11 @@
         <% else %>
           <p>This person hasn't added a description yet...</p>
         <% end %>
-      <% end  %>    
+      <% end  %>
     </div>
-    
+
     <% if @user.tags.size > 0 %>
-      <p class="tags">  
+      <p class="tags">
         <% @user.tags.each do |tag| %>
           <span class="tag tag-topic"><%= link_to tag.name, tags_expert_users_path(:user_id => @user.id, :tag_id => tag.id) %></span>
         <% end %>
@@ -120,9 +120,9 @@
       <% else %>
         <p><span class="unlinked tag tag-topic">No tags selected</span></p>
       <% end %>
-        
+
     <% end %>
-    
+
     <% if @user.location %>
       <strong>Primary Location</strong> <% if current_user.id == @user.id %><%= link_to 'edit', expert_profile_settings_path(@user), :class => "downplay" %><% end %>
       <p><% if @user.county %>
@@ -134,7 +134,7 @@
 
     <% if @user.expertise_locations.size > 0 %>
 
-    <h3>Expertise Locations 
+    <h3>Expertise Locations
     <% if current_user.id == @user.id %>
       <small><%= link_to 'edit', expert_settings_location_path(), :class => "downplay left" %></small>
     <% end %>
@@ -162,12 +162,12 @@
       <% end %>
 
   <% end %>
-    
+
   </div>
-  
-  
-  
-  
-  
+
+
+
+
+
 
 </div>

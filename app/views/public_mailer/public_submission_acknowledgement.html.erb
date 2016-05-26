@@ -1,10 +1,10 @@
 <%= render :partial => 'partials/public_email_header' %>
-  
+
 <tr>
   <tr>
     <td class="please_dont_reply"><strong>Please don't reply to this email.</strong> <%= link_to("Reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
   </tr>
-  
+
   <td class="content padding">
     <p>Hello,</p>
     <p>Thank you for your question. It has been assigned to one of our experts and we will try to answer it within 48 hours.</p>
