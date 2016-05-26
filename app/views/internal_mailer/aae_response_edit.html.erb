@@ -14,8 +14,7 @@
 
 <tr>
   <td class="content padding question_block">
-    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
-    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
+    <%= render :partial => 'question_title_body' %>
   </td>
 </tr>
 

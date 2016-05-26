@@ -1,0 +1,2 @@
+<div class="question_title"><%= link_to(@question.title.html_safe, expert_question_url(@question)) -%></div>
+<div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
