@@ -1,16 +1,16 @@
 <div class="incoming_question title_only">
-  
+
   <div class="row">
-  
-      
+
+
       <%= link_to question_path(question.id) do %>
         <h3><%= format_text_for_display(question.title) -%></h3>
       <%- end -%>
 
       <%= render :partial => 'shared/question_meta_data', :locals => {:question => question} %>
-      
-      
-      
+
+
+
       <% if question.images.size > 0 %>
 
         <div class="images_wrapper clearfix">
@@ -45,7 +45,7 @@
       </div>
     <% end %>
 
-  
+
   </div>
-  
+
 </div>

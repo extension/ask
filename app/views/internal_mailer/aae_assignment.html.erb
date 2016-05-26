@@ -29,7 +29,7 @@
           <span class="tag tag-geography">No Location</span>
       <% end %>
     </p>
-        
+
     <% if @question.tags.size > 0 %>
       <p class="tag">
         <% @question.tags.each do |tag| %>
@@ -44,7 +44,7 @@
 
 <tr>
   <td class="content padding">
-    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>    
+    <p class="meta">The question was assigned to you <%= @assigned_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %>.</p>
   </td>
 </tr>
 

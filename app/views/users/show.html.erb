@@ -1,7 +1,7 @@
 <% @page_title = @user.public_name %>
 
 <div id="main" class="col-md-6">
-  
+
   <div id="user_masthead">
     <%= link_public_user_avatar(@user) %>
     <h1>
@@ -10,19 +10,19 @@
     <% if @user.title.present? %>
       <h3 class="expert_title"><%= @user.title %></h3>
     <% end %>
-    
+
     <% if current_user && current_user.has_exid? && @user.has_exid? %>
       <p><%= link_to "expert view", expert_user_path(@user.id), :class => "btn btn-sm" %></p>
-    <% end %>    
+    <% end %>
   </div>
-  
-  
+
+
   <% if @user.bio? %>
     <div class="aboutme">
       <%= format_text_for_display(@user.bio) %>
     </div>
   <% end %>
-  
+
   <% if @user.tags.size > 0 %>
     <p>
     <% @user.tags.each do |tag| %>
@@ -30,7 +30,7 @@
     <% end %>
     </p>
   <% end %>
-  
+
   <div id="location_list">
 
   <% if @user.has_exid? && @user.expertise_locations.size > 0 %>
@@ -72,17 +72,13 @@
     <div class="answered_question">
 
         <%= link_to question_path(question.id) do %>
-          <% if question.title.present? %>
-            <p><%= format_text_for_display(question.title) -%></p>
-          <% else %>
-            <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-          <% end %>
+        <p><%= question.title.html_safe -%></p>
         <%- end -%>
     </div>
     <% end %>
   <% end %>
-  
-  
+
+
   <% if @answered_questions.size > 0 %>
       <h3>Answered Questions</h3>
 
@@ -99,5 +95,5 @@
       <% end %>
   <% end %>
   <% end %>
-  
+
 </div>

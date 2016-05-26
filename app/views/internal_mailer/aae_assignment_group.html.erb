@@ -7,7 +7,7 @@
     <% end %>
 
     <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
-    
+
     <% if @question.assignee_id.present? %>
       <h4><%= get_avatar_for_user(@question.assignee, :thumb, false) %> <%= link_expert_user(@question.assignee) %> is the assigned expert.</h4>
     <% end %>
@@ -34,7 +34,7 @@
           <span class="tag tag-geography">No Location</span>
       <% end %>
     </p>
-        
+
     <% if @question.tags.size > 0 %>
       <p class="tag">
         <% @question.tags.each do |tag| %>

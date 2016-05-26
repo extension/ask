@@ -10,17 +10,17 @@
   .aae_qw-see-more a {text-decoration:none;}
 </style>
 <div class="aae_qw" id="aae_qw_hook" data-widget-key="<%= @widget_key %>" data-widget-params="<%= @widget_params %>">
-  
+
   <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
     <p class="aae_qw-app-location-widget-dev">This is a <strong>TEST</strong> widget coming from the  <strong>AaE <%= Settings.app_location.upcase %></strong> site. This should ONLY be used for TESTING purposes.</p>
   <% end %>
-  
+
   <h3 class="aae_qw-header"><%= @title %></h3>
-  
+
   <% if @no_matches %>
     <p class="aae_qw-no-matches">There were no matches for <strong>questions <%= @no_matches %></strong>, but here's some other recently answered questions.</p>
   <% end %>
-  
+
   <% if @question_list.length > 0 %>
     <ul>
       <% @question_list.each_with_index do |q, i| %>
@@ -38,7 +38,6 @@
       <% end %>
     </ul>
   <% end %>
-  
+
   <p class="aae_qw-see-more"><%= link_to 'See More', @path_to_questions %></p>
 </div>
-

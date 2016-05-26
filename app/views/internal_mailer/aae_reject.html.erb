@@ -3,11 +3,11 @@
 <tr>
   <td class="content padding">
     <h3>A Question Assigned To You Has Been Rejected</h3>
-    
+
     <p class="rejected"><strong>Reason:</strong> <%= @rejected_event.response %></p>
-    
+
     <p>You don't need to do anything at this time, but you can <%= link_to("view the question", expert_question_url(@question), :class => "action") -%> if you are interested.</p>
-    
+
   </td>
 </tr>
 
@@ -31,7 +31,7 @@
           <span class="tag tag-geography">No Location</span>
       <% end %>
     </p>
-        
+
     <% if @question.tags.size > 0 %>
       <p class="tag">
         <% @question.tags.each do |tag| %>
