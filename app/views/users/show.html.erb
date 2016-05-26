@@ -85,11 +85,7 @@
       <% @answered_questions.each do |question| %>
         <div class="answered_question">
             <%= link_to question_path(question.id) do %>
-              <% if question.title.present? %>
-                <p><%= format_text_for_display(question.title) -%></p>
-              <% else %>
-                <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-              <% end %>
+            <p><%= question.title.html_safe -%></p>
             <%- end -%>
         </div>
       <% end %>

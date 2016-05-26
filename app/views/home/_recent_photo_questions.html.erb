@@ -12,12 +12,7 @@
         <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
       <% end %>
       </div>
-        <% if question.title.present? %>
-          <p><%= format_text_for_display(question.title) -%></p>
-        <% else %>
-          <p><%= format_text_for_display(question.body.truncate(80, separator: ' ')) %></p>
-        <% end %>
-
+      <p><%= question.title.html_safe -%></p>
       <%- end -%>
       <br class="clearing" />
   </div>
