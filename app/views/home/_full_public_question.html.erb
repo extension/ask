@@ -1,5 +1,5 @@
 <div class="incoming_question">
-  <h1 class="article_title"><%= link_to format_text_for_display(question.title), question_path(question.id) %></h1>
+  <h1 class="article_title"><%= link_to(question.title.html_safe, question_path(question.id)) %></h1>
   <p class="question_body"><%= format_text_for_display(question.body).html_safe -%></p>
 
   <% if question.responses.size > 0 %>

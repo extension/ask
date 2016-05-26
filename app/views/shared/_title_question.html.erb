@@ -4,7 +4,7 @@
 
 
       <%= link_to question_path(question.id) do %>
-        <h3><%= format_text_for_display(question.title) -%></h3>
+        <h3><%= question.title.html_safe -%></h3>
       <%- end -%>
 
       <%= render :partial => 'shared/question_meta_data', :locals => {:question => question} %>

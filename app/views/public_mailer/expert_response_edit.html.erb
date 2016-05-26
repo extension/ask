@@ -7,7 +7,7 @@
 
   <td class="content padding">
     <h3>An expert has edited a response to your question.</h3>
-    <div class="question_title">Your Question: <%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
+    <div class="question_title">Your Question: <%= link_to(@question.title.html_safe, submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
     <div class="response">Edited Response: <%= format_text_for_display(@response.body) %></div>
 
     <h2>Need to reply to the expert?</h2>

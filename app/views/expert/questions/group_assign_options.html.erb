@@ -29,7 +29,7 @@
 
 
   <div id="reassign_question">
-    <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
+    <h3 class="title"><%= @question.title.html_safe -%></h3>
     <div class="question_body"><%= format_text_for_display(@question.body) %></div>
 
 

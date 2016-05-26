@@ -16,7 +16,7 @@
 
 <tr>
   <td class="content padding question_block">
-    <div class="question_title"><%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
+    <div class="question_title"><%= link_to(@question.title.html_safe, submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
     <div class="question_body"><%= format_text_for_display(@question.body) %></div>
   </td>
 </tr>

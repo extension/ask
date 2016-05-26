@@ -5,7 +5,7 @@
 <div id="main" class="col-sm-8 col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
 
-    <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
+    <h1 class="article_title" itemprop="name"><%=  @question.title.html_safe -%></h1>
 
     <div id="question">
 
@@ -226,7 +226,7 @@
   <aside>
     <h4 class="subhead_style">Related Questions</h4>
     <% @question.public_similar_questions.each do |question,score| %>
-      <p><%= link_to(format_text_for_display(question.title), question_path(question.id), :class => "muted_link") %></p>
+      <p><%= link_to(question.title.html_safe, question_path(question.id), :class => "muted_link") %></p>
     <% end %>
   </aside>
   <% end %>

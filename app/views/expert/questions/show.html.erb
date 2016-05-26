@@ -163,7 +163,7 @@
     <h4>Other Questions From This Person</h4>
     <% @question.submitter.submitted_questions.each do |question,score| %>
       <% if question.id != @question.id %>
-      <p><%= link_to(format_text_for_display(question.title), expert_question_path(question.id)) %></p>
+      <p><%= link_to(question.title.html_safe, expert_question_path(question.id)) %></p>
       <% end %>
     <% end %>
   </aside>
