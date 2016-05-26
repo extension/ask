@@ -32,7 +32,7 @@
           <% else %>
             <li class="aae_qw-li">
           <% end %>
-            <span class="aae_qw-title"><%= raw("#{q.title.gsub(/[[:space:]]/, ' ')}") %></span> <span class="aae_qw-view-response">view response &raquo;</span>
+            <span class="aae_qw-title"><%= q.title.html_safe %></span> <span class="aae_qw-view-response">view response &raquo;</span>
           </li>
         <% end %>
       <% end %>

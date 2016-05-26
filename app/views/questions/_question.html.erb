@@ -1,4 +1,4 @@
-<% @page_title = raw("#{@question.title.gsub(/[[:space:]]/, ' ')}") %>
+<% @page_title = @question.title.html_safe %>
 <% @page_type = "article" %>
 <% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
