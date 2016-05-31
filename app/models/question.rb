@@ -555,9 +555,9 @@ class Question < ActiveRecord::Base
 
   def title
     if self[:title].present?
-      return self[:title]
+      return self[:title].gsub(/[[:space:]]/, ' ')
     else
-      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ')
+      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ').gsub(/[[:space:]]/, ' ')
     end
   end
 

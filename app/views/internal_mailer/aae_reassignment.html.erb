@@ -7,7 +7,7 @@
     <% else %>
       <h3>One of Your Questions Has Been Assigned To Another Expert: <%= link_expert_group(@question.assigned_group) %></h3>
     <% end %>
-    
+
     <p>You don't need to do anything at this time, but you can <%= link_to("view the question", expert_question_url(@question), :class => "action") -%> if you are interested.</p>
 
     <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
@@ -16,8 +16,7 @@
 
 <tr>
   <td class="content padding question_block">
-    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
-    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
+    <%= render :partial => 'question_title_body' %>
     <p class="meta">Submitted <%= @question.created_at.strftime("%A, %B %e, %Y, %l:%M %p %Z") %></p>
     <% if !@question.is_private %>
       <p class="tag">
@@ -34,7 +33,7 @@
           <span class="tag tag-geography">No Location</span>
       <% end %>
     </p>
-        
+
     <% if @question.tags.size > 0 %>
       <p class="tag">
         <% @question.tags.each do |tag| %>

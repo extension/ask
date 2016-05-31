@@ -4,8 +4,8 @@
   <h1>Assign to <%= link_expert_group(@group) %></h1>
 
   <h2><%= link_expert_group_avatar(@group) %></h2>
-  
-  <% if (@group.assignment_outside_locations == true) || 
+
+  <% if (@group.assignment_outside_locations == true) ||
     ((@group.assignment_outside_locations == false) && (@question.location.present?) && (@group.expertise_locations.include?(@question.location))) %>
     <%= form_tag(assign_to_group_expert_question_path(:id => @question.id, :group_id => @group.id)) do %>
       <p>
@@ -22,23 +22,23 @@
       <p><strong><%= @group.name %></strong> only accepts questions that match their defined locations.</p>
       <p>You can't assign this question to them, but you can <%= link_to "assign it directly to an individual expert", reassign_expert_question_path(@question.id) %> or <%= link_to "find another group", reassign_expert_question_path(@question.id) %>.</p>
       <p>If appropriate, you can <%= link_to "edit the location", expert_question_url(@question) %> of this question and then assign it to <%= @group.name %>. This question is currently set to <strong><%= @question.location.present? ? @question.location.name : "No Location" %></strong>.</p>
-      
+
       <p><%= link_to "See other reassignment matches", reassign_expert_question_path(@question.id), :class => "btn btn-default" %></p>
     </div>
   <% end %>
 
-  
-  <div id="reassign_question">
-    <h3 class="title"><%= format_text_for_display(@question.title) -%></h3>
-    <div class="question_body"><%= format_text_for_display(@question.body) %></div>
-  
 
-    <p>Asked 
+  <div id="reassign_question">
+    <h3 class="title"><%= @question.title.html_safe -%></h3>
+    <div class="question_body"><%= format_text_for_display(@question.body) %></div>
+
+
+    <p>Asked
       <% if @original_group.present? %>
         to the <%= link_to @original_group.name, expert_group_path(@original_group.id) %> group
       <% end %>
 
-      <%= time_ago_in_words(@question.created_at) %> ago 
+      <%= time_ago_in_words(@question.created_at) %> ago
 
       <% if @question.submitter %>
         by <%= link_to @question.submitter.public_name, expert_user_submitted_path(@question.submitter) %>
@@ -72,7 +72,7 @@
 
 <div id="secondary" class="col-md-6">
   <h4>About <%= @group.name %></h4>
-  
+
   <p class="downplay">
     <% if @group.assignment_outside_locations == true %>
       Great news! This group accepts questions from anywhere.
@@ -80,10 +80,10 @@
       Questions must match this group's locations
     <% end %>
   </p>
-    
+
   <% if @group.tags.size > 0 %>
     <h5>Tags</h5>
-    <p class="tags">  
+    <p class="tags">
       <% @group.tags.each do |tag| %>
         <span class="tag tag-topic"><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span>
       <% end %>
@@ -92,12 +92,12 @@
   <% else %>
     <p class="subtle">This group hasn't added any tags</p>
   <% end %>
-  
+
   <% if @group.expertise_locations.size > 0 %>
     <h5 class="clearing">Locations</h5>
     <% @group.expertise_locations.each do |l| %>
       <div class="location">
-        
+
         <h4><span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span></h4>
           <% if @group.expertise_counties.where("location_id = ?", l.id).size > 0 %>
             <ul>

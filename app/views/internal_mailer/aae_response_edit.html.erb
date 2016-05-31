@@ -3,9 +3,9 @@
 <tr>
   <td class="content padding">
     <h3>One of your Ask an Expert responses was edited.</h3>
-    
+
     <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
-    
+
     <h4 class="question-header">Why was my response edited?</h4>
     <p class="question-answer">Editors may correct grammar, spelling, or occasionally phrasing, in order to improve the quality of the Ask an Expert site. <%= link_to 'View the changes', response_history_expert_question_url(id: @question.id, response_id: @response.id) %> made to your response.</p>
 
@@ -14,8 +14,7 @@
 
 <tr>
   <td class="content padding question_block">
-    <div class="question_title"><%= link_to(format_text_for_display(@question.title), expert_question_url(@question)) -%></div>
-    <div class="question_body"><%= link_to(format_text_for_display(@question.body), expert_question_url(@question)) -%></div>
+    <%= render :partial => 'question_title_body' %>
   </td>
 </tr>
 
