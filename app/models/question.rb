@@ -529,9 +529,13 @@ class Question < ActiveRecord::Base
     self.submitter.present? ? self.submitter.email : ''
   end
 
+  def check_for_duplicate
+    Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
+  end
+
   def auto_assign_by_preference
     return true if self.spam?
-    if existing_question = Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
+    if existing_question = self.check_for_duplicate
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
       return
