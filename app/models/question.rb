@@ -1053,9 +1053,11 @@ class Question < ActiveRecord::Base
   def self.ua_report(filename)
     CSV.open(filename, "wb") do |csv|
       csv << ['question_id','date','unixtime','browser','version','platform','mobile?','location']
-      self.not_rejected.each do |question|
-        if(!question.user_agent.blank?)
-          csv << question.to_ua_report
+      with_scope do
+        all.each do |question|
+          if(!question.user_agent.blank?)
+            csv << question.to_ua_report
+          end
         end
       end
     end
