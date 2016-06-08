@@ -55,11 +55,6 @@ gem 'omniauth-twitter'
 # oauth integration
 gem 'omniauth', "~> 1.0"
 
-# feed retrieval and parsing
-# force curb to 0.7.15 to avoid a constant warning
-gem "curb", "0.7.15"
-gem "feedzirra", "0.1.2"
-
 # pagination
 gem 'kaminari'
 
@@ -142,7 +137,7 @@ group :development do
   gem 'powder'
   # rails3 compatible generators
   gem "rails3-generators"
-  gem 'capistrano'
+  gem 'capistrano', '~> 2.15'
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
