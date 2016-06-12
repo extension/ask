@@ -30,7 +30,6 @@ GEM
     activesupport (3.2.22.2)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    ansi (1.4.3)
     arel (3.0.3)
     auto_strip_attributes (2.0.6)
       activerecord (>= 3.0)
@@ -91,11 +90,6 @@ GEM
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
-    factory_girl (4.1.0)
-      activesupport (>= 3.0.0)
-    factory_girl_rails (4.1.0)
-      factory_girl (~> 4.1.0)
-      railties (>= 3.0.0)
     faraday (0.8.4)
       multipart-post (~> 1.1)
     font-awesome-rails (4.0.3.1)
@@ -219,6 +213,8 @@ GEM
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
+    rack-protection (1.5.3)
+      rack
     rack-robustness (1.1.0)
     rack-ssl (1.3.4)
       rack
@@ -272,6 +268,10 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    sinatra (1.4.6)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
     slop (3.3.3)
     sprockets (2.2.3)
       hike (~> 1.2)
@@ -295,8 +295,6 @@ GEM
     turbo-sprockets-rails3 (0.3.2)
       railties (> 3.2.8, < 4.0.0)
       sprockets (>= 2.0.0)
-    turn (0.9.6)
-      ansi
     tzinfo (0.3.49)
     uglifier (1.3.0)
       execjs (>= 0.3.0)
@@ -329,7 +327,6 @@ DEPENDENCIES
   demoji
   devise (~> 1.5.1)
   diffy
-  factory_girl_rails
   font-awesome-rails
   geocoder
   geoip
@@ -366,12 +363,12 @@ DEPENDENCIES
   rmagick
   sass-rails (~> 3.2.4)
   select2-rails
-  sidekiq (~> 2.17)
+  sidekiq (< 4)
+  sinatra
   sunspot_rails
   sunspot_solr
   thor
   turbo-sprockets-rails3
-  turn
   uglifier (>= 1.0.3)
   useragent
 
