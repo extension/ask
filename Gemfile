@@ -98,7 +98,8 @@ group :test, :development do
 end
 
 # sidekiq - must come before delayed job in the gemfile
-gem 'sidekiq', "~> 2.17"
+gem 'sidekiq', '< 4'
+gem 'sinatra'
 
 # delayed_job
 gem "delayed_job"
