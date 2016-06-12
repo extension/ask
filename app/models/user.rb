@@ -92,13 +92,15 @@ class User < ActiveRecord::Base
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :question_wranglers, conditions: { is_question_wrangler: true }
-  scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :not_retired, conditions: { retired: false }
-  scope :not_blocked, conditions: { is_blocked: false }
-  scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
+  scope :not_retired, ->{ where(retired: false) }
+  scope :not_blocked, ->{ where(is_blocked: false) }
+  scope :not_system,  ->{ where("id NOT IN (#{SYSTEMS_USERS.join(',')})") }
+  scope :valid_users, ->{ not_retired.not_blocked.not_system }
+  scope :active, ->{ where(away:false) }
+  scope :auto_route, ->{ where(auto_route:true) }
+
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
