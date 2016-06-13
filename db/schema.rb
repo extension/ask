@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160613140352) do
+ActiveRecord::Schema.define(:version => 20160613193928) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -48,6 +48,16 @@ ActiveRecord::Schema.define(:version => 20160613140352) do
 
   add_index "authmaps", ["authname", "source"], :name => "index_authmaps_on_authname_and_source", :unique => true
   add_index "authmaps", ["user_id"], :name => "index_authmaps_on_user_id"
+
+  create_table "auto_assignment_logs", :force => true do |t|
+    t.integer  "question_id"
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.integer  "pool_floor"
+    t.text     "reason"
+    t.text     "pool",        :limit => 16777215
+    t.datetime "created_at",                      :null => false
+  end
 
   create_table "comments", :force => true do |t|
     t.text     "content",                           :null => false
