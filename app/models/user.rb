@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
   has_many :recipient_question_events, :class_name => 'QuestionEvent', :foreign_key => 'recipient_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
-  has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
+  has_many :assigned_questions, :class_name => "Question", :foreign_key => "assignee_id"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
   has_many :current_resolver_questions, :class_name => "Question", :foreign_key => "current_resolver_id"
   has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
@@ -96,7 +96,7 @@ class User < ActiveRecord::Base
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_retired, ->{ where(retired: false) }
   scope :not_blocked, ->{ where(is_blocked: false) }
-  scope :not_system,  ->{ where("id NOT IN (#{SYSTEMS_USERS.join(',')})") }
+  scope :not_system,  ->{ where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
   scope :valid_users, ->{ not_retired.not_blocked.not_system }
   scope :active, ->{ where(away:false) }
   scope :auto_route, ->{ where(auto_route:true) }
@@ -479,20 +479,30 @@ class User < ActiveRecord::Base
     end
   end
 
-  def last_question_touched(for_sort = false)
-    last_touched = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
-    if(!last_touched.blank?)
-      last_touched
-    else
-      # if they've never touched a question, we can't return nil when sorting
-      # because nil can't be used in a sort - so let's return the created_at
-      # for the first question_event ever
-      if(for_sort)
-        QuestionEvent.first.created_at
-      else
-        nil
-      end
-    end
+  def last_question_touched_at(return_default_date = false)
+    # if they've never touched a question, we can't return nil when sorting
+    # because nil can't be used in a sort - so let's return the created_at
+    # for the first question_event ever
+    return_default_date ? (read_attribute(:last_question_touched_at) || QuestionEvent::FIRST_CONTACT) : read_attribute(:last_question_touched_at)
+  end
+
+
+  def last_question_assigned_at(return_default_date = false)
+    # if they've never been assigned a question, we can't return nil when sorting
+    # because nil can't be used in a sort - so let's return the created_at
+    # for the first question_event ever
+    return_default_date ? (read_attribute(:last_question_assigned_at) || QuestionEvent::FIRST_CONTACT) : read_attribute(:last_question_assigned_at)
+  end
+
+  def open_questions
+    assigned_questions.submitted
+  end
+
+  def set_assignment_values
+    self.open_question_count = self.open_questions.count
+    self.last_question_touched_at = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
+    self.last_question_assigned_at = self.assigned_questions.order('created_at DESC').pluck(:created_at).first
+    self.save
   end
 
   def daily_summary_group_list
@@ -620,6 +630,30 @@ class User < ActiveRecord::Base
         u.save
       end
     end
+  end
+
+  def self.pick_assignee_from_pool(users)
+    returndata = {}
+    user_pool = users.to_a
+    if user_pool.blank? or user_pool.length == 0
+      return nil
+    end
+
+    # look at question assignments to see who has the least for load balancing
+    user_pool.sort! { |a, b| a.open_question_count <=> b.open_question_count }
+
+    questions_floor = user_pool[0].open_question_count
+
+    # who all matches the fewest number of questions assigned
+    possible_user_pool = user_pool.select { |u| u.open_question_count == questions_floor }
+
+    return nil if !possible_user_pool or possible_user_pool.length == 0
+    return possible_user_pool[0] if possible_user_pool.length == 1
+
+    # for the set of users with the same number of open questions, pick the person
+    # out of the list with the oldest last assignment time
+    possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
+    return possible_user_pool.first
   end
 
 
