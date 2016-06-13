@@ -195,9 +195,9 @@ class Question < ActiveRecord::Base
   }
   scope :by_location, lambda {|location| {:conditions => {:location_id => location.id}}}
   scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
-  scope :answered, where(:status_state => STATUS_RESOLVED)
-  scope :submitted, where(:status_state => STATUS_SUBMITTED)
-  scope :not_rejected, lambda { where("status_state <> #{STATUS_REJECTED}") }
+  scope :answered, ->{ where(status_state: STATUS_RESOLVED) }
+  scope :submitted, ->{ where(status_state: STATUS_SUBMITTED) }
+  scope :not_rejected, ->{ where("status_state <> #{STATUS_REJECTED}") }
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
@@ -576,6 +576,11 @@ class Question < ActiveRecord::Base
   end
 
 
+  def find_assignee
+
+  end
+
+
   def auto_assign(assignees_to_exclude = nil)
     assignee = nil
     system_user = User.system_user
@@ -868,53 +873,6 @@ class Question < ActiveRecord::Base
   def set_is_extension
     self.submitter_is_extension = self.submitter.has_exid?
     true
-  end
-
-  def pick_user_from_list(users)
-    if !users or users.length == 0
-      return nil
-    end
-
-    # look at question assignments to see who has the least for load balancing
-    users.sort! { |a, b| a.open_questions.length <=> b.open_questions.length }
-
-    questions_floor = users[0].open_questions.length
-    # p "questions_floor: #{questions_floor}"
-
-    # who all matches the least amt. of questions assigned
-    possible_users = users.select { |u| u.open_questions.length == questions_floor }
-
-    return nil if !possible_users or possible_users.length == 0
-    return possible_users[0] if possible_users.length == 1
-
-    # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
-    # so if all experts that made the cut have zero questions assigned, pick the person who hasn't had a question
-    # in a while, returning the start of AaE time if they've never touched one
-    # jayoung => this is slow, slow, slow and more slow, this whole thing needs to be re-examined
-    if questions_floor == 0
-      possible_users.sort! { |a, b| a.last_question_touched(true) <=> b.last_question_touched(true) }
-      return possible_users.first
-    end
-
-    assignment_dates = Hash.new
-
-    # for all those eligible experts with greater than zero questions assigned (but are in the group with the lowest number of questions assigned),
-    # select the expert who's last assigned question was the earliest so that the ones with the more recent assigned questions do not get
-    # the next one
-    possible_users.each do |u|
-      question = u.open_questions.find(:first, :conditions => ["event_state = ?", QuestionEvent::ASSIGNED_TO], :include => :question_events, :order => "question_events.created_at desc")
-
-      if question
-        assignment_dates[u.id] = question.question_events[0].created_at
-      # shouldn't happen b/c the case of no questions assigned is covered above
-      else
-        assignment_dates[u.id] = Time.at(0)
-      end
-    end
-
-    user_id = assignment_dates.sort{ |a, b| a[1] <=> b[1] }[0][0]
-
-    return User.find(user_id)
   end
 
   def notify_submitter
