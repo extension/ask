@@ -14,6 +14,10 @@ class QuestionEvent < ActiveRecord::Base
   serialize :updated_question_values
 
   # constants
+  # date of first QuestionEvent for default dates to avoid hitting db
+  FIRST_CONTACT = Date.parse('2006-10-10').to_datetime
+
+
   # #'s 3 and 4 were the old marked spam and marked non spam question events from darmok, these were
   # just pulled instead of renumbering all these so to not disturb the other status numbers being pulled over from the other sytem
   ASSIGNED_TO = 1
