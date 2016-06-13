@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160330180547) do
+ActiveRecord::Schema.define(:version => 20160612212655) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -216,14 +216,11 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
   add_index "geo_names", ["feature_name", "state_abbreviation", "county"], :name => "name_state_county_ndx"
 
   create_table "group_connections", :force => true do |t|
-    t.integer  "user_id",                              :null => false
-    t.integer  "group_id",                             :null => false
-    t.string   "connection_type",                      :null => false
-    t.integer  "connection_code"
-    t.boolean  "send_notifications", :default => true
-    t.integer  "connected_by"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.integer  "user_id",         :null => false
+    t.integer  "group_id",        :null => false
+    t.string   "connection_type", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
   add_index "group_connections", ["connection_type"], :name => "idx_group_connections_on_connection_type"
