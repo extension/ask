@@ -31,8 +31,8 @@ class ResponsesController < ApplicationController
         # if not, then assign to a question wrangler
         if question.assignee.away == true
           assigned_group = question.assigned_group
-          if assigned_group.present? && assigned_group.leaders.active.length > 0
-            assignee = question.pick_user_from_list(assigned_group.leaders.active)
+          if assigned_group.present? && assigned_group.leaders.not_away.length > 0
+            assignee = question.pick_user_from_list(assigned_group.leaders.not_away)
           else
             assignee = question.pick_user_from_list(Group.get_wrangler_assignees(question.location, question.county))
           end
@@ -48,8 +48,8 @@ class ResponsesController < ApplicationController
         QuestionEvent.log_public_response(question, submitter.id)
         if question.assignee.present? && question.assignee.away == true
           assigned_group = question.assigned_group
-          if assigned_group.present? && assigned_group.leaders.active.length > 0
-            assignee = question.pick_user_from_list(assigned_group.leaders.active)
+          if assigned_group.present? && assigned_group.leaders.not_away.length > 0
+            assignee = question.pick_user_from_list(assigned_group.leaders.not_away)
           else
             assignee = question.pick_user_from_list(Group.get_wrangler_assignees(question.location, question.county))
           end

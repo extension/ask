@@ -17,7 +17,6 @@ class Group < ActiveRecord::Base
   belongs_to :widget_county, :foreign_key => "widget_county_id", :class_name => "County"
 
   has_many :users, :through => :group_connections
-  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0 and users.auto_route = 1"
 
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
@@ -129,7 +128,7 @@ class Group < ActiveRecord::Base
   end
 
   def assignees
-    users.valid_users.active.auto_route
+    users.valid_users.not_away.auto_route
   end
 
   def group_members_with_self_first(current_user, limit)

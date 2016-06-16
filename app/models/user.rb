@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   scope :not_blocked, ->{ where(is_blocked: false) }
   scope :not_system,  ->{ where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
   scope :valid_users, ->{ not_retired.not_blocked.not_system }
-  scope :active, ->{ where(away:false) }
+  scope :not_away, ->{ where(away:false) }
   scope :auto_route, ->{ where(auto_route:true) }
 
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
@@ -633,7 +633,6 @@ class User < ActiveRecord::Base
   end
 
   def self.pick_assignee_from_pool(users)
-    returndata = {}
     user_pool = users.to_a
     if user_pool.blank? or user_pool.length == 0
       return nil
