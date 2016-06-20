@@ -149,9 +149,9 @@
 
     <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
 	    <div id="submitter_followup">
-	      <p class="additional_response_toggle btn btn-primary btn-large">Post a response to the expert</p>
+	      <p class="additional_response_toggle btn btn-primary btn-lg">Post a response to the expert</p>
 	    </div>
-	    <div id="additional_response">
+	    <div id="additional_response" class="image-upload-wrapper">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
           <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
@@ -160,10 +160,10 @@
 	        <p><em>You can upload .jpg .png or .gif.</em></p>
 
 	        <%= r_form.fields_for :images do |image_form| %>
-			      <p><%= image_form.file_field :attachment %></p>
+			      <p class="image-upload"><%= image_form.file_field :attachment %></p>
           <% end %>
 
-          <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
+          <%= submit_tag "Post response", :class => 'btn btn-primary btn-lg' %>
           <%= link_to_function "Cancel", "$('#additional_response').hide()" %>
         <% end %>
 	    </div>
