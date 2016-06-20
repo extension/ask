@@ -3,11 +3,11 @@
   <p><%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'form-control wysiwyg', rows: 8}) %></p>
   <p>If we can't answer this question, use the <a id="canned_response" class="cursor">canned response</a> to suggest their local office.</p>
 
-  <div id="add_images">
+  <div class="image-upload-wrapper">
     <h3>Images (optional)</h3>
     <p><em>You can upload .jpg .png or .gif.</em></p>
     <% (1..@image_count).each do |counter| %>
-      <p>
+      <p class="image-upload">
         <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
       </p>
     <% end %>
