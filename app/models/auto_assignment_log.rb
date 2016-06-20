@@ -22,10 +22,13 @@ class AutoAssignmentLog < ActiveRecord::Base
   # reason_assigned = "You chose to accept questions from #{group.name} group"
   LEADER = 105
   # reason_assigned = "You are a group leader"
-  WRANGLER_EMPTY_GROUP = 201
-  WRANGLER_COUNTY_MATCH = 202
-  WRANGLER_LOCATION_MATCH = 203
-  WRANGLER_ANYWHERE = 204
+  WRANGLER_HANDOFF_OUTSIDE_LOCATION = 201
+  WRANGLER_HANDOFF_EMPTY_GROUP = 202
+  WRANGLER_HANDOFF_NO_MATCHES = 203
+
+  WRANGLER_COUNTY_MATCH = 210
+  WRANGLER_LOCATION_MATCH = 211
+  WRANGLER_ANYWHERE = 212
 
   # doh!
   FAILURE = 13

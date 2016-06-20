@@ -499,10 +499,9 @@ class User < ActiveRecord::Base
   end
 
   def set_assignment_values
-    self.open_question_count = self.open_questions.count
-    self.last_question_touched_at = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
-    self.last_question_assigned_at = self.assigned_questions.order('created_at DESC').pluck(:created_at).first
-    self.save
+    self.update_column(:open_question_count, self.open_questions.count)
+    self.update_column(:last_question_touched_at, self.initiated_question_events.order('created_at DESC').pluck(:created_at).first)
+    self.update_column(:last_question_assigned_at, self.assigned_questions.order('created_at DESC').pluck(:created_at).first)
   end
 
   def daily_summary_group_list

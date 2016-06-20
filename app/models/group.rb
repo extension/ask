@@ -152,36 +152,7 @@ class Group < ActiveRecord::Base
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end
 
-  def self.get_wrangler_assignees(question_location = nil, question_county = nil, assignees_to_exclude = nil)
-    assignees = nil
-    wrangler_group = self.question_wrangler_group
 
-    if question_county.present?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.with_expertise_county(question_county.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
-      end
-    end
-
-    if assignees.blank? && question_location.present?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.with_expertise_location(question_location.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
-      end
-    end
-
-    if assignees.blank?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.active.route_from_anywhere.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.active.route_from_anywhere
-      end
-    end
-
-    return assignees
-  end
 
   def question_wrangler_group?
     self.id == QUESTION_WRANGLER_GROUP_ID
@@ -203,5 +174,10 @@ class Group < ActiveRecord::Base
   def is_australian?
     AUSTRALIAN_GROUPS.include?(self.id)
   end
+
+  def will_accept_question_location?(question)
+    (group.assignment_outside_locations or group.expertise_location_ids.include?(question.location_id))
+  end
+
 
 end
