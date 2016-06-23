@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160613193928) do
+ActiveRecord::Schema.define(:version => 20160623204239) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -344,10 +344,11 @@ ActiveRecord::Schema.define(:version => 20160613193928) do
     t.boolean  "processed",                       :default => false, :null => false
     t.integer  "notification_type",                                  :null => false
     t.datetime "delivery_time",                                      :null => false
-    t.integer  "offset",                          :default => 0
     t.integer  "delayed_job_id"
     t.datetime "created_at",                                         :null => false
     t.datetime "updated_at",                                         :null => false
+    t.boolean  "process_on_create",               :default => false
+    t.text     "results"
   end
 
   create_table "old_evaluation_answers", :force => true do |t|
