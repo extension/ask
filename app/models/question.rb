@@ -730,10 +730,23 @@ class Question < ActiveRecord::Base
   end
 
   def queue_initial_assignment
-    # TODO
+    if(!group.will_accept_question_location(self))
+      reason = <<-END_TEXT.gsub(/\s+/, " ").strip
+      The assigned group for this question #{group.name} does not accept
+      questions outside its locations. Transferring to the Question Wrangler
+      group.
+      END_TEXT
+      self.kick_out_to_wrangler_group(reason)
+    end
+
+    if(!Settings.sidekiq_enabled)
+      self.find_group_assignee_and_assign
+    else
+      self.class.sidekiq_delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
+    end
   end
 
-  def find_group_assignee_and_assign
+  def find_group_assignee_and_assign(assignees_to_exclude = nil)
     system_user = User.system_user
     group = self.assigned_group
     if group.individual_assignment == false
@@ -742,7 +755,7 @@ class Question < ActiveRecord::Base
     end
 
     # find
-    # TODO
+    result = self.find_group_assignee(assignees_to_exclude)
     # log auto assignment
     # TODO
     # assign_to
@@ -764,24 +777,6 @@ class Question < ActiveRecord::Base
     QuestionEvent.log_group_assignment(self,question_wrangler_group,User.system_user,reason)
     true
   end
-
-
-  # def auto_assign(assignees_to_exclude = nil)
-  #   assignee = nil
-  #   system_user = User.system_user
-  #
-  #   group = self.assigned_group
-  #
-  #
-  #   if (group.assignment_outside_locations || group.expertise_locations.include?(self.location))
-  #     # if group individual assignment is not turned on for a group, then we log that it was assigned to the group.
-  #     # the group designation has already been taken care of with the saving of the question, and when we don't have an individual assignment, but a group designation,
-  #     # it is considered assigned to the group and not an individual.
-  #     if group.individual_assignment == false
-  #       QuestionEvent.log_group_assignment(self, group, system_user, nil)
-  #       return
-  #     end
-
 
   def add_history_comment(user, comment)
     QuestionEvent.log_history_comment(self, user, comment)
