@@ -4,12 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class PublicMailer < ActionMailer::Base
-  helper ApplicationHelper
-  default_url_options[:host] = Settings.urlwriter_host
-  default from: "aae-notify@extension.org"
-  default bcc: "systemsmirror@extension.org"
-  helper_method :ssl_root_url, :ssl_webmail_logo
+class PublicMailer < BaseMailer
 
   def public_expert_response(options = {})
     @user = options[:user]
@@ -128,23 +123,6 @@ class PublicMailer < ActionMailer::Base
 
     # the email if we got it
     return_email
-  end
-
-  def ssl_root_url
-    if(Settings.app_location != 'localdev')
-      root_url(protocol: 'https')
-    else
-      root_url
-    end
-  end
-
-  def ssl_webmail_logo
-    parameters = {mailer_cache_id: @mailer_cache.id, format: 'png'}
-    if(Settings.app_location != 'localdev')
-      webmail_logo_url(parameters.merge({protocol: 'https'}))
-    else
-      webmail_logo_url(parameters)
-    end
   end
 
 end

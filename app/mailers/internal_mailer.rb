@@ -4,13 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class InternalMailer < ActionMailer::Base
-  helper ApplicationHelper
-  default_url_options[:host] = Settings.urlwriter_host
-  default from: "aae-notify@extension.org"
-  default bcc: "systemsmirror@extension.org"
-  helper_method :ssl_root_url, :ssl_webmail_logo, :is_demo?
-
+class InternalMailer < BaseMailer
 
   def aae_assignment(options = {})
     @user = options[:user]
@@ -418,27 +412,5 @@ class InternalMailer < ActionMailer::Base
 
     return_email
   end
-
-  def ssl_root_url
-    if(Settings.app_location != 'localdev')
-      root_url(protocol: 'https')
-    else
-      root_url
-    end
-  end
-
-  def ssl_webmail_logo
-    parameters = {mailer_cache_id: @mailer_cache.id, format: 'png'}
-    if(Settings.app_location != 'localdev')
-      webmail_logo_url(parameters.merge({protocol: 'https'}))
-    else
-      webmail_logo_url(parameters)
-    end
-  end
-
-  def is_demo?
-    Settings.app_location != 'production'
-  end
-
 
 end

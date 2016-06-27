@@ -4,13 +4,8 @@
 # === LICENSE:
 # see LICENSE file
 
-class GroupMailer < ActionMailer::Base
-  helper ApplicationHelper
-  default_url_options[:host] = Settings.urlwriter_host
-  default from: "aae-notify@extension.org"
-  default bcc: "systemsmirror@extension.org"
-  helper_method :ssl_root_url, :ssl_webmail_logo
-  
+class GroupMailer < BaseMailer
+
   def group_user_join(options = {})
     @user = options[:user]
     @group = options[:group]
@@ -18,26 +13,26 @@ class GroupMailer < ActionMailer::Base
     @subject = "Someone joined your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "Someone has joined #{@group.name}"
-    
+
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
         # the rendered email.
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
-      
+
       return_email = mail(to: @user.email, subject: @subject)
-      
+
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
         @mailer_cache.update_attribute(:markup, return_email.body.to_s)
       end
     end
-    
+
     # the email if we got it
     return_email
   end
-  
+
   def group_user_left(options = {})
     @user = options[:user]
     @group = options[:group]
@@ -45,26 +40,26 @@ class GroupMailer < ActionMailer::Base
     @subject = "Someone left your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "Someone has left #{@group.name}"
-    
+
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
         # the rendered email.
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
-      
+
       return_email = mail(to: @user.email, subject: @subject)
-      
+
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
         @mailer_cache.update_attribute(:markup, return_email.body.to_s)
       end
     end
-    
+
     # the email if we got it
     return_email
   end
-  
+
   def group_leader_join(options = {})
     @user = options[:user]
     @group = options[:group]
@@ -72,26 +67,26 @@ class GroupMailer < ActionMailer::Base
     @subject = "New Leader for Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "New Leader for #{@group.name}"
-    
+
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
         # the rendered email.
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
-      
+
       return_email = mail(to: @user.email, subject: @subject)
-      
+
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
         @mailer_cache.update_attribute(:markup, return_email.body.to_s)
       end
     end
-    
+
     # the email if we got it
     return_email
   end
-  
+
   def group_leader_left(options = {})
     @user = options[:user]
     @group = options[:group]
@@ -99,41 +94,24 @@ class GroupMailer < ActionMailer::Base
     @subject = "A leader left your Ask an Expert Group: #{@group.name}"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "A Leader Has Left #{@group.name}"
-    
+
     if(!@user.email.blank?)
       if(@will_cache_email)
         # create a cached mail object that can be used for "view this in a browser" within
         # the rendered email.
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
-      
+
       return_email = mail(to: @user.email, subject: @subject)
-      
+
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
         @mailer_cache.update_attribute(:markup, return_email.body.to_s)
       end
     end
-    
+
     # the email if we got it
     return_email
-  end
-
-  def ssl_root_url
-    if(Settings.app_location != 'localdev')
-      root_url(protocol: 'https')
-    else
-      root_url
-    end
-  end
-
-  def ssl_webmail_logo
-    parameters = {mailer_cache_id: @mailer_cache.id, format: 'png'}
-    if(Settings.app_location != 'localdev')
-      webmail_logo_url(parameters.merge({protocol: 'https'}))
-    else
-      webmail_logo_url(parameters)
-    end
   end
 
 end
