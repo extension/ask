@@ -17,8 +17,6 @@ class Expert::QuestionsController < ApplicationController
   end
 
   def titles
-
-
   end
 
   def show
