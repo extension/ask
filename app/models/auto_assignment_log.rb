@@ -7,7 +7,7 @@
 class AutoAssignmentLog < ActiveRecord::Base
   serialize :user_pool
   belongs_to :question
-  belongs_to :user
+  belongs_to :assignee, :foreign_key => "assignee_id", :class_name => "User"
   belongs_to :group
   belongs_to :question_location, :foreign_key => "question_location_id", :class_name => "Location"
   belongs_to :question_county, :foreign_key => "question_county_id", :class_name => "County"
@@ -72,16 +72,17 @@ class AutoAssignmentLog < ActiveRecord::Base
     question = log_values[:question]
     group = log_values[:group]
     user_pool = log_values[:user_pool]
-    pool_floor =
+    pool_floor = user_pool.values.map{|h| h[:open_question_count]}.min
     self.create(question: question,
                 question_location_id: question.location_id,
                 question_county_id: question.county_id,
-                user: log_values[:user],
+                assignee: log_values[:assignee],
                 group: log_values[:group],
-                group_member_count: group.members.count,
-                group_present_count: group.members.not_away.count
+                group_member_count: group.joined.count,
+                group_present_count: group.joined.not_away.count,
                 pool_floor: pool_floor,
                 assignment_code: log_values[:assignment_code],
+                wrangler_assignment_code: log_values[:wrangler_assignment_code],
                 assignee_tests: log_values[:assignee_tests],
                 user_pool: user_pool )
   end
