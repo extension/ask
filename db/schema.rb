@@ -53,10 +53,16 @@ ActiveRecord::Schema.define(:version => 20160623204239) do
     t.integer  "question_id"
     t.integer  "user_id"
     t.integer  "group_id"
+    t.integer  "question_location_id"
+    t.integer  "question_county_id"
     t.integer  "pool_floor"
-    t.text     "reason"
-    t.text     "pool",        :limit => 16777215
-    t.datetime "created_at",                      :null => false
+    t.integer  "group_member_count"
+    t.integer  "group_present_count"
+    t.integer  "wrangler_assignment_code"
+    t.integer  "assignment_code"
+    t.text     "assignee_tests"
+    t.text     "user_pool",                :limit => 16777215
+    t.datetime "created_at",                                   :null => false
   end
 
   create_table "comments", :force => true do |t|
@@ -417,6 +423,7 @@ ActiveRecord::Schema.define(:version => 20160623204239) do
     t.text     "updated_question_values"
     t.boolean  "is_extension",                       :default => false
     t.string   "changed_tag"
+    t.integer  "auto_assignment_log_id"
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"

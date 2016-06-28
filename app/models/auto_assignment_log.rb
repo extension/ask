@@ -5,27 +5,24 @@
 # see LICENSE file
 
 class AutoAssignmentLog < ActiveRecord::Base
-  serialize :pool
+  serialize :user_pool
   belongs_to :question
   belongs_to :user
   belongs_to :group
+  belongs_to :question_location, :foreign_key => "question_location_id", :class_name => "Location"
+  belongs_to :question_county, :foreign_key => "question_county_id", :class_name => "County"
+
 
 
   # auto assignment constants
   LOCATION_MATCH_GROUP_IGNORES_COUNTY = 101
-  # reason_assigned = "The question location (#{self.location.name}) matched the member's expertise location. Note: This group ignores counties when automatically assigning questions."
   COUNTY_MATCH = 102
-  # reason_assigned = "You chose to accept questions based on location (#{self.county.name})"
   LOCATION_MATCH_ALL_COUNTY = 103
-  # reason_assigned = "You chose to accept questions based on location (all counties in #{self.location.name})"
   ANYWHERE = 104
-  # reason_assigned = "You chose to accept questions from #{group.name} group"
   LEADER = 105
-  # reason_assigned = "You are a group leader"
   WRANGLER_HANDOFF_OUTSIDE_LOCATION = 201
   WRANGLER_HANDOFF_EMPTY_GROUP = 202
   WRANGLER_HANDOFF_NO_MATCHES = 203
-
   WRANGLER_COUNTY_MATCH = 210
   WRANGLER_LOCATION_MATCH = 211
   WRANGLER_ANYWHERE = 212
@@ -33,11 +30,60 @@ class AutoAssignmentLog < ActiveRecord::Base
   # doh!
   FAILURE = 13
 
+  def auto_assignment_reason
+    case assignment_code
+    when LOCATION_MATCH_GROUP_IGNORES_COUNTY
+      "The question location (#{self.question_location.name}) matched the your expertise location. Note: This group ignores counties when automatically assigning questions."
+    when COUNTY_MATCH
+      "You chose to accept questions based on county and location (#{self.question_county.name}, #{self.question_location.name})."
+    when LOCATION_MATCH_ALL_COUNTY
+      "You chose to accept questions based on location (all counties in #{self.question_location.name})."
+    when ANYWHERE
+      "You chose to accept questions from any location, and no specific location matched for this question."
+    when LEADER
+      "You are a group leader, and no other group members were available that accept automatic assignments"
+    when WRANGLER_COUNTY_MATCH
+      wrangler_assignment_reason + " You are a question wrangler matching the question county and location (#{self.question_county.name}, #{self.question_location.name})."
+    when WRANGLER_LOCATION_MATCH
+      wrangler_assignment_reason + " You are a question wrangler matching the question location (#{self.question_location.name})."
+    when WRANGLER_ANYWHERE
+      wrangler_assignment_reason + " You are a question wrangler accepting questions from any location and no specific location matched for this question."
+    when FAILURE
+      "Unable to find an automatic assignee for this question"
+    else
+      ''
+    end
+  end
+
+  def wrangler_assignment_reason
+    case wrangler_assignment_code
+    when WRANGLER_HANDOFF_EMPTY_GROUP
+      "No present assignees were available in #{self.group.name}."
+    when WRANGLER_HANDOFF_NO_MATCHES
+      "No assignee matches were found in #{self.group.name}."
+    else
+      ""
+    end
+  end
+
+
 
   def self.log_assignment(log_values)
-    user_pool = log_values[:user_pool].sort { |a, b| a.open_question_count <=> b.open_question_count }
-    pool_floor = user_pool[0].open_question_count
-    self.create(question: log_values[:question], user: log_values[:user], group: log_values[:group], pool_floor: pool_floor, reason: log_values[:reason], pool: saved_pool )
+    question = log_values[:question]
+    group = log_values[:group]
+    user_pool = log_values[:user_pool]
+    pool_floor =
+    self.create(question: question,
+                question_location_id: question.location_id,
+                question_county_id: question.county_id,
+                user: log_values[:user],
+                group: log_values[:group],
+                group_member_count: group.members.count,
+                group_present_count: group.members.not_away.count
+                pool_floor: pool_floor,
+                assignment_code: log_values[:assignment_code],
+                assignee_tests: log_values[:assignee_tests],
+                user_pool: user_pool )
   end
 
   def self.mapped_user_pool(user_pool)
