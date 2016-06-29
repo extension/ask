@@ -44,7 +44,6 @@ class ResponsesController < ApplicationController
                              submitter_comment: response)
         else
           question.assign_to_question_wrangler(current_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
-          # TODO assign to wrangler
         end
       elsif submitter_reopen
         question.assign_to(assignee: question.assignee,
