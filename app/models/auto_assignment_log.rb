@@ -23,6 +23,8 @@ class AutoAssignmentLog < ActiveRecord::Base
   WRANGLER_HANDOFF_OUTSIDE_LOCATION = 201
   WRANGLER_HANDOFF_EMPTY_GROUP = 202
   WRANGLER_HANDOFF_NO_MATCHES = 203
+  WRANGLER_HANDOFF_MANUAL = 204
+  WRANGLER_HANDOFF_NO_LEADERS = 205
   WRANGLER_COUNTY_MATCH = 210
   WRANGLER_LOCATION_MATCH = 211
   WRANGLER_ANYWHERE = 212
@@ -61,6 +63,10 @@ class AutoAssignmentLog < ActiveRecord::Base
       "No present assignees were available in #{self.group.name}."
     when WRANGLER_HANDOFF_NO_MATCHES
       "No assignee matches were found in #{self.group.name}."
+    when WRANGLER_HANDOFF_MANUAL
+      "Previous assigneed handed off to a question wrangler."
+    when WRANGLER_HANDOFF_NO_LEADERS
+      "No group leaders were found in #{self.group.name}"
     else
       ""
     end

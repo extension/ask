@@ -322,12 +322,16 @@ class Expert::QuestionsController < ApplicationController
 
     params[:assign_comment].present? ? assign_comment = params[:assign_comment] : assign_comment = nil
 
-    @question.assign_to(user, current_user, assign_comment)
+    @question.assign_to(assignee: user, assigned_by: current_user, comment: assign_comment)
+
     # re-open the question if it's reassigned after resolution
     if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
       @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
       QuestionEvent.log_reopen(@question, user, current_user, assign_comment)
     end
+
+
+
 
     flash[:notice] = "Question successfully reassigned!"
 
@@ -384,7 +388,7 @@ class Expert::QuestionsController < ApplicationController
     @question = Question.find_by_id(params[:id])
     @original_group = @question.original_group
     if !@question.assignee || @question.assignee.id != current_user.id
-      @question.assign_to(current_user, current_user, "Clicked \"I'm working on this\"")
+      @question.assign_to(assignee: current_user, assigned_by: current_user, comment: "Clicked \"I'm working on this\"")
     else
       QuestionEvent.log_working_on(@question, current_user)
     end
@@ -429,7 +433,7 @@ class Expert::QuestionsController < ApplicationController
       end
 
       if (current_user != @question.assignee)
-        @question.assign_to(current_user, current_user, nil, false, nil, true)
+        @question.assign_to(assignee: current_user, assigned_by: current_user, resolving_self_assignment: true)
       end
 
       @related_question ? contributing_question = @related_question : contributing_question = nil
@@ -455,7 +459,7 @@ class Expert::QuestionsController < ApplicationController
       if request.post?
         if (message = params[:wrangle_reason]).present?
           params[:wrangle_reason].present? ? wrangle_reason = params[:wrangle_reason] : wrangle_reason = nil
-          recipient = @question.assign_to_question_wrangler(current_user, wrangle_reason)
+          recipient = @question.assign_to_question_wrangler(current_user, wrangle_reason, AutoAssignmentLog::WRANGLER_HANDOFF_MANUAL)
           # re-open the question if it's reassigned after resolution
           if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
             @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)

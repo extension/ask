@@ -958,11 +958,11 @@ class Question < ActiveRecord::Base
   end
 
   # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by, comment)
+  def assign_to_question_wrangler(assigned_by, comment, wrangler_assignment_code)
     exclude_assignees = (self.assignee.present? ? [self.assignee] : nil)
-    assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, exclude_assignees))
-    assign_to(assignee, assigned_by, comment, false, nil, false, true)
-    self.save
+    results = self.find_question_wrangler(exclude_assignees)
+    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: self.assigned_group, wrangler_assignment_code: wrangler_assignment_code))
+    assign_to(assignee: results[:assignee], assigned_by: assigned_by, comment: comment, is_wrangler_handoff: true)
     return assignee
   end
 

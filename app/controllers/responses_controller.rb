@@ -26,35 +26,34 @@ class ResponsesController < ApplicationController
       # the status is submitted, so the expert has not responded to the response yet.
       if question.status_state != Question::STATUS_SUBMITTED
         question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
-        QuestionEvent.log_public_response(question, submitter.id)
-        # if the previous resolver of the question is marked as away, then look to see if we can assign it to the question's group leader.
-        # if not, then assign to a question wrangler
-        if question.assignee.away == true
-          assigned_group = question.assigned_group
-          if assigned_group.present? && assigned_group.leaders.not_away.length > 0
-            assignee = question.pick_user_from_list(assigned_group.leaders.not_away)
-          else
-            assignee = question.pick_user_from_list(Group.get_wrangler_assignees(question.location, question.county))
-          end
-          comment = Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT
-        else
-          assignee = question.assignee
-          comment = Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT
-        end
-
         QuestionEvent.log_reopen(question, assignee, User.system_user, comment)
-        question.assign_to(assignee, User.system_user, comment, true, response)
+        submitter_reopen = true
       else
-        QuestionEvent.log_public_response(question, submitter.id)
-        if question.assignee.present? && question.assignee.away == true
-          assigned_group = question.assigned_group
-          if assigned_group.present? && assigned_group.leaders.not_away.length > 0
-            assignee = question.pick_user_from_list(assigned_group.leaders.not_away)
-          else
-            assignee = question.pick_user_from_list(Group.get_wrangler_assignees(question.location, question.county))
-          end
-          question.assign_to(assignee, User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, false, response)
+        submitter_reopen = false
+      end
+
+      QuestionEvent.log_public_response(question, submitter.id)
+      # away check, whether this is a reopen or not
+      if(question.assignee.present? and question.assignee.away?)
+        if assigned_group.present? && assigned_group.leaders.not_away.length > 0
+          assignee = User.pick_assignee_from_pool(assigned_group.leaders.not_away)
+          question.assign_to(assignee: assignee,
+                             assigned_by: User.system_user,
+                             comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT,
+                             submitter_reopen: submitter_reopen,
+                             submitter_comment: response)
+        else
+          question.assign_to_question_wrangler(current_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
+          # TODO assign to wrangler
         end
+      elsif submitter_reopen
+        question.assign_to(assignee: question.assignee,
+                           assigned_by: User.system_user,
+                           comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT,
+                           submitter_reopen: true,
+                           submitter_comment: response)
+      else
+        # nothing else
       end
     else
       return record_not_found
