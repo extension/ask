@@ -47,7 +47,7 @@ class Download < ActiveRecord::Base
     if(!Settings.sidekiq_enabled)
       self.dump_to_file
     else
-      self.class.sidekiq_delay_for(5.seconds).delayed_dump_to_file(self.id)
+      self.class.delay_for(5.seconds).delayed_dump_to_file(self.id)
     end
   end
 

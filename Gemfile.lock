@@ -70,14 +70,8 @@ GEM
     coffee-script-source (1.4.0)
     connection_pool (2.0.0)
     csspool (3.0.2)
-    daemons (1.1.9)
     dalli (2.5.0)
     debug_inspector (0.0.2)
-    delayed_job (3.0.4)
-      activesupport (~> 3.0)
-    delayed_job_active_record (0.3.3)
-      activerecord (>= 2.1.0, < 4)
-      delayed_job (~> 3.0)
     demoji (0.0.5)
     devise (1.5.4)
       bcrypt-ruby (~> 3.0)
@@ -320,10 +314,7 @@ DEPENDENCIES
   capistrano (~> 2.15)
   coffee-rails (~> 3.2.2)
   csspool
-  daemons
   dalli
-  delayed_job
-  delayed_job_active_record
   demoji
   devise (~> 1.5.1)
   diffy
