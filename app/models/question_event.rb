@@ -43,6 +43,7 @@ class QuestionEvent < ActiveRecord::Base
   ADDED_TAG = 23
   DELETED_TAG = 24
   PASSED_TO_WRANGLER = 25
+  AUTO_ASSIGNED_TO = 26
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -66,7 +67,8 @@ class QuestionEvent < ActiveRecord::Base
                             CHANGED_FEATURED => 'changed featured by',
                             ADDED_TAG => 'tag added by',
                             DELETED_TAG => 'tag deleted by',
-                            PASSED_TO_WRANGLER => 'handed off to'
+                            PASSED_TO_WRANGLER => 'handed off to',
+                            AUTO_ASSIGNED_TO => 'automatically assigned to'
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, PASSED_TO_WRANGLER, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
@@ -113,20 +115,29 @@ class QuestionEvent < ActiveRecord::Base
                            :contributing_question => contributing_question})
   end
 
-  def self.log_assignment(question, recipient, initiated_by, assignment_comment)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :recipient_id => recipient.id,
+  def self.log_assignment(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => options[:initiated_by].id,
+      :recipient_id => options[:recipient].id,
       :event_state => ASSIGNED_TO,
-      :response => assignment_comment})
+      :response => options[:assignment_comment]})
   end
 
-  def self.log_wrangler_handoff(question, recipient, initiated_by, handoff_reason)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :recipient_id => recipient.id,
+  def self.log_auto_assignment(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => User.system_user_id,
+      :recipient_id => options[:recipient].id,
+      :event_state => AUTO_ASSIGNED_TO,
+      :response => options[:assignment_comment]})
+  end
+
+  def self.log_wrangler_handoff(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => options[:initiated_by].id,
+      :recipient_id => options[:recipient].id,
       :event_state => PASSED_TO_WRANGLER,
-      :response => handoff_reason})
+      :response => options[:handoff_reason],
+      :auto_assignment_log = options[:auto_assignment_log]})
   end
 
   def self.log_history_comment(question, initiated_by, history_comment)

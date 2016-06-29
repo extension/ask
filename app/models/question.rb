@@ -575,8 +575,9 @@ class Question < ActiveRecord::Base
       # find a wrangler
       results = find_question_wrangler(assignees_to_exclude)
       return { assignee: results[:assignee],
-               pool: results[:pool],
-               auto_assignment_code: results[:auto_assignment_code],
+               user_pool:  results[:pool],
+               wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP,
+               assignment_code: results[:assignment_code],
                assignee_tests: assignee_tests + results[:assignee_tests] }
     end
 
@@ -588,8 +589,8 @@ class Question < ActiveRecord::Base
         assignee = User.pick_assignee_from_pool(assignee_pool)
         if(assignee)
           return { assignee: assignee,
-                   pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                   auto_assignment_code: AutoAssignmentLog::LOCATION_MATCH_GROUP_IGNORES_COUNTY,
+                   user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_GROUP_IGNORES_COUNTY,
                    assignee_tests: assignee_tests }
         end
       else
@@ -600,8 +601,8 @@ class Question < ActiveRecord::Base
           assignee = User.pick_assignee_from_pool(assignee_pool)
           if(assignee)
             return { assignee: assignee,
-                     pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                     auto_assignment_code: AutoAssignmentLog::COUNTY_MATCH,
+                     user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                     assignment_code: AutoAssignmentLog::COUNTY_MATCH,
                      assignee_tests: assignee_tests }
           end
         end
@@ -616,8 +617,8 @@ class Question < ActiveRecord::Base
         assignee = User.pick_assignee_from_pool(assignee_pool)
         if(assignee)
           return { assignee: assignee,
-                   pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                   auto_assignment_code: AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY,
+                   user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY,
                    assignee_tests: assignee_tests }
         end
       end # no group override of county
@@ -629,8 +630,8 @@ class Question < ActiveRecord::Base
     assignee = User.pick_assignee_from_pool(assignee_pool)
     if(assignee)
       return { assignee: assignee,
-               pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-               auto_assignment_code: AutoAssignmentLog::ANYWHERE,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::ANYWHERE,
                assignee_tests: assignee_tests }
     end
 
@@ -644,8 +645,8 @@ class Question < ActiveRecord::Base
     assignee = User.pick_assignee_from_pool(assignee_pool)
     if(assignee)
       return { assignee: assignee,
-               pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-               auto_assignment_code: AutoAssignmentLog::LEADER,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::LEADER,
                assignee_tests: assignee_tests }
     end
 
@@ -655,8 +656,9 @@ class Question < ActiveRecord::Base
     results = find_question_wrangler(assignees_to_exclude)
 
     return { assignee: results[:assignee],
-             pool: results[:pool],
-             auto_assignment_code: results[:auto_assignment_code],
+             user_pool:  results[:pool],
+             wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES,
+             assignment_code: results[:assignment_code],
              assignee_tests: assignee_tests + results[:assignee_tests] }
 
   end
@@ -680,8 +682,8 @@ class Question < ActiveRecord::Base
       assignee = User.pick_assignee_from_pool(assignee_pool)
       if(assignee)
         return { assignee: assignee,
-                 pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 auto_assignment_code: AutoAssignmentLog::WRANGLER_COUNTY_MATCH,
+                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                 assignment_code: AutoAssignmentLog::WRANGLER_COUNTY_MATCH,
                  assignee_tests: assignee_tests }
       end
     end
@@ -693,8 +695,8 @@ class Question < ActiveRecord::Base
       assignee = User.pick_assignee_from_pool(assignee_pool)
       if(assignee)
         return { assignee: assignee,
-                 pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 auto_assignment_code: AutoAssignmentLog::WRANGLER_LOCATION_MATCH,
+                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                 assignment_code: AutoAssignmentLog::WRANGLER_LOCATION_MATCH,
                  assignee_tests: assignee_tests }
       end
     end
@@ -705,15 +707,15 @@ class Question < ActiveRecord::Base
     assignee = User.pick_assignee_from_pool(assignee_pool)
     if(assignee)
       return { assignee: assignee,
-               pool: AutoAssignmentLog.mapped_user_pool(assignee_pool),
-               auto_assignment_code: AutoAssignmentLog::WRANGLER_ANYWHERE,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::WRANGLER_ANYWHERE,
                assignee_tests: assignee_tests }
     end
 
     # uh-oh!
     return { assignee: nil,
-             pool: {},
-             auto_assignment_code: AutoAssignmentLog::FAILURE,
+             user_pool:  {},
+             assignment_code: AutoAssignmentLog::FAILURE,
              assignee_tests: assignee_tests }
 
   end
@@ -742,7 +744,7 @@ class Question < ActiveRecord::Base
     if(!Settings.sidekiq_enabled)
       self.find_group_assignee_and_assign
     else
-      self.class.sidekiq_delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
+      self.class.delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
     end
   end
 
@@ -755,9 +757,11 @@ class Question < ActiveRecord::Base
     end
 
     # find
-    result = self.find_group_assignee(assignees_to_exclude)
+    results = self.find_group_assignee(assignees_to_exclude)
+
     # log auto assignment
-    # TODO
+    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+
     # assign_to
     # TODO
 
@@ -785,43 +789,76 @@ class Question < ActiveRecord::Base
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.
-  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false, wrangler_handoff = false)
-    if(!user and !user.instance_of?(User))
-      raise AssignmentError, 'Invalid user provided to assign_to'
-    end
+  def assign_to(options = {})
+    current_assignee = self.assignee
+    assign_to = options[:assignee]
+    assigned_by = options[:assigned_by]
+    comment = options[:comment]
+    submitter_reopen = options[:submitter_reopen].present? ? options[:submitter_reopen] : false
+    resolving_self_assignment = options[:resolving_self_assignment].present? ? options[:resolving_self_assignment] : false
+    auto_assignment_log = options[:auto_assignment_log].present? ? options[:auto_assignment_log] : nil
+    is_auto_assignment = options[:is_auto_assignment].present ? options[:is_auto_assignment] : false
+    is_wrangler_handoff = options[:is_wrangler_handoff].present ? options[:is_wrangler_handoff] : false
 
+    # this doesn't appear to be used at all at the moment, leaving because
+    # I need to figure out how it was supposed to have been used - jayoung
+    submitter_comment = options[:submitter_comment].present? ? options[:submitter_comment] : false
 
-    # don't bother doing anything if this is assignment to the person already assigned unless it's
-    # a question that's been responded to by the public after it's been resolved that then gets
-    # assigned to whomever the question was last assigned to (unless that person is on vacation)
-    return true if self.assignee && user.id == assignee.id && public_reopen == false
+    # is this an assignment to the person already assigned - and not from being
+    # reopened by the submitter? do nothing.
+    return true if (current_assignee.present? and (assign_to.id ==current_assignee.id) and !submitter_reopen)
 
-    if(self.assignee.present? && (assigned_by != self.assignee))
+    # is this being reassigned?
+    if(current_assignee.present? and (assigned_by.id != current_assignee.id))
       is_reassign = true
-      previously_assigned_to = self.assignee
+      previously_assigned_to = current_assignee
     else
       is_reassign = false
     end
 
-    # update and log
+    # set the assigne - log it, and notify it
     self.update_attributes(:assignee_id => user.id, :working_on_this => nil)
 
     if wrangler_handoff
-      QuestionEvent.log_wrangler_handoff(self,user,assigned_by,comment)
+      QuestionEvent.log_wrangler_handoff(question: self,
+                                         recipient: assign_to,
+                                         initiated_by: assigned_by,
+                                         handoff_reason: comment,
+                                         auto_assignment_log: auto_assignment_log)
+    elsif is_auto_assignment
+      QuestionEvent.log_auto_assignment(question: self,
+                                        recipient: assign_to,
+                                        assignment_comment: comment,
+                                        auto_assignment_log: auto_assignment_log)
     else
-      QuestionEvent.log_assignment(self,user,assigned_by,comment)
+      QuestionEvent.log_assignment(question: self,
+                                   recipient: assign_to,
+                                   initiated_by: assigned_by,
+                                   assignment_comment: comment)
     end
 
-    # if this is being assigned to an expert who is resolving the question, do not notify that expert, the question will be resolved
-    if !resolving_assign
-      Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
+    # assignment notification
+    if !resolving_self_assignment
+      if(!previously_assigned_to.nil? and previously_assigned_to != self.current_resolver )
+        Notification.create(notifiable: self,
+                            created_by: User.system_user_id,
+                            recipient_id: self.assignee_id,
+                            notification_type: Notification::AAE_ASSIGNMENT,
+                            delivery_time: 1.minute.from_now )
+      end
     end
+
+    # reassignment notification
+    if(is_reassign and !submitter_reopen)
 
     # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded)
     if(is_reassign && public_reopen == false)
-      Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+      Notification.create(notifiable: self,
+                          created_by: User.system_user_id,
+                          recipient_id: previously_assigned_to.id,
+                          notification_type: Notification::AAE_REASSIGNMENT,
+                          delivery_time: 1.minute.from_now )
     end
-
   end
 
   # Assigns the question to the group, logs the assignment, and sends an email
