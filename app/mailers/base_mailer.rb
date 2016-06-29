@@ -12,15 +12,6 @@ class BaseMailer < ActionMailer::Base
   helper_method :ssl_root_url, :ssl_webmail_logo, :is_demo?
 
 
-  def save_sent_email_for_recipient(email,recipient,options = {})
-    if(recipient.is_a?(Person))
-      create_options = {person: recipient, markup: email.body.to_s}
-    elsif(recipient.is_a?(String))
-      create_options = {email: recipient, markup: email.body.to_s}
-    end
-    create_options.merge!({notification: options[:notification]}) if(!options[:notification].blank?)
-    SentEmail.create(create_options)
-  end
 
   def ssl_root_url
     if(Settings.app_location != 'localdev')

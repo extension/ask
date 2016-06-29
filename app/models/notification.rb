@@ -79,7 +79,7 @@ class Notification < ActiveRecord::Base
       self.delivery_time = Time.now
     end
   end
-  
+
   def self.code_to_constant_string(code)
     constantslist = self.constants
     constantslist.each do |c|
@@ -91,11 +91,6 @@ class Notification < ActiveRecord::Base
 
     # if we got here?  return nil
     return nil
-  end
-
-  def queue_delayed_notifications
-    delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
-    self.update_attribute(:delayed_job_id, delayed_job.id)
   end
 
   def queue_notification
@@ -127,63 +122,6 @@ class Notification < ActiveRecord::Base
       end
     else
       self.update_attributes({results: "ERROR! No method for this notification type"})
-    end
-  end
-
-  # really needs to change to be a reflection of some kind
-  def process
-
-    case self.notification_type
-    when GROUP_USER_JOIN
-      group_user_join
-    when GROUP_USER_LEFT
-      group_user_left
-    when GROUP_LEADER_JOIN
-      group_leader_join
-    when GROUP_LEADER_LEFT
-      group_leader_left
-    when AAE_ASSIGNMENT
-      aae_assignment
-    when AAE_REASSIGNMENT
-      aae_reassignment
-    when AAE_DAILY_SUMMARY
-      aae_daily_summary
-    when AAE_PUBLIC_EDIT
-      aae_public_edit
-    when AAE_PUBLIC_RESPONSE
-      aae_public_response
-    when AAE_REJECT
-      aae_reject
-    when AAE_INTERNAL_COMMENT
-      aae_internal_comment
-    when AAE_ASSIGNMENT_GROUP
-      aae_assignment_group
-    when AAE_PUBLIC_EXPERT_RESPONSE
-      aae_public_expert_response
-    when AAE_PUBLIC_EVALUATION_REQUEST
-      aae_public_evaluation_request
-    when AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT
-      aae_public_submission_acknowledgement
-    when AAE_QUESTION_ACTIVITY
-      aae_question_activity
-    when AAE_EXPERT_TAG_EDIT
-      aae_expert_tag_edit
-    when AAE_EXPERT_VACATION_EDIT
-      aae_expert_vacation_edit
-    when AAE_EXPERT_LOCATION_EDIT
-      aae_expert_location_edit
-    when AAE_EXPERT_HANDLING_REMINDER
-      aae_expert_handling_reminder
-    when AAE_EXPERT_RESPONSE_EDIT
-      aae_expert_response_edit
-    when AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER
-      aae_expert_response_edit_to_submitter
-    when AAE_DATA_DOWNLOAD_AVAILABLE
-      aae_data_download_available
-    when AAE_EXPERT_AWAY_REMINDER
-      aae_expert_away_reminder
-    else
-      # nothing
     end
   end
 
