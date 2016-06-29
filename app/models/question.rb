@@ -763,8 +763,11 @@ class Question < ActiveRecord::Base
     log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
 
     # assign_to
-    # TODO
-
+    assign_to(assignee: results[:assignee],
+              assigned_by: system_user,
+              comment: "Reason assigned: " + log.auto_assignment_reason,
+              auto_assignment_log: log)
+              
   end
 
   def self.delayed_find_group_assignee_and_assign(question_id)
