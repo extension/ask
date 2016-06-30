@@ -753,7 +753,7 @@ class Question < ActiveRecord::Base
   def find_group_assignee_and_assign(assignees_to_exclude = nil)
     system_user = User.system_user
     group = self.assigned_group
-    if group.individual_assignment == false
+    if(!group.individual_assignment?)
       QuestionEvent.log_group_assignment(self, group, system_user, nil)
       return true
     end
@@ -823,7 +823,10 @@ class Question < ActiveRecord::Base
 
     # set the assigne - log it, and notify it
     self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil)
-    # TODO update assignee stats
+
+    # update assignment stats for the assignee
+    assign_to.update_column(:open_question_count, assign_to.open_questions.count)
+    assign_to.update_column(:last_question_assigned_at, Time.zone.now)
 
     if is_wrangler_handoff
       QuestionEvent.log_wrangler_handoff(question: self,
@@ -892,15 +895,18 @@ class Question < ActiveRecord::Base
 
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change,
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
-    if group.individual_assignment == true
-      # TODO fix this!
-      # auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
+    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
+    if group.individual_assignment?
+      if(!Settings.sidekiq_enabled)
+        self.find_group_assignee_and_assign
+      else
+        self.class.delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
+      end
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
       end
     end
-    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
   end
 
   def change_group(group, changed_by)

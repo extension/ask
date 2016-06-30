@@ -104,6 +104,12 @@ class QuestionEvent < ActiveRecord::Base
 
   # filters
   after_create :create_question_event_notification
+  after_create :update_initiator_last_touched
+
+  def update_initiator_last_touched
+    self.initator.update_column(:last_question_touched_at, self.created_at)
+  end
+
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
