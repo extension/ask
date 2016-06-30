@@ -137,7 +137,7 @@ class QuestionEvent < ActiveRecord::Base
       :recipient_id => options[:recipient].id,
       :event_state => PASSED_TO_WRANGLER,
       :response => options[:handoff_reason],
-      :auto_assignment_log = options[:auto_assignment_log]})
+      :auto_assignment_log => options[:auto_assignment_log]})
   end
 
   def self.log_history_comment(question, initiated_by, history_comment)

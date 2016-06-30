@@ -732,6 +732,8 @@ class Question < ActiveRecord::Base
   end
 
   def queue_initial_assignment
+    group = self.assigned_group
+
     if(!group.will_accept_question_location(self))
       reason = <<-END_TEXT.gsub(/\s+/, " ").strip
       The assigned group for this question #{group.name} does not accept
@@ -767,7 +769,7 @@ class Question < ActiveRecord::Base
               assigned_by: system_user,
               comment: "Reason assigned: " + log.auto_assignment_reason,
               auto_assignment_log: log)
-              
+
   end
 
   def self.delayed_find_group_assignee_and_assign(question_id)
@@ -800,8 +802,8 @@ class Question < ActiveRecord::Base
     submitter_reopen = options[:submitter_reopen].present? ? options[:submitter_reopen] : false
     resolving_self_assignment = options[:resolving_self_assignment].present? ? options[:resolving_self_assignment] : false
     auto_assignment_log = options[:auto_assignment_log].present? ? options[:auto_assignment_log] : nil
-    is_auto_assignment = options[:is_auto_assignment].present ? options[:is_auto_assignment] : false
-    is_wrangler_handoff = options[:is_wrangler_handoff].present ? options[:is_wrangler_handoff] : false
+    is_auto_assignment = options[:is_auto_assignment].present? ? options[:is_auto_assignment] : false
+    is_wrangler_handoff = options[:is_wrangler_handoff].present? ? options[:is_wrangler_handoff] : false
 
     # this doesn't appear to be used at all at the moment, leaving because
     # I need to figure out how it was supposed to have been used - jayoung
@@ -820,9 +822,10 @@ class Question < ActiveRecord::Base
     end
 
     # set the assigne - log it, and notify it
-    self.update_attributes(:assignee_id => user.id, :working_on_this => nil)
+    self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil)
+    # TODO update assignee stats
 
-    if wrangler_handoff
+    if is_wrangler_handoff
       QuestionEvent.log_wrangler_handoff(question: self,
                                          recipient: assign_to,
                                          initiated_by: assigned_by,
@@ -842,7 +845,7 @@ class Question < ActiveRecord::Base
 
     # assignment notification
     if !resolving_self_assignment
-      if(!previously_assigned_to.nil? and previously_assigned_to != self.current_resolver )
+      if(self.assignee_id != self.current_resolver_id )
         Notification.create(notifiable: self,
                             created_by: User.system_user_id,
                             recipient_id: self.assignee_id,
@@ -851,17 +854,15 @@ class Question < ActiveRecord::Base
       end
     end
 
-    # reassignment notification
-    if(is_reassign and !submitter_reopen)
-
     # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded)
-    if(is_reassign && public_reopen == false)
+    if(is_reassign and !submitter_reopen)
       Notification.create(notifiable: self,
                           created_by: User.system_user_id,
                           recipient_id: previously_assigned_to.id,
                           notification_type: Notification::AAE_REASSIGNMENT,
                           delivery_time: 1.minute.from_now )
     end
+
   end
 
   # Assigns the question to the group, logs the assignment, and sends an email
@@ -892,7 +893,8 @@ class Question < ActiveRecord::Base
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change,
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     if group.individual_assignment == true
-      auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
+      # TODO fix this!
+      # auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )

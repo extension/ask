@@ -175,8 +175,8 @@ class Group < ActiveRecord::Base
     AUSTRALIAN_GROUPS.include?(self.id)
   end
 
-  def will_accept_question_location?(question)
-    (group.assignment_outside_locations or group.expertise_location_ids.include?(question.location_id))
+  def will_accept_question_location(question)
+    (self.assignment_outside_locations or self.expertise_location_ids.include?(question.location_id))
   end
 
 
