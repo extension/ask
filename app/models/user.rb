@@ -164,6 +164,14 @@ class User < ActiveRecord::Base
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
 
+  def is_systems_account?
+    SYSTEMS_USERS.include?(self.id)
+  end
+
+  def signin_allowed?
+    !self.is_blocked? and !self.retired? and !is_systems_account?
+  end
+  
   def self.by_question_event_count(event_state,options = {})
     with_scope do
       (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
