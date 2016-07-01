@@ -253,7 +253,7 @@ class User < ActiveRecord::Base
   end
 
   def previously_assigned(question)
-    find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
+    find_question = QuestionEvent.where('question_id = ?', question.id).where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id)
     !find_question.blank?
   end
 
@@ -533,7 +533,7 @@ class User < ActiveRecord::Base
   # reporting
 
   def earliest_assigned_at
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).minimum(:created_at)
   end
 
   def earliest_touched_at
@@ -541,18 +541,18 @@ class User < ActiveRecord::Base
   end
 
   def assigned_count_by_year
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
   end
 
   def assigned_count_by_year_month
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
   end
 
   def assigned_list_for_year_month(year_month)
     year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     Question.select("DISTINCT(questions.id), questions.*")
     .joins(:question_events)
-    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})")
     .where("question_events.recipient_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
