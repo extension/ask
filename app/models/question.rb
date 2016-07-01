@@ -768,6 +768,7 @@ class Question < ActiveRecord::Base
     assign_to(assignee: results[:assignee],
               assigned_by: system_user,
               comment: "Reason assigned: " + log.auto_assignment_reason,
+              is_auto_assignment: true,
               auto_assignment_log: log)
 
   end
