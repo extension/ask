@@ -32,6 +32,19 @@ class AutoAssignmentLog < ActiveRecord::Base
   # doh!
   FAILURE = 13
 
+  def self.code_to_constant_string(code)
+    constantslist = self.constants
+    constantslist.each do |c|
+      value = self.const_get(c)
+      if(value.is_a?(Fixnum) and code == value)
+        return c.to_s.downcase
+      end
+    end
+
+    # if we got here?  return nil
+    return nil
+  end
+
   def auto_assignment_reason
     case assignment_code
     when LOCATION_MATCH_GROUP_IGNORES_COUNTY
