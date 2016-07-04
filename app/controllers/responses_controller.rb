@@ -26,7 +26,6 @@ class ResponsesController < ApplicationController
       # the status is submitted, so the expert has not responded to the response yet.
       if question.status_state != Question::STATUS_SUBMITTED
         question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
-        QuestionEvent.log_reopen(question, assignee, User.system_user, comment)
         submitter_reopen = true
       else
         submitter_reopen = false
@@ -43,14 +42,16 @@ class ResponsesController < ApplicationController
                              submitter_reopen: submitter_reopen,
                              submitter_comment: response)
         else
-          question.assign_to_question_wrangler(current_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
+          assignee = question.assign_to_question_wrangler(current_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
         end
+        QuestionEvent.log_reopen(question, assignee, User.system_user, comment) if submitter_reopen
       elsif submitter_reopen
         question.assign_to(assignee: question.assignee,
                            assigned_by: User.system_user,
                            comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT,
                            submitter_reopen: true,
                            submitter_comment: response)
+        QuestionEvent.log_reopen(question, question.assignee, User.system_user, comment)
       else
         # nothing else
       end
