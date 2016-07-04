@@ -68,10 +68,6 @@ class CronTasks < Thor
       puts "Cleaned up Mailer Caches more than 2 months old"
     end
 
-    def check_dj_queue
-    late_count = Delayed::Job.where("run_at < ?", Time.now).count
-    $stderr.puts "Check to see if delayed_job died. #{late_count} job(s) waiting to be sent. " if late_count > 0
-    end
 
     def flag_accounts_for_search_update
       User.needs_search_update.all.each do |u|
@@ -102,7 +98,6 @@ class CronTasks < Thor
     create_daily_handling_reminder_notification
     create_daily_away_reminder_notification
     clean_up_mailer_caches
-    check_dj_queue
   end
 
   desc "hourly", "All hourly cron tasks"

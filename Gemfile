@@ -55,11 +55,6 @@ gem 'omniauth-twitter'
 # oauth integration
 gem 'omniauth', "~> 1.0"
 
-# feed retrieval and parsing
-# force curb to 0.7.15 to avoid a constant warning
-gem "curb", "0.7.15"
-gem "feedzirra", "0.1.2"
-
 # pagination
 gem 'kaminari'
 
@@ -103,12 +98,13 @@ group :test, :development do
 end
 
 # sidekiq - must come before delayed job in the gemfile
-gem 'sidekiq', "~> 2.17"
+gem 'sidekiq', '< 4'
+gem 'sinatra'
 
 # delayed_job
-gem "delayed_job"
-gem 'delayed_job_active_record'
-gem "daemons"
+# gem "delayed_job"
+# gem 'delayed_job_active_record'
+# gem "daemons"
 
 # tropo - sms messages
 # gem "tropo-webapi-ruby"
@@ -142,7 +138,7 @@ group :development do
   gem 'powder'
   # rails3 compatible generators
   gem "rails3-generators"
-  gem 'capistrano'
+  gem 'capistrano', '~> 2.15'
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
@@ -153,11 +149,4 @@ group :development do
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'active_record_query_trace'
-end
-
-group :test do
-  # Pretty printed test output
-  gem 'turn', :require => false
-  # gem 'shoulda', '>= 3.0.0.beta'
-  gem 'factory_girl_rails'
 end

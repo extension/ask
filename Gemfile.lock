@@ -30,9 +30,8 @@ GEM
     activesupport (3.2.22.2)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    ansi (1.4.3)
     arel (3.0.3)
-    auto_strip_attributes (2.0.4)
+    auto_strip_attributes (2.0.6)
       activerecord (>= 3.0)
     bcrypt-ruby (3.0.1)
     better_errors (2.1.1)
@@ -47,12 +46,12 @@ GEM
       railties (>= 3.0)
     builder (3.0.4)
     callsite (0.0.11)
-    capatross (1.6.0)
+    capatross (1.6.1)
       capistrano (~> 2.11)
       grit (>= 2.4)
       rest-client (>= 1.6.7)
       thor (>= 0.16.0)
-    capistrano (2.15.5)
+    capistrano (2.15.8)
       highline
       net-scp (>= 1.0.0)
       net-sftp (>= 2.0.0)
@@ -71,15 +70,8 @@ GEM
     coffee-script-source (1.4.0)
     connection_pool (2.0.0)
     csspool (3.0.2)
-    curb (0.7.15)
-    daemons (1.1.9)
     dalli (2.5.0)
     debug_inspector (0.0.2)
-    delayed_job (3.0.4)
-      activesupport (~> 3.0)
-    delayed_job_active_record (0.3.3)
-      activerecord (>= 2.1.0, < 4)
-      delayed_job (~> 3.0)
     demoji (0.0.5)
     devise (1.5.4)
       bcrypt-ruby (~> 3.0)
@@ -87,26 +79,13 @@ GEM
       warden (~> 1.1)
     diff-lcs (1.2.5)
     diffy (2.1.3)
+    domain_name (0.5.20160310)
+      unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
-    factory_girl (4.1.0)
-      activesupport (>= 3.0.0)
-    factory_girl_rails (4.1.0)
-      factory_girl (~> 4.1.0)
-      railties (>= 3.0.0)
     faraday (0.8.4)
       multipart-post (~> 1.1)
-    feedzirra (0.1.2)
-      activesupport (>= 3.0.8)
-      builder (>= 2.1.2)
-      curb (~> 0.7.15)
-      i18n (>= 0.5.0)
-      loofah (~> 1.2.0)
-      nokogiri (>= 1.4.4)
-      rake (>= 0.9.2)
-      rdoc (~> 3.8)
-      sax-machine (~> 0.1.0)
     font-awesome-rails (4.0.3.1)
       railties (>= 3.2, < 5.0)
     geocoder (1.1.5)
@@ -120,6 +99,8 @@ GEM
     hike (1.2.3)
     honeybadger (2.5.3)
     htmlentities (4.3.1)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     httpauth (0.2.0)
     i18n (0.7.0)
     inline-style (0.5.2ex)
@@ -152,17 +133,18 @@ GEM
     method_source (0.8.1)
     mime-types (1.25.1)
     mini_portile (0.6.1)
-    multi_json (1.11.2)
+    multi_json (1.12.1)
     multipart-post (1.1.5)
     mysql2 (0.3.16)
     net-http-spy (0.2.1)
-    net-scp (1.1.2)
+    net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
-    net-ssh (2.8.0)
+    net-ssh (3.1.1)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
+    netrc (0.11.0)
     nokogiri (1.6.4.1)
       mini_portile (~> 0.6.0)
     oauth (0.4.7)
@@ -202,7 +184,7 @@ GEM
       cocaine (~> 0.4.0)
       mime-types
     polyglot (0.3.5)
-    posix-spawn (0.3.8)
+    posix-spawn (0.3.11)
     powder (0.3.0)
       thor (>= 0.11.5)
     pr_geohash (1.0.0)
@@ -225,6 +207,8 @@ GEM
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
+    rack-protection (1.5.3)
+      rack
     rack-robustness (1.1.0)
     rack-ssl (1.3.4)
       rack
@@ -256,8 +240,10 @@ GEM
     redis (3.0.7)
     redis-namespace (1.4.1)
       redis (~> 3.0.4)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rinku (1.7.2)
     rmagick (2.13.2)
     rsolr (1.0.10)
@@ -268,8 +254,6 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    sax-machine (0.1.0)
-      nokogiri (> 0.0.0)
     select2-rails (3.5.4)
       thor (~> 0.14)
     sidekiq (2.17.7)
@@ -278,6 +262,10 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    sinatra (1.4.6)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
     slop (3.3.3)
     sprockets (2.2.3)
       hike (~> 1.2)
@@ -301,13 +289,14 @@ GEM
     turbo-sprockets-rails3 (0.3.2)
       railties (> 3.2.8, < 4.0.0)
       sprockets (>= 2.0.0)
-    turn (0.9.6)
-      ansi
-    tzinfo (0.3.46)
+    tzinfo (0.3.49)
     uglifier (1.3.0)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
-    useragent (0.10.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
+    useragent (0.16.7)
     warden (1.2.1)
       rack (>= 1.0)
 
@@ -322,19 +311,13 @@ DEPENDENCIES
   bootstrap-sass (~> 3.1.1)
   bootstrap-wysihtml5-rails
   capatross
-  capistrano
+  capistrano (~> 2.15)
   coffee-rails (~> 3.2.2)
   csspool
-  curb (= 0.7.15)
-  daemons
   dalli
-  delayed_job
-  delayed_job_active_record
   demoji
   devise (~> 1.5.1)
   diffy
-  factory_girl_rails
-  feedzirra (= 0.1.2)
   font-awesome-rails
   geocoder
   geoip
@@ -371,14 +354,14 @@ DEPENDENCIES
   rmagick
   sass-rails (~> 3.2.4)
   select2-rails
-  sidekiq (~> 2.17)
+  sidekiq (< 4)
+  sinatra
   sunspot_rails
   sunspot_solr
   thor
   turbo-sprockets-rails3
-  turn
   uglifier (>= 1.0.3)
   useragent
 
 BUNDLED WITH
-   1.10.6
+   1.12.5

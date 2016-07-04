@@ -1,4 +1,9 @@
+require 'sidekiq/web'
+require 'admin_constraint'
+
 Aae::Application.routes.draw do
+  mount Sidekiq::Web => '/queues', :constraints => AdminConstraint.new
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

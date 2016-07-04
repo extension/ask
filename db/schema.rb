@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160330180547) do
+ActiveRecord::Schema.define(:version => 20160623204239) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -48,6 +48,22 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
 
   add_index "authmaps", ["authname", "source"], :name => "index_authmaps_on_authname_and_source", :unique => true
   add_index "authmaps", ["user_id"], :name => "index_authmaps_on_user_id"
+
+  create_table "auto_assignment_logs", :force => true do |t|
+    t.integer  "question_id"
+    t.integer  "assignee_id"
+    t.integer  "group_id"
+    t.integer  "question_location_id"
+    t.integer  "question_county_id"
+    t.integer  "pool_floor"
+    t.integer  "group_member_count"
+    t.integer  "group_present_count"
+    t.integer  "wrangler_assignment_code"
+    t.integer  "assignment_code"
+    t.text     "assignee_tests"
+    t.text     "user_pool",                :limit => 16777215
+    t.datetime "created_at",                                   :null => false
+  end
 
   create_table "comments", :force => true do |t|
     t.text     "content",                           :null => false
@@ -216,14 +232,11 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
   add_index "geo_names", ["feature_name", "state_abbreviation", "county"], :name => "name_state_county_ndx"
 
   create_table "group_connections", :force => true do |t|
-    t.integer  "user_id",                              :null => false
-    t.integer  "group_id",                             :null => false
-    t.string   "connection_type",                      :null => false
-    t.integer  "connection_code"
-    t.boolean  "send_notifications", :default => true
-    t.integer  "connected_by"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.integer  "user_id",         :null => false
+    t.integer  "group_id",        :null => false
+    t.string   "connection_type", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
   add_index "group_connections", ["connection_type"], :name => "idx_group_connections_on_connection_type"
@@ -337,10 +350,11 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
     t.boolean  "processed",                       :default => false, :null => false
     t.integer  "notification_type",                                  :null => false
     t.datetime "delivery_time",                                      :null => false
-    t.integer  "offset",                          :default => 0
     t.integer  "delayed_job_id"
     t.datetime "created_at",                                         :null => false
     t.datetime "updated_at",                                         :null => false
+    t.boolean  "process_on_create",               :default => false
+    t.text     "results"
   end
 
   create_table "old_evaluation_answers", :force => true do |t|
@@ -409,6 +423,7 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
     t.text     "updated_question_values"
     t.boolean  "is_extension",                       :default => false
     t.string   "changed_tag"
+    t.integer  "auto_assignment_log_id"
   end
 
   add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
@@ -593,47 +608,50 @@ ActiveRecord::Schema.define(:version => 20160330180547) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "kind",                                    :default => "",         :null => false
-    t.string   "login",                    :limit => 80
+    t.string   "kind",                                     :default => "",         :null => false
+    t.string   "login",                     :limit => 80
     t.string   "first_name"
     t.string   "last_name"
     t.string   "public_name"
     t.string   "email"
     t.string   "title"
     t.integer  "position_id"
-    t.integer  "location_id",                             :default => 0
-    t.integer  "county_id",                               :default => 0
-    t.boolean  "retired",                                 :default => false
-    t.boolean  "is_admin",                                :default => false
-    t.boolean  "auto_route",                              :default => true,       :null => false
+    t.integer  "location_id",                              :default => 0
+    t.integer  "county_id",                                :default => 0
+    t.boolean  "retired",                                  :default => false
+    t.boolean  "is_admin",                                 :default => false
+    t.boolean  "auto_route",                               :default => true,       :null => false
     t.string   "phone_number"
-    t.boolean  "away",                                    :default => false
+    t.boolean  "away",                                     :default => false
     t.string   "time_zone"
-    t.boolean  "is_question_wrangler",                    :default => false
+    t.boolean  "is_question_wrangler",                     :default => false
     t.datetime "vacated_aae_at"
-    t.boolean  "first_aae_away_reminder",                 :default => false
-    t.boolean  "second_aae_away_reminder",                :default => false
+    t.boolean  "first_aae_away_reminder",                  :default => false
+    t.boolean  "second_aae_away_reminder",                 :default => false
     t.text     "bio"
-    t.boolean  "is_blocked",                              :default => false,      :null => false
+    t.boolean  "is_blocked",                               :default => false,      :null => false
     t.text     "signature"
-    t.string   "routing_instructions",                    :default => "anywhere", :null => false
+    t.string   "routing_instructions",                     :default => "anywhere", :null => false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.string   "encrypted_password",       :limit => 128
+    t.string   "encrypted_password",        :limit => 128
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                           :default => 0
+    t.integer  "sign_in_count",                            :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                                                      :null => false
-    t.datetime "updated_at",                                                      :null => false
+    t.datetime "created_at",                                                       :null => false
+    t.datetime "updated_at",                                                       :null => false
     t.date     "last_active_at"
     t.boolean  "needs_search_update"
-    t.boolean  "has_invalid_email",                       :default => false
+    t.boolean  "has_invalid_email",                        :default => false
     t.string   "invalid_email"
+    t.integer  "open_question_count",                      :default => 0
+    t.datetime "last_question_touched_at"
+    t.datetime "last_question_assigned_at"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"

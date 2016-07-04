@@ -17,16 +17,6 @@ class Group < ActiveRecord::Base
   belongs_to :widget_county, :foreign_key => "widget_county_id", :class_name => "County"
 
   has_many :users, :through => :group_connections
-  has_many :validusers, :through => :group_connections, :source => :user, :conditions => "users.retired = 0"
-  has_many :joined, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0"
-  has_many :members, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'member' and users.retired = 0"
-  has_many :leaders, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'leader' and users.retired = 0"
-  has_many :assignees, :through => :group_connections, :source => :user, :conditions => "(group_connections.connection_type = 'member' OR group_connections.connection_type = 'leader') and users.retired = 0 and users.away = 0 and users.auto_route = 1"
-  # these are not relevant right now, but we might use some of this in the future
-  # has_many :invited, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'invited' and users.retired = 0"
-  # has_many :interest, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'interest' and users.retired = 0"
-  # has_many :interested, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type IN ('interest','wantstojoin','leader') and users.retired = 0"
-  # has_many :wantstojoin, :through => :group_connections, :source => :user, :conditions => "group_connections.connection_type = 'wantstojoin' and users.retired = 0"
 
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
@@ -129,6 +119,18 @@ class Group < ActiveRecord::Base
     (self.widget_fingerprint == BONNIE_PLANTS_GROUP)
   end
 
+  def joined
+    users.valid_users
+  end
+
+  def leaders
+    users.valid_users.where("group_connections.connection_type = ?",'leader')
+  end
+
+  def assignees
+    users.valid_users.not_away.auto_route
+  end
+
   def group_members_with_self_first(current_user, limit)
     group_members = self.joined.where("user_id != ?", current_user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit)
     if (current_user.leader_of_group(self) || current_user.member_of_group(self))
@@ -150,36 +152,7 @@ class Group < ActiveRecord::Base
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end
 
-  def self.get_wrangler_assignees(question_location = nil, question_county = nil, assignees_to_exclude = nil)
-    assignees = nil
-    wrangler_group = self.question_wrangler_group
 
-    if question_county.present?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.with_expertise_county(question_county.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.with_expertise_county(question_county.id)
-      end
-    end
-
-    if assignees.blank? && question_location.present?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.with_expertise_location(question_location.id).where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.with_expertise_location(question_location.id)
-      end
-    end
-
-    if assignees.blank?
-      if assignees_to_exclude.present?
-        assignees = wrangler_group.assignees.active.route_from_anywhere.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        assignees = wrangler_group.assignees.active.route_from_anywhere
-      end
-    end
-
-    return assignees
-  end
 
   def question_wrangler_group?
     self.id == QUESTION_WRANGLER_GROUP_ID
@@ -201,5 +174,10 @@ class Group < ActiveRecord::Base
   def is_australian?
     AUSTRALIAN_GROUPS.include?(self.id)
   end
+
+  def will_accept_question_location(question)
+    (self.assignment_outside_locations or self.expertise_location_ids.include?(question.location_id))
+  end
+
 
 end

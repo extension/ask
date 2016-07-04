@@ -5,11 +5,21 @@
 # see LICENSE file
 
 class Notification < ActiveRecord::Base
-  belongs_to :notifiable, :polymorphic => true
+  ## attributes
   serialize :additional_data
-  after_create :queue_delayed_notifications
+  serialize :results
+
+  ## validations
+
+  ## filters
+  before_create :set_delivery_time
+  after_create  :queue_notification
+
+
+  ## associations
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   belongs_to :recipient, :class_name => "User", :foreign_key => "recipient_id"
+  belongs_to :notifiable, :polymorphic => true
 
 
   ###############################
@@ -64,158 +74,150 @@ class Notification < ActiveRecord::Base
 
   ##########################################
 
-
-  # really needs to change to be a reflection of some kind
-  def process
-    return true if (!Settings.send_notifications)
-
-    case self.notification_type
-    when GROUP_USER_JOIN
-      process_group_user_join
-    when GROUP_USER_LEFT
-      process_group_user_left
-    when GROUP_LEADER_JOIN
-      process_group_leader_join
-    when GROUP_LEADER_LEFT
-      process_group_leader_left
-    when AAE_ASSIGNMENT
-      process_aae_assignment
-    when AAE_REASSIGNMENT
-      process_aae_reassignment
-    when AAE_DAILY_SUMMARY
-      process_aae_daily_summary
-    when AAE_PUBLIC_EDIT
-      process_aae_public_edit
-    when AAE_PUBLIC_RESPONSE
-      process_aae_public_response
-    when AAE_REJECT
-      process_aae_reject
-    when AAE_INTERNAL_COMMENT
-      process_aae_internal_comment
-    when AAE_ASSIGNMENT_GROUP
-      process_aae_assignment_group
-    when AAE_PUBLIC_EXPERT_RESPONSE
-      process_aae_public_expert_response
-    when AAE_PUBLIC_EVALUATION_REQUEST
-      process_aae_public_evaluation_request
-    when AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT
-      process_aae_public_submission_acknowledgement
-    when AAE_QUESTION_ACTIVITY
-      process_aae_question_activity
-    when AAE_EXPERT_TAG_EDIT
-      process_aae_expert_tag_edit
-    when AAE_EXPERT_VACATION_EDIT
-      process_aae_expert_vacation_edit
-    when AAE_EXPERT_LOCATION_EDIT
-      process_aae_expert_location_edit
-    when AAE_EXPERT_HANDLING_REMINDER
-      process_aae_expert_handling_reminder
-    when AAE_EXPERT_RESPONSE_EDIT
-      process_aae_expert_response_edit
-    when AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER
-      process_aae_expert_response_edit_to_submitter
-    when AAE_DATA_DOWNLOAD_AVAILABLE
-      process_aae_data_download_available
-    when AAE_EXPERT_AWAY_REMINDER
-      process_aae_expert_away_reminder
-    else
-      # nothing
+  def set_delivery_time
+    if(self.delivery_time.blank?)
+      self.delivery_time = Time.now
     end
   end
 
-  def process_group_user_join
+  def self.code_to_constant_string(code)
+    constantslist = self.constants
+    constantslist.each do |c|
+      value = self.const_get(c)
+      if(value.is_a?(Fixnum) and code == value)
+        return c.to_s.downcase
+      end
+    end
+
+    # if we got here?  return nil
+    return nil
+  end
+
+  def queue_notification
+    if(Settings.sidekiq_enabled and !self.process_on_create?)
+      self.class.delay_until(self.delivery_time).delayed_notify(self.id)
+    else
+      self.notify
+    end
+  end
+
+  def self.delayed_notify(record_id)
+    if(record = find_by_id(record_id))
+      record.notify
+    end
+  end
+
+
+  def notify
+    return true if (!Settings.send_notifications)
+
+    method_name = self.class.code_to_constant_string(self.notification_type)
+    methods = self.class.instance_methods.map{|m| m.to_s}
+    if(methods.include?(method_name))
+      begin
+        self.send(method_name)
+        self.update_attributes({processed: true})
+      rescue NotificationError => e
+        self.update_attributes({results: "ERROR! #{e.message}"})
+      end
+    else
+      self.update_attributes({results: "ERROR! No method for this notification type"})
+    end
+  end
+
+  def group_user_join
     self.notifiable.group.leaders.each{|leader| GroupMailer.group_user_join(user: leader, group: self.notifiable.group, new_member: self.notifiable.creator).deliver}
   end
 
-  def process_group_user_left
+  def group_user_left
     self.notifiable.group.leaders.each{|leader| GroupMailer.group_user_left(user: leader, group: self.notifiable.group, former_member: self.notifiable.creator).deliver}
   end
 
-  def process_group_leader_join
+  def group_leader_join
     self.notifiable.group.leaders.each{|leader| GroupMailer.group_leader_join(user: leader, group: self.notifiable.group, new_leader: self.notifiable.creator).deliver}
   end
 
-  def process_group_leader_left
+  def group_leader_left
     self.notifiable.group.leaders.each{|leader| GroupMailer.group_leader_left(user: leader, group: self.notifiable.group, former_leader: self.notifiable.creator).deliver}
   end
 
-  def process_aae_assignment
+  def aae_assignment
     InternalMailer.aae_assignment(user: self.notifiable.assignee, question: self.notifiable).deliver unless (self.notifiable.assignee.nil? || self.notifiable.assignee.email.nil?)
   end
 
-  def process_aae_reassignment
+  def aae_reassignment
     user = User.find(self.recipient_id)
     InternalMailer.aae_reassignment(user: user, question: self.notifiable).deliver unless (user.nil? || user.email.nil?)
   end
 
-  def process_aae_daily_summary
+  def aae_daily_summary
     User.not_retired.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or user.daily_summary_group_list.empty?}
   end
 
-  def process_aae_public_edit
+  def aae_public_edit
     InternalMailer.aae_public_edit(user: self.notifiable.recipient, question: self.notifiable.question).deliver unless (self.notifiable.recipient.nil? || self.notifiable.recipient.email.nil?)
   end
 
-  def process_aae_public_response
+  def aae_public_response
     InternalMailer.aae_public_response(user: self.notifiable.question.current_resolver, response: self.notifiable).deliver unless (self.notifiable.question.current_resolver.nil? || self.notifiable.question.current_resolver.email.nil?)
   end
 
-  def process_aae_internal_comment
+  def aae_internal_comment
     InternalMailer.aae_internal_comment(user: self.notifiable.question.assignee, question: self.notifiable.question, internal_comment_event: self.notifiable).deliver unless (self.notifiable.question.assignee.nil? || self.notifiable.question.assignee.email.nil?)
   end
 
-  def process_aae_assignment_group
+  def aae_assignment_group
     self.notifiable.assigned_group.incoming_notification_list.each{|user| InternalMailer.aae_assignment_group(user: user, question: self.notifiable).deliver unless user.email.nil? or self.notifiable.assignee == user }
   end
 
-  def process_aae_reject
+  def aae_reject
     InternalMailer.aae_reject(rejected_event: self.notifiable, user: self.notifiable.previous_handling_recipient).deliver unless (self.notifiable.previous_handling_recipient.nil? || (self.notifiable.initiator.id == self.notifiable.previous_handling_recipient.id))
   end
 
-  def process_aae_public_expert_response
+  def aae_public_expert_response
     PublicMailer.public_expert_response(user:self.notifiable.question.submitter, expert: self.notifiable.question.current_resolver, question: self.notifiable.question).deliver
   end
 
-  def process_aae_public_evaluation_request
+  def aae_public_evaluation_request
     PublicMailer.public_evaluation_request(user: self.notifiable.submitter, question: self.notifiable).deliver
     self.notifiable.update_attribute(:evaluation_sent,true)
   end
 
-  def process_aae_public_submission_acknowledgement
+  def aae_public_submission_acknowledgement
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
 
-  def process_aae_expert_response_edit
+  def aae_expert_response_edit
     recipient = User.find_by_id(self.recipient_id)
     InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
   end
 
-  def process_aae_expert_response_edit_to_submitter
+  def aae_expert_response_edit_to_submitter
     recipient = User.find_by_id(self.recipient_id)
     PublicMailer.expert_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless (recipient.blank? || recipient.email.blank?)
   end
 
-  def process_aae_question_activity
+  def aae_question_activity
     self.notifiable.question_activity_preference_list.each{|pref| InternalMailer.aae_question_activity(user: pref.prefable, question: self.notifiable).deliver unless (pref.prefable.email.nil? || pref.prefable.id == self.created_by)}
   end
 
-  def process_aae_expert_tag_edit
+  def aae_expert_tag_edit
     InternalMailer.aae_expert_tag_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
 
-  def process_aae_expert_vacation_edit
+  def aae_expert_vacation_edit
     InternalMailer.aae_expert_vacation_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
 
-  def process_aae_expert_location_edit
+  def aae_expert_location_edit
     InternalMailer.aae_expert_location_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
 
-  def process_aae_expert_handling_reminder
+  def aae_expert_handling_reminder
     Question.submitted.where("last_assigned_at < ?", 3.days.ago).each{|question| InternalMailer.aae_expert_handling_reminder(user: question.assignee, question: question).deliver unless (question.assignee.nil? || question.assignee.away?)}
   end
 
-  def process_aae_expert_away_reminder
+  def aae_expert_away_reminder
     #2 week reminder
     two_week_vacators = User.valid_users.exid_holder.where("DATE(vacated_aae_at) <= '#{2.weeks.ago.to_date.to_s(:db)}' AND
                 first_aae_away_reminder = false AND
@@ -237,12 +239,8 @@ class Notification < ActiveRecord::Base
     end
   end
 
-  def queue_delayed_notifications
-    delayed_job = Delayed::Job.enqueue(NotificationJob.new(self.id), {:priority => 0, :run_at => self.delivery_time})
-    self.update_attribute(:delayed_job_id, delayed_job.id)
-  end
 
-  def process_aae_data_download_available
+  def aae_data_download_available
      if(self.notifiable.notifylist)
       self.notifiable.notifylist.each do |id|
         if(person = User.find_by_id(id))

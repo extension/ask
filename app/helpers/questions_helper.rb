@@ -31,6 +31,14 @@ module QuestionsHelper
       reassign_msg = "<strong #{qw}>#{initiator_full_name}</strong> assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
       return reassign_msg.html_safe
+    when QuestionEvent::AUTO_ASSIGNED_TO
+      recipient_class = ""
+      if q_event.recipient.is_question_wrangler?
+        recipient_class = "class='qw'"
+      end
+      reassign_msg = "<strong #{qw}>#{initiator_full_name}</strong> auto assigned to <strong #{recipient_class}>#{link_to "#{q_event.recipient.name}", expert_user_path(q_event.recipient.id)}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
+      reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response
+      return reassign_msg.html_safe
     when QuestionEvent::ASSIGNED_TO_GROUP
       reassign_msg = "Assigned to group <strong>#{link_to "#{q_event.assigned_group.name}", expert_group_path(q_event.assigned_group.id)}</strong> by <strong #{qw}>#{initiator_full_name}</strong> <span>#{time_ago_in_words(q_event.created_at)} ago</span> <small>#{humane_date(q_event.created_at)}</small>"
       reassign_msg = reassign_msg + " <span class=\"comment\">#{q_event.response}</span>" if q_event.response

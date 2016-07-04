@@ -8,7 +8,8 @@ urlwriter_host: 'aae.dev'
 airbrake_api_key: 'notset'
 app_location: 'localdev'
 engineering_list: 'engineering@extension.org'
-auto_assign_incoming_questions: true
+email_bcc_address: 'systemsmirror@extension.org'
+email_from_address: 'aae-notify@extension.org'
 group_avatar_count: 3
 user_avatar_count: 2
 aae_escalation_delta: 24
