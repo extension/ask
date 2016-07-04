@@ -27,20 +27,14 @@ if(TRUE_VALUES.include?(ENV['MIGRATE']))
   after "deploy:update_code", "deploy:migrate"
   after "deploy", "deploy:web:enable"
 else
-  before "deploy", "delayed_job:stop"
   before "deploy", "sidekiq:stop"
   before "deploy", "deploy:checks:git_migrations"
   after "deploy:update_code", "deploy:link_and_copy_configs"
   after "deploy:update_code", "deploy:cleanup"
-  after "deploy", "delayed_job:start"
   after "deploy", "sidekiq:start"
 end
 
-# delayed job - stop when app is manually put into maintenance mode and when there are migrations to run
-before "deploy:web:disable", "delayed_job:stop"
-before "deploy:web:enable", "delayed_job:start"
-
-# ditto sidekiq
+# sidekiq - stop when app is manually put into maintenance mode and when there are migrations to run
 after "deploy:web:disable",   "sidekiq:stop"
 before "deploy:web:enable",   "sidekiq:start"
 
