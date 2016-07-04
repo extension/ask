@@ -34,6 +34,7 @@ class ResponsesController < ApplicationController
       QuestionEvent.log_public_response(question, submitter.id)
       # away check, whether this is a reopen or not
       if(question.assignee.present? and question.assignee.away?)
+        assigned_group = question.assigned_group
         if assigned_group.present? && assigned_group.leaders.not_away.length > 0
           assignee = User.pick_assignee_from_pool(assigned_group.leaders.not_away)
           question.assign_to(assignee: assignee,
