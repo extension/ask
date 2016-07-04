@@ -45,8 +45,8 @@
 
     Submitted  <abbr title="<%= humane_date(question.created_at) %>"><%= time_ago_in_words(question.created_at) %></abbr> ago.
 
-    <% if (question.created_at != question.last_question_assigned_at) && !question.last_question_assigned_at.nil? && !question.resolved_at? %>
-      Reassigned <%= time_ago_in_words(question.last_question_assigned_at) %> ago.
+    <% if (question.created_at != question.last_assigned_at) && !question.last_assigned_at.nil? && !question.resolved_at? %>
+      Reassigned <%= time_ago_in_words(question.last_assigned_at) %> ago.
     <% end %>
   </small>
 </p>
