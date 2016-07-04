@@ -48,7 +48,13 @@ class Group < ActiveRecord::Base
 
   scope :route_outside_locations, where(assignment_outside_locations: true)
 
-  scope :order_by_assignee_count, joins(:assignees).group('groups.id').order('COUNT(users.id) DESC')
+
+  scope :order_by_assignee_count, lambda {
+    joins(:users)
+    .where('users.retired = ?',false).where('users.is_blocked = ?',false).where("users.id NOT IN (#{User::SYSTEMS_USERS.join(',')})")
+    .where('users.away = ?',false).where('users.auto_route = ?',true)
+    .group('groups.id').order('COUNT(users.id) DESC') }
+
 
   scope :pattern_search, lambda {|searchterm, type = nil|
     # remove any leading * to avoid borking mysql

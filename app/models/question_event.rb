@@ -92,6 +92,7 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :previous_group, class_name: 'Group'
   belongs_to :changed_group, class_name: 'Group'
+  belongs_to :auto_assignment_log
 
   # scopes
   scope :latest, order("#{self.table_name}.created_at desc")
