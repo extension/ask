@@ -108,7 +108,7 @@ class QuestionEvent < ActiveRecord::Base
   after_create :update_initiator_last_touched
 
   def update_initiator_last_touched
-    self.initiator.update_column(:last_question_touched_at, self.created_at)
+    self.initiator.update_column(:last_question_touched_at, self.created_at) if self.initiated_by_id.present?
   end
 
 
