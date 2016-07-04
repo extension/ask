@@ -41,18 +41,18 @@ class ResponsesController < ApplicationController
                              assigned_by: User.system_user,
                              comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT,
                              submitter_reopen: submitter_reopen,
-                             submitter_comment: response)
+                             submitter_comment: response.body)
         else
           assignee = question.assign_to_question_wrangler(current_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
         end
-        QuestionEvent.log_reopen(question, assignee, User.system_user, comment) if submitter_reopen
+        QuestionEvent.log_reopen(question, assignee, User.system_user, response.body) if submitter_reopen
       elsif submitter_reopen
         question.assign_to(assignee: question.assignee,
                            assigned_by: User.system_user,
                            comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_COMMENT,
                            submitter_reopen: true,
-                           submitter_comment: response)
-        QuestionEvent.log_reopen(question, question.assignee, User.system_user, comment)
+                           submitter_comment: response.body)
+        QuestionEvent.log_reopen(question, question.assignee, User.system_user, response.body)
       else
         # nothing else
       end
