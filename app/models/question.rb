@@ -822,8 +822,8 @@ class Question < ActiveRecord::Base
       is_reassign = false
     end
 
-    # set the assigne - log it, and notify it
-    self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil)
+    # set the assignee - log it, and notify them
+    self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil, :last_assigned_at => Time.zone.now )
 
     # update assignment stats for the assignee
     assign_to.update_column(:open_question_count, assign_to.open_questions.count)
