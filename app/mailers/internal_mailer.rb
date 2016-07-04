@@ -10,7 +10,7 @@ class InternalMailer < BaseMailer
     @user = options[:user]
     @question = options[:question]
     @subject = "You have a new Ask an Expert question (##{@question.id})"
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "You have a new Ask an Expert question (##{@question.id})"
@@ -90,7 +90,7 @@ class InternalMailer < BaseMailer
     @user = options[:user]
     @question = options[:question]
     @subject = "Your Ask an Expert question was edited by the submitter (Question:#{@question.id})"
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "A Question Assigned to You Has Been Edited"
@@ -146,7 +146,7 @@ class InternalMailer < BaseMailer
     @response = options[:response]
     @question = @response.question
     @subject = "Your Ask an Expert question has a new response from the question submitter (Question:#{@question.id})"
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "New response to a question assigned to you"
@@ -204,7 +204,7 @@ class InternalMailer < BaseMailer
     @internal_comment = @internal_comment_event.response
     @subject = "Another expert has posted a comment to your Ask an Expert question (Question:#{@question.id})"
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @title = "New Note on a Question Assigned To You"
 
     if(!@user.email.blank?)
@@ -256,7 +256,7 @@ class InternalMailer < BaseMailer
     @user = options[:user]
     @question = options[:question]
     @subject = "New Ask an Expert activity on question #{@question.id}"
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @respond_by = @assigned_at + Settings.aae_escalation_delta.hours
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
     @title = "New Activity on a Question"
@@ -351,7 +351,7 @@ class InternalMailer < BaseMailer
   def aae_expert_handling_reminder(options = {})
     @user = options[:user]
     @question = options[:question]
-    @assigned_at = @user.time_for_user(@question.last_question_assigned_at)
+    @assigned_at = @user.time_for_user(@question.last_assigned_at)
     @subject = "Ask an Expert Handling Reminder: Question #{@question.id}"
     @title = "Handling Reminder: Question #{@question.id}"
 
