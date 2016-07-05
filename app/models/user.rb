@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
   scope :valid_users, ->{ not_retired.not_blocked.not_system }
   scope :not_away, ->{ where(away:false) }
   scope :auto_route, ->{ where(auto_route:true) }
+  scope :assignable, ->{ exid_holder.valid_users.not_away }
 
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   # special scope for returning an empty AR association
@@ -171,7 +172,7 @@ class User < ActiveRecord::Base
   def signin_allowed?
     !self.is_blocked? and !self.retired? and !is_systems_account?
   end
-  
+
   def self.by_question_event_count(event_state,options = {})
     with_scope do
       (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
