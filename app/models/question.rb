@@ -898,11 +898,7 @@ class Question < ActiveRecord::Base
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
     if group.individual_assignment?
-      if(!Settings.sidekiq_enabled)
-        self.find_group_assignee_and_assign
-      else
-        self.class.delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
-      end
+      self.find_group_assignee_and_assign(previously_assigned_user)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
