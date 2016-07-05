@@ -575,7 +575,7 @@ class Question < ActiveRecord::Base
       # find a wrangler
       results = find_question_wrangler(assignees_to_exclude)
       return { assignee: results[:assignee],
-               user_pool:  results[:pool],
+               user_pool:  results[:user_pool],
                wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP,
                assignment_code: results[:assignment_code],
                assignee_tests: assignee_tests + results[:assignee_tests] }
@@ -656,7 +656,7 @@ class Question < ActiveRecord::Base
     results = find_question_wrangler(assignees_to_exclude)
 
     return { assignee: results[:assignee],
-             user_pool:  results[:pool],
+             user_pool:  results[:user_pool],
              wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES,
              assignment_code: results[:assignment_code],
              assignee_tests: assignee_tests + results[:assignee_tests] }
