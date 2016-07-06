@@ -302,10 +302,6 @@ class User < ActiveRecord::Base
     return self.preferences.find(:first, conditions: {name: pref_name})
   end
 
-  def log_create_group(group)
-    GroupEvent.log_group_creation(group, self, self)
-  end
-
   def join_group(group, connection_type)
     group.connect_user_to_group(self, connection_type)
   end
