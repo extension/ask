@@ -1,11 +1,11 @@
-<% @page_title = raw("#{@question.title.gsub(/[[:space:]]/, ' ')}") %>
+<% @page_title = @question.title.html_safe %>
 <% @page_type = "article" %>
 <% @page_meta_description = "#{Question.html_to_text(@question.body.gsub(/[[:space:]]/, ' ')).truncate(140, separator: ' ')}" %>
 
 <div id="main" class="col-sm-8 col-md-8">
   <div itemscope itemtype="http://www.schema.org/Article">
 
-    <h1 class="article_title" itemprop="name"><%= format_text_for_display(@question.title) -%></h1>
+    <h1 class="article_title" itemprop="name"><%=  @question.title.html_safe -%></h1>
 
     <div id="question">
 
@@ -149,9 +149,9 @@
 
     <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
 	    <div id="submitter_followup">
-	      <p class="additional_response_toggle btn btn-primary btn-large">Post a response to the expert</p>
+	      <p class="additional_response_toggle btn btn-primary btn-lg">Post a response to the expert</p>
 	    </div>
-	    <div id="additional_response">
+	    <div id="additional_response" class="image-upload-wrapper">
 	      <h2>Post a Response to the Expert</h2>
 	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
           <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
@@ -160,10 +160,10 @@
 	        <p><em>You can upload .jpg .png or .gif.</em></p>
 
 	        <%= r_form.fields_for :images do |image_form| %>
-			      <p><%= image_form.file_field :attachment %></p>
+			      <p class="image-upload"><%= image_form.file_field :attachment %></p>
           <% end %>
 
-          <%= submit_tag "Post response", :class => 'btn btn-primary btn-large' %>
+          <%= submit_tag "Post response", :class => 'btn btn-primary btn-lg' %>
           <%= link_to_function "Cancel", "$('#additional_response').hide()" %>
         <% end %>
 	    </div>
@@ -226,7 +226,7 @@
   <aside>
     <h4 class="subhead_style">Related Questions</h4>
     <% @question.public_similar_questions.each do |question,score| %>
-      <p><%= link_to(format_text_for_display(question.title), question_path(question.id), :class => "muted_link") %></p>
+      <p><%= link_to(question.title.html_safe, question_path(question.id), :class => "muted_link") %></p>
     <% end %>
   </aside>
   <% end %>

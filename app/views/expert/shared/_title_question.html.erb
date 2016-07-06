@@ -6,7 +6,7 @@
 
   <div class="row">
 
-    <h3><%= link_to format_text_for_display(question.title), expert_question_path(question.id) %></h3>
+    <h3><%= link_to(question.title.html_safe, expert_question_path(question.id)) %></h3>
 
       <% if highlight_unanswered && (question.responses.size == 0) %>
         <h4><span class="needs_an_answer">Needs an answer</span></h4>

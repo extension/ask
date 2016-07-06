@@ -49,14 +49,12 @@
 
 
   <% if @group.widget_upload_capable? %>
-    <fieldset>
-      <p>
+    <fieldset class="image-upload-wrapper">
         <label>Image (optional)</label>
         <p><em>You can upload .jpg .png or .gif.</em></p>
         <%= f.fields_for :images do |image_form| %>
-          <%= image_form.file_field :attachment  %>
+          <p class="image-upload"><%= image_form.file_field :attachment  %></p>
         <% end %>
-      </p>
     </fieldset>
   <% end %>
 

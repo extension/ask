@@ -14,6 +14,10 @@ class QuestionEvent < ActiveRecord::Base
   serialize :updated_question_values
 
   # constants
+  # date of first QuestionEvent for default dates to avoid hitting db
+  FIRST_CONTACT = Date.parse('2006-10-10').to_datetime
+
+
   # #'s 3 and 4 were the old marked spam and marked non spam question events from darmok, these were
   # just pulled instead of renumbering all these so to not disturb the other status numbers being pulled over from the other sytem
   ASSIGNED_TO = 1
@@ -39,6 +43,7 @@ class QuestionEvent < ActiveRecord::Base
   ADDED_TAG = 23
   DELETED_TAG = 24
   PASSED_TO_WRANGLER = 25
+  AUTO_ASSIGNED_TO = 26
 
   EVENT_TO_TEXT_MAPPING = { ASSIGNED_TO => 'assigned to',
                             RESOLVED => 'resolved by',
@@ -62,7 +67,8 @@ class QuestionEvent < ActiveRecord::Base
                             CHANGED_FEATURED => 'changed featured by',
                             ADDED_TAG => 'tag added by',
                             DELETED_TAG => 'tag deleted by',
-                            PASSED_TO_WRANGLER => 'handed off to'
+                            PASSED_TO_WRANGLER => 'handed off to',
+                            AUTO_ASSIGNED_TO => 'automatically assigned to'
                           }
 
   HANDLING_EVENTS = [ASSIGNED_TO, PASSED_TO_WRANGLER, ASSIGNED_TO_GROUP, RESOLVED, REJECTED, NO_ANSWER, CLOSED]
@@ -86,6 +92,7 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :previous_group, class_name: 'Group'
   belongs_to :changed_group, class_name: 'Group'
+  belongs_to :auto_assignment_log
 
   # scopes
   scope :latest, order("#{self.table_name}.created_at desc")
@@ -98,6 +105,12 @@ class QuestionEvent < ActiveRecord::Base
 
   # filters
   after_create :create_question_event_notification
+  after_create :update_initiator_last_touched
+
+  def update_initiator_last_touched
+    self.initiator.update_column(:last_question_touched_at, self.created_at) if self.initiated_by_id.present?
+  end
+
 
   def self.log_resolution(question)
     question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
@@ -109,20 +122,29 @@ class QuestionEvent < ActiveRecord::Base
                            :contributing_question => contributing_question})
   end
 
-  def self.log_assignment(question, recipient, initiated_by, assignment_comment)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :recipient_id => recipient.id,
+  def self.log_assignment(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => options[:initiated_by].id,
+      :recipient_id => options[:recipient].id,
       :event_state => ASSIGNED_TO,
-      :response => assignment_comment})
+      :response => options[:assignment_comment]})
   end
 
-  def self.log_wrangler_handoff(question, recipient, initiated_by, handoff_reason)
-    return self.log_event({:question => question,
-      :initiated_by_id => initiated_by.id,
-      :recipient_id => recipient.id,
+  def self.log_auto_assignment(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => User.system_user_id,
+      :recipient_id => options[:recipient].id,
+      :event_state => AUTO_ASSIGNED_TO,
+      :response => options[:assignment_comment]})
+  end
+
+  def self.log_wrangler_handoff(options = {})
+    return self.log_event({:question => options[:question],
+      :initiated_by_id => options[:initiated_by].id,
+      :recipient_id => options[:recipient].id,
       :event_state => PASSED_TO_WRANGLER,
-      :response => handoff_reason})
+      :response => options[:handoff_reason],
+      :auto_assignment_log => options[:auto_assignment_log]})
   end
 
   def self.log_history_comment(question, initiated_by, history_comment)

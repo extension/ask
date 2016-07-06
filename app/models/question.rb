@@ -122,10 +122,9 @@ class Question < ActiveRecord::Base
   END_TEXT
 
   PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
-  This question has been assigned to you because a new comment has been
-  posted to an expert's response or open question who has marked aae
-  vacation status. Please reply using the link below or close the
-  question out if no reply is needed. Thank You.
+  This question has been assigned to you because the submitter posted a new
+  comment and the previously assigned expert is not available. Please reply
+  using the link below or close the question out if no reply is needed. Thank You.
   END_TEXT
 
   DECLINE_ANSWER = <<-END_TEXT.gsub(/\s+/, " ").strip
@@ -196,9 +195,9 @@ class Question < ActiveRecord::Base
   }
   scope :by_location, lambda {|location| {:conditions => {:location_id => location.id}}}
   scope :by_county, lambda {|county| {:conditions => {:county_id => county.id}}}
-  scope :answered, where(:status_state => STATUS_RESOLVED)
-  scope :submitted, where(:status_state => STATUS_SUBMITTED)
-  scope :not_rejected, lambda { where("status_state <> #{STATUS_REJECTED}") }
+  scope :answered, ->{ where(status_state: STATUS_RESOLVED) }
+  scope :submitted, ->{ where(status_state: STATUS_SUBMITTED) }
+  scope :not_rejected, ->{ where("status_state <> #{STATUS_REJECTED}") }
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
@@ -215,7 +214,7 @@ class Question < ActiveRecord::Base
 
   ## filters
   before_create :generate_fingerprint, :set_last_opened, :set_is_extension
-  after_create :check_spam, :auto_assign_by_preference, :notify_submitter, :send_global_widget_notifications, :index_me
+  after_create :reject_if_spam_or_duplicate, :queue_initial_assignment,  :index_me
   after_update :index_me
   after_save :update_data_cache
 
@@ -524,14 +523,7 @@ class Question < ActiveRecord::Base
 
   ## instance methods
 
-  # check for spam - given the process flow, not sure
-  # this is a candidate for delayed job
-  def check_spam
-    if self.spam?
-      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
-    end
-    true
-  end
+
 
   # for purposes of solr search
   def response_list
@@ -579,18 +571,10 @@ class Question < ActiveRecord::Base
     self.submitter.present? ? self.submitter.email : ''
   end
 
-  def auto_assign_by_preference
-    return true if self.spam?
-    if existing_question = Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
-      reject_msg = "This question is a duplicate of question ##{existing_question.id}"
-      self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
-      return
-    end
-
-    if Settings.auto_assign_incoming_questions
-      auto_assign
-    end
+  def check_for_duplicate
+    Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
   end
+
 
   def is_being_worked_on?
     if !self.working_on_this.nil?
@@ -605,9 +589,9 @@ class Question < ActiveRecord::Base
 
   def title
     if self[:title].present?
-      return self[:title]
+      return self[:title].gsub(/[[:space:]]/, ' ')
     else
-      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ')
+      return self.html_to_text(self[:body].squish).truncate(80, separator: ' ').gsub(/[[:space:]]/, ' ')
     end
   end
 
@@ -622,79 +606,235 @@ class Question < ActiveRecord::Base
   end
 
 
-  def auto_assign(assignees_to_exclude = nil)
-    assignee = nil
-    system_user = User.system_user
 
+  def find_group_assignee(assignees_to_exclude = nil)
+    assignee_tests = []
     group = self.assigned_group
-    if (group.assignment_outside_locations || group.expertise_locations.include?(self.location))
-      # if group individual assignment is not turned on for a group, then we log that it was assigned to the group.
-      # the group designation has already been taken care of with the saving of the question, and when we don't have an individual assignment, but a group designation,
-      # it is considered assigned to the group and not an individual.
-      if group.individual_assignment == false
-        QuestionEvent.log_group_assignment(self, group, system_user, nil)
-        return
-      end
 
-      if assignees_to_exclude.present?
-        group_assignees = group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-      else
-        group_assignees = group.assignees
-      end
-
-      if group_assignees.length > 0
-        if (group.ignore_county_routing == true) && self.location.present?
-          assignee = pick_user_from_list(group_assignees.with_expertise_location(self.location.id))
-          reason_assigned = "The question location (#{self.location.name}) matched the member's expertise location. Note: This group ignores counties when automatically assigning questions."
-        else
-          if self.county.present?
-            assignee = pick_user_from_list(group_assignees.with_expertise_county(self.county.id))
-            reason_assigned = "You chose to accept questions based on location (#{self.county.name})"
-          end
-          if !assignee && self.location.present?
-            assignee = pick_user_from_list(group_assignees.with_expertise_location_all_counties(self.location.id))
-            reason_assigned = "You chose to accept questions based on location (all counties in #{self.location.name})"
-          end
-        end
-
-        if !assignee
-          assignee = pick_user_from_list(group_assignees.active.route_from_anywhere)
-          reason_assigned = "You chose to accept questions from #{group.name} group"
-        end
-        # still aint got no one? assign to a group leader
-        if !assignee
-          if assignees_to_exclude.present?
-            group_leaders = group.leaders.active.where("users.id NOT IN (#{assignees_to_exclude.map{|assignee| assignee.id}.join(',')})")
-          else
-            group_leaders = group.leaders.active
-          end
-
-          if group_leaders.length > 0
-            assignee = pick_user_from_list(group_leaders)
-            reason_assigned = "You are a group leader"
-          # still aint got no one? really?? Wrangle that bad boy.
-          else
-            assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
-            reason_assigned = "You are a Question Wrangler"
-          end
-        end
-      # if individual assignment is turned on for the group and there are no active assignees, wrangle it
-      else
-        assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
-        reason_assigned = "You are a Question Wrangler"
-      end
+    if(assignees_to_exclude.present?)
+      base_assignee_scope = group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
     else
-      # send to the question wrangler group if the location of the question is not in the location of the group and
-      # the group is not receiving questions from outside their defined locations.
-      assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, assignees_to_exclude))
-      reason_assigned = "This question's location did not match the group's location so it was assigned to a Question Wrangler"
+      base_assignee_scope = group.assignees
     end
 
-    if assignee
-      assign_to(assignee, system_user, "Reason assigned: " + reason_assigned)
-    else
-      return
+    if(base_assignee_scope.count  == 0)
+      # no one is home, wrangle it
+      assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP
+
+      # find a wrangler
+      results = find_question_wrangler(assignees_to_exclude)
+      return { assignee: results[:assignee],
+               user_pool:  results[:user_pool],
+               wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP,
+               assignment_code: results[:assignment_code],
+               assignee_tests: assignee_tests + results[:assignee_tests] }
     end
+
+    if(self.location_id.present?)
+      if(group.ignore_county_routing?)
+        # group setting overrides county constraint - get a location match
+        assignee_pool = base_assignee_scope.with_expertise_location(self.location_id)
+        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_GROUP_IGNORES_COUNTY
+        assignee = User.pick_assignee_from_pool(assignee_pool)
+        if(assignee)
+          return { assignee: assignee,
+                   user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_GROUP_IGNORES_COUNTY,
+                   assignee_tests: assignee_tests }
+        end
+      else
+        if self.county_id.present?
+          # get a location + county match
+          assignee_pool = base_assignee_scope.with_expertise_county(self.county_id)
+          assignee_tests << AutoAssignmentLog::COUNTY_MATCH
+          assignee = User.pick_assignee_from_pool(assignee_pool)
+          if(assignee)
+            return { assignee: assignee,
+                     user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                     assignment_code: AutoAssignmentLog::COUNTY_MATCH,
+                     assignee_tests: assignee_tests }
+          end
+        end
+
+        # get a location + "all" county match
+        # this probably should also get the pool of people with any kind of location
+        # match, as long as their routing instructions don't have a county specificity
+        # but it was working and we didn't change it per Slack discussion on
+        # 2016-06-15 - jayoung
+        assignee_pool = base_assignee_scope.with_expertise_location_all_counties(self.location_id)
+        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY
+        assignee = User.pick_assignee_from_pool(assignee_pool)
+        if(assignee)
+          return { assignee: assignee,
+                   user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY,
+                   assignee_tests: assignee_tests }
+        end
+      end # no group override of county
+    end # question has location
+
+    # look for active anywhere
+    assignee_pool = base_assignee_scope.route_from_anywhere
+    assignee_tests << AutoAssignmentLog::ANYWHERE
+    assignee = User.pick_assignee_from_pool(assignee_pool)
+    if(assignee)
+      return { assignee: assignee,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::ANYWHERE,
+               assignee_tests: assignee_tests }
+    end
+
+    # fallback to not away leaders, whether they auto route or not
+    if(assignees_to_exclude.present?)
+      assignee_pool = group.leaders.not_away.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
+    else
+      assignee_pool = group.leaders.not_away
+    end
+    assignee_tests << AutoAssignmentLog::LEADER
+    assignee = User.pick_assignee_from_pool(assignee_pool)
+    if(assignee)
+      return { assignee: assignee,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::LEADER,
+               assignee_tests: assignee_tests }
+    end
+
+
+    # find a wrangler
+    assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES
+    results = find_question_wrangler(assignees_to_exclude)
+
+    return { assignee: results[:assignee],
+             user_pool:  results[:user_pool],
+             wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES,
+             assignment_code: results[:assignment_code],
+             assignee_tests: assignee_tests + results[:assignee_tests] }
+
+  end
+
+  def find_question_wrangler(assignees_to_exclude = nil)
+    assignee_tests = []
+    wrangler_group = Group.question_wrangler_group
+
+    if(assignees_to_exclude.present?)
+      base_assignee_scope = wrangler_group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
+    else
+      base_assignee_scope = wrangler_group.assignees
+    end
+
+    # check for county match, then location match, then anywhere
+
+    # county
+    if(self.county_id.present?)
+      assignee_pool = base_assignee_scope.with_expertise_county(self.county_id)
+      assignee_tests << AutoAssignmentLog::WRANGLER_COUNTY_MATCH
+      assignee = User.pick_assignee_from_pool(assignee_pool)
+      if(assignee)
+        return { assignee: assignee,
+                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                 assignment_code: AutoAssignmentLog::WRANGLER_COUNTY_MATCH,
+                 assignee_tests: assignee_tests }
+      end
+    end
+
+    # location
+    if(self.location_id.present?)
+      assignee_pool = base_assignee_scope.with_expertise_county(self.location_id)
+      assignee_tests << AutoAssignmentLog::WRANGLER_LOCATION_MATCH
+      assignee = User.pick_assignee_from_pool(assignee_pool)
+      if(assignee)
+        return { assignee: assignee,
+                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+                 assignment_code: AutoAssignmentLog::WRANGLER_LOCATION_MATCH,
+                 assignee_tests: assignee_tests }
+      end
+    end
+
+    # anywhere
+    assignee_pool = base_assignee_scope.route_from_anywhere
+    assignee_tests << AutoAssignmentLog::WRANGLER_ANYWHERE
+    assignee = User.pick_assignee_from_pool(assignee_pool)
+    if(assignee)
+      return { assignee: assignee,
+               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
+               assignment_code: AutoAssignmentLog::WRANGLER_ANYWHERE,
+               assignee_tests: assignee_tests }
+    end
+
+    # uh-oh!
+    return { assignee: nil,
+             user_pool:  {},
+             assignment_code: AutoAssignmentLog::FAILURE,
+             assignee_tests: assignee_tests }
+
+  end
+
+  # runs after creation
+  def reject_if_spam_or_duplicate
+    if(self.spam?)
+      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+    elsif existing_question = self.check_for_duplicate
+      reject_msg = "This question is a duplicate of question ##{existing_question.id}"
+      self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
+    end
+    return true
+  end
+
+  def queue_initial_assignment
+    group = self.assigned_group
+
+    if(!group.will_accept_question_location(self))
+      reason = <<-END_TEXT.gsub(/\s+/, " ").strip
+      The assigned group for this question #{group.name} does not accept
+      questions outside its locations. Transferring to the Question Wrangler
+      group.
+      END_TEXT
+      self.kick_out_to_wrangler_group(reason)
+    end
+
+    if(!Settings.sidekiq_enabled)
+      self.find_group_assignee_and_assign
+    else
+      self.class.delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
+    end
+  end
+
+  def find_group_assignee_and_assign(assignees_to_exclude = nil)
+    system_user = User.system_user
+    group = self.assigned_group
+    if(!group.individual_assignment?)
+      QuestionEvent.log_group_assignment(self, group, system_user, nil)
+      return true
+    end
+
+    # find
+    results = self.find_group_assignee(assignees_to_exclude)
+
+    # log auto assignment
+    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+
+    # assign_to
+    assign_to(assignee: results[:assignee],
+              assigned_by: system_user,
+              comment: "Reason assigned: " + log.auto_assignment_reason,
+              is_auto_assignment: true,
+              auto_assignment_log: log)
+
+  end
+
+  def self.delayed_find_group_assignee_and_assign(question_id)
+    if(question = find_by_id(question_id))
+      question.find_group_assignee_and_assign
+    end
+  end
+
+  def kick_out_to_wrangler_group(reason)
+    question_wrangler_group = Group.question_wrangler_group
+    current_assigned_group = self.assigned_group
+    self.update_attributes(:assigned_group => question_wrangler_group, :assignee => nil, :working_on_this => nil)
+    QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: question_wrangler_group, initiated_by: User.system_user)
+    QuestionEvent.log_group_assignment(self,question_wrangler_group,User.system_user,reason)
+    true
   end
 
   def add_history_comment(user, comment)
@@ -704,41 +844,76 @@ class Question < ActiveRecord::Base
   # Assigns the question to the user, logs the assignment, and sends an email
   # to the assignee letting them know that the question has been assigned to
   # them.
-  def assign_to(user, assigned_by, comment, public_reopen = false, public_comment = nil, resolving_assign = false, wrangler_handoff = false)
-    if(!user and !user.instance_of?(User))
-      raise AssignmentError, 'Invalid user provided to assign_to'
-    end
+  def assign_to(options = {})
+    current_assignee = self.assignee
+    assign_to = options[:assignee]
+    assigned_by = options[:assigned_by]
+    comment = options[:comment]
+    submitter_reopen = options[:submitter_reopen].present? ? options[:submitter_reopen] : false
+    resolving_self_assignment = options[:resolving_self_assignment].present? ? options[:resolving_self_assignment] : false
+    auto_assignment_log = options[:auto_assignment_log].present? ? options[:auto_assignment_log] : nil
+    is_auto_assignment = options[:is_auto_assignment].present? ? options[:is_auto_assignment] : false
+    is_wrangler_handoff = options[:is_wrangler_handoff].present? ? options[:is_wrangler_handoff] : false
 
+    # this doesn't appear to be used at all at the moment, leaving because
+    # I need to figure out how it was supposed to have been used - jayoung
+    submitter_comment = options[:submitter_comment].present? ? options[:submitter_comment] : false
 
-    # don't bother doing anything if this is assignment to the person already assigned unless it's
-    # a question that's been responded to by the public after it's been resolved that then gets
-    # assigned to whomever the question was last assigned to (unless that person is on vacation)
-    return true if self.assignee && user.id == assignee.id && public_reopen == false
+    # is this an assignment to the person already assigned - and not from being
+    # reopened by the submitter? do nothing.
+    return true if (current_assignee.present? and (assign_to.id ==current_assignee.id) and !submitter_reopen)
 
-    if(self.assignee.present? && (assigned_by != self.assignee))
+    # is this being reassigned?
+    if(current_assignee.present? and (assigned_by.id != current_assignee.id))
       is_reassign = true
-      previously_assigned_to = self.assignee
+      previously_assigned_to = current_assignee
     else
       is_reassign = false
     end
 
-    # update and log
-    self.update_attributes(:assignee_id => user.id, :working_on_this => nil)
+    # set the assignee - log it, and notify them
+    self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil, :last_assigned_at => Time.zone.now )
 
-    if wrangler_handoff
-      QuestionEvent.log_wrangler_handoff(self,user,assigned_by,comment)
+    # update assignment stats for the assignee
+    assign_to.update_column(:open_question_count, assign_to.open_questions.count)
+    assign_to.update_column(:last_question_assigned_at, Time.zone.now)
+
+    if is_wrangler_handoff
+      QuestionEvent.log_wrangler_handoff(question: self,
+                                         recipient: assign_to,
+                                         initiated_by: assigned_by,
+                                         handoff_reason: comment,
+                                         auto_assignment_log: auto_assignment_log)
+    elsif is_auto_assignment
+      QuestionEvent.log_auto_assignment(question: self,
+                                        recipient: assign_to,
+                                        assignment_comment: comment,
+                                        auto_assignment_log: auto_assignment_log)
     else
-      QuestionEvent.log_assignment(self,user,assigned_by,comment)
+      QuestionEvent.log_assignment(question: self,
+                                   recipient: assign_to,
+                                   initiated_by: assigned_by,
+                                   assignment_comment: comment)
     end
 
-    # if this is being assigned to an expert who is resolving the question, do not notify that expert, the question will be resolved
-    if !resolving_assign
-      Notification.create(notifiable: self, created_by: 1, recipient_id: self.assignee_id, notification_type: Notification::AAE_ASSIGNMENT, delivery_time: 1.minute.from_now ) unless self.assignee.nil? or self.assignee == self.current_resolver #individual assignment notification
+    # assignment notification
+    if !resolving_self_assignment
+      if(self.assignee_id != self.current_resolver_id )
+        Notification.create(notifiable: self,
+                            created_by: User.system_user_id,
+                            recipient_id: self.assignee_id,
+                            notification_type: Notification::AAE_ASSIGNMENT,
+                            delivery_time: 1.minute.from_now )
+      end
     end
 
     # if this is not being assigned to someone who already has it AND it's not a public reopen (the submitter responded)
-    if(is_reassign && public_reopen == false)
-      Notification.create(notifiable: self, created_by: 1, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+    if(is_reassign and !submitter_reopen)
+      Notification.create(notifiable: self,
+                          created_by: User.system_user_id,
+                          recipient_id: previously_assigned_to.id,
+                          notification_type: Notification::AAE_REASSIGNMENT,
+                          delivery_time: 1.minute.from_now )
     end
 
   end
@@ -770,14 +945,14 @@ class Question < ActiveRecord::Base
 
     # after reassigning to another group manually, updating the group, logging the group assignment, and logging the group change,
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
-    if group.individual_assignment == true
-      auto_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
+    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
+    if group.individual_assignment?
+      self.find_group_assignee_and_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
       end
     end
-    Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
   end
 
   def change_group(group, changed_by)
@@ -840,11 +1015,11 @@ class Question < ActiveRecord::Base
   end
 
   # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by, comment)
+  def assign_to_question_wrangler(assigned_by, comment, wrangler_assignment_code)
     exclude_assignees = (self.assignee.present? ? [self.assignee] : nil)
-    assignee = pick_user_from_list(Group.get_wrangler_assignees(self.location, self.county, exclude_assignees))
-    assign_to(assignee, assigned_by, comment, false, nil, false, true)
-    self.save
+    results = self.find_question_wrangler(exclude_assignees)
+    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: self.assigned_group, wrangler_assignment_code: wrangler_assignment_code))
+    assign_to(assignee: results[:assignee], assigned_by: assigned_by, comment: comment, is_wrangler_handoff: true)
     return assignee
   end
 
@@ -916,62 +1091,9 @@ class Question < ActiveRecord::Base
     true
   end
 
-  def pick_user_from_list(users)
-    if !users or users.length == 0
-      return nil
-    end
-
-    # look at question assignments to see who has the least for load balancing
-    users.sort! { |a, b| a.open_questions.length <=> b.open_questions.length }
-
-    questions_floor = users[0].open_questions.length
-    # p "questions_floor: #{questions_floor}"
-
-    # who all matches the least amt. of questions assigned
-    possible_users = users.select { |u| u.open_questions.length == questions_floor }
-
-    return nil if !possible_users or possible_users.length == 0
-    return possible_users[0] if possible_users.length == 1
-
-    # if all possible question assignees with least amt. of questions assigned have zero questions assigned to them...
-    # so if all experts that made the cut have zero questions assigned, pick the person who hasn't had a question
-    # in a while, returning the start of AaE time if they've never touched one
-    # jayoung => this is slow, slow, slow and more slow, this whole thing needs to be re-examined
-    if questions_floor == 0
-      possible_users.sort! { |a, b| a.last_question_touched(true) <=> b.last_question_touched(true) }
-      return possible_users.first
-    end
-
-    assignment_dates = Hash.new
-
-    # for all those eligible experts with greater than zero questions assigned (but are in the group with the lowest number of questions assigned),
-    # select the expert who's last assigned question was the earliest so that the ones with the more recent assigned questions do not get
-    # the next one
-    possible_users.each do |u|
-      question = u.open_questions.find(:first, :conditions => ["event_state = ?", QuestionEvent::ASSIGNED_TO], :include => :question_events, :order => "question_events.created_at desc")
-
-      if question
-        assignment_dates[u.id] = question.question_events[0].created_at
-      # shouldn't happen b/c the case of no questions assigned is covered above
-      else
-        assignment_dates[u.id] = Time.at(0)
-      end
-    end
-
-    user_id = assignment_dates.sort{ |a, b| a[1] <=> b[1] }[0][0]
-
-    return User.find(user_id)
-  end
-
   def notify_submitter
     if(!self.spam? and !self.rejected?)
       Notification.create(notifiable: self, created_by: 1, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_SUBMISSION_ACKNOWLEDGEMENT, delivery_time: 1.minute.from_now ) unless self.submitter.nil? or self.submitter.id.nil?
-    end
-  end
-
-  def send_global_widget_notifications
-    if(!self.spam? and !self.rejected?)
-      Notification.create(notifiable: self, created_by: 1, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.nil? or self.assigned_group.incoming_notification_list.empty? #group notification
     end
   end
 
@@ -1099,9 +1221,11 @@ class Question < ActiveRecord::Base
   def self.ua_report(filename)
     CSV.open(filename, "wb") do |csv|
       csv << ['question_id','date','unixtime','browser','version','platform','mobile?','location']
-      self.not_rejected.each do |question|
-        if(!question.user_agent.blank?)
-          csv << question.to_ua_report
+      with_scope do
+        all.each do |question|
+          if(!question.user_agent.blank?)
+            csv << question.to_ua_report
+          end
         end
       end
     end

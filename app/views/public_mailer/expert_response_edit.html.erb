@@ -4,12 +4,12 @@
   <tr>
     <td class="please_dont_reply"><strong>Please don't reply to this email.</strong> <%= link_to("Reply from your question page", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.</td>
   </tr>
-  
+
   <td class="content padding">
     <h3>An expert has edited a response to your question.</h3>
-    <div class="question_title">Your Question: <%= link_to(format_text_for_display(@question.title), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
+    <div class="question_title">Your Question: <%= link_to(@question.title.html_safe, submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></div>
     <div class="response">Edited Response: <%= format_text_for_display(@response.body) %></div>
-    
+
     <h2>Need to reply to the expert?</h2>
     <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/reply_to_the_expert_button.png", alt: "Reply to Expert", width: "245"), submitter_view_url(:fingerprint => @question.question_fingerprint)) -%></p>
   </td>

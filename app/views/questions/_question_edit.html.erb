@@ -14,7 +14,7 @@
 	      <p><%= f.text_area :body, :rows => "10", :cols => "60", class: 'col-md-6 wysiwyg form-control' %></p>
 	    </fieldset>
 
-		  <div id="aae_image_div">
+		  <div id="aae_image_div" class="image-upload-wrapper">
 			<h3>You can include up to 3 images</h3>
 	        <p><em>You can upload .jpg .png or .gif.</em></p>
 			<% @question.images.each do |image| %>
@@ -25,7 +25,7 @@
 			      <%= image_tag image.url(:thumb) %>
 			      </p>
                 <% else %>
-                  <p>
+                  <p class="image-upload">
 				    <%= image_fields.file_field :attachment  %>
 				  </p>
                 <% end %>

@@ -48,11 +48,11 @@
             <%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 6}) %>
             </p>
 
-            <div id="add_images">
+            <div class="image-upload-wrapper">
               <label>Images (optional)</label>
                 <p><em>You can upload .jpg .png or .gif.</em></p>
 	            <% (1..@image_count).each do |counter| %>
-	              <p>
+	              <p class="image-upload">
       	          <%= file_field_tag "response_images_attributes_#{counter}_attachment", name: "response[images_attributes][#{counter}][attachment]" %>
       	        </p>
       	      <% end %>

@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
   has_many :recipient_question_events, :class_name => 'QuestionEvent', :foreign_key => 'recipient_id'
   has_many :answered_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::RESOLVED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
   has_many :rejected_questions, :through => :initiated_question_events, :conditions => "question_events.event_state = #{QuestionEvent::REJECTED}", :source => :question, :order => 'question_events.created_at DESC', :uniq => true
-  has_many :open_questions, :class_name => "Question", :foreign_key => "assignee_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
+  has_many :assigned_questions, :class_name => "Question", :foreign_key => "assignee_id"
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
   has_many :current_resolver_questions, :class_name => "Question", :foreign_key => "current_resolver_id"
   has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
@@ -92,13 +92,16 @@ class User < ActiveRecord::Base
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
   scope :question_wranglers, conditions: { is_question_wrangler: true }
-  scope :active, conditions: { away: false, retired: false }
   scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :not_retired, conditions: { retired: false }
-  scope :not_blocked, conditions: { is_blocked: false }
-  scope :not_system, conditions: "id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :valid_users, not_retired.merge(not_blocked).merge(not_system)
+  scope :not_retired, ->{ where(retired: false) }
+  scope :not_blocked, ->{ where(is_blocked: false) }
+  scope :not_system,  ->{ where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
+  scope :valid_users, ->{ not_retired.not_blocked.not_system }
+  scope :not_away, ->{ where(away:false) }
+  scope :auto_route, ->{ where(auto_route:true) }
+  scope :assignable, ->{ exid_holder.valid_users.not_away }
+
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
@@ -161,6 +164,14 @@ class User < ActiveRecord::Base
   # filters
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
+
+  def is_systems_account?
+    SYSTEMS_USERS.include?(self.id)
+  end
+
+  def signin_allowed?
+    !self.is_blocked? and !self.retired? and !is_systems_account?
+  end
 
   def self.by_question_event_count(event_state,options = {})
     with_scope do
@@ -243,7 +254,7 @@ class User < ActiveRecord::Base
   end
 
   def previously_assigned(question)
-    find_question = QuestionEvent.where('question_id = ?', question.id).where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id)
+    find_question = QuestionEvent.where('question_id = ?', question.id).where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id)
     !find_question.blank?
   end
 
@@ -477,20 +488,29 @@ class User < ActiveRecord::Base
     end
   end
 
-  def last_question_touched(for_sort = false)
-    last_touched = self.initiated_question_events.order('created_at DESC').pluck(:created_at).first
-    if(!last_touched.blank?)
-      last_touched
-    else
-      # if they've never touched a question, we can't return nil when sorting
-      # because nil can't be used in a sort - so let's return the created_at
-      # for the first question_event ever
-      if(for_sort)
-        QuestionEvent.first.created_at
-      else
-        nil
-      end
-    end
+  def last_question_touched_at(return_default_date = false)
+    # if they've never touched a question, we can't return nil when sorting
+    # because nil can't be used in a sort - so let's return the created_at
+    # for the first question_event ever
+    return_default_date ? (read_attribute(:last_question_touched_at) || QuestionEvent::FIRST_CONTACT) : read_attribute(:last_question_touched_at)
+  end
+
+
+  def last_question_assigned_at(return_default_date = false)
+    # if they've never been assigned a question, we can't return nil when sorting
+    # because nil can't be used in a sort - so let's return the created_at
+    # for the first question_event ever
+    return_default_date ? (read_attribute(:last_question_assigned_at) || QuestionEvent::FIRST_CONTACT) : read_attribute(:last_question_assigned_at)
+  end
+
+  def open_questions
+    assigned_questions.submitted
+  end
+
+  def set_assignment_values
+    self.update_column(:open_question_count, self.open_questions.count)
+    self.update_column(:last_question_touched_at, self.initiated_question_events.order('created_at DESC').pluck(:created_at).first)
+    self.update_column(:last_question_assigned_at, self.assigned_questions.order('created_at DESC').pluck(:created_at).first)
   end
 
   def daily_summary_group_list
@@ -514,7 +534,7 @@ class User < ActiveRecord::Base
   # reporting
 
   def earliest_assigned_at
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).minimum(:created_at)
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).minimum(:created_at)
   end
 
   def earliest_touched_at
@@ -522,18 +542,18 @@ class User < ActiveRecord::Base
   end
 
   def assigned_count_by_year
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).group("YEAR(created_at)").count('DISTINCT(question_id)')
   end
 
   def assigned_count_by_year_month
-    QuestionEvent.where("event_state = #{QuestionEvent::ASSIGNED_TO}").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
+    QuestionEvent.where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})").where("recipient_id = ?",self.id).group("DATE_FORMAT(created_at,'%Y-%m')").count('DISTINCT(question_id)')
   end
 
   def assigned_list_for_year_month(year_month)
     year_month =~ /-/ ? date_string = '%Y-%m' : date_string = '%Y'
     Question.select("DISTINCT(questions.id), questions.*")
     .joins(:question_events)
-    .where("question_events.event_state = #{QuestionEvent::ASSIGNED_TO}")
+    .where("question_events.event_state IN (#{QuestionEvent::ASSIGNED_TO},#{QuestionEvent::AUTO_ASSIGNED_TO})")
     .where("question_events.recipient_id = ?",self.id)
     .where("DATE_FORMAT(question_events.created_at,'#{date_string}') = ?",year_month)
   end
@@ -618,6 +638,29 @@ class User < ActiveRecord::Base
         u.save
       end
     end
+  end
+
+  def self.pick_assignee_from_pool(users)
+    user_pool = users.to_a
+    if user_pool.blank? or user_pool.length == 0
+      return nil
+    end
+
+    # look at question assignments to see who has the least for load balancing
+    user_pool.sort! { |a, b| a.open_question_count <=> b.open_question_count }
+
+    questions_floor = user_pool[0].open_question_count
+
+    # who all matches the fewest number of questions assigned
+    possible_user_pool = user_pool.select { |u| u.open_question_count == questions_floor }
+
+    return nil if !possible_user_pool or possible_user_pool.length == 0
+    return possible_user_pool[0] if possible_user_pool.length == 1
+
+    # for the set of users with the same number of open questions, pick the person
+    # out of the list with the oldest last assignment time
+    possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
+    return possible_user_pool.first
   end
 
 

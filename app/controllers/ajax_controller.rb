@@ -87,7 +87,7 @@ class AjaxController < ApplicationController
       # this conditional should not be triggered during normal app usage, but
       # return something for testing
       groups = Group.where(group_active: true).order('created_at DESC').limit(6)
-      experts = User.exid_holder.active.not_blocked.not_retired.order('created_at DESC').limit(6)
+      experts = User.exid_holder.not_away.not_blocked.not_retired.order('created_at DESC').limit(6)
     end
 
     combined_array = groups + experts

@@ -36,7 +36,7 @@
   <% if @open_questions_col_one.size > 0 %>
     <% @open_questions_col_one.each do |q| %>
       <div class="incoming_question">
-        <h1 class="article_title"><%= link_to format_text_for_display(q.title), question_path(q.id) %></h1>
+        <h1 class="article_title"><%= link_to(q.title.html_safe, question_path(q.id)) %></h1>
         <p class="question_body"><%= format_text_for_display(q.body).html_safe -%></p>
       </div>
 
@@ -64,7 +64,7 @@
     <% @open_questions_col_two.each do |q| %>
 
       <div class="incoming_question">
-        <h1 class="article_title"><%= link_to format_text_for_display(q.title), question_path(q.id) %></h1>
+        <h1 class="article_title"><%= link_to(q.title.html_safe, question_path(q.id)) %></h1>
         <p class="question_body"><%= format_text_for_display(q.body).html_safe -%></p>
       </div>
 
