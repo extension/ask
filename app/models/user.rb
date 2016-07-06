@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   has_many :expertise_counties, :through => :user_counties, :source => :county
   has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
-  has_many :group_memberships, :through => :group_connections, :source => :group, :conditions => "connection_type IN ('leader', 'member')", :order => "groups.name", :uniq => true
+  has_many :groups, through: :group_connections
   has_many :ratings
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
@@ -221,13 +221,16 @@ class User < ActiveRecord::Base
   end
 
   def member_of_group(group)
-    find_group = self.group_connections.where('group_id = ?', group.id)
-    !find_group.blank?
+    self.group_ids.include?(group.id)
+  end
+
+  def group_memberships
+    self.groups.order("groups.name")
   end
 
   def leader_of_group(group)
-    find_group = self.group_connections.where('group_id = ?', group.id).where('connection_type = ?', 'leader')
-    !find_group.blank?
+    (leader_connection = self.group_connections.where(connection_type: 'leader').where(group_id: group.id).first)
+    leader_connection.present?
   end
 
   def self.system_user_id
@@ -304,28 +307,7 @@ class User < ActiveRecord::Base
   end
 
   def join_group(group, connection_type)
-    if (connection = GroupConnection.where(user_id: self.id, group_id: group.id).first)
-      connection.destroy
-    end
-
-    group_connection = self.group_connections.create(group: group, connection_type: connection_type)
-    return if !group_connection.valid?
-
-    if connection_type == 'leader'
-      GroupEvent.log_added_as_leader(group, self, self)
-      Preference.create_or_update(self, Preference::NOTIFICATION_DAILY_SUMMARY, true, group.id) #leaders are opted into daily summaries / escalations
-    else
-      GroupEvent.log_group_join(group, self, self)
-    end
-
-    # question wrangler group?
-    if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
-      if(connection_type == 'leader' || connection_type == 'member')
-        self.update_attribute(:is_question_wrangler, true)
-        Preference.create_or_update(self, Preference::NOTIFICATION_INCOMING, true, group.id)
-      end
-    end
-
+    group.connect_user_to_group(self, connection_type)
   end
 
   # instance method version of aae_handling_event_count
@@ -392,29 +374,15 @@ class User < ActiveRecord::Base
     return returnvalues
   end
 
-  def leave_group(group, connection_type)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
-      connection.destroy
-      GroupEvent.log_group_leave(group, self, self)
-    end
-
-    # question wrangler group?
-    if(group.id == Group::QUESTION_WRANGLER_GROUP_ID)
-      self.update_attribute(:is_question_wrangler, false)
-    end
-  end
-
   def update_aae_status_for_public
     if self.kind == 'PublicUser'
       self.away = true
     end
   end
 
-  def leave_group_leadership(group, connection_type)
-    if(connection = GroupConnection.where('user_id =?',self.id).where('connection_type = ?', connection_type).where('group_id = ?',group.id).first)
-      connection.destroy
-      self.group_connections.create(group: group, connection_type: "member")
-      GroupEvent.log_removed_as_leader(group, self, self)
+  def leave_group_leadership(group)
+    if(connection = self.group_connections.where(connection_type: 'leader').first)
+      group.connect_user_to_group(self, 'member')
     end
   end
 
@@ -515,7 +483,7 @@ class User < ActiveRecord::Base
 
   def daily_summary_group_list
     list = []
-    self.group_memberships.each{|group| list.push(group) if (send_daily_summary?(group) and group.include_in_daily_summary?)}
+    self.groups.order("groups.name").each{|group| list.push(group) if (send_daily_summary?(group) and group.include_in_daily_summary?)}
     return list
   end
 

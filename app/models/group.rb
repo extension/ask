@@ -137,12 +137,13 @@ class Group < ActiveRecord::Base
     users.valid_users.not_away.auto_route
   end
 
-  def group_members_with_self_first(current_user, limit)
-    group_members = self.joined.where("user_id != ?", current_user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit)
-    if (current_user.leader_of_group(self) || current_user.member_of_group(self))
-      group_members = group_members.unshift(current_user)
+  def group_members_with_self_first(user, limit)
+    group_members = self.users.where("user_id != ?", user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit).to_a
+    if (user.member_of_group(self))
+      # push this person on the front of the list
+      group_members = group_members.unshift(user)
     end
-    return group_members
+    group_members
   end
 
   def set_fingerprint(user)
@@ -185,5 +186,68 @@ class Group < ActiveRecord::Base
     (self.assignment_outside_locations or self.expertise_location_ids.include?(question.location_id))
   end
 
+  def connect_user_to_group(user, connection_type, added_by = nil)
+    added_by = user if(added_by.nil?)
+    if(connection = self.group_connections.where(user_id: user.id).first)
+      # existing connection? let's change the connection_type
+      if(connection.connection_type != connection_type)
+        connection.update_attribute(:connection_type, connection_type)
+        if(connection_type == 'leader')
+          GroupEvent.log_added_as_leader(self, added_by, user)
+        else
+          GroupEvent.log_removed_as_leader(self, added_by, user)
+        end
+      end
+      return connection
+    end
 
+    if(connection = self.group_connections.create(user: user, connection_type: connection_type))
+      if(connection_type == 'leader')
+        GroupEvent.log_added_as_leader(self, added_by, user)
+        Preference.create_or_update(user, Preference::NOTIFICATION_DAILY_SUMMARY, true, self.id) #leaders are opted into daily summaries / escalations
+      else
+        GroupEvent.log_group_join(self, added_by, user)
+      end
+
+      if(self.id == QUESTION_WRANGLER_GROUP_ID)
+        self.update_attribute(:is_question_wrangler, true)
+        Preference.create_or_update(user, Preference::NOTIFICATION_INCOMING, true, self.id)
+      end
+
+      return connection
+    else
+      return nil
+    end
+  end
+
+  def remove_user_from_group(user, removed_by = nil)
+    removed_by = user if(removed_by.nil?)
+    self.group_connections.where(user_id: user.id).destroy_all
+    GroupEvent.log_group_leave(self, removed_by, user)
+    if(self.id == QUESTION_WRANGLER_GROUP_ID)
+      user.update_attribute(:is_question_wrangler, false)
+    end
+
+    # update the person's listview prefererences
+    pref = user.filter_preference
+    if pref.present? && pref.setting[:question_filter][:groups].present? && pref.setting[:question_filter][:groups][0].to_i == self.id
+      pref.setting[:question_filter].merge!({:groups => nil})
+      pref.save
+    end
+
+    # check for empty group
+    if(self.users.count == 0)
+      change_hash = Hash.new
+      if self.group_active?
+        self.toggle!(:group_active)
+        change_hash[:group_active] = {:old => true, :new => false}
+      end
+
+      if self.widget_active?
+        self.toggle!(:widget_active)
+        change_hash[:widget_active] = {:old => true, :new => false}
+      end
+      GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
+    end
+  end
 end

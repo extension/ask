@@ -261,7 +261,7 @@ class Expert::GroupsController < ApplicationController
     @group.set_fingerprint(current_user)
     if @group.save
       current_user.join_group(@group,"leader")
-      current_user.log_create_group(@group)
+      GroupEvent.log_group_creation(@group, current_user, current_user)
       redirect_to(expert_group_path(@group.id), :notice => 'Group was successfully created.')
     else
       render :action => 'new'
@@ -281,35 +281,14 @@ class Expert::GroupsController < ApplicationController
   end
 
   def leave
-    @group = Group.find_by_id(params[:id])
-    current_user.leave_group(@group, "member")
+    @group = Group.find(params[:id])
+    @group.remove_user_from_group(current_user)
     @group_members = @group.group_members_with_self_first(current_user, 5)
-    # when the last person leaves the group, deactivate the group's widget and the group itself
-    if @group_members.count == 0
-      change_hash = Hash.new
-      if @group.group_active == true
-        @group.update_attribute(:group_active, false)
-        change_hash[:group_active] = {:old => true, :new => false}
-      end
-
-      if @group.widget_active == true
-        @group.update_attribute(:widget_active, false)
-        change_hash[:widget_active] = {:old => true, :new => false}
-      end
-      GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
-    end
-
-    # remove this person's listview prefs for this group if it exists
-    pref = current_user.filter_preference
-    if pref.present? && pref.setting[:question_filter][:groups].present? && pref.setting[:question_filter][:groups][0].to_i == @group.id
-      pref.setting[:question_filter].merge!({:groups => nil})
-      pref.save
-    end
   end
 
   def unlead
     @group = Group.find_by_id(params[:id])
-    current_user.leave_group_leadership(@group, "leader")
+    current_user.leave_group_leadership(@group)
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
