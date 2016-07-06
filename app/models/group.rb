@@ -250,4 +250,71 @@ class Group < ActiveRecord::Base
       GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
     end
   end
+
+
+  def self.asked_answered_metrics_for_date_range(start_date,end_date)
+    asked_answered = {}
+    asked    = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .group(:original_group_id) \
+               .count('DISTINCT(questions.id)')
+
+    submitters = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .group(:original_group_id) \
+               .count('DISTINCT(questions.submitter_id)')
+
+    answered = Question.not_rejected.joins(:question_events => :initiator) \
+               .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
+               .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .group(:assigned_group_id) \
+               .count('DISTINCT(questions.id)')
+
+    experts = QuestionEvent.joins(:initiator,:question).handling_events \
+                           .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s)\
+                           .group("questions.assigned_group_id") \
+                           .count('DISTINCT(question_events.initiated_by_id)')
+
+    Group.where(:is_test => false).each do |group|
+      asked_answered[group] = {}
+      asked_answered[group][:asked] = asked[group.id] || 0
+      asked_answered[group][:submitters] = submitters[group.id] || 0
+      asked_answered[group][:answered] = answered[group.id] || 0
+      asked_answered[group][:experts] = experts[group.id] || 0
+    end
+
+    asked_answered
+
+  end
+
+  def self.dump_asked_answered_metrics_for_date_range(filename,start_date,end_date)
+    data = self.asked_answered_metrics_for_date_range(start_date,end_date)
+    CSV.open(filename,'wb') do |csv|
+      headers = []
+      headers << 'id'
+      headers << 'name'
+      headers << 'is_test'
+      headers << 'group_active'
+      headers << 'widget_active'
+      headers << 'questions'
+      headers << 'submitters'
+      headers << 'answered'
+      headers << 'experts'
+      csv << headers
+      data.each do |group,values|
+        row = []
+        row << group.id
+        row << group.name
+        row << group.is_test
+        row << group.group_active
+        row << group.widget_active
+        row << values[:asked]
+        row << values[:submitters]
+        row << values[:answered]
+        row << values[:experts]
+        csv << row
+      end
+    end
+  end
+
 end
