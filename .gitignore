@@ -46,3 +46,5 @@
 # sitemaps
 /public/sitemap*
 
+# export work
+/export

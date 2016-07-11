@@ -1,12 +1,11 @@
-<%= paginate @groups %>
-
 <div class="col-md-12">
   <h2>All Groups (<%= number_with_delimiter(@group_count, :delimiter => ',') %> total)</h2>
+  <%= paginate @groups %>
 
   <% @groups.each do |group| %>
     <p><%= link_expert_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group.id) %></p>
   <% end %>
 
-</div>
+  <%= paginate @groups %>
 
-<%= paginate @groups %>
+</div>
