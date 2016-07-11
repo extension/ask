@@ -189,7 +189,7 @@ class ApplicationController < ActionController::Base
       q = q.not_public_visible
     end
 
-    if(params[:tag_id].present and @tag = Tag.find_by_id(params[:tag_id]))
+    if(params[:tag_id].present? and @tag = Tag.find_by_id(params[:tag_id]))
       @tag_pref = @tag.id
       filter_description_array << "Tag: #{@tag.name}"
       q = q.tagged_with(@tag.id)
