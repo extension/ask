@@ -29,7 +29,7 @@ class Expert::TagsController < ApplicationController
     if !@tag
       return redirect_to expert_tags_path()
     end
-
+    @current_user_has_tag = current_user.tagged_with_tag(@tag)
     @replacement_tag_placeholder = Tag.normalizename(@tag.name)
     if @tag
       @question_total_count = Question.tagged_with(@tag.id).count
@@ -62,6 +62,8 @@ class Expert::TagsController < ApplicationController
     @question_total_count = Question.tagged_with(@current_tag.id).order("questions.status_state ASC").count
     @expert_total_count = User.tagged_with(@current_tag.id).count
     @group_total_count = Group.tagged_with(@current_tag.id).count
+
+    @current_user_has_tag = current_user.tagged_with_tag(@current_tag)
   end
 
   def edit_taggings
