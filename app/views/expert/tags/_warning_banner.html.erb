@@ -1,0 +1,4 @@
+<span class="tag-edit-warning-banner">
+  <h3><strong class="warning-text">Warning:</strong> Changing this tag WILL affect <strong><%= pluralize(number_with_delimiter(@affected_count), @affected_description) %></strong> who have tagged themselves with it. Are you sure you want to do that?</h3>
+  <p>(If you are trying to change your own tags, add or remove them from your <%= link_to "profile page", expert_tags_settings_path(current_user) %>.)</p>
+</span>

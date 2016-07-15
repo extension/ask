@@ -23,25 +23,13 @@
       <p><span class="tag-monospace">"<%= params[:replacement_tag] %>"</span> (currently applied to <%= @replacement_tag_count %> items)</p>
     </div>
 
-    <% if @current_user_has_tag %>
-      <!-- <h2>Current user has tag</h2> -->
-      <% if @expert_total_count > 1 || @group_total_count > 0 %>
-        <!-- <h2>Other people or groups have the tag too</h2> -->
-        <h3><span class="tag-edit-warning-banner"><strong>Warning:</strong> Changing this tag WILL affect other people. Are you sure you should change it?</span></h3>
-      <% end %>
-    <% else %>
-      <!-- <h2>Current user DOES NOT has tag</h2> -->
-      <% if @expert_total_count > 0 || @group_total_count > 0 %>
-        <!-- <h2>Other people or groups have the tag</h2> -->
-        <h3><span class="tag-edit-warning-banner"><strong>Warning:</strong> Changing this tag WILL affect other people. Are you sure you should change it?</span></h3>
-      <% end %>
-    <% end %>
+    <%= render :partial => 'warning_banner' %>
 
     <%= form_tag({controller: "tags", action: "edit_taggings"}, method: "post", class: "form-horizontal") do %>
       <%= hidden_field_tag('current_tag_id',@current_tag.id) %>
       <%= hidden_field_tag('replacement_tag',params[:replacement_tag]) %>
 
-      <p><%= submit_tag "Update this tag for all people, groups and questions", :class => "btn btn-default btn-lg btn-primary" %> <%= link_to "Cancel", expert_show_tag_path(@current_tag.name), :class => "btn btn-link" %></p>
+      <p><%= submit_tag "Update this tag", :class => "btn btn-default btn-lg" %> <%= link_to "Cancel", expert_show_tag_path(@current_tag.name), :class => "btn btn-link" %></p>
 
     <%- end # end form -%>
 
