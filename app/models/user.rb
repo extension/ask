@@ -224,6 +224,10 @@ class User < ActiveRecord::Base
     self.group_ids.include?(group.id)
   end
 
+  def tagged_with_tag(tag)
+    self.tag_ids.include?(tag.id)
+  end
+
   def group_memberships
     self.groups.order("groups.name")
   end

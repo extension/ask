@@ -7,7 +7,7 @@
     <h1>Tag name</h1>
     <h2><span class="tag-monospace">"<%= @tag.name %>"</span></h2>
     <br />
-    <h2>Number of time used: <%= @total_items_tagged %></h2>
+    <h2>Number of time used: <%= number_with_delimiter(@total_items_tagged) %></h2>
     <ul class="tag-replacement-list">
       <li>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</li>
       <li>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</li>
@@ -38,15 +38,17 @@
 
 
     <div class="collapse" id="deleteOption">
-      <div class="alert alert-danger">
-        <h2>Delete this tag</h2>
-        <h3>The tag "<%= @tag.name %>" will be deleted from <span class="super-big"><%= @total_items_tagged %></span> items</h3>
-        <br />
+      <div class="alert alert-neutral">
+
+        <%- if @affected_count > 0 -%>
+          <%= render :partial => 'warning_banner' %>
+        <%- end -%>
+
         <%= form_tag({controller: "tags", action: "delete"}, method: "post", class: "") do %>
           <%= hidden_field_tag('current_tag',@tag.name) %>
           <div class="form-group">
             <%= hidden_field_tag('tag_id',@tag.id) %>
-            <p><%= submit_tag "Delete tag COMPLETELY from Ask an Expert", :class => "btn btn-default btn-lg btn-danger" %></p>
+            <p><%= submit_tag "Permanently delete tag", :class => "btn btn-default  btn-lg" %></p>
           </div>
         <%- end # end form -%>
       </div>

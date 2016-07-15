@@ -6,7 +6,12 @@
   <p>Details: Tag ID: <%= @current_tag.id %> is applied to Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>), Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>), Questions (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</p>
 
   <div class="alert alert-info">
-    <h2>You are about to modify a tag which is currently applied to <%= @expert_total_count + @group_total_count + @question_total_count %> items.</h2>
+    <h2>You are about to modify a tag which is currently applied to:</h2>
+    <ul class="tag-edit-warning">
+      <li><%= number_with_delimiter(@expert_total_count) %> experts</li>
+      <li><%= number_with_delimiter(@group_total_count) %> groups</li>
+      <li><%= number_with_delimiter(@question_total_count) %> questions</li>
+    </ul>
 
     <div class="tag-replacement">
       <h3>All instances of the tag</h3>
@@ -18,11 +23,15 @@
       <p><span class="tag-monospace">"<%= params[:replacement_tag] %>"</span> (currently applied to <%= @replacement_tag_count %> items)</p>
     </div>
 
+    <%- if @affected_count > 0 -%>
+      <%= render :partial => 'warning_banner' %>
+    <%- end -%>
+
     <%= form_tag({controller: "tags", action: "edit_taggings"}, method: "post", class: "form-horizontal") do %>
       <%= hidden_field_tag('current_tag_id',@current_tag.id) %>
       <%= hidden_field_tag('replacement_tag',params[:replacement_tag]) %>
 
-      <p><%= submit_tag "Update this tag for all people, groups and questions", :class => "btn btn-default btn-lg btn-primary" %> <%= link_to "Cancel", expert_show_tag_path(@current_tag.name), :class => "btn btn-link" %></p>
+      <p><%= submit_tag "Update this tag", :class => "btn btn-default btn-lg" %> <%= link_to "Cancel", expert_show_tag_path(@current_tag.name), :class => "btn btn-link" %></p>
 
     <%- end # end form -%>
 
