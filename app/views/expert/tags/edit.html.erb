@@ -40,7 +40,9 @@
     <div class="collapse" id="deleteOption">
       <div class="alert alert-neutral">
 
-        <%= render :partial => 'warning_banner' %>
+        <%- if @affected_count > 0 -%>
+          <%= render :partial => 'warning_banner' %>
+        <%- end -%>
 
         <%= form_tag({controller: "tags", action: "delete"}, method: "post", class: "") do %>
           <%= hidden_field_tag('current_tag',@tag.name) %>

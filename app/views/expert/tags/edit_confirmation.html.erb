@@ -23,7 +23,9 @@
       <p><span class="tag-monospace">"<%= params[:replacement_tag] %>"</span> (currently applied to <%= @replacement_tag_count %> items)</p>
     </div>
 
-    <%= render :partial => 'warning_banner' %>
+    <%- if @affected_count > 0 -%>
+      <%= render :partial => 'warning_banner' %>
+    <%- end -%>
 
     <%= form_tag({controller: "tags", action: "edit_taggings"}, method: "post", class: "form-horizontal") do %>
       <%= hidden_field_tag('current_tag_id',@current_tag.id) %>

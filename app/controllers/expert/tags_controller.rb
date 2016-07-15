@@ -39,30 +39,7 @@ class Expert::TagsController < ApplicationController
       @tag = false
       @tag_name = params[:name]
     end
-
-    if current_user.tagged_with_tag(@tag)
-      if @expert_total_count > 1 || @group_total_count > 0
-        # Other people or groups have the tag too
-        @affected_people = @expert_total_count - 1
-        @affected_groups = @group_total_count
-      end
-    else
-      # Current user DOES NOT has tag
-      if @expert_total_count > 0 || @group_total_count > 0
-        # Other people or groups DO have the tag
-        @affected_people = @expert_total_count
-        @affected_groups = @group_total_count
-      end
-    end
-    if @affected_people > 0
-      # if individuals are affected, focus on them
-      @affected_count = @affected_people
-      @affected_description = "other person"
-    else
-      # otherwise mention the groups
-      @affected_count = @affected_groups
-      @affected_description = "group"
-    end
+    check_for_affected_parties(@tag)
   end
 
   def edit_confirmation
@@ -86,31 +63,7 @@ class Expert::TagsController < ApplicationController
     @expert_total_count = User.tagged_with(@current_tag.id).count
     @group_total_count = Group.tagged_with(@current_tag.id).count
 
-
-    if current_user.tagged_with_tag(@current_tag)
-      if @expert_total_count > 1 || @group_total_count > 0
-        # Other people or groups have the tag too
-        @affected_people = @expert_total_count - 1
-        @affected_groups = @group_total_count
-      end
-    else
-      # Current user DOES NOT has tag
-      if @expert_total_count > 0 || @group_total_count > 0
-        # Other people or groups DO have the tag
-        @affected_people = @expert_total_count
-        @affected_groups = @group_total_count
-      end
-    end
-    if @affected_people > 0
-      # if individuals are affected, focus on them
-      @affected_count = @affected_people
-      @affected_description = "other person"
-    else
-      # otherwise mention the groups
-      @affected_count = @affected_groups
-      @affected_description = "group"
-    end
-
+    check_for_affected_parties(@current_tag)
   end
 
   def edit_taggings
@@ -178,6 +131,34 @@ class Expert::TagsController < ApplicationController
     else
       @tag = false
       @tag_name = params[:name]
+    end
+  end
+
+  def check_for_affected_parties(tag)
+    @affected_people = 0
+    @affected_groups = 0
+    if current_user.tagged_with_tag(tag)
+      if @expert_total_count > 1 || @group_total_count > 0
+        # Other people or groups have the tag too
+        @affected_people = @expert_total_count - 1
+        @affected_groups = @group_total_count
+      end
+    else
+      # Current user DOES NOT has tag
+      if @expert_total_count > 0 || @group_total_count > 0
+        # Other people or groups DO have the tag
+        @affected_people = @expert_total_count
+        @affected_groups = @group_total_count
+      end
+    end
+    if @affected_people > 0
+      # if individuals are affected, focus on them
+      @affected_count = @affected_people
+      @affected_description = "other person"
+    else
+      # otherwise mention the groups
+      @affected_count = @affected_groups
+      @affected_description = "group"
     end
   end
 
