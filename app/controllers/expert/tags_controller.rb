@@ -22,13 +22,17 @@ class Expert::TagsController < ApplicationController
 
 
   def edit
-    @tag = Tag.find_by_name(params[:name])
-    if !@tag
+    if (Tag.find_by_name(params[:name]))
+      @tag = Tag.find_by_name(params[:name])
+    elsif (params[:name].cast_to_i > 0 )
+      # didn't find by name, search by id
       @tag = Tag.find(params[:name])
     end
+
     if !@tag
       return redirect_to expert_tags_path()
     end
+
     @replacement_tag_placeholder = Tag.normalizename(@tag.name)
     if @tag
       @question_total_count = Question.tagged_with(@tag.id).count
