@@ -29,7 +29,6 @@ class Expert::TagsController < ApplicationController
     if !@tag
       return redirect_to expert_tags_path()
     end
-    @current_user_has_tag = current_user.tagged_with_tag(@tag)
     @replacement_tag_placeholder = Tag.normalizename(@tag.name)
     if @tag
       @question_total_count = Question.tagged_with(@tag.id).count
