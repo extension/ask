@@ -781,6 +781,7 @@ class Question < ActiveRecord::Base
   end
 
   def queue_initial_assignment
+    return true if self.status_state != STATUS_SUBMITTED
     group = self.assigned_group
 
     if(!group.will_accept_question_location(self))
