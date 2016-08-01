@@ -14,7 +14,7 @@
 <div class="well">
   <h3>Questions can be assigned to this Group via...</h3>
   <ul>
-  
+
     <% if @group.widget_active %>
       <li>The Group's <%= link_to "Ask an Expert form", ask_group_path(@group.id) %></li>
       <li>The Group's widget (embedded on any third party page)</li>
@@ -28,7 +28,7 @@
     <h3>This Group Only Accepts Questions From Certain Locations.</h3>
     <p>If the question <strong>doesn't have a location</strong>, or <strong>its state doesn't match this group's states</strong>, it will be automatically assigned to the Question Wrangler group. A QW may add a matching location, if appropriate, and assign it back to this group.</p>
     <p>This group has <%= link_to "#{@group_members.count} members", expert_group_members_path(@group) %>. <%= @group_members_route_from_anywhere.count %> members accept questions from anywhere.</p>
-    
+
   </div>
 <% else %>
   <div class="well">
@@ -42,7 +42,7 @@
   <% if @group.assignment_outside_locations == false %>
     <h3>Assuming the Question's location matches the Group's location...</h3>
   <% end %>
-  
+
   <p><strong>This group uses the assign-to-group option</strong>. Questions are assigned to the group itself, and members will need to select questions to answer.</p>
 </div>
 <% else %>
@@ -50,8 +50,8 @@
   <% if @group.assignment_outside_locations == false %>
     <h3>Assuming the Question's location matches the Group's location...</h3>
   <% end %>
-  
-  <p><strong>If the question indicates a county</strong>, 
+
+  <p><strong>If the question indicates a county</strong>,
 
     <% if @group.ignore_county_routing == true %>
       <strong>the county will be ignored</strong> (because this group is trying to equally distribute questions across the entire state) and we step back to the state level.
@@ -70,8 +70,8 @@
   <% if @group.leaders.not_away.length == 0 %>
     <p>Since this group doesn't have any active leaders, it will be assigned to the Question Wrangler group.</p>
   <% end %>
-  
-  
+
+
 </div>
 <% end %>
 
