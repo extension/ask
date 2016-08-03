@@ -210,7 +210,7 @@ class Group < ActiveRecord::Base
       end
 
       if(self.id == QUESTION_WRANGLER_GROUP_ID)
-        self.update_attribute(:is_question_wrangler, true)
+        user.update_attribute(:is_question_wrangler, true)
         Preference.create_or_update(user, Preference::NOTIFICATION_INCOMING, true, self.id)
       end
 
