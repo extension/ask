@@ -144,6 +144,7 @@ Aae::Application.routes.draw do
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
     match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
     match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
+    match "groups/:id/remove" => "groups#remove", :via => [:post], :as => 'group_remove'
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
     match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]

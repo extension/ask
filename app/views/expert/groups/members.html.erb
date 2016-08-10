@@ -41,7 +41,7 @@
       <td>
         <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %>
         <% if member.leader_of_group(@group)%><strong><i class="icon-user"></i> Leader</strong><% end %>
-        <%= link_to 'Remove from group', expert_group_leave_path(:user => member), :class => "btn btn-default", :remote => true, :method => :post %>
+        <%= link_to 'Remove from group', expert_group_remove_path(:user => member), :class => "btn btn-default", :remote => true, :method => :post %>
       </td>
       <td>
         <% if member.location %>
