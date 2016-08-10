@@ -280,10 +280,10 @@ class Expert::GroupsController < ApplicationController
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
-  def leave
+  def leave(user=current_user)
     @group = Group.find(params[:id])
-    @group.remove_user_from_group(current_user)
-    @group_members = @group.group_members_with_self_first(current_user, 5)
+    @group.remove_user_from_group(user)
+    @group_members = @group.group_members_with_self_first(user, 5)
   end
 
   def unlead
