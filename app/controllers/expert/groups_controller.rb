@@ -283,14 +283,14 @@ class Expert::GroupsController < ApplicationController
   def leave
     if(params[:user])
       @remove_user = User.find_by_id(params[:user])
-      return if(!@remove_user)
+      return if(@remove_user.nil?)
     else
       @remove_user = current_user
     end
 
     @group = Group.find(params[:id])
     @group.remove_user_from_group(@remove_user,current_user)
-    @group_members = @group.group_members_with_self_first(user, 5)
+    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
   def unlead
