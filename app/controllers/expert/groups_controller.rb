@@ -280,9 +280,16 @@ class Expert::GroupsController < ApplicationController
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
-  def leave(user=current_user)
+  def leave
+    if(params[:user])
+      @remove_user = User.find_by_id(params[:user])
+      return if(!@remove_user)
+    else
+      @remove_user = current_user
+    end
+
     @group = Group.find(params[:id])
-    @group.remove_user_from_group(user)
+    @group.remove_user_from_group(@remove_user,current_user)
     @group_members = @group.group_members_with_self_first(user, 5)
   end
 
