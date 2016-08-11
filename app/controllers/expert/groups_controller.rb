@@ -287,13 +287,10 @@ class Expert::GroupsController < ApplicationController
   end
 
   def remove
-    if(params[:user])
-      @remove_user = User.find_by_id(params[:user])
-      return if(@remove_user.nil?)
-    end
-
     @group = Group.find(params[:id])
-    @group.remove_user_from_group(@remove_user,current_user)
+    if(request.post? and @remove_user = User.find_by_id(params[:user_id]))
+      @group.remove_user_from_group(@remove_user,current_user)
+    end
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
