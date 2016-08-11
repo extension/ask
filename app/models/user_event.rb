@@ -17,6 +17,7 @@ class UserEvent < ActiveRecord::Base
   UPDATED_DESCRIPTION = 108
   UPDATED_PROFILE = 109
   UPDATED_ANSWERING_PREFS = 110
+  REMOVED_GROUP = 111
 
   USER_EVENT_STRINGS = {
     100 => 'changed tags',
@@ -29,11 +30,16 @@ class UserEvent < ActiveRecord::Base
     107 => 'removed expertise tag',
     108 => 'updated description',
     109 => 'updated profile',
-    110 => 'updated answering preferences'
+    110 => 'updated answering preferences',
+    111 => 'removed from group'
   }
 
   def self.log_generic_user_event(user, initiator, edit_hash, user_event)
     return self.log_user_changes(user, initiator, user_event, {what_changed: edit_hash})
+  end
+
+  def self.log_removed_group(user, initiator, edit_hash)
+    return self.log_user_changes(user, initiator, REMOVED_GROUP, edit_hash)
   end
 
   def self.log_added_tags(user, initiator, edit_hash)
@@ -43,7 +49,7 @@ class UserEvent < ActiveRecord::Base
   def self.log_removed_tags(user, initiator, edit_hash)
     return self.log_user_changes(user, initiator, REMOVED_TAGS, edit_hash)
   end
-  
+
   def self.log_updated_vacation_status(user, initiator, edit_hash)
     return self.log_user_changes(user, initiator, CHANGED_VACATION_STATUS, edit_hash)
   end

@@ -1,4 +1,4 @@
-<h1><%= link_to @group.name, expert_group_path() %> Members (<%= @group.joined.count %>)</h1>
+<h1><%= link_to @group.name, expert_group_path() %> Members (<span id="group-member-count"><%= @group.joined.count %></span>)</h1>
 
 <div class="explanation">
   <h2>What Are Group Leaders?</h2>
@@ -37,10 +37,11 @@
   <tbody>
 
 <% @group_members.each do |member| %>
-  <tr class="<%= member.away? ? "member-away" : "" %>">
+  <tr id="member_id_<%= member.id -%>" class="<%= member.away? ? "member-away" : "" %>">
       <td>
         <%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %>
         <% if member.leader_of_group(@group)%><strong><i class="icon-user"></i> Leader</strong><% end %>
+        <%= link_to('Edit group membership', expert_edit_attributes_path(member), {:class => "btn btn-default btn-xs"}) -%>
       </td>
       <td>
         <% if member.location %>

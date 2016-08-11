@@ -8,48 +8,59 @@ class Expert::UsersController < ApplicationController
   layout 'expert'
   before_filter :authenticate_user!
   before_filter :require_exid
-  
+
   def show
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @question_list = "assigned"
     @questions = @user.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.open_questions.length
     @user_groups = @user.group_memberships
-    @handling_event_count = @user.aae_handling_event_count 
+    @handling_event_count = @user.aae_handling_event_count
   end
-  
+
   def edit_attributes
     @user = User.exid_holder.find_by_id(params[:id])
     return record_not_found if @user.blank?
+    @user_groups = @user.group_memberships
     @locations = Location.order('fipsid ASC')
     @object = @user
-    
+
     if request.put?
       vacation_changed = false
       @user.attributes = params[:user]
       # log changes in expert history
       change_hash = Hash.new
       if @user.away_changed?
-        vacation_changed = true 
+        vacation_changed = true
         change_hash[:vacation_status] = {:old => @user.away_was, :new => @user.away, :reason => params[:set_to_away_reason]}
       end
-      
+
       @user.save
-      UserEvent.log_updated_vacation_status(@user, current_user, change_hash) if vacation_changed  
+      UserEvent.log_updated_vacation_status(@user, current_user, change_hash) if vacation_changed
       flash.now[:notice] = "Preferences updated successfully!"
       render nil
     end
   end
-  
+
+  def remove_group
+    @group = Group.find(params[:group_id])
+    if(request.post? and @remove_user = User.find_by_id(params[:user_id]))
+      @group.remove_user_from_group(@remove_user,current_user)
+      change_hash = Hash.new
+      change_hash[:groups] = {:removed_group_id => @group.id}
+      UserEvent.log_removed_group(@remove_user, current_user, change_hash)
+    end
+  end
+
   def answered
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @question_list = "answered"
     @questions = @user.answered_questions.page(params[:page]).order('resolved_at DESC')
@@ -58,12 +69,12 @@ class Expert::UsersController < ApplicationController
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
-  
+
   def watched
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @question_list = "watched"
     @questions = @user.watched_questions.page(params[:page]).order('created_at DESC')
@@ -72,12 +83,12 @@ class Expert::UsersController < ApplicationController
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
-  
+
   def rejected
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @question_list = "rejected"
     @questions = @user.rejected_questions.page(params[:page]).order('created_at DESC')
@@ -86,53 +97,53 @@ class Expert::UsersController < ApplicationController
     @handling_event_count = @user.aae_handling_event_count
     render :action => 'show'
   end
-  
+
   def submitted
     @user = User.find_by_id(params[:id])
-    
+
     if !@user.present?
       flash[:error] = "User does not exist with this id or email."
       return redirect_to expert_home_url
     end
-    
+
     @question_list = "submitted"
     @questions = @user.submitted_questions.page(params[:page]).order('created_at DESC')
     @question_count = @user.submitted_questions.length
   end
-  
+
   def tags
     @tag = Tag.find_by_id(params[:tag_id])
     @user = User.exid_holder.find_by_id(params[:user_id])
     return record_not_found if (!@user || !@tag)
     @questions = @user.answered_questions.tagged_with(@tag.id).order("questions.status_state ASC")
   end
-  
+
   def groups
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @user_groups = @user.group_memberships
   end
-  
+
   def history
     @user = User.exid_holder.find_by_id(params[:id])
     if @user.blank?
       flash[:error] = "The user specified does not exist as an expert in AaE."
-      return redirect_to expert_home_url 
+      return redirect_to expert_home_url
     end
     @expert_events = @user.user_events.order("created_at DESC")
   end
-  
+
   def save_listview_filter
     user = current_user
     pref = user.filter_preference
-    
+
     if pref.nil?
       pref = FilterPreference.create(:user => user, :setting => {:question_filter => {}})
     end
-    
+
     if !params[:location_id].nil?
       if params[:location_id].blank?
         pref.setting[:question_filter].merge!({:locations => nil, :counties => nil})
@@ -181,10 +192,10 @@ class Expert::UsersController < ApplicationController
       pref.save
     end
   end
-  
+
   def save_notification_prefs
     user = current_user
-    if params[:group_id].present? 
+    if params[:group_id].present?
       send_incoming_notification = params[:send_incoming_notification].present?
       Preference.create_or_update(user, Preference::NOTIFICATION_INCOMING, send_incoming_notification, params[:group_id])
       send_daily_summary =  params[:send_daily_summary].present?
@@ -192,5 +203,5 @@ class Expert::UsersController < ApplicationController
     end
     redirect_to :back
   end
-    
+
 end

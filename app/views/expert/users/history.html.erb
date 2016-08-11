@@ -12,23 +12,26 @@
       <% when UserEvent::REMOVED_TAGS %>
         <p><%= link_expert_user(event.creator) %> Deleted <span class="label label-default label-topic label-strike"><%= value[:old] %></span> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
       <% when UserEvent::CHANGED_VACATION_STATUS %>
-        <p><%= link_expert_user(event.creator) %> Switched <strong><%= key.to_s.gsub('_', ' ') %></strong> to <%= value[:new] ? '<span class="label label-default">away</span>'.html_safe : '<span class="label label-success">available</span>'.html_safe %> 
+        <p><%= link_expert_user(event.creator) %> Switched <strong><%= key.to_s.gsub('_', ' ') %></strong> to <%= value[:new] ? '<span class="label label-default">away</span>'.html_safe : '<span class="label label-success">available</span>'.html_safe %>
           <% if value[:reason].present? %>
             because <span class="bg-warning">"<%= value[:reason] %>"</span>
           <% end %>
         <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
-      <% when UserEvent::ADDED_LOCATION, UserEvent::ADDED_COUNTY %> 
+      <% when UserEvent::ADDED_LOCATION, UserEvent::ADDED_COUNTY %>
         <p><%= link_expert_user(event.creator) %> Added <span class="label label-default label-geography"><%= value[:new] %></span> to <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
-      <% when UserEvent::REMOVED_LOCATION, UserEvent::REMOVED_COUNTY %> 
+      <% when UserEvent::REMOVED_LOCATION, UserEvent::REMOVED_COUNTY %>
         <p><%= link_expert_user(event.creator) %> Deleted <span class="label label-default label-geography label-strike"><%= value[:old] %></span> from <strong><%= key.to_s.gsub('_', ' ') %></strong> <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
+      <% when UserEvent::REMOVED_GROUP %>
+        <%- @removed_group = Group.find(value[:removed_group_id]) -%>
+        <p><%= link_expert_user(event.creator) %> removed <%= @user.name -%> from the <%= link_to @removed_group.name, expert_group_path(@removed_group.id) %> group <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
       <%- when UserEvent::UPDATED_PROFILE, UserEvent::UPDATED_ANSWERING_PREFS -%>
         <p><%= link_expert_user(event.creator) %> <%= event.description %>
-          <%= link_to("(details)".html_safe, 
+          <%= link_to("(details)".html_safe,
             '#',
-            id: "detailstoggler_#{event.id}", 
+            id: "detailstoggler_#{event.id}",
             data: {toggle: 'collapse', target: "#showdetails_#{event.id}"}) %>
         <%= time_ago_in_words(event.created_at) %> ago <small class="text-muted"><%= humane_date(event.created_at) %></small></p>
-      
+
           <div id="showdetails_<%= event.id %>" class="collapse">
             <ul class='unstyled'>
               <%- profile_changes(event.updated_user_attributes[:what_changed]).each do |change| -%>

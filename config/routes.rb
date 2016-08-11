@@ -133,6 +133,7 @@ Aae::Application.routes.draw do
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "users/:id/edit_attributes" => "users#edit_attributes", :via => [:get, :put], :as => 'edit_attributes'
     match "users/:id/submitted" => "users#submitted", :via => [:get], :as => 'user_submitted'
+    match "users/:id/remove_group" => "users#remove_group", :via => [:post], :as => 'remove_group'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'

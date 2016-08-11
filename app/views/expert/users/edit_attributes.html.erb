@@ -31,7 +31,7 @@
     <%= render :partial => 'ajax/location_picker' %>
   </div>
 </div>
-  
+
 <div class="well">
   <h2>Tags</h2>
   <div class="ui-widget">
@@ -45,11 +45,29 @@
     <% end %>
   <% end %>
   </div>
-</div>  
-    
+</div>
 
 
-<script class="code" type="text/javascript">    
+<% if @user_groups.size != 0 %>
+  <div class="well">
+    <h2>Groups</h2>
+    <ul class="groups">
+      <% @user_groups.each do |group| %>
+        <li class="group_list_item" id="group_list_item_<%= group.id -%>">
+          <span class="<%= !group.group_active? ? "inactive_group" : "active" %>">
+            <%= link_expert_group_avatar(group, :thumb) %>
+            <span class="group_info">
+              <strong><%= link_to group.name, expert_group_path(group.id) %></strong> <%= !group.group_active? ? "- Inactive Group" : "" %>
+            </span> <%= link_to('Remove from group', expert_remove_group_path(group_id: group.id, user_id: @user.id), {:class => "btn btn-default", :remote => true, :method => :post}) -%>
+          </span>
+        </li>
+      <% end %>
+    </ul>
+    <br class="clearing" />
+  </div>
+<% end %>
+
+<script class="code" type="text/javascript">
 
 		function add_tag(tag) {
 		  $.ajax({
@@ -62,7 +80,7 @@
 				$("#tag_picker").autocomplete("close");
 				$("#tag_picker").val('');
 				return false;
-      })  
+      })
       .fail(function() {
         alert("error");
         $("#tag_picker").autocomplete("close");
