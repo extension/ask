@@ -9,7 +9,7 @@ class GroupEvent < ActiveRecord::Base
   # GROUP EVENTS
   GROUP_JOIN = 201
   GROUP_LEFT= 203
-  GROUP_REMOVE= 203
+  GROUP_REMOVE= 204
   GROUP_ADDED_AS_LEADER = 212
   GROUP_REMOVED_AS_LEADER = 214
   CREATED_GROUP = 110
@@ -19,7 +19,7 @@ class GroupEvent < ActiveRecord::Base
     212 => 'joined group leadership',
     201 => 'joined group',
     203 => 'left group',
-    203 => 'removed from group',
+    204 => 'removed from group',
     214 => 'left group leadership',
     110 => 'created group',
     600 => 'edited attributes'
