@@ -286,14 +286,6 @@ class Expert::GroupsController < ApplicationController
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
-  def remove
-    @group = Group.find(params[:id])
-    if(request.post? and @remove_user = User.find_by_id(params[:user_id]))
-      @group.remove_user_from_group(@remove_user,current_user)
-    end
-    @group_members = @group.group_members_with_self_first(current_user, 5)
-  end
-
   def unlead
     @group = Group.find_by_id(params[:id])
     current_user.leave_group_leadership(@group)

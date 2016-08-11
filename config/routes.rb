@@ -133,6 +133,7 @@ Aae::Application.routes.draw do
     match "users/:id/groups" => "users#groups", :via => [:get, :put, :post], :as => 'user_groups'
     match "users/:id/edit_attributes" => "users#edit_attributes", :via => [:get, :put], :as => 'edit_attributes'
     match "users/:id/submitted" => "users#submitted", :via => [:get], :as => 'user_submitted'
+    match "users/:id/remove_group" => "users#remove_group", :via => [:post], :as => 'remove_group'
     match "groups/:id/members" => "groups#members", :via => :get, :as => 'group_members'
     match "groups/:id/profile" => "groups#profile", :via => [:get, :put], :as => 'group_profile'
     match "groups/:id/locations" => "groups#locations", :via => [:get, :put], :as => 'group_locations'
@@ -144,7 +145,6 @@ Aae::Application.routes.draw do
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
     match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
     match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
-    match "groups/:id/remove" => "groups#remove", :via => [:post], :as => 'group_remove'
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
     match "groups/:id/unlead" => "groups#unlead", :via => [:post], :as => 'group_unlead'
     match "groups/create" => "groups#create", :via => [:post]
