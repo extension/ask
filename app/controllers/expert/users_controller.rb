@@ -50,8 +50,10 @@ class Expert::UsersController < ApplicationController
     @group = Group.find(params[:group_id])
     if(request.post? and @remove_user = User.find_by_id(params[:user_id]))
       @group.remove_user_from_group(@remove_user,current_user)
+      change_hash = Hash.new
+      change_hash[:groups] = {:removed_group_id => @group.id}
+      UserEvent.log_removed_group(@remove_user, current_user, change_hash)
     end
-    @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
   def answered
