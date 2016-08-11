@@ -57,6 +57,7 @@ class Notification < ActiveRecord::Base
   AAE_DATA_DOWNLOAD_AVAILABLE = 1018
   AAE_EXPERT_LOCATION_EDIT = 1019
   AAE_EXPERT_AWAY_REMINDER = 1020
+  AAE_EXPERT_GROUP_EDIT = 1021
 
 
   ##########################################
@@ -211,6 +212,10 @@ class Notification < ActiveRecord::Base
 
   def aae_expert_location_edit
     InternalMailer.aae_expert_location_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
+  end
+
+  def aae_expert_group_edit
+    InternalMailer.aae_expert_group_edit(user: self.notifiable.user).deliver unless (self.notifiable.user.nil? || self.notifiable.user.email.nil?)
   end
 
   def aae_expert_handling_reminder
