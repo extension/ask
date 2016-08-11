@@ -223,7 +223,11 @@ class Group < ActiveRecord::Base
   def remove_user_from_group(user, removed_by = nil)
     removed_by = user if(removed_by.nil?)
     self.group_connections.where(user_id: user.id).destroy_all
-    GroupEvent.log_group_leave(self, removed_by, user)
+    if (user != removed_by)
+      GroupEvent.log_group_remove(self, removed_by, user)
+    else
+      GroupEvent.log_group_leave(self, removed_by, user)
+    end
     if(self.id == QUESTION_WRANGLER_GROUP_ID)
       user.update_attribute(:is_question_wrangler, false)
     end
