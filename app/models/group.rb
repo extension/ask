@@ -251,7 +251,7 @@ class Group < ActiveRecord::Base
         self.toggle!(:widget_active)
         change_hash[:widget_active] = {:old => true, :new => false}
       end
-      GroupEvent.log_edited_attributes(@group, User.system_user, nil, change_hash)
+      GroupEvent.log_edited_attributes(self, User.system_user, nil, change_hash)
     end
   end
 
