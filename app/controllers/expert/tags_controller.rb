@@ -98,8 +98,6 @@ class Expert::TagsController < ApplicationController
       flash[:success] = "All instances of '#{@current_tag.name}' have been updated"
 
       return redirect_to expert_show_tag_path(@replacement_tag.name)
-    else
-
     end
   end
 
