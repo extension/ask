@@ -52,6 +52,12 @@ class Expert::TagsController < ApplicationController
     end
 
     @current_tag = Tag.find_by_name(params[:current_tag])
+
+    if(@current_tag.nil?)
+      # silently redirect because of the missing param - probably a double form hit
+      return redirect_to expert_tags_path()
+    end
+
     @replacement_tag = Tag.find_by_name(Tag.normalizename(params[:replacement_tag]))
     @replacement_tag_count = 0
 
@@ -72,6 +78,11 @@ class Expert::TagsController < ApplicationController
 
   def edit_taggings
     @current_tag = Tag.find_by_id(params[:current_tag_id])
+    if(@current_tag.nil?)
+      # silently redirect because of the missing param - probably a double form hit
+      return redirect_to expert_tags_path()
+    end
+
     @replacement_tag = Tag.find_or_create_by_name(Tag.normalizename(params[:replacement_tag]))
     if @current_tag != @replacement_tag
       affected_objects_hash = @current_tag.tagged_objects_hash
