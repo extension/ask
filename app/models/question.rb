@@ -610,7 +610,6 @@ class Question < ActiveRecord::Base
   def find_group_assignee(assignees_to_exclude = nil)
     assignee_tests = []
     group = self.assigned_group
-
     if(assignees_to_exclude.present?)
       base_assignee_scope = group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
     else
@@ -791,6 +790,7 @@ class Question < ActiveRecord::Base
       group.
       END_TEXT
       self.kick_out_to_wrangler_group(reason)
+      group = Group.question_wrangler_group
     end
 
     if(!Settings.sidekiq_enabled)
@@ -798,11 +798,22 @@ class Question < ActiveRecord::Base
     else
       self.class.delay_for(5.seconds).delayed_find_group_assignee_and_assign(self.id)
     end
+
+    # queue a notification to the group
+    if(!group.nil? and !group.incoming_notification_list.empty?)
+      Notification.create(notifiable: self,
+                          created_by: 1,
+                          recipient_id: 1,
+                          notification_type: Notification::AAE_ASSIGNMENT_GROUP,
+                          delivery_time: 1.minute.from_now )
+    end
+
   end
 
   def find_group_assignee_and_assign(assignees_to_exclude = nil)
     system_user = User.system_user
     group = self.assigned_group
+
     if(!group.individual_assignment?)
       QuestionEvent.log_group_assignment(self, group, system_user, nil)
       return true
