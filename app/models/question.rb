@@ -214,7 +214,7 @@ class Question < ActiveRecord::Base
 
   ## filters
   before_create :generate_fingerprint, :set_last_opened, :set_is_extension
-  after_create :reject_if_spam_or_duplicate, :queue_initial_assignment,  :index_me
+  after_create :reject_if_spam_or_duplicate, :queue_initial_assignment, :notify_submitter, :index_me
   after_update :index_me
   after_save :update_data_cache
 
