@@ -15,7 +15,6 @@ set :user, "pacecar"
 set :use_sudo, false
 set :keep_releases, 5
 ssh_options[:forward_agent] = true
-set :port, 24
 set :bundle_flags, '--deployment --binstubs'
 set :rails_env, "production" #added for delayed job
 

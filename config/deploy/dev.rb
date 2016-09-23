@@ -6,3 +6,4 @@ else
 end
 set :vhost, 'dev-ask.awsi.extension.org'
 server vhost, :app, :web, :db, :primary => true
+set :port, 22
