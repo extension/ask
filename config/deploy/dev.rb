@@ -4,6 +4,7 @@ if(branch = ENV['BRANCH'])
 else
   set :branch, 'master'
 end
-set :vhost, 'dev-ask.aws.extension.org'
-server vhost, :app, :web, :db, :primary => true
+set :vhost, 'dev-ask.extension.org'
+set :deploy_server, 'dev-ask.aws.extension.org'
+server deploy_server, :app, :web, :db, :primary => true
 set :port, 22
