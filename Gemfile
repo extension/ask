@@ -59,7 +59,7 @@ gem 'omniauth', "~> 1.0"
 gem 'kaminari'
 
 # revision history
-gem 'paper_trail', '~> 2'
+gem 'paper_trail', '~> 2', :source => 'http://rubygems.org/'
 
 # diffs
 gem 'diffy'
@@ -132,6 +132,9 @@ gem 'demoji'
 
 # additional help in blocking apps
 gem 'rack-attack'
+
+# Ruby 2.2 requirement
+gem 'test-unit'
 
 group :development do
   # require the powder gem

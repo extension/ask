@@ -5,4 +5,5 @@ else
   set :branch, 'master'
 end
 set :vhost, 'dev-ask.extension.org'
-server vhost, :app, :web, :db, :primary => true
+set :deploy_server, 'dev-ask.aws.extension.org'
+server deploy_server, :app, :web, :db, :primary => true
