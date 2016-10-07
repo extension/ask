@@ -98,7 +98,7 @@ GEM
     highline (1.6.21)
     hike (1.2.3)
     honeybadger (2.5.3)
-    htmlentities (4.3.1)
+    htmlentities (4.3.4)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     httpauth (0.2.0)
@@ -366,3 +366,6 @@ DEPENDENCIES
   turbo-sprockets-rails3
   uglifier (>= 1.0.3)
   useragent
+
+BUNDLED WITH
+   1.12.5
