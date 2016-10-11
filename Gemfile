@@ -136,6 +136,9 @@ gem 'rack-attack'
 # Ruby 2.2 requirement
 gem 'test-unit'
 
+# monitoring
+gem 'scout_apm'
+
 group :development do
   # require the powder gem
   gem 'powder'
