@@ -1,0 +1,4 @@
+---
+api_key: '<%= Settings.honeybadger_api_key %>'
+exceptions.ignore: ["ActionController::UnknownHttpMethod"]
+env: '<%= Settings.honeybadger_api_environment %>'
