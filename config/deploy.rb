@@ -49,7 +49,11 @@ namespace :deploy do
   task :link_and_copy_configs, :roles => :app do
     run <<-CMD
     rm -rf #{release_path}/config/database.yml &&
+    rm -rf #{release_path}/config/honeybadger.yml &&
+    rm -rf #{release_path}/config/scout_apm.yml &&
     ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml &&
+    ln -nfs #{shared_path}/config/honeybadger.yml #{release_path}/config/honeybadger.yml &&
+    ln -nfs #{shared_path}/config/scout_apm.yml #{release_path}/config/scout_apm.yml &&
     ln -nfs #{shared_path}/config/settings.local.yml #{release_path}/config/settings.local.yml &&
     ln -nfs #{shared_path}/config/sunspot.yml #{release_path}/config/sunspot.yml &&
     ln -nfs #{shared_path}/config/robots.txt #{release_path}/public/robots.txt &&

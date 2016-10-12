@@ -4,7 +4,7 @@ common: &defaults
 
   # key: Your Organization key for Scout APM. Found on the settings screen.
   # - Default: none
-  key: <%= Settings.scout_apm_key %>
+  key: notprovided
 
   # log_level: Verboseness of logs.
   # - Default: 'info'
@@ -18,9 +18,9 @@ common: &defaults
   # monitor: Enable Scout APM or not
   # - Default: none
   # - Valid Options: true, false
-  monitor: <%= Settings.scout_apm_monitor %>
+  monitor: true
   # development
-  dev_trace: <%= Settings.scout_apm_devtrace %>
+  dev_trace: true
 
 production:
   <<: *defaults

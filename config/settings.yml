@@ -38,9 +38,4 @@ akismet_host: 'https://ask.extension.org'
 sitemap_dir: 'notset'
 downloads_data_dir: 'notset'
 sidekiq_enabled: true
-honeybadger_api_key: 'use_local_settings'
-honeybadger_api_environment: 'localdev'
 block_user_agent_regex: 'use_local_settings'
-scout_apm_key: 'use_local_settings'
-scout_apm_monitor: false
-scout_apm_devtrace: false
