@@ -1,0 +1,4 @@
+---
+api_key: notprovided
+exceptions.ignore: ["ActionController::UnknownHttpMethod"]
+env: 'localdev'
