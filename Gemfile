@@ -137,7 +137,7 @@ gem 'rack-attack'
 gem 'test-unit'
 
 # monitoring
-gem 'scout_apm'
+gem 'scout_apm', '~> 3.0.x'
 
 group :development do
   # require the powder gem
