@@ -28,5 +28,13 @@ module MarkupScrubber
     Loofah.fragment(html_string).to_text
   end
 
+  def remove_links(html_string)
+    parsed_string = Nokogiri::HTML::DocumentFragment.parse(html_string)
+    parsed_string.css('a').each do |anchor|
+      anchor.remove
+    end
+    html_to_text(parsed_string.to_s)
+  end
+
 
 end
