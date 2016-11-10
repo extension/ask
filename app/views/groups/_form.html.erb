@@ -1,6 +1,8 @@
-<%= form_for @question, :url => ask_group_path(), :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
+<%= form_for @question, :url => groups_path(id: @group.id), :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |f| %>
 
   <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+  <%= invisible_captcha %>
+
 
   <fieldset>
     <p>

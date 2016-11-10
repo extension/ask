@@ -139,6 +139,9 @@ gem 'test-unit'
 # monitoring
 gem 'scout_apm', '~> 3.0.x'
 
+# spam prevention
+gem 'invisible_captcha'
+
 group :development do
   # require the powder gem
   gem 'powder'

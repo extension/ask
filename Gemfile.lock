@@ -106,6 +106,8 @@ GEM
     inline-style (0.5.2ex)
       csspool
       nokogiri
+    invisible_captcha (0.9.1)
+      rails
     journey (1.0.4)
     jqtools-rails (0.1.3)
     jquery-rails (2.1.3)
@@ -328,6 +330,7 @@ DEPENDENCIES
   honeybadger
   htmlentities
   inline-style (= 0.5.2ex)!
+  invisible_captcha
   jqtools-rails
   jquery-rails
   kaminari

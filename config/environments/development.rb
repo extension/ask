@@ -37,7 +37,6 @@ Aae::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
+
   config.action_mailer.asset_host = "http://#{Settings.urlwriter_host}"
-  
 end

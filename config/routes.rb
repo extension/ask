@@ -32,7 +32,7 @@ Aae::Application.routes.draw do
   resources :groups do
     member do
       get 'ask'
-      post 'ask'
+      post 'create'
       get 'widget'
       get 'ask_widget'
       post 'ask_widget'
