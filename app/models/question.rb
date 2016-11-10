@@ -772,6 +772,9 @@ class Question < ActiveRecord::Base
   def reject_if_spam_or_duplicate
     if(self.spam?)
       self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+    elsif(self.has_blank_body_when_links_removed?)
+      self.spam!
+      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
     elsif existing_question = self.check_for_duplicate
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
       self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
@@ -1473,6 +1476,9 @@ class Question < ActiveRecord::Base
     end
   end
 
+  def has_blank_body_when_links_removed?
+    CGI.unescapeHTML(self.class.remove_links(self.body)).gsub(/\s+/,'').blank?
+  end
 
 
 
