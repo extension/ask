@@ -1,0 +1,6 @@
+<div>
+<%- @question_list.each do |question| -%>
+  <h2 class="subhead_style bordered">Question ID# <%= question.id -%></h2>
+  <%= render :partial => 'questionresponse', :locals => {:question => question} -%>
+<%- end -%>
+</div>

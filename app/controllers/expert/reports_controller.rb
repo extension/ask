@@ -6,8 +6,8 @@
 
 class Expert::ReportsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :authenticate_user!, :except => 'response_export'
+  before_filter :require_exid, :except => 'response_export'
 
   def index
     @user = current_user
@@ -396,5 +396,11 @@ class Expert::ReportsController < ApplicationController
     @locations =  Location.in_state_out_metrics_by_year(@year).deep_merge(Location.asked_answered_metrics_by_year(@year))
   end
 
+  def response_export
+    @group = Group.find(1087)
+    @yearmonth = params[:yearmonth]
+    @question_list = Question.answered.where(assigned_group_id: @group.id).where("DATE_FORMAT(created_at,'%Y-%m') = ?",@yearmonth).order('created_at DESC')
+    return render :layout => 'export'
+  end
 
 end
