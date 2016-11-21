@@ -15,7 +15,7 @@
           <% if image.persisted? %>
             <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
               <div class="question_image_wrapper">
-                <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />" %>
+                <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />".html_safe %>
               </div>
 
             <% else %>
@@ -68,7 +68,7 @@
                 <% if image.persisted? %>
                   <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
                   <div class="question_image_wrapper">
-                    <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />" %>
+                    <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />".html_safe %>
                   </div>
                   <% else %>
                    <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
