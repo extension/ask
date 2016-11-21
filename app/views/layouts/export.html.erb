@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= (@page_title) ? @page_title + " - Ask an Expert" : "Ask an Expert - eXtension" %></title>
+  <link href="https://ask.extension.org/assets/public.css" media="screen" rel="stylesheet" />
+</head>
+<body id="public" class='<%= 'demo' if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>'>
+
+  <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+    <div id="app_location" class="demo">
+      <p>This is the <strong>AaE <%= Settings.app_location.upcase %></strong> site. Feel free to test/play. Note: The data on this site is regularly deleted/refreshed, and all notifications are turned off. Visit <%= link_to("Ask an Expert", "http://ask.extension.org") -%>.</p>
+    </div>
+  <% end %>
+
+  <div class="container container-main">
+
+    <div class="navbar masthead">
+
+      <span class="navbar-toggle btn btn-default mobile-menu-search-btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search'></i> <i class='fa fa-bars'></i></span>
+      <%= image_tag "cooperative_extension_500w.png", :class => "coopex", :alt => "eXtension" %>
+      <a class="navbar-brand ex_logo" href="/"><%= image_tag "aae_logo.png", :class => "", :alt => "eXtension" %></a>
+
+
+</div>
+
+      <div class="row">
+      <%= yield :layout %>
+      </div>
+
+      <hr class="noprint" />
+
+      <footer>
+        <span id="extension_icon_512" class="pull-left noprint"><%= image_tag "extension_logo.jpg", :class => "hidden-xs", :id => "extension_logo", :alt => "eXtension" %></span>
+        <p>&copy; <%= Time.now.utc.year %> eXtension. All rights reserved.</p>
+      </footer>
+
+
+    </div> <!-- /container -->
+
+
+</body>
+</html>

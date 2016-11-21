@@ -15,23 +15,9 @@
           <% if image.persisted? %>
             <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
               <div class="question_image_wrapper">
-                <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+                <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />" %>
               </div>
 
-
-              <div id="myModal<%= image.id %>" class="modal fade">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
-                    </div>
-                    <div class="modal-body">
-                      <%= image_tag image.url() %>
-                    </div>
-                  </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal -->
             <% else %>
              <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
             <% end %>
@@ -82,27 +68,8 @@
                 <% if image.persisted? %>
                   <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
                   <div class="question_image_wrapper">
-                    <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+                    <%= "<img src='#{image.dynamic_attachment_url("300x300#")}' class => 'size180w' />" %>
                   </div>
-
-
-                  <div id="myModal<%= image.id %>" class="modal fade">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                          <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
-                          <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
-                            <%= button_to "Delete image", remove_image_response_path(:id => response.id, :image_id => image.id), :class => "btn btn-default" %>
-                          <% end %>
-                        </div>
-                        <div class="modal-body">
-                          <%= image_tag image.url() %>
-                        </div>
-                      </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
                   <% else %>
                    <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
                   <% end %>
@@ -113,7 +80,7 @@
 
           <div class="author" itemprop="author">
             <% if response.resolver_id %>
-              <p><%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to link_public_user(response.resolver) %></p>
+              <p><%= link_to link_public_user(response.resolver) %></p>
             <% else %>
               <p>Anonymous Guest</p>
             <% end %>

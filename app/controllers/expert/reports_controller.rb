@@ -400,7 +400,7 @@ class Expert::ReportsController < ApplicationController
     @group = Group.find(1087)
     @yearmonth = params[:yearmonth]
     @question_list = Question.answered.where(assigned_group_id: @group.id).where("DATE_FORMAT(created_at,'%Y-%m') = ?",@yearmonth).order('created_at DESC')
-    return render :layout => 'public'
+    return render :layout => 'export'
   end
 
 end
