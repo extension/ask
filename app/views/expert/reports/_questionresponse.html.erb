@@ -1,0 +1,126 @@
+  <div itemscope itemtype="http://www.schema.org/Article">
+
+
+    <div id="question">
+
+      <div class="infobar bordered clearfix">
+        <span class="text-muted"><small>Asked <%= humane_date(question.created_at) %></small></span>
+      </div>
+
+      <div class="question_body" itemprop="description"><%= format_text_for_display(question.body) %></div>
+
+    <% if question.images.size > 0 %>
+        <div class="images_wrapper clearfix">
+        <% question.images.each do |image| %>
+          <% if image.persisted? %>
+            <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
+              <div class="question_image_wrapper">
+                <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+              </div>
+
+
+              <div id="myModal<%= image.id %>" class="modal fade">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                    </div>
+                    <div class="modal-body">
+                      <%= image_tag image.url() %>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+            <% else %>
+             <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <p>
+      <% if question.location.present? %>
+        <% if question.county.present? %>
+          <span class="tag tag-geography"><%= "#{question.county.name}" %></span>
+        <% end %>
+        <% if question.location.present? %>
+          <span class="tag tag-geography"><%= question.location.name %></span>
+        <% end %>
+      <% end %>
+    </p>
+
+    <p>
+      <% if question.tags.size > 0 %>
+      Tags:
+        <% question.tags.each do |tag| %>
+          <% if tag.name != "front page" %>
+            <span class="tag tag-topic"><%= tag.name %></span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </p>
+
+  </div>
+  <!--  Question end -->
+
+  <!--  Response -->
+    <%- question_responses = question.responses.all -%>
+    <% if question_responses.size > 0 %>
+      <% question_responses.each do |response| %>
+        <div id="response-<%= response.id %>" class="response_block">
+          <div id="view-response-<%= response.id %>" class="response-anchor"></div>
+          <div class="response">
+            <%= format_text_for_display(response.body) %>
+          </div>
+
+           <% if response.images.size > 0 %>
+
+              <div class="images_wrapper clearfix">
+              <% response.images.each do |image| %>
+                <% if image.persisted? %>
+                  <% if File.exists?(Rails.root.join("public#{image.url(:original,{escape: false, timestamp: false})}")) %>
+                  <div class="question_image_wrapper">
+                    <a data-toggle="modal" href="#myModal<%= image.id %>"><%= image_tag image.dynamic_attachment_url("300x300#"), :class => "size180w" %></a>
+                  </div>
+
+
+                  <div id="myModal<%= image.id %>" class="modal fade">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <p><%= link_to "View full size in a new window", image.url(), :target => "_blank" %></p>
+                          <% if @authenticated_submitter.present? && response.submitter_id == @authenticated_submitter.id %>
+                            <%= button_to "Delete image", remove_image_response_path(:id => response.id, :image_id => image.id), :class => "btn btn-default" %>
+                          <% end %>
+                        </div>
+                        <div class="modal-body">
+                          <%= image_tag image.url() %>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <% else %>
+                   <%= image_tag("missing_image.png", :size => "80x80", :class => 'missing_image size80x80') %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="author" itemprop="author">
+            <% if response.resolver_id %>
+              <p><%= link_public_user_avatar(response.resolver, :thumb) %> <%= link_to link_public_user(response.resolver) %></p>
+            <% else %>
+              <p>Anonymous Guest</p>
+            <% end %>
+            <p><small><%= "Replied #{humane_date(response.created_at)}" %></small></p>
+          </div>
+
+        </div>
+        <% end %>
+      <% end %>
+  </div>
