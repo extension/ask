@@ -6,8 +6,8 @@
 
 class Expert::ReportsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!, :except => 'response_export'
-  before_filter :require_exid, :except => 'response_export'
+  before_filter :authenticate_user!
+  before_filter :require_exid
 
   def index
     @user = current_user
@@ -397,7 +397,7 @@ class Expert::ReportsController < ApplicationController
   end
 
   def response_export
-    @group = Group.find(1087)
+    @group = Group.find(params[:group])
     @yearmonth = params[:yearmonth]
     @question_list = Question.answered.where(assigned_group_id: @group.id).where("DATE_FORMAT(created_at,'%Y-%m') = ?",@yearmonth).order('created_at DESC')
     return render :layout => 'export'
