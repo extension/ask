@@ -10,6 +10,7 @@ class Group < ActiveRecord::Base
   has_many :question_events
   has_many :questions, :class_name => "Question", :foreign_key => "assigned_group_id"
   has_many :group_locations
+  has_many :locations, :through => :group_locations
   has_many :group_counties
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
@@ -263,28 +264,53 @@ class Group < ActiveRecord::Base
                .group(:original_group_id) \
                .count('DISTINCT(questions.id)')
 
-    submitters = Question.not_rejected \
-               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
-               .group(:original_group_id) \
-               .count('DISTINCT(questions.submitter_id)')
 
-    answered = Question.not_rejected.joins(:question_events => :initiator) \
-               .where("question_events.event_state = #{QuestionEvent::RESOLVED}") \
-               .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s) \
+    asked_widget = Question.not_rejected \
+                   .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+                   .where("questions.referrer LIKE '%widget%'")
+                   .group(:original_group_id) \
+                   .count('DISTINCT(questions.id)')
+
+    moved_out = Question.not_rejected \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+               .where('assigned_group_id != original_group_id')
+               .group(:original_group_id) \
+               .count('DISTINCT(questions.id)')
+
+    moved_in = Question.not_rejected \
+              .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+              .where('assigned_group_id != original_group_id')
+              .group(:assigned_group_id) \
+              .count('DISTINCT(questions.id)')
+
+    moved_in_widget = Question.not_rejected \
+              .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+              .where("questions.referrer LIKE '%widget%'")
+              .where('assigned_group_id != original_group_id')
+              .group(:assigned_group_id) \
+              .count('DISTINCT(questions.id)')
+
+    answered = Question.answered \
+               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
                .group(:assigned_group_id) \
                .count('DISTINCT(questions.id)')
 
-    experts = QuestionEvent.joins(:initiator,:question).handling_events \
-                           .where("DATE(question_events.created_at) >= ? and DATE(question_events.created_at) <= ?",start_date.to_s,end_date.to_s)\
-                           .group("questions.assigned_group_id") \
-                           .count('DISTINCT(question_events.initiated_by_id)')
+    not_answered = Question.not_rejected \
+                  .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
+                  .where("status_state <> #{Question::STATUS_RESOLVED}")
+                  .group(:assigned_group_id) \
+                  .count('DISTINCT(questions.id)')
+
 
     Group.where(:is_test => false).each do |group|
       asked_answered[group] = {}
       asked_answered[group][:asked] = asked[group.id] || 0
-      asked_answered[group][:submitters] = submitters[group.id] || 0
+      asked_answered[group][:asked_widget] = asked_widget[group.id] || 0
+      asked_answered[group][:moved_out] = moved_out[group.id] || 0
+      asked_answered[group][:moved_in] = moved_in[group.id] || 0
+      asked_answered[group][:moved_in_widget] = moved_in_widget[group.id] || 0
       asked_answered[group][:answered] = answered[group.id] || 0
-      asked_answered[group][:experts] = experts[group.id] || 0
+      asked_answered[group][:not_answered] = not_answered[group.id] || 0
     end
 
     asked_answered
@@ -300,10 +326,15 @@ class Group < ActiveRecord::Base
       headers << 'is_test'
       headers << 'group_active'
       headers << 'widget_active'
-      headers << 'questions'
-      headers << 'submitters'
+      headers << 'assignment_outside_locations'
+      headers << 'asked'
+      headers << 'asked_from_widget'
+      headers << 'moved_out'
+      headers << 'moved_id'
+      headers << 'moved_in_widget'
       headers << 'answered'
-      headers << 'experts'
+      headers << 'not_answered'
+      headers << 'locations'
       csv << headers
       data.each do |group,values|
         row = []
@@ -312,10 +343,15 @@ class Group < ActiveRecord::Base
         row << group.is_test
         row << group.group_active
         row << group.widget_active
+        row << group.assignment_outside_locations
         row << values[:asked]
-        row << values[:submitters]
+        row << values[:asked_widget]
+        row << values[:moved_out]
+        row << values[:moved_in]
+        row << values[:moved_in_widget]
         row << values[:answered]
-        row << values[:experts]
+        row << values[:not_answered]
+        row << group.locations.map(&:name).join(';')
         csv << row
       end
     end
