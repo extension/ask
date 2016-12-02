@@ -137,6 +137,25 @@ class Group < ActiveRecord::Base
     users.valid_users.not_away.auto_route
   end
 
+  def deactivate_if_no_assignees
+    if(self.assignees.count == 0)
+      change_hash = Hash.new
+      if self.group_active?
+        self.toggle!(:group_active)
+        change_hash[:group_active] = {:old => true, :new => false}
+      end
+
+      if self.widget_active?
+        self.toggle!(:widget_active)
+        change_hash[:widget_active] = {:old => true, :new => false}
+      end
+      GroupEvent.log_edited_attributes(self, User.system_user, nil, change_hash)
+      true
+    else
+      false
+    end
+  end
+
   def group_members_with_self_first(user, limit)
     group_members = self.joined.where("user_id != ?", user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit).to_a
     if (user.member_of_group(self))
@@ -240,19 +259,7 @@ class Group < ActiveRecord::Base
     end
 
     # check for empty group
-    if(self.users.count == 0)
-      change_hash = Hash.new
-      if self.group_active?
-        self.toggle!(:group_active)
-        change_hash[:group_active] = {:old => true, :new => false}
-      end
-
-      if self.widget_active?
-        self.toggle!(:widget_active)
-        change_hash[:widget_active] = {:old => true, :new => false}
-      end
-      GroupEvent.log_edited_attributes(self, User.system_user, nil, change_hash)
-    end
+    self.deactivate_if_no_assignees
   end
 
 
