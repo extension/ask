@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160704164542) do
+ActiveRecord::Schema.define(:version => 20161207203253) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -249,11 +249,15 @@ ActiveRecord::Schema.define(:version => 20160704164542) do
   add_index "group_events", ["recipient_id"], :name => "idx_group_events_recipient_id"
 
   create_table "group_locations", :force => true do |t|
-    t.integer "location_id", :default => 0, :null => false
-    t.integer "group_id",    :default => 0, :null => false
+    t.integer  "location_id", :default => 0,     :null => false
+    t.integer  "group_id",    :default => 0,     :null => false
+    t.boolean  "is_primary",  :default => false, :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
 
   add_index "group_locations", ["group_id", "location_id"], :name => "fk_locations_groups", :unique => true
+  add_index "group_locations", ["is_primary"], :name => "primary_ndx"
 
   create_table "groups", :force => true do |t|
     t.string   "name",                                            :null => false
