@@ -22,15 +22,16 @@ class Location < ActiveRecord::Base
   has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
   has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
 
-
   scope :states, where(entrytype: STATE)
+  scope :unitedstates, where(entrytype: [STATE,INSULAR])
+  scope :outsideunitedstates, where(entrytype: OUTSIDEUS)
 
   def self.find_by_geoip(ipaddress = Settings.request_ip_address)
     if(geoip_data = self.get_geoip_data(ipaddress))
       if(geoip_data[:country_code] == 'US')
-        self.find_by_abbreviation(geoip_data[:region])
+        self.unitedstates.where(abbreviation: geoip_data[:region]).first
       else
-        self.find_by_abbreviation('OUTSIDEUS')
+        self.outsideunitedstates.first
       end
     else
       nil
@@ -61,6 +62,10 @@ class Location < ActiveRecord::Base
 
   def get_all_county
     return County.find_by_location_id_and_name(self.id, 'All')
+  end
+
+  def primary_groups
+    groups.where("group_locations.is_primary = 1")
   end
 
   def self.in_state_out_metrics_by_year(year,cache_options = {})
