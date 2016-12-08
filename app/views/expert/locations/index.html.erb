@@ -6,7 +6,7 @@
       <tbody>
       <%- Location.displaylist.each do |location| -%>
         <tr>
-          <td><%= location.name %></td>
+          <td><%= link_to location.name, expert_location_path(id: location.id) %></td>
           <td>
             <%- if(location.primary_groups.count >= 1) -%>
               <%- location.primary_groups.order(:name).each do |group| -%>
@@ -19,8 +19,9 @@
                 <p>This location has no assignable groups!</p>
               <%- end -%>
             <%- else -%>
-              <p>No primary groups have been designated for this location.</p>
+              <p>No primary groups designated</p>
             <%- end -%>
+            <%= link_to "Designate a group", primarize_expert_location_path(id: location.id), :class => "btn btn-default btn-xs" -%>
           </td>
           <td>
             <%- if location.office_link.blank? -%>

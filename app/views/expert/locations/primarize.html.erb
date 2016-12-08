@@ -1,0 +1,35 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Locations", expert_locations_path -%></li>
+  <li><%= link_to @location.name, expert_location_path %></li>
+</ol>
+
+<h1>Designate a primary group for <%= @location.name -%></h1>
+
+<%= form_tag do -%>
+  <div class="input-group">
+    <h3>Search for a group by name</h3>
+    <div class="form-group">
+      <%= text_field_tag("group_picker", "", class: 'form-control input-lg', :placeholder => 'Type and select a group' )%>
+      <%= hidden_field_tag('group_id') %>
+    </div>
+    <p>
+      <%= submit_tag('Save', class: 'btn btn-default btn-primary input-lg') %>
+    </p>
+  </div>
+<%- end -%>
+
+
+
+
+<script class="code" type="text/javascript">
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
+		$("#group_picker").autocomplete({
+      source: "/ajax/groups",
+			minLength: 2,
+      select: function(e, ui) {
+        $("#group_id").val(ui.item.id);
+			}
+		});
+		});
+</script>

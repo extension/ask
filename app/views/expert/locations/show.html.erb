@@ -1,0 +1,56 @@
+<ol class="breadcrumb">
+  <li><%= link_to "Locations", expert_locations_path -%></li>
+</ol>
+
+<div id="main" class="col-md-8">
+
+  <div class="map"></div>
+  <h1><%= @location.name %></h1>
+
+<div class="col-md-12">
+  <%- if(@location.primary_groups.count < 1) -%>
+    <h3>No primary groups have been designated for this location</h3>
+    <p><%= link_to "Designate a group", primarize_expert_location_path(id: @location.id), :class => "btn btn-default" -%></p>
+  <%- end -%>
+</div>
+
+  <div class="col-md-5">
+    <div class="location_section">
+      <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
+    <% if @experts.size > 0 %>
+      <% @experts.each do |member| %>
+        <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
+      <% end %>
+    <% else %>
+      <p>There are no experts in this location</p>
+    <% end %>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="location_section">
+      <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
+    <% if @groups.size > 0 %>
+      <% @groups.each do |group| %>
+        <div class="group_in_group_list active">
+          <p class="group_list_avatar"><%= link_public_group_avatar(group, :thumb) %></p>
+          <h4><%= link_to group.name, group_path(group.id) %></h4>
+          <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>
+          <p class="downplay">
+          <% if group.assignment_outside_locations == true %>
+            Accepts questions from anywhere.
+          <% else %>
+            Questions must match this group's locations
+          <% end %>
+          </p>
+        </div>
+      <% end %>
+    <% else %>
+      <p>There are no groups in this location</p>
+    <% end %>
+    </div>
+  </div>
+
+
+
+</div>

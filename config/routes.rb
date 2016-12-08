@@ -41,7 +41,13 @@ Aae::Application.routes.draw do
   end
 
   namespace :expert do
-    resources :locations, :only => [:show, :index]
+    resources :locations, :only => [:show, :index] do
+      member do
+        get :primarize
+        post :primarize
+      end
+    end
+
 
     resources :questions, :only => [:show, :edit, :update] do
       member do
