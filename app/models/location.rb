@@ -25,6 +25,8 @@ class Location < ActiveRecord::Base
   scope :states, where(entrytype: STATE)
   scope :unitedstates, where(entrytype: [STATE,INSULAR])
   scope :outsideunitedstates, where(entrytype: OUTSIDEUS)
+  scope :displaylist, order(:entrytype,:name)
+
 
   def self.find_by_geoip(ipaddress = Settings.request_ip_address)
     if(geoip_data = self.get_geoip_data(ipaddress))
@@ -67,6 +69,11 @@ class Location < ActiveRecord::Base
   def primary_groups
     groups.where("group_locations.is_primary = 1")
   end
+
+  def active_primary_groups
+    groups.where("group_locations.is_primary = 1").where(group_active: true)
+  end
+
 
   def self.in_state_out_metrics_by_year(year,cache_options = {})
     if(!cache_options[:expires_in].present?)

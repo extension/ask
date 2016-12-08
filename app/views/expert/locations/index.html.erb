@@ -1,0 +1,38 @@
+<h1>Locations</h1>
+
+<div class='row'>
+  <div class="col-md-12">
+    <table class="table table-bordered">
+      <tbody>
+      <%- Location.displaylist.each do |location| -%>
+        <tr>
+          <td><%= location.name %></td>
+          <td>
+            <%- if(location.primary_groups.count >= 1) -%>
+              <%- location.primary_groups.order(:name).each do |group| -%>
+                <p><span><%= group.name -%></span><span><%= group.assignees.count -%></span></p>
+              <%- end -%>
+              <!-- Assignable groups? -->
+              <%- if location.active_primary_groups.count >= 1 -%>
+                <p><%= link_to("Location Group Selection Form", "#") -%></p>
+              <%- else -%>
+                <p>This location has no assignable groups!</p>
+              <%- end -%>
+            <%- else -%>
+              <p>No primary groups have been designated for this location.</p>
+            <%- end -%>
+          </td>
+          <td>
+            <%- if location.office_link.blank? -%>
+              No office link listed.
+            <%- else -%>
+              <%= link_to(location.office_link, location.office_link) -%>
+            <%- end -%>
+          </td>
+          <td><%= link_to("Experts List?", "#") -%></td>
+        </tr>
+      <%- end -%>
+      </tbody>
+    </table>
+  </div>
+</div>

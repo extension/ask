@@ -41,6 +41,8 @@ Aae::Application.routes.draw do
   end
 
   namespace :expert do
+    resources :locations, :only => [:show, :index]
+
     resources :questions, :only => [:show, :edit, :update] do
       member do
         post 'assign'
@@ -108,7 +110,9 @@ Aae::Application.routes.draw do
         get  :filter_evaluations
         post :filter_evaluations
       end
-    end
+
+
+    end # expert namespace
 
     namespace :data do
       match 'demographics/download', action: 'demographics_download'
