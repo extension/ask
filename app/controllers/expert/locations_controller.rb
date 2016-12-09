@@ -11,8 +11,6 @@ class Expert::LocationsController < ApplicationController
 
 
   def index
-    @locations = Location.displaylist.includes(:groups)
-
   end
 
   def show

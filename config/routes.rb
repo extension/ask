@@ -43,8 +43,9 @@ Aae::Application.routes.draw do
   namespace :expert do
     resources :locations, :only => [:show, :index] do
       member do
-        get :primarize
-        post :primarize
+        get :primary_groups
+        post :add_primary_group
+        post :remove_primary_group
       end
     end
 

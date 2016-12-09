@@ -5,7 +5,7 @@
 
 <h1>Designate a primary group for <%= @location.name -%></h1>
 
-<%= form_tag do -%>
+<%= form_tag(add_primary_group_expert_location_path(id: @location.id)) do -%>
   <div class="input-group">
     <h3>Search for a group by name</h3>
     <div class="form-group">
