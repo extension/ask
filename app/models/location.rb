@@ -63,7 +63,7 @@ class Location < ActiveRecord::Base
   end
 
   def get_all_county
-    return County.find_by_location_id_and_name(self.id, 'All')
+    self.counties.where(name: 'All').first
   end
 
   def primary_groups
@@ -74,6 +74,32 @@ class Location < ActiveRecord::Base
     groups.where("group_locations.is_primary = 1").where(group_active: true)
   end
 
+  def add_primary_group(group, added_by = User.system_user)
+    if(group_location = self.group_locations.where(group_id: group.id).first)
+      return if(group_location.is_primary == true) # already primary, peace out
+      group_location.update_attribute(:is_primary,true)
+    else
+      self.group_locations.create(group_id: group.id, is_primary: true)
+    end
+
+    # add all county
+    all_county = self.get_all_county
+    group.add_expertise_county(all_county,added_by)
+
+    # todo log group event
+    # todo log user event
+  end
+
+  def remove_primary_group(group, removed_by = User.system_user)
+    if(group_location = GroupLocation.where(group_id: group.id).where(location_id: self.id).first)
+      return if(group_location.is_primary == false) # already not a primary, peace out
+      group_location.update_attribute(:is_primary,false)
+      # todo log group event
+      # todo log user event
+    else
+       # no association, do nothing
+    end
+  end
 
   def self.in_state_out_metrics_by_year(year,cache_options = {})
     if(!cache_options[:expires_in].present?)

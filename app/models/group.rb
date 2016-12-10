@@ -179,7 +179,31 @@ class Group < ActiveRecord::Base
     self.find_by_id(QUESTION_WRANGLER_GROUP_ID)
   end
 
+  def add_expertise_county(county, added_by = User.system_user)
+    county_id_list = self.group_counties.map(&:county_id)
+    return if(county_id_list.include?(county.id)) # already connected, peace out
+    all_county = county.location.get_all_county
 
+    if(county.id == all_county.id)
+      # delete all other county associations, no callbacks
+      self.expertise_counties.delete_all
+    else
+      # delete all county if present, if group is a primary group for a location then remove it
+      if(all_county_connection = self.group_counties.where(county_id: all_county.id).first)
+        # remove primary_group
+        all_county.location.remove_primary_group(self, added_by)
+        # delete connection
+        all_county_connection.delete
+      end
+    end
+
+    # add the county
+    self.group_counties.create(county_id: county.id)
+    # add the location (don't care if it fails)
+    self.group_locations.create(location_id: county.location.id)
+
+    # todo log
+  end
 
   def question_wrangler_group?
     self.id == QUESTION_WRANGLER_GROUP_ID
