@@ -3,8 +3,29 @@
   <li><%= link_to @location.name, expert_location_path %></li>
 </ol>
 
-<h1>Designate a primary group for <%= @location.name -%></h1>
+<h1><%= @location.name -%> primary groups</h1>
 
+<%- if(@location.primary_groups.count < 1) -%>
+  <div class="well">
+    <h3>No primary groups have been designated for this location</h3>
+  </div>
+<%- end -%>
+
+<%- if(@location.primary_groups.count >= 1) -%>
+  <%- @location.primary_groups.order(:name).each do |group| -%>
+    <h3><%= link_to group.name, expert_group_path(group) -%></h3>
+    <p><span>Available members: <%= group.assignees.count -%></span></p>
+  <%- end -%>
+  <!-- Assignable groups? -->
+  <%- if @location.active_primary_groups.count >= 1 -%>
+    <p><%= link_to("Location Group Selection Form", "#") -%></p>
+  <%- else -%>
+    <p>This location has no assignable groups!</p>
+  <%- end -%>
+<%- end -%>
+
+<div class="well">
+  <h2>Add another primary group</h2>
 <%= form_tag(add_primary_group_expert_location_path(id: @location.id)) do -%>
   <div class="input-group">
     <h3>Search for a group by name</h3>
@@ -13,11 +34,11 @@
       <%= hidden_field_tag('group_id') %>
     </div>
     <p>
-      <%= submit_tag('Save', class: 'btn btn-default btn-primary input-lg') %>
+      <%= submit_tag('Designate as primary group', class: 'btn btn-default btn-primary input-lg') %>
     </p>
   </div>
 <%- end -%>
-
+</div>
 
 
 
