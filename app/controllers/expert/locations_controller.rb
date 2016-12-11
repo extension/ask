@@ -35,7 +35,7 @@ class Expert::LocationsController < ApplicationController
 
   def remove_primary_group
     location = Location.find(params[:id])
-    group = Group.find(params[:group_id])
+    group = Group.find(params[:remove_group_id])
     location.remove_primary_group(group,current_user)
     return redirect_to primary_groups_expert_location_path(id: location.id)
   end

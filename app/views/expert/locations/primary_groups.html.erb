@@ -3,7 +3,8 @@
   <li><%= link_to @location.name, expert_location_path %></li>
 </ol>
 
-<h1><%= @location.name -%> primary groups</h1>
+<h1><%= @location.name -%> primary group manager</h1>
+<p class="subhead">These are the groups which are displayed when someone searches for their location on ask.extension.org</p>
 
 <%- if(@location.primary_groups.count < 1) -%>
   <div class="well">
@@ -11,17 +12,27 @@
   </div>
 <%- end -%>
 
+<%- if @location.active_primary_groups.count >= 1 -%>
+  <h3><%= link_to("View entry page", location_path(@location.id), class: 'btn btn-default') -%></h3>
+<%- else -%>
+  <p>This location has no assignable groups!</p>
+<%- end -%>
+
+<h2>Primary groups</h2>
 <%- if(@location.primary_groups.count >= 1) -%>
   <%- @location.primary_groups.order(:name).each do |group| -%>
-    <h3><%= link_to group.name, expert_group_path(group) -%></h3>
-    <p><span>Available members: <%= group.assignees.count -%></span></p>
-  <%- end -%>
-  <!-- Assignable groups? -->
-  <%- if @location.active_primary_groups.count >= 1 -%>
-    <p><%= link_to("Location Group Selection Form", "#") -%></p>
-  <%- else -%>
-    <p>This location has no assignable groups!</p>
-  <%- end -%>
+    <div class="location-group">
+      <h2><%= link_to group.name, expert_group_path(group) -%></h2>
+      <h3><span>Available members: <%= group.assignees.count -%></span></h3>
+
+      <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
+        <%= hidden_field_tag('remove_group_id', group.id) %>
+        <p><%= submit_tag('Remove primary group', class: 'btn btn-default btn-xs btn-danger') %></p>
+      <%- end -%>
+    </div>
+<%- end -%>
+
+
 <%- end -%>
 
 <div class="well">

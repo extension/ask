@@ -3,23 +3,34 @@
 <div class='row'>
   <div class="col-md-12">
     <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Primary groups</th>
+          <th>Office link</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody>
       <%- Location.displaylist.each do |location| -%>
         <tr>
-          <td><%= link_to location.name, expert_location_path(id: location.id) %></td>
+          <td><h2><%= link_to location.name, expert_location_path(id: location.id) %></h2></td>
           <td>
             <%- if(location.primary_groups.count >= 1) -%>
               <%- location.primary_groups.order(:name).each do |group| -%>
-                <p><span><%= group.name -%></span><span><%= group.assignees.count -%></span></p>
+                <p>
+                  <strong><%= group.name -%></strong>
+                  <br /><small>(<%= group.assignees.count -%> members available)</small>
+                </p>
               <%- end -%>
               <!-- Assignable groups? -->
               <%- if location.active_primary_groups.count >= 1 -%>
-                <p><%= link_to("Location Group Selection Form", "#") -%></p>
+                <p><%= link_to "View entry page", location_path(location.id), :class => "btn btn-default btn-xs" -%></p>
               <%- else -%>
-                <p>This location has no assignable groups!</p>
+                <p class="warning">This location has no assignable groups!</p>
               <%- end -%>
             <%- else -%>
-              <p>No primary groups designated</p>
+              <p class="warning">No primary groups designated</p>
             <%- end -%>
             <%= link_to "Manage groups", primary_groups_expert_location_path(id: location.id), :class => "btn btn-default btn-xs" -%>
           </td>

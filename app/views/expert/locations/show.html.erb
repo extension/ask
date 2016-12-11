@@ -8,9 +8,20 @@
   <h1><%= @location.name %></h1>
 
 <div class="col-md-12">
+  <h2>Primary groups</h2>
+
   <%- if(@location.primary_groups.count < 1) -%>
     <h3>No primary groups have been designated for this location</h3>
     <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default" -%></p>
+  <%- end -%>
+
+  <%- if(@location.primary_groups.count >= 1) -%>
+    <%- @location.primary_groups.order(:name).each do |group| -%>
+      <div class="location-group">
+        <h2><%= link_to group.name, expert_group_path(group) -%></h2>
+        <h3><span>Available members: <%= group.assignees.count -%></span></h3>
+      </div>
+    <%- end -%>
   <%- end -%>
 
 </div>

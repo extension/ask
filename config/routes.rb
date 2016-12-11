@@ -24,6 +24,9 @@ Aae::Application.routes.draw do
     end
   end
 
+  resources :locations do
+  end
+
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
 
