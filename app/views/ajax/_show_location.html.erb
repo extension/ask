@@ -1,13 +1,27 @@
-<p class="edit_location btn right">edit</p>
+<%-
+  if @object.is_a?(Group)
+    is_primary_group = @object.is_primary_group_for_location?(location)
+  else
+    is_primary_group = false
+  end
+-%>
+<%- if !is_primary_group -%>
+  <p class="edit_location btn right">edit</p>
+<%- end -%>
 
-<h3><span class="tag tag-geography"><%= location.name %></span> <span id="location_<%= location.id %>" class="removestate btn">X</span></h3>
-  
+<h3>
+  <span class="tag tag-geography"><%= location.name %></span>
+  <%- if !is_primary_group -%>
+  <span id="location_<%= location.id %>" class="removestate btn">X</span>
+  <%- end -%>
+</h3>
+
 <div class="ux_actions"></div>
-  
+
 <div class="show_counties">
   <% if @object.expertise_locations.where("location_id = ?", location.id).size > 0 %>
-
-    <% if @object.expertise_counties.where("location_id = ?", location.id).size > 0 %>
+    <%- all_county = location.get_all_county -%>
+    <% if @object.expertise_counties.where("location_id = ?", location.id).where("counties.id != #{all_county.id}").size > 0 %>
       <ul>
         <% @object.expertise_counties.where("location_id = ?", location.id).each do |c| %>
           <% if c.name != "Entire state" %>
@@ -21,7 +35,10 @@
         <li class="all_counties">The entire state</li>
       </ul>
     <% end %>
-
   <% end %>
-  
 </div>
+
+<%- if is_primary_group -%>
+  <p class="warning">This group is a primary group for this location.
+  To edit the location, first <%= link_to('remove it as a primary group', primary_groups_expert_location_path(id: location.id)) -%>.</p>
+<%- end -%>
