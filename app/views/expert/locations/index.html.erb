@@ -14,7 +14,10 @@
       <tbody>
       <%- Location.displaylist.each do |location| -%>
         <tr>
-          <td><h2><%= link_to location.name, expert_location_path(id: location.id) %></h2></td>
+          <td>
+            <h2><%= link_to location.name, expert_location_path(id: location.id) %></h2>
+            <p><%= link_to "View entry page", location_path(location.id), :class => "btn btn-default btn-xs" -%></p>
+          </td>
           <td>
             <%- if(location.primary_groups.count >= 1) -%>
               <%- location.primary_groups.order(:name).each do |group| -%>
@@ -24,9 +27,7 @@
                 </p>
               <%- end -%>
               <!-- Assignable groups? -->
-              <%- if location.active_primary_groups.count >= 1 -%>
-                <p><%= link_to "View entry page", location_path(location.id), :class => "btn btn-default btn-xs" -%></p>
-              <%- else -%>
+              <%- if location.active_primary_groups.count < 1 -%>
                 <p class="warning">This location has no assignable groups!</p>
               <%- end -%>
             <%- else -%>
