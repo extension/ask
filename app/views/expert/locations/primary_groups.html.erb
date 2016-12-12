@@ -26,7 +26,7 @@
       <h3><span>Available members: <%= group.assignees.count -%></span></h3>
 
       <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
-        <%= hidden_field_tag('group_id', group.id) %>
+        <%= hidden_field_tag('group_id', group.id, {id: "remove_form_group_#{group.id}"}) %>
         <p><%= submit_tag('Remove primary group', class: 'btn btn-default btn-xs btn-danger') %></p>
       <%- end -%>
     </div>
@@ -42,7 +42,7 @@
     <h3>Search for a group by name</h3>
     <div class="form-group">
       <%= text_field_tag("group_picker", "", class: 'form-control input-lg', :placeholder => 'Type and select a group' )%>
-      <%= hidden_field_tag('group_id') %>
+      <%= hidden_field_tag('group_id',nil,{id: 'add_form_group'}) %>
     </div>
     <p>
       <%= submit_tag('Designate as primary group', class: 'btn btn-default btn-primary input-lg') %>
@@ -60,7 +60,7 @@
       source: "/ajax/groups",
 			minLength: 2,
       select: function(e, ui) {
-        $("#group_id").val(ui.item.id);
+        $("#add_form_group").val(ui.item.id);
 			}
 		});
 		});
