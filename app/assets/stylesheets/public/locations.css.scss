@@ -1,11 +1,9 @@
+.centered {text-align:center;}
 
 
-.primary-group {background: #f47B28; padding: 20px; margin:20px 0;}
-.primary-group-name {font-size: 30px; font-weight:normal; color:#fff; text-transform: capitalize;}
-.primary-group-name a {color:#fff;}
 
 .primary-group-description {color: #fff;}
-.powered-by {font-size: 12px; color: #f47B28; margin: 40px 0; text-align:center;}
+
 
 .title-alt {
   font-family: 'Sanchez', serif;
@@ -16,5 +14,42 @@
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
-.title-small {font-size: 20px; color: #81858b; text-transform: uppercase; letter-spacing: 2px; font-weight: normal;}
+.title-small {font-size: 16px; color: #81858b; text-transform: uppercase; letter-spacing: 2px; font-weight: normal;}
+.title-small a {color: #81858b;}
+.title-xs {font-size: 13px; color: #81858b; text-transform: uppercase; letter-spacing: 2px; font-weight: normal;}
 .no-primary-groups {font-size: 20px; padding: 40px 0;}
+.change-location {margin-top: -30px;}
+.change-location a {color: #aaa; padding: 20px;}
+.primary-group {background: #eee; padding: 20px 20px 30px; margin:20px -10px 10px; border-bottom: 2px solid #ddd;}
+.primary-group-name {font-size: 24px; font-weight:normal; color:#fff; text-transform: capitalize; margin:0 0 20px;}
+.primary-group-name a {color:#f47B28;}
+
+.powered-by {font-size: 13px; color: #f47B28; margin: 40px 0; text-align:center;}
+
+/* Mobile first queries */
+/*===============================================================================================================================*/
+
+/* Larger than mobile */
+@media (min-width: 400px) {
+
+}
+
+/* Larger than phablet */
+@media (min-width: 550px) {
+  .primary-group {margin:20px 0 10px;}
+}
+
+/* Larger than tablet */
+@media (min-width: 750px) {
+  .centered {text-align:center; width: 50%; margin: 0 auto;}
+}
+
+/* Larger than desktop */
+@media (min-width: 1000px) {
+
+}
+
+/* Larger than Desktop HD */
+@media (min-width: 1200px) {
+
+}

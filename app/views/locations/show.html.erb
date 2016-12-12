@@ -1,10 +1,11 @@
-<div id="main" class="col-md-12">
 
+<div class="centered">
   <div class="map"></div>
-  <h3 class="title-small">Ask a Question</h3>
+  <h3 class="title-small"><%= link_to "Ask a Question", locations_path %></h3>
   <h1 class="title-alt"><%= @location.name %></h1>
+  <p class="change-location btn btn-default btn-xs"><%= link_to("change location", locations_path()) %></p>
 
-  <h3 class="title-small">Groups accepting questions</h3>
+  <h3 class="title-xs">Groups accepting questions</h3>
 
   <%- if(@location.primary_groups.count < 1) -%>
     <div class="no-primary-groups">
