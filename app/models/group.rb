@@ -207,6 +207,14 @@ class Group < ActiveRecord::Base
     # todo log
   end
 
+  def is_primary_group_for_location?(location)
+    if(group_location = self.group_locations.where(location_id: location.id).first)
+      group_location.is_primary?
+    else
+      false
+    end
+  end
+
   def question_wrangler_group?
     self.id == QUESTION_WRANGLER_GROUP_ID
   end
