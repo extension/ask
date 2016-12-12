@@ -187,11 +187,13 @@ class Group < ActiveRecord::Base
     if(county.id == all_county.id)
       # delete all other county associations, no callbacks
       self.expertise_counties.delete_all
+    elsif(self.is_primary_group_for_location?(county.location))
+      # you can't add non-all county counties to a primary group for a location
+      # so just bail from here
+      return false
     else
-      # delete all county if present, if group is a primary group for a location then remove it
+      # delete all county if present
       if(all_county_connection = self.group_counties.where(county_id: all_county.id).first)
-        # remove primary_group
-        all_county.location.remove_primary_group(self, added_by)
         # delete connection
         all_county_connection.delete
       end
@@ -199,7 +201,7 @@ class Group < ActiveRecord::Base
 
     # add the county
     self.group_counties.create(county_id: county.id)
-    # add the location (don't care if it fails)
+    # add the location (don't care if it fails because it's already in that location)
     self.group_locations.create(location_id: county.location.id)
 
     # todo log
