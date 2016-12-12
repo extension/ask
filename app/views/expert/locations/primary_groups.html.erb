@@ -1,34 +1,37 @@
+<div class='row'>
+    <div class="col-md-offset-2 col-md-8">
 <ol class="breadcrumb">
   <li><%= link_to "Locations", expert_locations_path -%></li>
   <li><%= link_to @location.name, expert_location_path %></li>
 </ol>
 
-<h1><%= @location.name -%> primary group manager</h1>
-<p class="subhead">These are the groups which are displayed when someone searches for their location on ask.extension.org</p>
+<h1><%= @location.name -%> Primary Group Manager</h1>
+<p class="subhead">These are the groups which are displayed when someone searches for their location on ask.extension.org. <%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
 
 <%- if(@location.primary_groups.count < 1) -%>
-  <div class="well">
+  <div class="alert alert-danger" role="alert">
     <h3>No primary groups have been designated for this location</h3>
   </div>
 <%- end -%>
 
-<%- if @location.active_primary_groups.count >= 1 -%>
-  <h3><%= link_to("View entry page", location_path(@location.id), class: 'btn btn-default') -%></h3>
-<%- else -%>
-  <p>This location has no assignable groups!</p>
+<%- if ((@location.active_primary_groups.count < 1) && (@location.primary_groups.count > 1)) -%>
+  <div class="alert alert-danger" role="alert">
+    <h3>This location has no assignable groups</h3>
+  </div>
 <%- end -%>
 
 <h2>Primary groups</h2>
 <%- if(@location.primary_groups.count >= 1) -%>
   <%- @location.primary_groups.order(:name).each do |group| -%>
     <div class="location-group">
-      <h2><%= link_to group.name, expert_group_path(group) -%></h2>
-      <h3><span>Available members: <%= group.assignees.count -%></span></h3>
-
       <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
         <%= hidden_field_tag('group_id', group.id, {id: "remove_form_group_#{group.id}"}) %>
-        <p><%= submit_tag('Remove primary group', class: 'btn btn-default btn-xs btn-danger') %></p>
+        <p class="pull-right"><%= submit_tag('Remove', class: 'btn btn-default btn-xs btn-danger') %></p>
       <%- end -%>
+      <h2><%= link_to group.name, expert_group_path(group) -%></h2>
+      <h4>Available members: <%= group.assignees.count -%></h4>
+
+
     </div>
 <%- end -%>
 
@@ -51,7 +54,8 @@
 <%- end -%>
 </div>
 
-
+</div>
+</div>
 
 <script class="code" type="text/javascript">
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection

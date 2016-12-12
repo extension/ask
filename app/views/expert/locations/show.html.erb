@@ -2,31 +2,36 @@
   <li><%= link_to "Locations", expert_locations_path -%></li>
 </ol>
 
-<div id="main" class="col-md-8">
+<div id="main" class="col-md-12">
 
-  <div class="map"></div>
-  <h1><%= @location.name %></h1>
+  <div id="main" class="col-md-12">
+    <h1><%= @location.name %></h1>
+    <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+  </div>
 
-<div class="col-md-12">
+<div class="col-md-4">
+  <div class="location_section">
   <h2>Primary groups</h2>
 
   <%- if(@location.primary_groups.count < 1) -%>
-    <h3>No primary groups have been designated for this location</h3>
-    <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default" -%></p>
+    <div class="alert alert-danger" role="alert">
+      <h3>No primary groups have been designated for this location</h3>
+      <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default" -%></p>
+    </div>
   <%- end -%>
 
   <%- if(@location.primary_groups.count >= 1) -%>
     <%- @location.primary_groups.order(:name).each do |group| -%>
       <div class="location-group">
         <h2><%= link_to group.name, expert_group_path(group) -%></h2>
-        <h3><span>Available members: <%= group.assignees.count -%></span></h3>
+        <h4><span>Available members: <%= group.assignees.count -%></span></h4>
       </div>
     <%- end -%>
   <%- end -%>
-
+</div>
 </div>
 
-  <div class="col-md-5">
+  <div class="col-md-3">
     <div class="location_section">
       <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
     <% if @experts.size > 0 %>
@@ -39,7 +44,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="location_section">
       <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
     <% if @groups.size > 0 %>
