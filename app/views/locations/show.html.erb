@@ -9,7 +9,8 @@
 
   <%- if(@location.primary_groups.count < 1) -%>
     <div class="no-primary-groups">
-      <p>This location does not currently have any active groups.  Please try contacting <%= link_to("your local Extension office", @location.office_link) -%>.</p>
+      <p>Currently there are no active groups accepting questions for this location.</p>
+      <p>Please try contacting your local Extension office for help.</p>
     </div>
   <%- end -%>
 
