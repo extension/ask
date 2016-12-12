@@ -26,7 +26,7 @@
       <h3><span>Available members: <%= group.assignees.count -%></span></h3>
 
       <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
-        <%= hidden_field_tag('remove_group_id', group.id) %>
+        <%= hidden_field_tag('group_id', group.id) %>
         <p><%= submit_tag('Remove primary group', class: 'btn btn-default btn-xs btn-danger') %></p>
       <%- end -%>
     </div>
