@@ -6,6 +6,10 @@
 
   <div id="main" class="col-md-12">
     <h1><%= @location.name %></h1>
+    <% if @unanswered_questions_count %>
+      <h3><%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :location_id => @location.id)%></h3>
+    <% end %>
+    <p><%= link_to "View Summary Report", expert_reports_locations_and_groups_path(:location_id => @location.id) %></p>
     <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
   </div>
 
@@ -38,39 +42,43 @@
   <div class="col-md-3">
     <div class="location_section">
       <h2>Experts (<%= number_with_delimiter(@expert_total_count, :delimiter => ',') %>)</h2>
-    <% if @experts.size > 0 %>
-      <% @experts.each do |member| %>
-        <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
+
+      <% if @experts.size > 0 %>
+        <% @experts.each do |member| %>
+          <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span></p>
+
+        <% end %>
+        <p><%= link_to "view all", expert_users_by_location_path() %></p>
+      <% else %>
+        <p>There are no experts in this location</p>
       <% end %>
-      <p><%= link_to "view all", expert_users_by_location_path() %></p>
-    <% else %>
-      <p>There are no experts in this location</p>
-    <% end %>
     </div>
   </div>
 
   <div class="col-md-4">
     <div class="location_section">
       <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
-    <% if @groups.size > 0 %>
-      <% @groups.each do |group| %>
-        <div class="group_in_group_list active">
-          <p class="group_list_avatar"><%= link_public_group_avatar(group, :thumb) %></p>
-          <h4><%= link_to group.name, group_path(group.id) %></h4>
-          <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>
-          <p class="downplay">
-          <% if group.assignment_outside_locations == true %>
-            Accepts questions from anywhere.
-          <% else %>
-            Questions must match this group's locations
-          <% end %>
-          </p>
-        </div>
+
+      <% if @groups.size > 0 %>
+        <% @groups.each do |group| %>
+          <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+            <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+            <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+            <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+            <p><strong><%= group.joined.count %> <%= group.joined.count >  1 ? "Members" : "Member" %></strong><p>
+            <p class="downplay">
+            <% if group.assignment_outside_locations == true %>
+              Accepts questions from anywhere.
+            <% else %>
+              Questions must match this group's locations
+            <% end %>
+            </p>
+          </div>
+        <% end %>
+        <p><%= link_to "view all", expert_groups_by_location_path() %></p>
+      <% else %>
+        <p>There are no groups in this location</p>
       <% end %>
-      <p><%= link_to "view all", expert_groups_by_location_path() %></p>
-    <% else %>
-      <p>There are no groups in this location</p>
-    <% end %>
     </div>
   </div>
 

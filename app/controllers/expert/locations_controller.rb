@@ -19,6 +19,7 @@ class Expert::LocationsController < ApplicationController
     @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
     @groups = Group.with_expertise_location(@location.id).limit(5)
     @group_total_count = Group.with_expertise_location(@location.id).count
+    @unanswered_questions_count = Question.where("location_id = ?", @location.id).submitted.not_rejected.count
   end
 
   def primary_groups
