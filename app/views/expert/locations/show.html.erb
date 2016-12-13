@@ -28,7 +28,10 @@
       </div>
     <%- end -%>
   <%- end -%>
-  <p class="alert muted">Primary groups which are displayed when someone searches for their location on ask.extension.org.</p>
+  <div class="alert muted">
+    <p>Primary groups which are displayed when someone searches for their location on ask.extension.org.</p>
+    <p><%= link_to "Manage groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-xs" -%></p>
+  </div>
 </div>
 </div>
 

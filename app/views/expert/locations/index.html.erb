@@ -32,7 +32,6 @@
             <%- else -%>
               <p class="warning">No primary groups designated</p>
             <%- end -%>
-            <%= link_to "Manage groups", primary_groups_expert_location_path(id: location.id), :class => "btn btn-default btn-xs" -%>
           </td>
           <td>
             <%- if location.office_link.blank? -%>
