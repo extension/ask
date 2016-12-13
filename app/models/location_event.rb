@@ -10,27 +10,27 @@ class LocationEvent < ActiveRecord::Base
   serialize :additionaldata
 
   # EVENT CODES
-  LOCATION_EDIT_OFFICE_LINK = 201
-  LOCATION_ADD_PRIMARY_GROUP = 220
-  LOCATION_REMOVE_PRIMARY_GROUP = 221
+  EDIT_OFFICE_LINK = 201
+  ADD_PRIMARY_GROUP = 220
+  REMOVE_PRIMARY_GROUP = 221
 
 
   EVENT_STRINGS = {
-    LOCATION_EDIT_OFFICE_LINK     => 'edited the office link',
-    LOCATION_ADD_PRIMARY_GROUP    => 'added a primary group',
-    LOCATION_REMOVE_PRIMARY_GROUP => 'removed a primary group'
+    EDIT_OFFICE_LINK     => 'edited the office link',
+    ADD_PRIMARY_GROUP    => 'added a primary group',
+    REMOVE_PRIMARY_GROUP => 'removed a primary group'
   }
 
   def description
     EVENT_STRINGS[self.event_code]
   end
 
-  def self.log_event(location, creator, recipient, event_code, additionaldata = nil)
+  def self.log_event(location, creator, event_code, additionaldata = nil)
     log_attributes = {}
     log_attributes[:location_id] = location.id
     log_attributes[:created_by] = creator.id
     log_attributes[:event_code] = event_code
-    log_attributes[:additionaldata] = edit_hash
+    log_attributes[:additionaldata] = additionaldata
 
     return LocationEvent.create(log_attributes)
   end

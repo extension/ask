@@ -204,7 +204,19 @@ class Group < ActiveRecord::Base
     # add the location (don't care if it fails because it's already in that location)
     self.group_locations.create(location_id: county.location.id)
 
-    # todo log
+    #todo log
+  end
+
+  def remove_expertise_county(county, removed_by = User.system_user)
+    #todo placeholder method
+  end
+
+  def add_expertise_location(location, added_by = User.system_user)
+    #todo placeholder method
+  end
+
+  def remove_expertise_location(location, removed_by = User.system_user)
+    #todo placeholder method
   end
 
   def is_primary_group_for_location?(location)

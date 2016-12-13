@@ -86,9 +86,9 @@ class Location < ActiveRecord::Base
     all_county = self.get_all_county
     group.add_expertise_county(all_county,added_by)
 
-    # todo log group event
     GroupEvent.log_added_primary_group(group,added_by,self)
-    # todo log user event
+    LocationEvent.log_event(self,added_by,LocationEvent::ADD_PRIMARY_GROUP,{group_id: group.id})
+    #todo? user event logging?
   end
 
   def remove_primary_group(group, removed_by = User.system_user)
@@ -96,7 +96,8 @@ class Location < ActiveRecord::Base
       return if(group_location.is_primary == false) # already not a primary, peace out
       group_location.update_attribute(:is_primary,false)
       GroupEvent.log_removed_primary_group(group,removed_by,self)
-      # todo log user event
+      LocationEvent.log_event(self,removed_by,LocationEvent::REMOVE_PRIMARY_GROUP,{group_id: group.id})
+      #todo? user event logging? 
     else
        # no association, do nothing
     end
