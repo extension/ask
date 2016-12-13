@@ -148,24 +148,7 @@ class AjaxController < ApplicationController
       when "user"     then @object = User.find_by_id(params[:object_id])
     end
     @county = County.find(params[:requested_county])
-    all_county = @county.location.get_all_county
-
-    # if they're selecting a specific county, then take away the 'all county' selection
-    if @object.expertise_counties.include?(all_county)
-      @object.expertise_counties.delete(all_county)
-    end
-
-    if !@object.expertise_counties.include?(@county)
-      @object.expertise_counties << @county
-      if !@object.expertise_locations.include?(@county.location)
-        @object.expertise_locations << @county.location
-      end
-      @object.save
-    end
-
-    change_hash = Hash.new
-    change_hash[:expertise_locations] = {:old => "", :new => @county.name}
-    UserEvent.log_added_county(@object, current_user, change_hash)
+    @object.add_expertise_county(@county,current_user)
   end
 
 

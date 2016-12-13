@@ -275,6 +275,33 @@ class User < ActiveRecord::Base
     end
   end
 
+  def add_expertise_county(county, added_by = User.system_user)
+    county_id_list = self.user_counties.map(&:county_id)
+    return if(county_id_list.include?(county.id)) # already connected, peace out
+    all_county = county.location.get_all_county
+
+    if(county.id == all_county.id)
+      # delete all other county associations, no callbacks
+      self.expertise_counties.delete_all
+    else
+      # delete all county if present
+      if(all_county_connection = self.user_counties.where(county_id: all_county.id).first)
+        # delete connection
+        all_county_connection.delete
+      end
+    end
+
+    # add the county
+    self.user_counties.create(county_id: county.id)
+    # add the location (don't care if it fails)
+    self.user_locations.create(location_id: county.location.id)
+
+    change_hash = Hash.new
+    change_hash[:expertise_locations] = {:old => "", :new => county.name}
+    UserEvent.log_added_county(self, added_by, change_hash)
+  end
+
+
   def get_locations_with_open_questions
     expertise_location_ids = self.expertise_locations.map{|l| l.id}.join(',')
     if expertise_location_ids.present?
@@ -630,6 +657,9 @@ class User < ActiveRecord::Base
     possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
     return possible_user_pool.first
   end
+
+
+
 
 
   private

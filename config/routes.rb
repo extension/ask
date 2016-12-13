@@ -24,6 +24,9 @@ Aae::Application.routes.draw do
     end
   end
 
+  resources :locations do
+  end
+
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
 
@@ -41,6 +44,15 @@ Aae::Application.routes.draw do
   end
 
   namespace :expert do
+    resources :locations, :only => [:show, :index] do
+      member do
+        get :primary_groups
+        post :add_primary_group
+        post :remove_primary_group
+      end
+    end
+
+
     resources :questions, :only => [:show, :edit, :update] do
       member do
         post 'assign'
@@ -108,7 +120,9 @@ Aae::Application.routes.draw do
         get  :filter_evaluations
         post :filter_evaluations
       end
-    end
+
+
+    end # expert namespace
 
     namespace :data do
       match 'demographics/download', action: 'demographics_download'

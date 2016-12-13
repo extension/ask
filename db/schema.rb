@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160704164542) do
+ActiveRecord::Schema.define(:version => 20161213141627) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -236,7 +236,6 @@ ActiveRecord::Schema.define(:version => 20160704164542) do
   create_table "group_events", :force => true do |t|
     t.integer  "created_by",           :null => false
     t.integer  "recipient_id"
-    t.string   "description"
     t.integer  "event_code"
     t.integer  "group_id",             :null => false
     t.text     "updated_group_values"
@@ -249,11 +248,15 @@ ActiveRecord::Schema.define(:version => 20160704164542) do
   add_index "group_events", ["recipient_id"], :name => "idx_group_events_recipient_id"
 
   create_table "group_locations", :force => true do |t|
-    t.integer "location_id", :default => 0, :null => false
-    t.integer "group_id",    :default => 0, :null => false
+    t.integer  "location_id", :default => 0,                     :null => false
+    t.integer  "group_id",    :default => 0,                     :null => false
+    t.boolean  "is_primary",  :default => false,                 :null => false
+    t.datetime "created_at",  :default => '2012-12-03 05:00:00', :null => false
+    t.datetime "updated_at",  :default => '2012-12-03 05:00:00', :null => false
   end
 
   add_index "group_locations", ["group_id", "location_id"], :name => "fk_locations_groups", :unique => true
+  add_index "group_locations", ["is_primary"], :name => "primary_ndx"
 
   create_table "groups", :force => true do |t|
     t.string   "name",                                            :null => false
@@ -289,6 +292,17 @@ ActiveRecord::Schema.define(:version => 20160704164542) do
 
   add_index "groups", ["name"], :name => "idx_group_name", :unique => true
   add_index "groups", ["widget_fingerprint"], :name => "idx_group_widget_fingerprint"
+
+  create_table "location_events", :force => true do |t|
+    t.integer  "location_id"
+    t.integer  "created_by",     :null => false
+    t.integer  "event_code"
+    t.text     "additionaldata"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "location_events", ["location_id", "created_by", "event_code"], :name => "idx_who_where_what"
 
   create_table "locations", :force => true do |t|
     t.integer  "fipsid",                     :null => false
@@ -574,7 +588,6 @@ ActiveRecord::Schema.define(:version => 20160704164542) do
     t.integer  "user_id",                 :null => false
     t.integer  "created_by",              :null => false
     t.integer  "event_code",              :null => false
-    t.string   "description",             :null => false
     t.text     "updated_user_attributes"
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false

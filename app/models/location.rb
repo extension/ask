@@ -22,15 +22,18 @@ class Location < ActiveRecord::Base
   has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
   has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
 
-
   scope :states, where(entrytype: STATE)
+  scope :unitedstates, where(entrytype: [STATE,INSULAR])
+  scope :outsideunitedstates, where(entrytype: OUTSIDEUS)
+  scope :displaylist, order(:entrytype,:name)
+
 
   def self.find_by_geoip(ipaddress = Settings.request_ip_address)
     if(geoip_data = self.get_geoip_data(ipaddress))
       if(geoip_data[:country_code] == 'US')
-        self.find_by_abbreviation(geoip_data[:region])
+        self.unitedstates.where(abbreviation: geoip_data[:region]).first
       else
-        self.find_by_abbreviation('OUTSIDEUS')
+        self.outsideunitedstates.first
       end
     else
       nil
@@ -60,7 +63,44 @@ class Location < ActiveRecord::Base
   end
 
   def get_all_county
-    return County.find_by_location_id_and_name(self.id, 'All')
+    self.counties.where(name: 'All').first
+  end
+
+  def primary_groups
+    groups.where("group_locations.is_primary = 1")
+  end
+
+  def active_primary_groups
+    groups.where("group_locations.is_primary = 1").where(group_active: true)
+  end
+
+  def add_primary_group(group, added_by = User.system_user)
+    if(group_location = self.group_locations.where(group_id: group.id).first)
+      return if(group_location.is_primary == true) # already primary, peace out
+      group_location.update_attribute(:is_primary,true)
+    else
+      self.group_locations.create(group_id: group.id, is_primary: true)
+    end
+
+    # add all county
+    all_county = self.get_all_county
+    group.add_expertise_county(all_county,added_by)
+
+    GroupEvent.log_added_primary_group(group,added_by,self)
+    LocationEvent.log_event(self,added_by,LocationEvent::ADD_PRIMARY_GROUP,{group_id: group.id})
+    #todo? user event logging?
+  end
+
+  def remove_primary_group(group, removed_by = User.system_user)
+    if(group_location = GroupLocation.where(group_id: group.id).where(location_id: self.id).first)
+      return if(group_location.is_primary == false) # already not a primary, peace out
+      group_location.update_attribute(:is_primary,false)
+      GroupEvent.log_removed_primary_group(group,removed_by,self)
+      LocationEvent.log_event(self,removed_by,LocationEvent::REMOVE_PRIMARY_GROUP,{group_id: group.id})
+      #todo? user event logging? 
+    else
+       # no association, do nothing
+    end
   end
 
   def self.in_state_out_metrics_by_year(year,cache_options = {})

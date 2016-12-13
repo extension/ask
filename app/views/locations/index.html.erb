@@ -1,0 +1,19 @@
+<div class="centered">
+<h1>Ask a Question</h1>
+
+<h2 class="title-alt">How it works</h2>
+<p class="subhead">Questions are answered by Cooperative Extension, University staff and volunteers from across the United States.</p>
+
+<h2 class="title-alt">Find an expert</h2>
+<p class="form-inline"><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick your location", :class => "form-control"}) %></p>
+
+
+<p class="powered-by">Ask an Expert is powered by Cooperative Extension</p>
+</div>
+
+<script type="text/javascript">
+  $("#location_id").change(function() {
+    var location_id = $('select#location_id :selected').val();
+    window.location = '/locations/' + location_id
+  });
+</script>

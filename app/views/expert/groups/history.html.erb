@@ -1,23 +1,32 @@
-<h1><%= link_to @group.name, expert_group_path() %></h1>
-<p id="aaeid">Group #<%= @group.id %></p>
+<h1><%= link_to @group.name, expert_group_path() -%> </h1>
+<p id="aaeid">Group #<%= @group.id -%> </p>
 
 <h2>Settings > History</h2>
 
-<%= render :partial => 'expert/groups/settings_navigation' %>
+<%= render :partial => 'expert/groups/settings_navigation' -%>
 
-<% @group_events.each do |event| %>
-  <% if event.event_code == GroupEvent::GROUP_EDITED_ATTRIBUTES %>
-    <% event.updated_group_values.each do |key, value| %>
-      <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> Changed <strong>Group <%= key.to_s.gsub('_', ' ').capitalize %></strong> from '<strong><%= value[:old] %></strong>' to '<strong><%= value[:new] %></strong>' <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small><p>
-    <% end %>
-  <% elsif event.event_code == GroupEvent::GROUP_REMOVE %>
-    <p><%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> removed <%= link_expert_user_avatar(event.recipient, :thumb) %> <%= link_expert_user(event.recipient) %> from the group <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small></p>
-  <% else %>
-    <% if event.recipient.name == event.creator.name %>
-      <p><%= link_expert_user_avatar(event.recipient, :thumb) %> <%= link_expert_user(event.recipient) %> <%= event.description %> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small></p>
-    <% else %>
-      <p><%= link_expert_user_avatar(event.recipient, :thumb) %> <%= link_expert_user(event.recipient) %> <%= event.description %> by <%= link_expert_user_avatar(event.creator, :thumb) %> <%= link_expert_user(event.creator) %> <%= time_ago_in_words(event.created_at) %> ago <small><%= humane_date(event.created_at) %></small></p>
-    <% end %>
-  <% end %>
+<%- @group_events.each do |event| -%>
+  <%- if event.event_code == GroupEvent::GROUP_EDITED_ATTRIBUTES -%>
+    <%- event.updated_group_values.each do |key, value| -%>
+      <p><%= link_expert_user_avatar(event.creator, :thumb) -%>  <%= link_expert_user(event.creator) -%>  Changed <strong>Group <%= key.to_s.gsub('_', ' ').capitalize -%> </strong> from '<strong><%= value[:old] -%> </strong>' to '<strong><%= value[:new] -%> </strong>' <%= time_ago_in_words(event.created_at) -%>  ago <small><%= humane_date(event.created_at) -%> </small><p>
+    <%- end -%>
+  <%- elsif event.event_code == GroupEvent::GROUP_REMOVE -%>
+    <p><%= link_expert_user_avatar(event.creator, :thumb) -%>  <%= link_expert_user(event.creator) -%>  removed <%= link_expert_user_avatar(event.recipient, :thumb) -%>  <%= link_expert_user(event.recipient) -%>  from the group <%= time_ago_in_words(event.created_at) -%>  ago <small><%= humane_date(event.created_at) -%> </small></p>
+  <%- elsif (event.event_code == GroupEvent::GROUP_ADDED_AS_PRIMARY or  event.event_code == GroupEvent::GROUP_REMOVED_AS_PRIMARY) -%>
+    <%-
+      if(event.additionaldata[:location_id] and location = Location.where(id: event.additionaldata[:location_id]).first)
+        location_link = link_to(location.name,expert_location_path(location.id))
+      else
+        location_link = 'Unknown'
+      end
+    -%>
+    <p><%= link_expert_user_avatar(event.creator, :thumb) -%>  <%= link_expert_user(event.creator) -%>  <%= event.description -%> for <%= location_link.html_safe %>  <%= time_ago_in_words(event.created_at) -%>  ago <small><%= humane_date(event.created_at) -%> </small></p>
+  <%- else -%>
+    <%- if event.created_by == event.recipient_id -%>
+      <p><%= link_expert_user_avatar(event.recipient, :thumb) -%>  <%= link_expert_user(event.recipient) -%>  <%= event.description -%>  <%= time_ago_in_words(event.created_at) -%>  ago <small><%= humane_date(event.created_at) -%> </small></p>
+    <%- else -%>
+      <p><%= link_expert_user_avatar(event.recipient, :thumb) -%>  <%= link_expert_user(event.recipient) -%>  <%= event.description -%>  by <%= link_expert_user_avatar(event.creator, :thumb) -%>  <%= link_expert_user(event.creator) -%>  <%= time_ago_in_words(event.created_at) -%>  ago <small><%= humane_date(event.created_at) -%> </small></p>
+    <%- end -%>
+  <%- end -%>
 
-<% end %>
+<%- end -%>

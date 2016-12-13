@@ -1,0 +1,33 @@
+
+<div class="centered">
+  <div class="map"></div>
+  <h3 class="title-small"><%= link_to "Ask a Question", locations_path %></h3>
+  <h1 class="title-alt"><%= @location.name %></h1>
+  <p class="change-location btn btn-default btn-xs"><%= link_to("change location", locations_path()) %></p>
+
+  <h3 class="title-xs">Groups accepting questions</h3>
+
+  <%- if(@location.primary_groups.count < 1) -%>
+    <div class="no-primary-groups">
+      <p>Currently there are no active groups accepting questions for this location.</p>
+    </div>
+  <%- end -%>
+
+
+
+  <%- if @location.active_primary_groups.count >= 1 -%>
+    <%- @location.primary_groups.order(:name).each do |group| -%>
+      <div class="primary-group">
+        <h2 class="primary-group-name"><%= link_to group.name, group_path(group) -%></h2>
+        <div class="primary-group-description">
+          <% if group.description? %>
+            <%= format_text_for_display(group.description) %>
+          <% end  %>
+        </div>
+        <%= link_to "Ask your question to this group", ask_group_path(group), :class => "btn btn-default btn-lg" -%>
+      </div>
+    <%- end -%>
+  <%- end -%>
+
+  <p class="powered-by">Ask an Expert is powered by Cooperative Extension</p>
+</div>

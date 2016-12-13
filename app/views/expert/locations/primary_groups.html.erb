@@ -1,0 +1,84 @@
+<div class='row'>
+    <div class="col-md-offset-2 col-md-8">
+<ol class="breadcrumb">
+  <li><%= link_to "Locations", expert_locations_path -%></li>
+  <li><%= link_to @location.name, expert_location_path %></li>
+</ol>
+
+<h1><%= @location.name -%> Primary Group Manager</h1>
+<p class="subhead">These are the groups which are displayed when someone searches for their location on ask.extension.org. <%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+
+<%- if(@location.primary_groups.count < 1) -%>
+  <div class="alert alert-danger" role="alert">
+    <h3>No primary groups have been designated for this location</h3>
+  </div>
+<%- end -%>
+
+<%- if ((@location.active_primary_groups.count < 1) && (@location.primary_groups.count >= 1)) -%>
+  <div class="alert alert-danger" role="alert">
+    <h3>This location has no assignable groups</h3>
+  </div>
+<%- end -%>
+
+<h2>Primary groups</h2>
+<%- if(@location.primary_groups.count >= 1) -%>
+  <%- @location.primary_groups.order(:name).each do |group| -%>
+    <div class="location-group">
+      <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
+        <%= hidden_field_tag('group_id', group.id, {id: "remove_form_group_#{group.id}"}) %>
+        <p class="pull-right"><%= submit_tag('Remove', class: 'btn btn-default btn-xs', :confirm => 'Remove this group as a primary group?') %></p>
+      <%- end -%>
+
+      <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+        <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+        <h2><%= link_to group.name, expert_group_path(group.id) %></h2>
+        <h4>Available members: <%= group.assignees.count -%></h4>
+        <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+
+        <p class="downplay">
+        <% if group.assignment_outside_locations == true %>
+          Accepts questions from anywhere.
+        <% else %>
+          Questions must match this group's locations
+        <% end %>
+        </p>
+      </div>
+
+
+    </div>
+<%- end -%>
+
+
+<%- end -%>
+
+<div class="well">
+  <h2>Add another primary group</h2>
+<%= form_tag(add_primary_group_expert_location_path(id: @location.id)) do -%>
+  <div class="input-group">
+    <h3>Search for a group by name</h3>
+    <div class="form-group">
+      <%= text_field_tag("group_picker", "", class: 'form-control input-lg', :placeholder => 'Type and select a group' )%>
+      <%= hidden_field_tag('group_id',nil,{id: 'add_form_group'}) %>
+    </div>
+    <p>
+      <%= submit_tag('Designate as primary group', class: 'btn btn-default btn-primary input-lg') %>
+    </p>
+  </div>
+<%- end -%>
+</div>
+
+</div>
+</div>
+
+<script class="code" type="text/javascript">
+    // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
+    $(document).ready(function(){
+		$("#group_picker").autocomplete({
+      source: "/ajax/groups",
+			minLength: 2,
+      select: function(e, ui) {
+        $("#add_form_group").val(ui.item.id);
+			}
+		});
+		});
+</script>
