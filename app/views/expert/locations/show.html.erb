@@ -38,6 +38,7 @@
       <% @experts.each do |member| %>
         <p><%= link_public_user_avatar(member, :thumb) %> <%= link_to member.public_name, user_path(member.id) %></p>
       <% end %>
+      <p><%= link_to "view all", expert_users_by_location_path() %></p>
     <% else %>
       <p>There are no experts in this location</p>
     <% end %>
@@ -62,6 +63,7 @@
           </p>
         </div>
       <% end %>
+      <p><%= link_to "view all", expert_groups_by_location_path() %></p>
     <% else %>
       <p>There are no groups in this location</p>
     <% end %>
