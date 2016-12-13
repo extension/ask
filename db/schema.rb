@@ -248,11 +248,11 @@ ActiveRecord::Schema.define(:version => 20161213141627) do
   add_index "group_events", ["recipient_id"], :name => "idx_group_events_recipient_id"
 
   create_table "group_locations", :force => true do |t|
-    t.integer  "location_id", :default => 0,     :null => false
-    t.integer  "group_id",    :default => 0,     :null => false
-    t.boolean  "is_primary",  :default => false, :null => false
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
+    t.integer  "location_id", :default => 0,                     :null => false
+    t.integer  "group_id",    :default => 0,                     :null => false
+    t.boolean  "is_primary",  :default => false,                 :null => false
+    t.datetime "created_at",  :default => '2012-12-03 05:00:00', :null => false
+    t.datetime "updated_at",  :default => '2012-12-03 05:00:00', :null => false
   end
 
   add_index "group_locations", ["group_id", "location_id"], :name => "fk_locations_groups", :unique => true
