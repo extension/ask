@@ -7,7 +7,6 @@
         <tr>
           <th>Location</th>
           <th>Primary groups</th>
-          <th>Office link</th>
         </tr>
       </thead>
       <tbody>
@@ -31,13 +30,6 @@
               <%- end -%>
             <%- else -%>
               <p class="warning">No primary groups designated</p>
-            <%- end -%>
-          </td>
-          <td>
-            <%- if location.office_link.blank? -%>
-              No office link listed.
-            <%- else -%>
-              <%= link_to(location.office_link, location.office_link) -%>
             <%- end -%>
           </td>
         </tr>
