@@ -14,7 +14,7 @@
   </div>
 <%- end -%>
 
-<%- if ((@location.active_primary_groups.count < 1) && (@location.primary_groups.count > 1)) -%>
+<%- if ((@location.active_primary_groups.count < 1) && (@location.primary_groups.count >= 1)) -%>
   <div class="alert alert-danger" role="alert">
     <h3>This location has no assignable groups</h3>
   </div>
@@ -26,10 +26,23 @@
     <div class="location-group">
       <%= form_tag(remove_primary_group_expert_location_path(id: @location.id)) do -%>
         <%= hidden_field_tag('group_id', group.id, {id: "remove_form_group_#{group.id}"}) %>
-        <p class="pull-right"><%= submit_tag('Remove', class: 'btn btn-default btn-xs btn-danger') %></p>
+        <p class="pull-right"><%= submit_tag('Remove', class: 'btn btn-default btn-xs', :confirm => 'Remove this group as a primary group?') %></p>
       <%- end -%>
-      <h2><%= link_to group.name, expert_group_path(group) -%></h2>
-      <h4>Available members: <%= group.assignees.count -%></h4>
+
+      <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+        <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+        <h2><%= link_to group.name, expert_group_path(group.id) %></h2>
+        <h4>Available members: <%= group.assignees.count -%></h4>
+        <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+
+        <p class="downplay">
+        <% if group.assignment_outside_locations == true %>
+          Accepts questions from anywhere.
+        <% else %>
+          Questions must match this group's locations
+        <% end %>
+        </p>
+      </div>
 
 
     </div>
