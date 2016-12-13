@@ -19,20 +19,25 @@ class UserEvent < ActiveRecord::Base
   UPDATED_ANSWERING_PREFS = 110
   REMOVED_GROUP = 111
 
-  USER_EVENT_STRINGS = {
-    100 => 'changed tags',
-    101 => 'changed vacation status',
-    102 => 'added expertise location',
-    103 => 'removed expertise location',
-    104 => 'added expertise county',
-    105 => 'removed expertise county',
-    106 => 'added expertise tag',
-    107 => 'removed expertise tag',
-    108 => 'updated description',
-    109 => 'updated profile',
-    110 => 'updated answering preferences',
-    111 => 'removed from group'
+  EVENT_STRINGS = {
+    CHANGED_TAGS => 'changed tags',
+    CHANGED_VACATION_STATUS => 'changed vacation status',
+    ADDED_LOCATION => 'added expertise location',
+    REMOVED_LOCATION => 'removed expertise location',
+    ADDED_COUNTY => 'added expertise county',
+    REMOVED_COUNTY => 'removed expertise county',
+    ADDED_TAGS => 'added expertise tag',
+    REMOVED_TAGS => 'removed expertise tag',
+    UPDATED_DESCRIPTION => 'updated description',
+    UPDATED_PROFILE => 'updated profile',
+    UPDATED_ANSWERING_PREFS => 'updated answering preferences',
+    REMOVED_GROUP => 'removed from group'
   }
+
+  def description
+    EVENT_STRINGS[self.event_code]
+  end
+
 
   def self.log_generic_user_event(user, initiator, edit_hash, user_event)
     return self.log_user_changes(user, initiator, user_event, {what_changed: edit_hash})
@@ -74,7 +79,6 @@ class UserEvent < ActiveRecord::Base
     log_attributes = {}
     log_attributes[:created_by] = initiator.id
     log_attributes[:user_id] = user.id
-    log_attributes[:description] = USER_EVENT_STRINGS[event_code]
     log_attributes[:event_code] = event_code
     log_attributes[:updated_user_attributes] = edit_hash
 
@@ -94,7 +98,7 @@ class UserEvent < ActiveRecord::Base
                             notification_type: Notification::AAE_EXPERT_VACATION_EDIT, delivery_time: 1.minute.from_now )
       when REMOVED_GROUP
         Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id,
-                            notification_type: Notification::AAE_EXPERT_GROUP_EDIT, delivery_time: 1.minute.from_now )                            
+                            notification_type: Notification::AAE_EXPERT_GROUP_EDIT, delivery_time: 1.minute.from_now )
       when ADDED_LOCATION, REMOVED_LOCATION, ADDED_COUNTY, REMOVED_COUNTY
         if !Notification.pending_location_edit_notification?(self)
           Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.user_id,
