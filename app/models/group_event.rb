@@ -25,8 +25,8 @@ class GroupEvent < ActiveRecord::Base
     204 => 'removed from group',
     212 => 'joined group leadership',
     214 => 'left group leadership',
-    220 => 'added as a primary group',
-    221 => 'removed as a primary group',
+    220 => 'added group as a primary for location',
+    221 => 'removed group as a primary for location',
     600 => 'edited attributes'
   }
 
@@ -59,11 +59,11 @@ class GroupEvent < ActiveRecord::Base
   end
 
   def self.log_added_primary_group(group, initiator, location)
-    return self.log_group_changes(group, initiator, initiator, GROUP_ADDED_AS_PRIMARY, {location: location.id})
+    return self.log_group_changes(group, initiator, initiator, GROUP_ADDED_AS_PRIMARY, {location_id: location.id})
   end
 
   def self.log_removed_primary_group(group, initiator, location)
-    return self.log_group_changes(group, initiator, initiator, GROUP_REMOVED_AS_PRIMARY, {location: location.id})
+    return self.log_group_changes(group, initiator, initiator, GROUP_REMOVED_AS_PRIMARY, {location_id: location.id})
   end
 
   def self.log_group_changes(group, initiator, recipient, event_code, edit_hash = nil)
