@@ -1,4 +1,4 @@
 <h1>Experts tagged with '<%= @tag.name %>' (<%= @expert_total_count %>)</h1>
 <h3><%= link_to "View everything tagged '#{@tag.name}'", expert_show_tag_path(:name => @tag.name) %></h3>
 
-<%= render partial: 'expert/home/expert_list' %>
+<%= render partial: 'expert/shared/expert_list' %>

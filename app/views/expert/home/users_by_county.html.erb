@@ -1,4 +1,4 @@
 <h1>Experts in '<%= @county.name %>' (<%= @expert_total_count %>)</h1>
 <h3><%= link_to "View everything in '#{@county.name}'", expert_view_county_path(:id => @county.id) %></h3>
 
-<%= render partial: 'expert/home/expert_list' %>
+<%= render partial: 'expert/shared/expert_list' %>
