@@ -10,7 +10,7 @@
       <h3><%= link_to @unanswered_questions_count == 1 ? "#{@unanswered_questions_count} Unanswered Question" : "#{@unanswered_questions_count} Unanswered Questions", expert_questions_path(:status => "unanswered", :location_id => @location.id)%></h3>
     <% end %>
     <p><%= link_to "View Summary Report", expert_reports_locations_and_groups_path(:location_id => @location.id) %></p>
-    <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+
   </div>
 
 <div class="col-md-4">
@@ -27,14 +27,29 @@
   <%- if(@location.primary_groups.count >= 1) -%>
     <%- @location.primary_groups.order(:name).each do |group| -%>
       <div class="location-group">
-        <h2><%= link_to group.name, expert_group_path(group) -%></h2>
-        <h4><span>Available members: <%= group.assignees.count -%></span></h4>
+        <div class="group_in_group_list <%= !group.group_active? ? "inactive_group" : "active" %>">
+          <p class="group_list_avatar"><%= link_expert_group_avatar(group, :thumb) %></p>
+          <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
+          <p><%= !group.group_active? ? "Inactive Group" : "" %></p>
+          <p><strong>Available members: <%= group.assignees.count -%></strong> (out of <%= group.joined.count %>)</p>
+          <p class="downplay">
+          <% if group.assignment_outside_locations == true %>
+            Accepts questions from anywhere.
+          <% else %>
+            Questions must match this group's locations
+          <% end %>
+          </p>
+        </div>
       </div>
+
     <%- end -%>
   <%- end -%>
   <div class="alert muted">
-    <p>Primary groups which are displayed when someone searches for their location on ask.extension.org.</p>
-    <p><%= link_to "Manage groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-xs" -%></p>
+    <p>Primary groups are displayed when someone selects a location to ask a question on ask.extension.org.</p>
+    <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-sm" -%></p>
+    <%- if(@location.primary_groups.count > 0) -%>
+      <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-sm" -%></p>
+    <%- end -%>
   </div>
 </div>
 </div>
@@ -48,7 +63,7 @@
           <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span></p>
 
         <% end %>
-        <p><%= link_to "view all", expert_users_by_location_path() %></p>
+        <p><%= link_to "view all", experts_expert_location_path() %></p>
       <% else %>
         <p>There are no experts in this location</p>
       <% end %>
@@ -82,6 +97,17 @@
     </div>
   </div>
 
+  <div class="col-md-12">
+    <h2>Counties</h2>
+    <div class="county-columns">
+      <ul class="county_list">
+      <% @counties.each do |county| %>
+        <li><span class="tag tag-geography"><%= link_to "#{county.name}", expert_view_county_path(county.id) %></span> <%= User.with_expertise_county(county.id).exid_holder.not_retired.count > 0 ? "#{User.with_expertise_county(county.id).exid_holder.not_retired.count} experts" : "" %></li>
+      <% end %>
+      </ul>
+    </div>
+
+  </div>
 
 
 </div>
