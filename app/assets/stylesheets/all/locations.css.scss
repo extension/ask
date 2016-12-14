@@ -2,3 +2,40 @@
 .location-group {background: #fff; padding: 20px; margin:20px 0;}
 .warning {color: red; font-weight:bold;}
 .subhead {font-size:20px; margin:20px 0 30px; line-height:1.25em}
+
+.county-columns {margin-bottom:60px;}
+/* Mobile first queries */
+/*===============================================================================================================================*/
+
+/* Larger than mobile */
+@media (min-width: 400px) {
+
+}
+
+/* Larger than phablet */
+@media (min-width: 550px) {
+  .county-columns {
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+  }
+}
+
+/* Larger than tablet */
+@media (min-width: 750px) {
+
+}
+
+/* Larger than desktop */
+@media (min-width: 1000px) {
+  .county-columns {
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+  }
+}
+
+/* Larger than Desktop HD */
+@media (min-width: 1200px) {
+
+}

@@ -20,6 +20,7 @@ class Expert::LocationsController < ApplicationController
     @groups = Group.with_expertise_location(@location.id).limit(5)
     @group_total_count = Group.with_expertise_location(@location.id).count
     @unanswered_questions_count = Question.where("location_id = ?", @location.id).submitted.not_rejected.count
+    @counties = @location.counties.find(:all, :order => 'name', :conditions => "countycode <> '0'")
   end
 
   def primary_groups
