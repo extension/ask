@@ -1,5 +1,5 @@
 <h1>Questions in '<%= @location.name %>' (<%= number_with_delimiter(@question_total_count, :delimiter => ',') %>)</h1>
-<h3><%= link_to "View everything in '#{@location.name}'", expert_view_location_path(:id => @location.id) %></h3>
+<h3><%= link_to "View everything in '#{@location.name}'", expert_location_path(:id => @location.id) %></h3>
 
 <%= render partial: 'expert/home/question_list' %>
 

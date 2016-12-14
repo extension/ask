@@ -77,7 +77,7 @@
         <% if l.open_count > 0 %>
           <div class="group_in_group_list active">
             <h4>
-              <span class="tag tag-geography"><%= link_to l.name, expert_view_location_path(l.id) %></span>
+              <span class="tag tag-geography"><%= link_to l.name, expert_location_path(l.id) %></span>
               <strong><%= link_to "#{l.open_count} unanswered", expert_questions_path(:status => "unanswered", :location_id => l.id)%></strong>
               <span>- <%= link_to "activity report", expert_reports_locations_and_groups_path(:location_id => l.id) %></span>
             </h4>

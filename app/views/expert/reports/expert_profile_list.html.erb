@@ -45,7 +45,7 @@
               <% if question.county.present? %>
                 <span class="tag tag-geography"><%= link_to "#{question.county.name}", expert_view_county_path(question.county.id) %></span>
               <% end %>
-                <span class="tag tag-geography"><%= link_to question.location.abbreviation, expert_view_location_path(question.location.id) %></span>
+                <span class="tag tag-geography"><%= link_to question.location.abbreviation, expert_location_path(question.location.id) %></span>
             <% else %>
               <span class="label label-inverse"><%= link_to "No Location" %></span>
             <% end %></td>
