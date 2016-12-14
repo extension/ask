@@ -20,6 +20,8 @@ Aae::Application.routes.draw do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
+  # expert redirect routes
+  match "/expert/home/locations/:id", to: redirect("/expert/locations/%{id}")
 
   # config/routes/expert.rb
   draw :expert
