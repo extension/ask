@@ -5,7 +5,7 @@
 <p class="subhead">Questions are answered by Cooperative Extension, University staff and volunteers from across the United States.</p>
 
 <h2 class="title-alt">Find an expert</h2>
-<p class="form-inline"><%= select_tag(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : nil), {:prompt => "Pick your location", :class => "form-control"}) %></p>
+<p class="form-inline"><%= select_tag(:location_id, options_for_select(get_location_options), {:prompt => "Pick your location", :class => "form-control"}) %></p>
 
 
 <p class="powered-by">Ask an Expert is powered by Cooperative Extension</p>
