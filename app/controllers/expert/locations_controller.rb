@@ -42,4 +42,24 @@ class Expert::LocationsController < ApplicationController
     return redirect_to primary_groups_expert_location_path(id: location.id)
   end
 
+
+  def experts
+    @location = Location.find(params[:id])
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
+    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
+    @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
+  end
+
+
+  def experts_email_csv
+    @location = Location.find_by_id(params[:id])
+    return record_not_found if @location.blank?
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.order("users.last_active_at DESC")
+    respond_to do |format|
+      format.csv { send_data User.to_csv(@experts, ["first_name", "last_name", "email"]), :filename => "#{@location.name.gsub(' ', '_')}_Expert_Emails.csv" }
+    end
+  end
+
+
+
 end

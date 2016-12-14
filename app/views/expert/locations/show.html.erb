@@ -63,7 +63,7 @@
           <p><%= link_expert_user_avatar(member, :thumb) %> <%= link_expert_user(member) %> <br /><span class="downplay">Last active: <%= get_last_active_time(member) %></span></p>
 
         <% end %>
-        <p><%= link_to "view all", expert_users_by_location_path() %></p>
+        <p><%= link_to "view all", experts_expert_location_path() %></p>
       <% else %>
         <p>There are no experts in this location</p>
       <% end %>

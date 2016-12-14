@@ -22,6 +22,7 @@ Aae::Application.routes.draw do
 
   # expert redirect routes
   match "/expert/home/locations/:id", to: redirect("/expert/locations/%{id}")
+  match "/expert/home/users/locations/:id", to: redirect("/expert/locations/%{id}/experts")
 
   # config/routes/expert.rb
   draw :expert

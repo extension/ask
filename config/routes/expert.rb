@@ -1,16 +1,12 @@
-# redirect routes
-match "/expert/home/locations/:id", to: redirect("/expert/locations/%{id}")
-
-
 namespace :expert do
-
-
 
   resources :locations, :only => [:show, :index] do
     member do
       get :primary_groups
       post :add_primary_group
       post :remove_primary_group
+      get :experts
+      get :experts_email_csv
     end
   end
 
@@ -138,8 +134,6 @@ namespace :expert do
   match "home/users/tags/:name" => "home#users_by_tag", :as => 'users_by_tag'
   match "home/groups/tags/:name" => "home#groups_by_tag", :as => 'groups_by_tag'
   match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
-  match "home/users/locations/:id" => "home#users_by_location", :as => 'users_by_location'
-  match "home/users/locations/:id/email_list" => "home#users_by_location_email_csv", :as => 'users_by_location_email_csv'
   match "home/groups/locations/:id" => "home#groups_by_location", :as => 'groups_by_location'
   match "home/questions/locations/:id" => "home#questions_by_location", :as => 'questions_by_location'
   match "home/users/counties/:id" => "home#users_by_county", :as => 'users_by_county'
