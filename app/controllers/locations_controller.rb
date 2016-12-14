@@ -7,9 +7,6 @@
 class LocationsController < ApplicationController
   layout 'public'
 
-  before_filter :set_format, :only => [:ask]
-  invisible_captcha only: [:create]
-
   def index
   end
 
