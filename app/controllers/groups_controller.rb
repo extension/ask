@@ -82,7 +82,7 @@ class GroupsController < ApplicationController
           3.times do
             @question.images.build
           end
-          return
+          return render(action: 'ask') 
         end
       end
     end
