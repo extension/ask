@@ -71,7 +71,7 @@ class Location < ActiveRecord::Base
   end
 
   def active_primary_groups
-    groups.where("group_locations.is_primary = 1").where(group_active: true)
+    groups.where("group_locations.is_primary = 1").where(group_active: true).where(widget_active: true)
   end
 
   def add_primary_group(group, added_by = User.system_user)
@@ -97,7 +97,7 @@ class Location < ActiveRecord::Base
       group_location.update_attribute(:is_primary,false)
       GroupEvent.log_removed_primary_group(group,removed_by,self)
       LocationEvent.log_event(self,removed_by,LocationEvent::REMOVE_PRIMARY_GROUP,{group_id: group.id})
-      #todo? user event logging? 
+      #todo? user event logging?
     else
        # no association, do nothing
     end

@@ -21,12 +21,17 @@
               <%- location.primary_groups.order(:name).each do |group| -%>
                 <p>
                   <strong><%= group.name -%></strong>
+                  <%- if !group.group_active? -%>
+                    ( <span class="warning">Group not active</span> )
+                  <%- elsif !group.widget_active -%>
+                    ( <span class="warning">Group widget not active</span> )
+                  <%- end -%>
                   <br /><small>(<%= group.assignees.count -%> members available)</small>
                 </p>
               <%- end -%>
-              <!-- Assignable groups? -->
+              <!-- submittable groups? -->
               <%- if location.active_primary_groups.count < 1 -%>
-                <p class="warning">This location has no assignable groups!</p>
+                <p class="warning">This location has no submittable groups!</p>
               <%- end -%>
             <%- else -%>
               <p class="warning">No primary groups designated</p>

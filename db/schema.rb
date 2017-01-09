@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161213141627) do
+ActiveRecord::Schema.define(:version => 20170109160815) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -251,8 +251,8 @@ ActiveRecord::Schema.define(:version => 20161213141627) do
     t.integer  "location_id", :default => 0,                     :null => false
     t.integer  "group_id",    :default => 0,                     :null => false
     t.boolean  "is_primary",  :default => false,                 :null => false
-    t.datetime "created_at",  :default => '2012-12-03 05:00:00', :null => false
-    t.datetime "updated_at",  :default => '2012-12-03 05:00:00', :null => false
+    t.datetime "created_at",  :default => '2012-12-03 00:00:00', :null => false
+    t.datetime "updated_at",  :default => '2012-12-03 00:00:00', :null => false
   end
 
   add_index "group_locations", ["group_id", "location_id"], :name => "fk_locations_groups", :unique => true
@@ -682,18 +682,5 @@ ActiveRecord::Schema.define(:version => 20161213141627) do
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
   end
-
-  create_table "yo_los", :force => true do |t|
-    t.integer  "user_id",              :default => 0
-    t.string   "ipaddress"
-    t.integer  "detected_location_id", :default => 0
-    t.integer  "detected_county_id",   :default => 0
-    t.integer  "location_id",          :default => 0
-    t.integer  "county_id",            :default => 0
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
-  end
-
-  add_index "yo_los", ["user_id"], :name => "user_ndx"
 
 end

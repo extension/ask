@@ -6,6 +6,9 @@
 #  see LICENSE file
 
 class ApplicationController < ActionController::Base
+  protect_from_forgery
+  layout "public"
+
   TRUE_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'yes','YES','y','Y']
   FALSE_VALUES = [false, 0, '0', 'f', 'F', 'false', 'FALSE','no','NO','n','N']
 
@@ -17,11 +20,9 @@ class ApplicationController < ActionController::Base
   helper_method :location_abbreviations
   helper_method :county_names
 
-  before_filter :set_time_zone_from_user, :set_last_active_at_for_user, :check_retired
-
-  protect_from_forgery
-  layout "public"
-
+  before_filter :set_time_zone_from_user
+  before_filter :set_last_active_at_for_user
+  before_filter :check_retired
   before_filter :store_redirect_url
   before_filter :set_yolo
 
@@ -73,21 +74,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_yolo
-    if(current_user)
-      if(@yolo = current_user.yo_lo)
-        @yolo.update_with_ip(request.remote_ip,current_user)
-        session[:yolo_id] = @yolo.id
-        return true
-      end
-    elsif(session[:yolo_id])
-      if(@yolo = YoLo.find_by_id(session[:yolo_id]))
-        @yolo.update_with_ip(request.remote_ip,current_user)
-        return true
-      end
-    end
-    @yolo = YoLo.create_from_ip(request.remote_ip,current_user)
-    if(@yolo)
-      session[:yolo_id] = @yolo.id
+    if(!@yolo)
+      @yolo = YoLo.new(request.remote_ip,session)
     end
   end
 

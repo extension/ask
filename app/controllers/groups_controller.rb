@@ -82,7 +82,7 @@ class GroupsController < ApplicationController
           3.times do
             @question.images.build
           end
-          return render(action: 'ask') 
+          return render(action: 'ask')
         end
       end
     end
@@ -100,6 +100,10 @@ class GroupsController < ApplicationController
     @question.original_location = @question.location
     @question.original_county = @question.county
 
+    # set the yolo location/county as well
+    @yolo.set_location(@question.location)
+    @yolo.set_county(@question.county)
+
     if !@group.widget_public_option
       @question.is_private = true
       # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
@@ -114,6 +118,8 @@ class GroupsController < ApplicationController
       @question.is_private = true
       @question.is_private_reason = Question::PRIVACY_REASON_SUBMITTER
     end
+
+
 
     if @question.save
       if(!@question.spam?)
