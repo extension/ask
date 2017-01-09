@@ -12,6 +12,7 @@ class LocationsController < ApplicationController
 
   def show
     @location = Location.find(params[:id])
+    @yolo.set_location(@location)
   end
 
 end
