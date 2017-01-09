@@ -52,7 +52,11 @@ class YoLo
 
   def set_location(location)
     @location = location
-    session[:yolo_location_id] = @location.id if(!@location.nil?)
+    if(@location.nil?)
+      session[:yolo_location_id] = nil
+    else
+      session[:yolo_location_id] = @location.id
+    end
     # clear county if mismatch
     if(@county and @location and @county.location_id != @location.id)
       @county = nil
@@ -62,7 +66,11 @@ class YoLo
 
   def set_county(county)
     @county = county
-    session[:yolo_county_id] = @county.id if(!@county.nil?)
+    if(@county.nil?)
+      session[:yolo_county_id] = nil
+    else
+      session[:yolo_county_id] = @county.id
+    end
     # set location to the county location
     if(@county)
       @location = @county.location
