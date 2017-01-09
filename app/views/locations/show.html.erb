@@ -7,7 +7,7 @@
 
   <h3 class="title-xs">Groups accepting questions</h3>
 
-  <%- if(@location.primary_groups.count < 1) -%>
+  <%- if(@location.active_primary_groups.count < 1) -%>
     <div class="no-primary-groups">
       <p>Currently there are no active groups accepting questions for this location.</p>
     </div>
@@ -16,7 +16,7 @@
 
 
   <%- if @location.active_primary_groups.count >= 1 -%>
-    <%- @location.primary_groups.order(:name).each do |group| -%>
+    <%- @location.active_primary_groups.order(:name).each do |group| -%>
       <div class="primary-group">
         <h2 class="primary-group-name"><%= link_to group.name, group_path(group) -%></h2>
         <div class="primary-group-description">
