@@ -71,7 +71,7 @@ class Location < ActiveRecord::Base
   end
 
   def active_primary_groups
-    groups.where("group_locations.is_primary = 1").where(group_active: true).where(widget_active: true)
+    groups.where("group_locations.is_primary = 1").where(group_active: true)
   end
 
   def add_primary_group(group, added_by = User.system_user)

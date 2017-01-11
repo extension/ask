@@ -32,8 +32,6 @@
           <h4><%= link_to group.name, expert_group_path(group.id) %></h4>
           <%- if !group.group_active? -%>
             <p class="warning">Group not active</p>
-          <%- elsif !group.widget_active -%>
-            <p class="warning">Group widget not active</p>
           <%- end -%>
           <p><strong>Available members: <%= group.assignees.count -%></strong> (out of <%= group.joined.count %>)</p>
           <p class="downplay">

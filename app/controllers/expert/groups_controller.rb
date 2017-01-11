@@ -122,12 +122,6 @@ class Expert::GroupsController < ApplicationController
             flash[:error] = "There must be at least one active member to activate a Group."
             return render nil
           end
-        # if the group is marked inactive, then the group's widget gets marked as inactive
-        else
-          if @group.widget_active == true
-            @group.widget_active = false
-            change_hash[:widget_active] = {:old => true, :new => false}
-          end
         end
         change_hash[:group_active] = {:old => @group.group_active_was, :new => @group.group_active}
       end
@@ -206,15 +200,6 @@ class Expert::GroupsController < ApplicationController
     if request.put?
       @group.attributes = params[:group]
       change_hash = Hash.new
-
-      if @group.widget_active_changed?
-        if @group.widget_active == true && @group.group_active == false
-          @group.widget_active = false
-          flash[:error] = "This group is not active. You will need to activate the group on the group edit page before the widget can be activated."
-          return render nil
-        end
-        change_hash[:widget_active] = {:old => @group.widget_active_was.to_s, :new => @group.widget_active.to_s}
-      end
 
       if @group.widget_public_option_changed?
         change_hash[:public_option] = {:old => @group.widget_public_option_was.to_s, :new => @group.widget_public_option.to_s}

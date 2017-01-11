@@ -23,8 +23,6 @@
                   <strong><%= group.name -%></strong>
                   <%- if !group.group_active? -%>
                     ( <span class="warning">Group not active</span> )
-                  <%- elsif !group.widget_active -%>
-                    ( <span class="warning">Group widget not active</span> )
                   <%- end -%>
                   <br /><small>(<%= group.assignees.count -%> members available)</small>
                 </p>
