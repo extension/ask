@@ -35,8 +35,7 @@ class Group < ActiveRecord::Base
     :uniqueness => {:message => "The name \"%{value}\" is being used by another group.", :case_sensitive => false},
     :unless => Proc.new { |a| a.name.blank? }
 
-  scope :public_visible, where(is_test: false, widget_active: true, group_active: true)
-  scope :assignable, conditions: {is_test: false, group_active: true}
+  scope :assignable, -> {where(is_test: false, group_active: true)}
 
   scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("group_locations.location_id = #{location_id}")}
@@ -146,10 +145,6 @@ class Group < ActiveRecord::Base
         change_hash[:group_active] = {:old => true, :new => false}
       end
 
-      if self.widget_active?
-        self.toggle!(:widget_active)
-        change_hash[:widget_active] = {:old => true, :new => false}
-      end
       GroupEvent.log_edited_attributes(self, User.system_user, nil, change_hash)
       true
     else
@@ -378,7 +373,6 @@ class Group < ActiveRecord::Base
       headers << 'name'
       headers << 'is_test'
       headers << 'group_active'
-      headers << 'widget_active'
       headers << 'assignment_outside_locations'
       headers << 'asked'
       headers << 'asked_from_widget'
@@ -395,7 +389,6 @@ class Group < ActiveRecord::Base
         row << group.name
         row << group.is_test
         row << group.group_active
-        row << group.widget_active
         row << group.assignment_outside_locations
         row << values[:asked]
         row << values[:asked_widget]

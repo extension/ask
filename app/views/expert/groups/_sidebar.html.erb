@@ -1,27 +1,29 @@
 <aside>
-<% if @group.widget_active %>
+<%- if @group.group_active? -%>
 	<p>
 	  <%= link_to ask_group_path(@group.id), :class => "btn btn-success" do %>
 	    Question Form is Live
 	  <% end %>
 	  <%= link_to 'Configure', expert_group_widget_path() %>
 	</p>
-	
-<% else  %>
-	<p>This groups widget is <%= link_to 'currently inactive', expert_group_widget_path() %></p>
-<% end %>
 
-<p class="downplay">
-  <% if @group.assignment_outside_locations == true %>
-    This group accepts questions from anywhere.
-  <% else %>
-    Questions must match this group's locations
-  <% end %>
-</p>
+	<p class="downplay">
+	  <% if @group.assignment_outside_locations == true %>
+	    This group accepts questions from anywhere.
+	  <% else %>
+	    Questions must match this group's locations
+	  <% end %>
+	</p>
 
-<p><%= link_to 'How are questions assigned to this group?', expert_about_group_path() %></p>
+	<p><%= link_to 'How are questions assigned to this group?', expert_about_group_path() %></p>
 
+
+<%- else -%>
+	<p>This group is not active - You can <%= link_to 'configure question submission settings', expert_group_widget_path() %>
+	to use when this group is active.</p>
+<%- end -%>
 </aside>
+
 
 <aside>
   <%= render :partial => 'location_summary' %>
@@ -29,7 +31,7 @@
 
 <aside>
   <% if @group_tags.size > 0 %>
-    <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3> 
+    <h3>Group Tags <%= link_to "(#{@group.tags.count})", expert_group_tags_path() %></h3>
     <% @group_tags.each do |tag| %>
       <p><span class='tag tag-topic'><%= link_to tag.name, questions_by_tag_expert_groups_path(:group_id => @group.id, :tag_id => tag.id) %></span></p>
     <% end %>
@@ -38,7 +40,7 @@
     <h3>This Group needs tags</h3>
     <p><%= link_to 'Add some tags', expert_group_tags_path() %></p>
   <% end %>
-  
+
 </aside>
 
 
@@ -58,5 +60,5 @@
   <% end %>
   </div>
   <p><%= link_to 'view all', expert_group_members_path(@group) %></p>
-  
+
 </aside>

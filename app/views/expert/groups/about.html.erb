@@ -15,10 +15,8 @@
   <h3>Questions can be assigned to this Group via...</h3>
   <ul>
 
-    <% if @group.widget_active %>
-      <li>The Group's <%= link_to "Ask an Expert form", ask_group_path(@group.id) %></li>
-      <li>The Group's widget (embedded on any third party page)</li>
-    <% end %>
+    <li>The Group's <%= link_to "Ask an Expert form", ask_group_path(@group.id) %></li>
+    <li>The Group's widget (embedded on any third party page)</li>
     <li>Manual reassignment by any AaE Expert</li>
   </ul>
 </div>

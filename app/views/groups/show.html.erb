@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<% if @group.widget_active %>
+<% if @group.group_active? %>
   <div class="tagline col-md-12">
     <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large pull-right hidden-xs" %>
 

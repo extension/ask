@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170109160815) do
+ActiveRecord::Schema.define(:version => 20170111160946) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -262,7 +262,6 @@ ActiveRecord::Schema.define(:version => 20170109160815) do
     t.string   "name",                                            :null => false
     t.text     "description"
     t.boolean  "widget_public_option",         :default => false
-    t.boolean  "widget_active",                :default => true
     t.boolean  "assignment_outside_locations", :default => true
     t.boolean  "individual_assignment",        :default => true
     t.integer  "created_by",                                      :null => false
