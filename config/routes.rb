@@ -20,6 +20,10 @@ Aae::Application.routes.draw do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
+  # locations redirects to ask controller (temporary, but we've promoted them a fair amount during transition)
+  match "/locations", to: redirect("/ask")
+  match "/locations/:id", to: redirect("/ask/%{id}")
+
   # expert redirect routes
   match "/expert/home/locations/:id", to: redirect("/expert/locations/%{id}")
   match "/expert/home/users/locations/:id", to: redirect("/expert/locations/%{id}/experts")
@@ -39,7 +43,7 @@ Aae::Application.routes.draw do
     end
   end
 
-  resources :locations
+  resources :ask
 
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
@@ -85,7 +89,6 @@ Aae::Application.routes.draw do
 
   match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
 
-  match "ask" => "groups#ask", :id => "38" #id for QW group
 
   match "ajax/tags" => "ajax#tags", :via => [:get]
   match "ajax/groups" => "ajax#groups", :via => [:get]

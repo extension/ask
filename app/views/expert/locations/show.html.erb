@@ -48,7 +48,7 @@
   <%- end -%>
   <div class="alert muted">
     <p>Primary groups are displayed when someone selects a location to ask a question on ask.extension.org.</p>
-    <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-sm" -%></p>
+    <p><%= link_to "View entry page", ask_path(@location.id), :class => "btn btn-default btn-sm" -%></p>
     <%- if(@location.primary_groups.count > 0) -%>
       <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-sm" -%></p>
     <%- end -%>

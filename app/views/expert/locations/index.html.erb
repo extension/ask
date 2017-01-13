@@ -14,7 +14,7 @@
         <tr>
           <td>
             <h2><%= link_to location.name, expert_location_path(id: location.id) %></h2>
-            <p><%= link_to "View entry page", location_path(location.id), :class => "btn btn-default btn-xs" -%></p>
+            <p><%= link_to "View entry page", ask_path(location.id), :class => "btn btn-default btn-xs" -%></p>
           </td>
           <td>
             <%- if(location.primary_groups.count >= 1) -%>

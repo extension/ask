@@ -4,7 +4,7 @@
 # === LICENSE:
 # see LICENSE file
 
-class LocationsController < ApplicationController
+class AskController < ApplicationController
   layout 'public'
 
   def index

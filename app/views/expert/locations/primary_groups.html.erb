@@ -6,7 +6,7 @@
 </ol>
 
 <h1><%= @location.name -%> Primary Group Manager</h1>
-<p class="subhead">These are the groups which are displayed when someone picks this location when asking a question on ask.extension.org. <%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+<p class="subhead">These are the groups which are displayed when someone picks this location when asking a question on ask.extension.org. <%= link_to "View entry page", ask_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
 
 <%- if(@location.primary_groups.count < 1) -%>
   <div class="alert alert-danger" role="alert">
