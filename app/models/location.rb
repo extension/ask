@@ -8,6 +8,8 @@
 class Location < ActiveRecord::Base
   include CacheTools
 
+  attr_accessor :message
+
   # entrytypes
   UNKNOWN = 0
   STATE = 1
@@ -21,6 +23,7 @@ class Location < ActiveRecord::Base
   has_many :counties
   has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
   has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
+  has_one  :location_message
 
   scope :states, where(entrytype: STATE)
   scope :unitedstates, where(entrytype: [STATE,INSULAR])
@@ -197,6 +200,14 @@ class Location < ActiveRecord::Base
 
     asked_answered
 
+  end
+
+  def message
+    # placeholder for virtual attribute to get the location_message
+  end
+
+  def message=
+    # placeholder for virtual attribute to get the location_message
   end
 
 

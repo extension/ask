@@ -13,12 +13,14 @@ class LocationEvent < ActiveRecord::Base
   EDIT_OFFICE_LINK = 201
   ADD_PRIMARY_GROUP = 220
   REMOVE_PRIMARY_GROUP = 221
+  EDIT_MESSAGE = 222
 
 
   EVENT_STRINGS = {
     EDIT_OFFICE_LINK     => 'edited the office link',
     ADD_PRIMARY_GROUP    => 'added a primary group',
-    REMOVE_PRIMARY_GROUP => 'removed a primary group'
+    REMOVE_PRIMARY_GROUP => 'removed a primary group',
+    EDIT_MESSAGE         => 'edited the location message'
   }
 
   def description
