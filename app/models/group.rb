@@ -118,8 +118,8 @@ class Group < ActiveRecord::Base
   SUPPORT_WIDGET_FINGERPRINT = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
 
   # attr_writer override for description to scrub html
-  def description=(bodycontent)
-    write_attribute(:description, self.cleanup_html(description))
+  def description=(descriptioncontent)
+    write_attribute(:description, self.cleanup_html(descriptioncontent))
   end
 
   def self.support_group
