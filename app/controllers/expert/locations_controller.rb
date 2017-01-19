@@ -28,6 +28,19 @@ class Expert::LocationsController < ApplicationController
     @location = Location.find_by_id(params[:id])
   end
 
+  def message
+    @location = Location.find_by_id(params[:id])
+  end
+
+  def set_message
+    @location = Location.find_by_id(params[:id])
+    if(params[:location] and params[:location][:message])
+      @location.set_message(params[:location][:message],current_user)
+      flash[:success] = "Custom message set."
+    end
+    return redirect_to(expert_location_path(@location))
+  end
+
   def add_primary_group
     location = Location.find(params[:id])
     group = Group.find(params[:group_id])
