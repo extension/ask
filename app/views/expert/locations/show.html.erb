@@ -80,7 +80,7 @@
 
   <div class="col-md-4">
     <div class="location_section">
-      <h2>Groups (<%= number_with_delimiter(@group_total_count, :delimiter => ',') %>)</h2>
+      <h2>Active Groups (<%= number_with_delimiter(@group_total_count_active, :delimiter => ',') %>)</h2>
 
       <% if @groups.size > 0 %>
         <% @groups.each do |group| %>
@@ -98,7 +98,8 @@
             </p>
           </div>
         <% end %>
-        <p><%= link_to "view all", expert_groups_by_location_path() %></p>
+        <p><%= link_to "view all active", expert_groups_by_location_path() %></p>
+        <p><%= link_to "view inactive (#{number_with_delimiter(@group_total_count_inactive, :delimiter => ',')})", expert_groups_by_location_path(:group_status => "inactive") %></p>
       <% else %>
         <p>There are no groups in this location</p>
       <% end %>
