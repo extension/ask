@@ -21,6 +21,14 @@
     <div class="alert alert-danger" role="alert">
       <h3>No primary groups have been designated for this location</h3>
       <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default" -%></p>
+      <p>
+        <%- if @location.default_message? -%>
+          Showing default message for this location.
+        <%- else -%>
+          Showing a custom message for this location.
+        <%- end -%>
+        <br/> A <%= link_to("custom message can be set and displayed", message_expert_location_path(id: @location.id)) -%>  when no primary groups are defined.
+      </p>
     </div>
   <%- end -%>
 
@@ -49,9 +57,7 @@
   <div class="alert muted">
     <p>Primary groups are displayed when someone selects a location to ask a question on ask.extension.org.</p>
     <p><%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-sm" -%></p>
-    <%- if(@location.primary_groups.count > 0) -%>
-      <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-sm" -%></p>
-    <%- end -%>
+    <p><%= link_to "Manage primary groups", primary_groups_expert_location_path(id: @location.id), :class => "btn btn-default btn-sm" -%></p>
   </div>
 </div>
 </div>

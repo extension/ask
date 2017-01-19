@@ -9,7 +9,7 @@
 
   <%- if(@location.active_primary_groups.count < 1) -%>
     <div class="no-primary-groups">
-      <p>Currently there are no active groups accepting questions for this location.</p>
+      <p><%= @location.message.html_safe -%></p>
     </div>
   <%- end -%>
 

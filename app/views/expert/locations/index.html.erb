@@ -33,6 +33,13 @@
               <%- end -%>
             <%- else -%>
               <p class="warning">No primary groups designated</p>
+              <p>
+                <%- if location.default_message? -%>
+                  Uses default message.
+                <%- else -%>
+                  Has a custom message.
+                <%- end -%>
+              </p>
             <%- end -%>
           </td>
         </tr>
