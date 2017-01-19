@@ -86,8 +86,19 @@ class Expert::HomeController < ApplicationController
   def groups_by_location
     @location = Location.find_by_id(params[:id])
     return record_not_found if @location.blank?
-    @groups = Group.with_expertise_location(@location.id).page(params[:page])
-    @group_total_count = Group.with_expertise_location(@location.id).count
+    @group_status = "active"
+    group_active = true
+    if(params[:group_status])
+      if params[:group_status] == "active"
+        @group_status = "active"
+        group_active = true
+      elsif params[:group_status] == "inactive"
+        @group_status = "inactive"
+        group_active = false
+      end
+    end
+    @groups = Group.where(group_active: group_active).with_expertise_location(@location.id).page(params[:page])
+    @group_total_count = Group.where(group_active: group_active).with_expertise_location(@location.id).count
   end
 
   def groups_by_county
