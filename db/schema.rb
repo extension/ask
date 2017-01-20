@@ -268,6 +268,7 @@ ActiveRecord::Schema.define(:version => 20170120145022) do
     t.boolean  "is_test",                      :default => false
     t.string   "widget_fingerprint"
     t.boolean  "widget_upload_capable",        :default => false
+    t.boolean  "unused_widget_show_location",  :default => false
     t.boolean  "widget_show_title",            :default => false
     t.boolean  "widget_enable_tags",           :default => false
     t.integer  "widget_location_id"
