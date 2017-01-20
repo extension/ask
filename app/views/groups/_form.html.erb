@@ -33,7 +33,6 @@
     </div>
   <% end %>
 
-  <%- if @group.ask_form_show_location -%>
     <fieldset>
       <p>
         <%= f.label :location_id, 'Location and County (optional)' %>
@@ -47,7 +46,6 @@
         <% end %>
       </p>
     </fieldset>
-  <%- end -%>
 
 
   <% if @group.widget_upload_capable? %>
