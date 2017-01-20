@@ -6,6 +6,7 @@
 #  see LICENSE file
 
 class Location < ActiveRecord::Base
+  include MarkupScrubber
   include CacheTools
 
   # entrytypes
@@ -21,6 +22,7 @@ class Location < ActiveRecord::Base
   has_many :counties
   has_many :users_with_origin, :class_name => "User", :foreign_key => "location_id"
   has_many :questions_with_origin, :class_name => "Question", :foreign_key => "location_id"
+  has_one  :location_message
 
   scope :states, where(entrytype: STATE)
   scope :unitedstates, where(entrytype: [STATE,INSULAR])
@@ -197,6 +199,27 @@ class Location < ActiveRecord::Base
 
     asked_answered
 
+  end
+
+  def message
+    if(self.default_message?)
+      "Currently there are no active groups accepting questions for this location."
+    else
+      self.location_message.message
+    end
+  end
+
+  def set_message(message,editor = User.system_user)
+    if(lm = self.location_message)
+      lm.update_attributes(message: self.cleanup_html(message), editor: editor)
+    else
+      self.create_location_message(message: self.cleanup_html(message), editor: editor)
+    end
+    # todo: log
+  end
+
+  def default_message?
+    self.location_message.nil? or self.location_message.message.blank?
   end
 
 

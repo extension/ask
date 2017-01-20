@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170111160946) do
+ActiveRecord::Schema.define(:version => 20170117183621) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -302,6 +302,16 @@ ActiveRecord::Schema.define(:version => 20170111160946) do
   end
 
   add_index "location_events", ["location_id", "created_by", "event_code"], :name => "idx_who_where_what"
+
+  create_table "location_messages", :force => true do |t|
+    t.integer  "location_id", :null => false
+    t.integer  "edited_by",   :null => false
+    t.text     "message",     :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "location_messages", ["location_id", "edited_by"], :name => "idx_who_where"
 
   create_table "locations", :force => true do |t|
     t.integer  "fipsid",                     :null => false

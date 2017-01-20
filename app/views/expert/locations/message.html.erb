@@ -1,0 +1,36 @@
+<div class='row'>
+    <div class="col-md-offset-2 col-md-8">
+      <ol class="breadcrumb">
+        <li><%= link_to "Locations", expert_locations_path -%></li>
+        <li><%= link_to @location.name, expert_location_path %></li>
+      </ol>
+
+      <h1><%= @location.name -%> Custom Message</h1>
+      <p class="subhead">This message is displayed to site visitors that select a group entry page for a location that has no primary groups defined. <%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+
+      <%= form_for @location, :url => set_message_expert_location_path(@location), :method => :post,  :html => { :class => "form-stacked no_m_t well"} do |f| %>
+
+        <fieldset>
+          <p>
+            <%= f.label :message do %>
+              Custom Message
+            <% end %>
+            <%= f.text_area :message, :rows => "8",  :class => "l wysiwyg" %>
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <p><%= f.submit "Set Message", :class => "btn large btn-primary" %>
+           <%= link_to "Cancel", expert_location_path(@location), :class => "btn" %></p>
+        </fieldset>
+
+      <%- end -%>
+
+  </div>
+</div>
+
+<script class="code" type="text/javascript">
+    $('.wysiwyg').each(function(i, elem) {
+      $(elem).wysihtml5({toolbar: { "fa": true, "image": false}});
+    });
+</script>

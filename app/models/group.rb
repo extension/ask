@@ -1,5 +1,12 @@
-class Group < ActiveRecord::Base
+# === COPYRIGHT:
+#  Copyright (c) North Carolina State University
+#  Developed with funding for the National eXtension Initiative.
+# === LICENSE:
+#
+#  see LICENSE file
 
+class Group < ActiveRecord::Base
+  include MarkupScrubber
   include TagUtilities
 
   # remove extra whitespace from these attributes
@@ -110,15 +117,13 @@ class Group < ActiveRecord::Base
   # hardcoded for support purposes
   SUPPORT_WIDGET_FINGERPRINT = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
 
-  # hardcoded for engineering-direct support purposes
-  ENGINEERING_GROUP_FINGERPRINT = 'ce3269eb3049931445262589195b56ce7aefb6f8'
+  # attr_writer override for description to scrub html
+  def description=(descriptioncontent)
+    write_attribute(:description, self.cleanup_html(descriptioncontent))
+  end
 
   def self.support_group
     self.find_by_widget_fingerprint(SUPPORT_WIDGET_FINGERPRINT)
-  end
-
-  def self.engineering_group
-    self.find_by_widget_fingerprint(ENGINEERING_GROUP_FINGERPRINT)
   end
 
   def is_bonnie_plants?
