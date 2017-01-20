@@ -169,12 +169,6 @@ class Expert::GroupsController < ApplicationController
 
       if @group.assignment_outside_locations_changed?
         change_hash[:assignment_outside_locations] = {:old => @group.assignment_outside_locations_was.to_s, :new => @group.assignment_outside_locations.to_s}
-        # if they do not want questions outside their locations and the show location setting is false for widgets (ie. they get sent to question wranglers),
-        # then set the location option to true.
-        if @group.assignment_outside_locations == false && @group.widget_show_location == false
-          @group.widget_show_location = true
-          change_hash[:show_location] = {:old => false, :new => true}
-        end
       end
 
       if @group.individual_assignment_changed?
