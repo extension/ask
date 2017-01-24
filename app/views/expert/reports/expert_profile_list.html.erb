@@ -8,10 +8,10 @@
 <div class="well">
   <%= link_expert_user_avatar(@expert, :medium, current_user.id == @expert.id ? true : false) %>
   <h1>
-    <span class="<%= @expert.is_question_wrangler? ? 'qw_large' : '' %>"><%= @expert.name %></span> <%= @expert.retired ? "(Retired Account)" : "" %>
+    <span class=''><%= @expert.name %></span> <%= @expert.retired ? "(Retired Account)" : "" %>
   </h1>
   <%= @expert.retired ? "(Retired Account)" : "" %>
-  
+
 </div>
 
 <div class="page-header">
@@ -62,4 +62,3 @@
 </div>
 
 <%= paginate @question_list %>
-
