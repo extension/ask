@@ -47,7 +47,7 @@ class Webmail::ExamplesController < ApplicationController
   end
 
   def internal_aae_daily_summary
-    mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last,Group.find(Group::QUESTION_WRANGLER_GROUP_ID)], cache_email: false)
+    mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last], cache_email: false)
     return render_mail(mail)
   end
 
