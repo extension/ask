@@ -203,15 +203,6 @@ class Expert::GroupsController < ApplicationController
         change_hash[:upload_capable] = {:old => @group.widget_upload_capable_was.to_s, :new => @group.widget_upload_capable.to_s}
       end
 
-      if @group.widget_show_location_changed?
-        if @group.widget_show_location == false && @group.assignment_outside_locations == false
-          flash[:error] = 'You have to show the location fields on your widgets as long as you are not accepting questions outside your location. That setting can be changed in your group assignment options preferences'
-          return redirect_to(expert_group_widget_path)
-        end
-
-        change_hash[:show_location] = {:old => @group.widget_show_location_was.to_s, :new => @group.widget_show_location.to_s}
-      end
-
       if @group.widget_show_title_changed?
         change_hash[:show_title] = {:old => @group.widget_show_title_was.to_s, :new => @group.widget_show_title.to_s}
       end
