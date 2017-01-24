@@ -218,7 +218,11 @@
     <% end %>
 
     <p class="text-muted">Ask an Expert is made up of groups and individual experts.</p>
-    <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn orange lg" %></p>
+    <%- if(@question.assigned_group and @question.assigned_group.assignment_outside_locations?) -%>
+      <p><%= link_to 'Ask a Question', ask_group_path(@question.assigned_group), :class => "btn orange lg" %></p>
+    <%- else -%>
+      <p><%= link_to 'Ask a Question', ask_index_path(), :class => "btn orange lg" %></p>
+    <%- end -%>
   </aside>
   <% end %>
 

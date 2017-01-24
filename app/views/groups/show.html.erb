@@ -16,13 +16,14 @@
   </div>
 </div>
 
-<% if @group.group_active? %>
+<%- if @group.group_active? and @group.assignment_outside_locations? -%>
   <div class="tagline col-md-12">
     <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large pull-right hidden-xs" %>
 
-    <div><%= link_to('Ask a question to this group', ask_group_path(@group.id), :class => "moreaboutpitch hidden-xs") %> <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large visible-xs" %></div>
-</div>
-<% end %>
+    <div><%= link_to('Ask a question to this group', ask_group_path(@group.id), :class => "moreaboutpitch hidden-xs") %>
+      <%= link_to "Ask an Expert", ask_group_path(@group.id), :class => "btn btn-primary btn-orange btn-large visible-xs" %></div>
+    </div>
+<%- end -%>
 
 <div class="col-md-12">
   <% if @open_questions_col_one.size == 0 %>
