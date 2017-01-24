@@ -43,6 +43,12 @@ class GroupsController < ApplicationController
 
   def ask
     @group = Group.find(params[:id])
+    # redirect if question wrangler group
+
+    if(@group.id == Group::QUESTION_WRANGLER_GROUP_ID)
+      return redirect_to(ask_index_path)
+    end
+
     # no linking directly to this form when a group doesn't
     # take questions outside the location
     if(!@group.assignment_outside_locations? and !refered_from_our_site?)

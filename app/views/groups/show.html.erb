@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<%- if @group.group_active? and @group.assignment_outside_locations? -%>
+<%- if @group.group_active? and @group.assignment_outside_locations? and !(@group.id == Group::QUESTION_WRANGLER_GROUP_ID) -%>
   <div class="tagline col-md-12">
     <div>
       <%= link_to('Ask a question to this group', ask_group_path(@group.id), :class => "moreaboutpitch") %>
