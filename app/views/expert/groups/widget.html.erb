@@ -33,20 +33,6 @@
         </label>
     </p>
 
-	<p>
-        <label>
-          <%= f.check_box 'widget_show_location', @group.assignment_outside_locations == false ? {disabled: true} : {disabled: false} %>  Enable location option for the widget
-          <% if @group.assignment_outside_locations == false %>
-            <span>This option is locked because the "Questions must come from this group's locations" <%= link_to 'assignment preference', expert_group_assignment_options_path %> is selected.</span>
-          <% end %>
-        </label>
-	</p>
-
-<p>
-      <label>
-        <%= f.check_box 'ask_form_show_location' -%>  Enable location option for the <%= link_to "Question form", ask_group_url(@group.id) -%>
-      </label>
-</p>
 
 	<p>
       <label>

@@ -78,7 +78,6 @@
       </label>
     </p>
 
-    <% if @group.widget_show_location %>
         <p>
           <label>Location and County
             <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : @group.widget_location_id)) %>
@@ -93,7 +92,6 @@
             </label>
           <% end %>
         </p>
-    <% end %>
 
     <% if @group.widget_upload_capable? %>
       <div class="image-upload-wrapper">
