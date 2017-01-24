@@ -42,7 +42,8 @@ class Group < ActiveRecord::Base
     :uniqueness => {:message => "The name \"%{value}\" is being used by another group.", :case_sensitive => false},
     :unless => Proc.new { |a| a.name.blank? }
 
-  scope :assignable, -> {where(is_test: false, group_active: true)}
+  scope :active, -> {where(group_active: true)}
+  scope :assignable, -> {active.where(is_test: false)}
 
   scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("group_locations.location_id = #{location_id}")}
@@ -308,6 +309,15 @@ class Group < ActiveRecord::Base
     # check for empty group
     self.deactivate_if_no_assignees
   end
+
+  def self.deactivate_if_no_assignees
+    deactivated_list = []
+    Group.active.each do |g|
+      deactivated_list << g if g.deactivate_if_no_assignees
+    end
+    deactivated_list
+  end
+
 
 
   def self.asked_answered_metrics_for_date_range(start_date,end_date)
