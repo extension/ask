@@ -133,6 +133,21 @@ class Webmail::ExamplesController < ApplicationController
     end
   end
 
+  def public_rejection_location
+    # try to find a question that would be rejected.
+    if(@group = Group.active.where(assignment_outside_locations: false).first)
+      if(!@question = @group.answered_questions.last)
+        @question = Question.answered.last
+      end
+    else
+      @question = Question.answered.last
+    end
+
+
+    mail = PublicMailer.public_rejection_location(user: User.first, question: @question, cache_email: false)
+    return render_mail(mail)
+  end
+
   def public_evaluation_request
     show_example_survey = !(params[:example_survey] and ['f','false','no','0'].include?(params[:example_survey].downcase))
     mail = PublicMailer.public_evaluation_request(user: User.first, question: Question.answered.last, cache_email: false, example_survey: show_example_survey)

@@ -3,6 +3,7 @@
 <h3>These emails are sent to question submitters</h3>
 <ul>
   <li><%= link_to "Your question has been submitted", {:action => "public_submission_acknowledgement"} %></li>
+  <li><%= link_to "Your Question Has Been Rejected (location)", {:action => "public_rejection_location"} %></li>
   <li><%= link_to "There's a response to your question", {:action => "public_expert_response"} %></li>
   <li><%= link_to "Ask an Expert evaluation", {:action => "public_evaluation_request"} %></li>
 </ul>
