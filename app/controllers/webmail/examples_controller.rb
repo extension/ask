@@ -6,6 +6,8 @@
 
 class Webmail::ExamplesController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :require_exid
+
   skip_before_filter :set_yolo
 
   def index
