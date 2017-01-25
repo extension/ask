@@ -16,9 +16,7 @@ class PublicMailer < BaseMailer
 
     @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
 
-    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-      @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
-    end
+
 
     if(!@user.email.blank?)
       if(@will_cache_email)
@@ -27,7 +25,8 @@ class PublicMailer < BaseMailer
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
 
-      return_email = @bonnie_plants_from.blank? ? mail(to: @user.email, subject: @subject) : mail(from: @bonnie_plants_from, to: @user.email, subject: @subject)
+      set_from_address_if_bonnie_plants
+      return_email = mail(from: @from_address, to: @user.email, subject: @subject)
 
       if(@mailer_cache)
         # now that we have the rendered email - update the cached mail object
@@ -46,10 +45,27 @@ class PublicMailer < BaseMailer
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       @title = "Your Question Has Been Submitted"
 
-      if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-        @bonnie_plants_from = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+
+
+      if(!@user.email.blank?)
+        if(@will_cache_email)
+          # create a cached mail object that can be used for "view this in a browser" within
+          # the rendered email.
+          @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+        end
+
+        set_from_address_if_bonnie_plants
+        return_email = mail(from: @from_address, to: @user.email, subject: @subject)
+
+        if(@mailer_cache)
+          # now that we have the rendered email - update the cached mail object
+          @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+        end
       end
 
+    # the email if we got it
+    return_email
+  end
       if(!@user.email.blank?)
         if(@will_cache_email)
           # create a cached mail object that can be used for "view this in a browser" within
@@ -68,6 +84,7 @@ class PublicMailer < BaseMailer
     # the email if we got it
     return_email
   end
+
 
   def public_evaluation_request(options = {})
     @user = options[:user]
@@ -123,6 +140,16 @@ class PublicMailer < BaseMailer
 
     # the email if we got it
     return_email
+  end
+
+  private
+
+  def set_from_address_if_bonnie_plants
+    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
+      @from_address = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
+    else
+      @from_address = Settings.email_from_address
+    end
   end
 
 end
