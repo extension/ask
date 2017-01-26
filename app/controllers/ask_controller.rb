@@ -11,11 +11,6 @@ class AskController < ApplicationController
   end
 
   def show
-    # no linking directly to this page from outside site
-    if(!refered_from_our_site?)
-      return redirect_to(ask_index_path)
-    end
-
     @location = Location.find(params[:id])
     @yolo.set_location(@location)
   end
