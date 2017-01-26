@@ -95,9 +95,9 @@ class GroupEvent < ActiveRecord::Base
     when GROUP_REMOVED_AS_LEADER
       Notification.create(notifiable: self, created_by: self.created_by, recipient_id: self.recipient_id, notification_type: Notification::GROUP_LEADER_LEFT, delivery_time: 1.minute.from_now )
     when GROUP_ADDED_AS_PRIMARY
-      # todo notification
+      #TODO  notification
     when GROUP_REMOVED_AS_PRIMARY
-      # todo notification
+      #TODO  notification
     end
   end
 

@@ -215,7 +215,7 @@ class Location < ActiveRecord::Base
     else
       self.create_location_message(message: self.cleanup_html(message), editor: editor)
     end
-    # todo: log
+    #TODO : log
   end
 
   def default_message?

@@ -86,7 +86,7 @@ class GroupsController < ApplicationController
       if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
         @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
         if !@submitter.valid?
-          # TODO: to be sure there's a better way to combine errors?
+          #TODO : to be sure there's a better way to combine errors?
           @submitter.errors.each do |attribute,message|
             # message could be an array, but not going to be for User
             @question.errors[attribute] = message

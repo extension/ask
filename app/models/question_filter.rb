@@ -61,7 +61,7 @@ class QuestionFilter < ActiveRecord::Base
     KNOWN_KEYS.each do |key|
       if(!settings_hash[key].blank?)
         if(key == 'date_range')
-          # TODO something for date range
+          #TODO  something for date range
         else
           # assumes array of objects
           savesettings << [key,settings_hash[key].split(',').map{|i| i.strip.to_i}.sort]

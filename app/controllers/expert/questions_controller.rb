@@ -447,7 +447,7 @@ class Expert::QuestionsController < ApplicationController
         return render nil
       end
 
-      # TODO: Add new notification logic here.
+      #TODO : Add new notification logic here.
       #Notification.create(:notifytype => Notification::AAE_PUBLIC_EXPERT_RESPONSE, :account => User.systemuser, :creator => @currentuser, :additionaldata => {:submitted_question_id => @submitted_question.id, :signature => @signature })
       flash[:success] = "Thanks for answering this question."
       redirect_to expert_question_url(@question)

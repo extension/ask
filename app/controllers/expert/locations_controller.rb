@@ -44,7 +44,7 @@ class Expert::LocationsController < ApplicationController
   def add_primary_group
     location = Location.find(params[:id])
     group = Group.find(params[:group_id])
-    # todo active check
+    #TODO  active check
     location.add_primary_group(group,current_user)
     return redirect_to primary_groups_expert_location_path(id: location.id)
   end

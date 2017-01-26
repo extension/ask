@@ -43,6 +43,7 @@ class ResponsesController < ApplicationController
                              submitter_reopen: submitter_reopen,
                              submitter_comment: response.body)
         else
+          #TODO: replace this!!
           assignee = question.assign_to_question_wrangler(User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
         end
         QuestionEvent.log_reopen(question, assignee, User.system_user, response.body) if submitter_reopen

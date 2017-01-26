@@ -125,7 +125,7 @@ class QuestionsController < ApplicationController
     redirect_to question_url(@question)
   end
 
-  # TODO: incorporate title into this.
+  #TODO : incorporate title into this.
   def create
     if request.post?
 
