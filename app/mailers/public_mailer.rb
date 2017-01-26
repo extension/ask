@@ -96,6 +96,35 @@ class PublicMailer < BaseMailer
     return_email
   end
 
+  def public_rejection_experts_unavailable(options = {})
+      @user = options[:user]
+      @question = options[:question]
+      @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
+      @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
+      @title = "Your Question Has Been Rejected"
+      @group = @question.assigned_group
+
+
+      if(!@user.email.blank?)
+        if(@will_cache_email)
+          # create a cached mail object that can be used for "view this in a browser" within
+          # the rendered email.
+          @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
+        end
+
+        set_from_address_if_bonnie_plants
+        return_email = mail(from: @from_address, to: @user.email, subject: @subject)
+
+        if(@mailer_cache)
+          # now that we have the rendered email - update the cached mail object
+          @mailer_cache.update_attribute(:markup, return_email.body.to_s)
+        end
+      end
+
+    # the email if we got it
+    return_email
+  end
+
 
   def public_evaluation_request(options = {})
     @user = options[:user]
