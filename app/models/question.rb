@@ -74,7 +74,6 @@ class Question < ActiveRecord::Base
   STATUS_NO_ANSWER = 3
   STATUS_REJECTED = 4
   STATUS_CLOSED = 5
-  STATUS_AUTO_REJECTED = 6
 
   # status text (to be used when a text version of the status is needed)
   STATUS_TEXT = {
@@ -82,8 +81,7 @@ class Question < ActiveRecord::Base
     STATUS_RESOLVED => 'answered',
     STATUS_NO_ANSWER => 'not_answered',
     STATUS_REJECTED => 'rejected',
-    STATUS_CLOSED => 'closed',
-    STATUS_AUTO_REJECTED => 'autorejected'
+    STATUS_CLOSED => 'closed'
   }
 
   # privacy constants
