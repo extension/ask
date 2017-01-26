@@ -13,7 +13,7 @@
         <%= format_text_for_display(@group.description) %>
       </div>
     <% end %>
-    <h4>(This group currently has <%= pluralize(@group.assignees.count, 'member') -%> available to answer questions)</h4>
+    <h4>(This group currently has <%= pluralize(@group.assignees.count, 'expert') -%> available to answer questions)</h4>
   </div>
 </div>
 
