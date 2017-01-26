@@ -72,7 +72,7 @@ class PublicMailer < BaseMailer
       @question = options[:question]
       @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
-      @title = "Your Question Has Been Rejected"
+      @title = "Your Question Can Not Be Assigned"
       @group = @question.assigned_group
 
 
@@ -101,7 +101,7 @@ class PublicMailer < BaseMailer
       @question = options[:question]
       @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
-      @title = "Your Question Has Been Rejected"
+      @title = "Your Question Can Not Be Assigned"
       @group = @question.assigned_group
 
 
