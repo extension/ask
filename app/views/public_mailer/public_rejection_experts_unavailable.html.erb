@@ -7,10 +7,10 @@
 
   <td class="content padding">
     <p>Hello,</p>
-    <p>Thank you for taking your time to submit your question to the <%= link_to @group.name, group_path(@group.id) %> Ask an Expert group</p>
+    <p>Thank you for taking your time to submit your question to the <%= link_to @group.name, group_url(@group.id) %> Ask an Expert group</p>
     <p>Unfortunately there is no one marked available in this group to answer your question at this time.</p>
 
-    <p>You can <%= link_to("find and directly contact your local Extension institution", "http://www.extension.org/main/partners")%>. You can also visit check this group's <%= link_to "homepage", group_path(@group.id) %> to check their answering availablity.</p>
+    <p>You can <%= link_to("find and directly contact your local Extension institution", "http://www.extension.org/main/partners")%>. You can also visit check this group's <%= link_to "homepage", group_url(@group.id) %> to check their answering availablity.</p>
   </td>
 </tr>
 
