@@ -868,7 +868,6 @@ class Question < ActiveRecord::Base
     resolving_self_assignment = options[:resolving_self_assignment].present? ? options[:resolving_self_assignment] : false
     auto_assignment_log = options[:auto_assignment_log].present? ? options[:auto_assignment_log] : nil
     is_auto_assignment = options[:is_auto_assignment].present? ? options[:is_auto_assignment] : false
-    is_wrangler_handoff = options[:is_wrangler_handoff].present? ? options[:is_wrangler_handoff] : false
 
     # this doesn't appear to be used at all at the moment, leaving because
     # I need to figure out how it was supposed to have been used - jayoung
@@ -893,13 +892,7 @@ class Question < ActiveRecord::Base
     assign_to.update_column(:open_question_count, assign_to.open_questions.count)
     assign_to.update_column(:last_question_assigned_at, Time.zone.now)
 
-    if is_wrangler_handoff
-      QuestionEvent.log_wrangler_handoff(question: self,
-                                         recipient: assign_to,
-                                         initiated_by: assigned_by,
-                                         handoff_reason: comment,
-                                         auto_assignment_log: auto_assignment_log)
-    elsif is_auto_assignment
+    if is_auto_assignment
       QuestionEvent.log_auto_assignment(question: self,
                                         recipient: assign_to,
                                         assignment_comment: comment,
@@ -1027,15 +1020,6 @@ class Question < ActiveRecord::Base
         self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED, :working_on_this => nil)
         QuestionEvent.log_rejection(self)
     end
-  end
-
-  # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by, comment, wrangler_assignment_code)
-    exclude_assignees = (self.assignee.present? ? [self.assignee] : nil)
-    results = self.find_question_wrangler(exclude_assignees)
-    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: self.assigned_group, wrangler_assignment_code: wrangler_assignment_code))
-    assign_to(assignee: results[:assignee], assigned_by: assigned_by, comment: comment, is_wrangler_handoff: true)
-    return assignee
   end
 
   def resolved?
