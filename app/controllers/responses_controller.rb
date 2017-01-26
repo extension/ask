@@ -25,7 +25,7 @@ class ResponsesController < ApplicationController
       # handle reopening and reassigning of question if question has been closed/resolved and a response from the submitter is entered, otherwise,
       # the status is submitted, so the expert has not responded to the response yet.
       if question.status_state != Question::STATUS_SUBMITTED
-        question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
+        question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_SUBMITTED], :status_state => Question::STATUS_SUBMITTED)
         submitter_reopen = true
       else
         submitter_reopen = false

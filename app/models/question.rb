@@ -76,14 +76,6 @@ class Question < ActiveRecord::Base
   STATUS_CLOSED = 5
 
   # status text (to be used when a text version of the status is needed)
-  SUBMITTED_TEXT = 'submitted'
-  RESOLVED_TEXT = 'resolved'
-  ANSWERED_TEXT = 'answered'
-  NO_ANSWER_TEXT = 'not_answered'
-  REJECTED_TEXT = 'rejected'
-  CLOSED_TEXT = 'closed'
-
-  # status text (to be used when a text version of the status is needed)
   STATUS_TEXT = {
     STATUS_SUBMITTED => 'submitted',
     STATUS_RESOLVED => 'answered',

@@ -177,7 +177,7 @@ class QuestionsController < ApplicationController
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.widget_parent_url = @widget_parent_url
-        @question.status = Question::SUBMITTED_TEXT
+        @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
         @question.status_state = Question::STATUS_SUBMITTED
 
         # record the original location and county
@@ -333,7 +333,7 @@ class QuestionsController < ApplicationController
     @question.user_ip = request.remote_ip
     @question.user_agent = (request.env['HTTP_USER_AGENT'] ? request.env['HTTP_USER_AGENT'] : '')
     @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-    @question.status = Question::SUBMITTED_TEXT
+    @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
     if(@question.save)
       returninformation = {'question_id' => @question.id, 'success' => true}

@@ -326,7 +326,7 @@ class Expert::QuestionsController < ApplicationController
 
     # re-open the question if it's reassigned after resolution
     if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
-      @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
+      @question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_SUBMITTED], :status_state => Question::STATUS_SUBMITTED)
       QuestionEvent.log_reopen(@question, user, current_user, assign_comment)
     end
 
@@ -372,7 +372,7 @@ class Expert::QuestionsController < ApplicationController
     @question.assign_to_group(group, current_user, assign_comment)
     # re-open the question if it's reassigned after resolution
     if @question.status_state == Question::STATUS_RESOLVED || @question.status_state == Question::STATUS_NO_ANSWER
-      @question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED)
+      @question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_SUBMITTED], :status_state => Question::STATUS_SUBMITTED)
       QuestionEvent.log_reopen_to_group(@question, group, current_user, assign_comment)
     end
 
@@ -501,14 +501,14 @@ class Expert::QuestionsController < ApplicationController
       if last_response = @question.last_response
         resolver = last_response.initiator
         if last_response.event_state == QuestionEvent::NO_ANSWER
-          @question.update_attributes(:status => Question::NO_ANSWER_TEXT,
+          @question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_NO_ANSWER],
                                       :status_state => Question::STATUS_NO_ANSWER,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
                                       :current_response => last_response.response,
                                       :working_on_this => nil)
         else
-          @question.update_attributes(:status => Question::RESOLVED_TEXT,
+          @question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_RESOLVED],
                                       :status_state => Question::STATUS_RESOLVED,
                                       :current_resolver => resolver,
                                       :resolved_at => last_response.created_at,
@@ -517,7 +517,7 @@ class Expert::QuestionsController < ApplicationController
         end
       # IF NO EXPERT RESPONSE YET...
       else
-        @question.update_attributes(:status => Question::CLOSED_TEXT,
+        @question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_CLOSED],
                                     :status_state => Question::STATUS_CLOSED,
                                     :current_resolver => current_user,
                                     :resolved_at => Time.now,
@@ -533,7 +533,7 @@ class Expert::QuestionsController < ApplicationController
 
   def reactivate
     question = Question.find_by_id(params[:id])
-    question.update_attributes(:status => Question::SUBMITTED_TEXT, :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil)
+    question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_SUBMITTED], :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil)
     QuestionEvent.log_reactivate(question, current_user)
     flash[:success] = "Question re-activated"
     redirect_to expert_question_url(question)
