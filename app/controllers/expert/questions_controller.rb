@@ -440,7 +440,11 @@ class Expert::QuestionsController < ApplicationController
       (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? question_status = Question::STATUS_NO_ANSWER : question_status = Question::STATUS_RESOLVED
 
       begin
-        @question.add_resolution(question_status, current_user, answer, @signature, contributing_question, params[:response])
+        @question.add_resolution({question_status: question_status,
+                                  resolver: current_user,
+                                  response: answer,
+                                  signature: @signature,
+                                  response_params: params[:response]})
       rescue Exception => e
         @answer = answer
         flash[:error] = "Error: #{e}"
