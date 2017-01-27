@@ -54,7 +54,6 @@ class Response < ActiveRecord::Base
   has_many :ratings
   has_many :images, :as => :assetable, :class_name => "Response::Image", :dependent => :destroy
   accepts_nested_attributes_for :images, :allow_destroy => true
-  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
 
   # scopes
   scope :latest, order('created_at DESC')

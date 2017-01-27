@@ -89,7 +89,6 @@ class QuestionEvent < ActiveRecord::Base
   belongs_to :previous_initiator,  :class_name => "User", :foreign_key => "previous_initiator_id"
   belongs_to :previous_handling_recipient, :class_name => "User", :foreign_key => "previous_handling_recipient_id"
   belongs_to :previous_handling_initiator,  :class_name => "User", :foreign_key => "previous_handling_initiator_id"
-  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :previous_group, class_name: 'Group'
   belongs_to :changed_group, class_name: 'Group'
   belongs_to :auto_assignment_log
@@ -113,13 +112,11 @@ class QuestionEvent < ActiveRecord::Base
 
 
   def self.log_resolution(question)
-    question.contributing_question ? contributing_question = question.contributing_question : contributing_question = nil
 
     return self.log_event({:question => question,
                            :initiator => question.current_resolver,
                            :event_state => RESOLVED,
-                           :response => question.current_response,
-                           :contributing_question => contributing_question})
+                           :response => question.current_response})
   end
 
   def self.log_assignment(options = {})

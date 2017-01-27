@@ -22,7 +22,7 @@
 
 <div id="response_form">
 
-    <%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]), :multipart => true) do %>
+    <%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :type => params[:type]), :multipart => true) do %>
     <div id="email_content">
         <div class="headerinfo">
             <p><strong>Subject:</strong> [Message from eXtension] Your question has been responded to by one of our experts.</p>
@@ -39,11 +39,6 @@
             <p>Your question:<br /><%= format_text_for_display(@question.body) %></p>
 
             <p><label for="current_response">Response:</label>
-
-            <!-- TODO: Change this from current_response to something else to be determined. Maybe all official responses can be inserted here. -->
-            <% if (@sampletext || @related_question) %>
-                <% @answer = (@sampletext ? @sampletext : @question.current_response)%>
-            <% end %>
 
             <%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'wysiwyg', rows: 6}) %>
             </p>

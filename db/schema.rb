@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170126183300) do
+ActiveRecord::Schema.define(:version => 20170127163015) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -408,7 +408,6 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
     t.integer  "recipient_group_id"
     t.text     "response"
     t.integer  "event_state",                                           :null => false
-    t.integer  "contributing_question_id"
     t.text     "tags"
     t.text     "additional_data"
     t.integer  "previous_event_id"
@@ -431,7 +430,6 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
     t.integer  "auto_assignment_log_id"
   end
 
-  add_index "question_events", ["contributing_question_id"], :name => "idx_contributing_question_id"
   add_index "question_events", ["created_at", "event_state", "previous_handling_recipient_id"], :name => "idx_handling"
   add_index "question_events", ["event_state"], :name => "index_question_events_on_event_state"
   add_index "question_events", ["initiated_by_id"], :name => "idx_initiated_by"
@@ -462,15 +460,14 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
 
   create_table "questions", :force => true do |t|
     t.integer  "current_resolver_id"
-    t.integer  "contributing_question_id"
-    t.string   "status",                   :default => "",    :null => false
-    t.text     "body",                                        :null => false
+    t.string   "status",                 :default => "",    :null => false
+    t.text     "body",                                      :null => false
     t.string   "title"
-    t.boolean  "is_private",               :default => false
+    t.boolean  "is_private",             :default => false
     t.integer  "is_private_reason"
     t.integer  "assignee_id"
     t.integer  "assigned_group_id"
-    t.boolean  "duplicate",                :default => false, :null => false
+    t.boolean  "duplicate",              :default => false, :null => false
     t.string   "external_app_id"
     t.string   "submitter_email"
     t.datetime "resolved_at"
@@ -480,31 +477,31 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
     t.integer  "initial_response_time"
     t.datetime "initial_response_at"
     t.integer  "initial_responder_id"
-    t.string   "question_fingerprint",                        :null => false
-    t.string   "submitter_firstname",      :default => ""
-    t.string   "submitter_lastname",       :default => ""
+    t.string   "question_fingerprint",                      :null => false
+    t.string   "submitter_firstname",    :default => ""
+    t.string   "submitter_lastname",     :default => ""
     t.integer  "county_id"
     t.integer  "location_id"
-    t.boolean  "spam_legacy",              :default => false, :null => false
-    t.string   "user_ip",                  :default => "",    :null => false
+    t.boolean  "spam_legacy",            :default => false, :null => false
+    t.string   "user_ip",                :default => "",    :null => false
     t.text     "user_agent"
     t.text     "referrer"
-    t.integer  "status_state",                                :null => false
+    t.integer  "status_state",                              :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
-    t.integer  "submitter_id",             :default => 0
+    t.integer  "submitter_id",           :default => 0
     t.datetime "last_assigned_at"
-    t.datetime "last_opened_at",                              :null => false
+    t.datetime "last_opened_at",                            :null => false
     t.boolean  "is_api"
-    t.boolean  "evaluation_sent",          :default => false
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.boolean  "evaluation_sent",        :default => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.integer  "original_location_id"
     t.integer  "original_county_id"
     t.datetime "working_on_this"
-    t.boolean  "featured",                 :default => false, :null => false
+    t.boolean  "featured",               :default => false, :null => false
     t.datetime "featured_at"
-    t.boolean  "submitter_is_extension",   :default => false
+    t.boolean  "submitter_is_extension", :default => false
     t.text     "widget_parent_url"
     t.text     "cached_tag_hash"
     t.integer  "rejection_code"
@@ -512,7 +509,6 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
   add_index "questions", ["assignee_id"], :name => "fk_assignee"
-  add_index "questions", ["contributing_question_id"], :name => "fk_contributing_question"
   add_index "questions", ["county_id"], :name => "fk_question_county"
   add_index "questions", ["created_at"], :name => "created_at_idx"
   add_index "questions", ["current_resolver_id"], :name => "fk_current_resolver"
@@ -538,23 +534,21 @@ ActiveRecord::Schema.define(:version => 20170126183300) do
   create_table "responses", :force => true do |t|
     t.integer  "resolver_id"
     t.integer  "submitter_id"
-    t.integer  "question_id",                                 :null => false
-    t.text     "body",                                        :null => false
-    t.boolean  "sent",                     :default => false, :null => false
-    t.integer  "contributing_question_id"
+    t.integer  "question_id",                              :null => false
+    t.text     "body",                                     :null => false
+    t.boolean  "sent",                  :default => false, :null => false
     t.text     "signature"
     t.string   "user_ip"
     t.string   "user_agent"
     t.string   "referrer"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
     t.boolean  "is_expert"
     t.boolean  "previous_expert"
     t.integer  "time_since_submission"
     t.integer  "time_since_last"
   end
 
-  add_index "responses", ["contributing_question_id"], :name => "idx_contributing_question"
   add_index "responses", ["is_expert", "previous_expert"], :name => "resonse_type_ndx"
   add_index "responses", ["question_id"], :name => "idx_question_id"
   add_index "responses", ["resolver_id"], :name => "idx_resolver_id"
