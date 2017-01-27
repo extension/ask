@@ -790,7 +790,20 @@ class Question < ActiveRecord::Base
     group = self.assigned_group
 
     if(!group.will_accept_question_location(self))
+      # auto reject
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: "Automatically Rejected because group does not accept question's location",
+                           rejection_code: REJECTION_AUTO_LOCATION})
 
+       if(!self.submitter.nil? and !self.submitter.id.nil?)
+         Notification.create(notifiable: self,
+                             created_by: 1,
+                             recipient_id: self.submitter.id,
+                             notification_type: Notification::AAE_PUBLIC_REJECTION_LOCATION,
+                             delivery_time: 1.minute.from_now )
+        end
+        return true
     end
 
     if(!Settings.sidekiq_enabled)
