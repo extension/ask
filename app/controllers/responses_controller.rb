@@ -34,19 +34,7 @@ class ResponsesController < ApplicationController
       QuestionEvent.log_public_response(question, submitter.id)
       # away check, whether this is a reopen or not
       if(question.assignee.present? and question.assignee.away?)
-        assigned_group = question.assigned_group
-        if assigned_group.present? && assigned_group.leaders.not_away.length > 0
-          assignee = User.pick_assignee_from_pool(assigned_group.leaders.not_away)
-          question.assign_to(assignee: assignee,
-                             assigned_by: User.system_user,
-                             comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT,
-                             submitter_reopen: submitter_reopen,
-                             submitter_comment: response.body)
-        else
-          #TODO: replace this!!
-          assignee = question.assign_to_question_wrangler(User.system_user, Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT, AutoAssignmentLog::WRANGLER_HANDOFF_NO_LEADERS)
-        end
-        QuestionEvent.log_reopen(question, assignee, User.system_user, response.body) if submitter_reopen
+        Question.find_group_assignee_and_assign(assignment_comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT)
       elsif submitter_reopen
         question.assign_to(assignee: question.assignee,
                            assigned_by: User.system_user,

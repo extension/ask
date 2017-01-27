@@ -111,11 +111,6 @@ class Question < ActiveRecord::Base
 
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
 
-  WRANGLER_REASSIGN_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
-  This question has been assigned to you because the previous assignee
-  clicked the 'Hand off to a Question Wrangler' button.
-  END_TEXT
-
   PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
   This question has been reassigned to you because a new comment has
   been posted to your response. Please reply using the link below or
@@ -608,16 +603,11 @@ class Question < ActiveRecord::Base
     end
 
     if(base_assignee_scope.count  == 0)
-      # no one is home, wrangle it
-      assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP
+      assignee_tests << AutoAssignmentLog::REJECTION_EMPTY_GROUP
 
-      # find a wrangler
-      results = find_question_wrangler(assignees_to_exclude)
-      return { assignee: results[:assignee],
-               user_pool:  results[:user_pool],
-               wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP,
-               assignment_code: results[:assignment_code],
-               assignee_tests: assignee_tests + results[:assignee_tests] }
+      return { assignee: nil,
+               assignment_code: AutoAssignmentLog::REJECTION_EMPTY_GROUP,
+               assignee_tests: assignee_tests }
     end
 
     if(self.location_id.present?)
@@ -690,16 +680,11 @@ class Question < ActiveRecord::Base
     end
 
 
-    # find a wrangler
-    assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES
-    results = find_question_wrangler(assignees_to_exclude)
-
-    return { assignee: results[:assignee],
-             user_pool:  results[:user_pool],
-             wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES,
-             assignment_code: results[:assignment_code],
-             assignee_tests: assignee_tests + results[:assignee_tests] }
-
+    # fail
+    assignee_tests << AutoAssignmentLog::REJECTION_NO_MATCHES
+    return { assignee: nil,
+             assignment_code: AutoAssignmentLog::REJECTION_NO_MATCHES,
+             assignee_tests: assignee_tests }
   end
 
   def find_question_wrangler(assignees_to_exclude = nil)
@@ -822,7 +807,9 @@ class Question < ActiveRecord::Base
 
   end
 
-  def find_group_assignee_and_assign(assignees_to_exclude = nil)
+  def find_group_assignee_and_assign(options = {})
+    assignees_to_exclude = options[:assignees_to_exclude]
+    assignment_comment = options[:assignment_comment]
     system_user = User.system_user
     group = self.assigned_group
 
@@ -834,16 +821,34 @@ class Question < ActiveRecord::Base
     # find
     results = self.find_group_assignee(assignees_to_exclude)
 
-    # log auto assignment
-    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+    # no results? no one was home, reject it
+    if(results[:assignee].nil?)
+      # log auto assignment rejection
+      log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
 
-    # assign_to
-    assign_to(assignee: results[:assignee],
-              assigned_by: system_user,
-              comment: "Reason assigned: " + log.auto_assignment_reason,
-              is_auto_assignment: true,
-              auto_assignment_log: log)
+      # auto reject
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: "Automatically Rejected because no assignees could be found to take the question",
+                           rejection_code: REJECTION_AUTO_EXPERT_UNAVAILABLE})
 
+       if(!self.submitter.nil? and !self.submitter.id.nil?)
+         Notification.create(notifiable: self,
+                             created_by: 1,
+                             recipient_id: self.submitter.id,
+                             notification_type: Notification::AAE_PUBLIC_REJECTION_EXPERTS_UNAVAILABLE,
+                             delivery_time: 1.minute.from_now )
+        end
+        return true
+     else
+
+      # assign_to
+      assign_to(assignee: results[:assignee],
+                assigned_by: system_user,
+                comment: (assignment_comment.nil? ? "Reason assigned: " + log.auto_assignment_reason : assignment_comment),
+                is_auto_assignment: true,
+                auto_assignment_log: log)
+    end
   end
 
   def self.delayed_find_group_assignee_and_assign(question_id)
@@ -957,7 +962,7 @@ class Question < ActiveRecord::Base
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
     if group.individual_assignment?
-      self.find_group_assignee_and_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
+      self.find_group_assignee_and_assign(assignees_to_exclude: previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )

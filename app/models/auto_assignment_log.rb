@@ -29,6 +29,9 @@ class AutoAssignmentLog < ActiveRecord::Base
   WRANGLER_LOCATION_MATCH = 211
   WRANGLER_ANYWHERE = 212
 
+  REJECTION_EMPTY_GROUP = 302
+  REJECTION_NO_MATCHES = 303
+  
   # doh!
   FAILURE = 13
 
