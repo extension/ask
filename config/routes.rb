@@ -136,6 +136,7 @@ Aae::Application.routes.draw do
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "groups/:id/about" => "groups#about", :via => [:get, :put], :as => 'about_group'
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
+    match "groups/:id/rejected" => "groups#rejected", :via => [:get, :put], :as => 'group_rejected'
     match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
     match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
