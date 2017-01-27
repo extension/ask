@@ -436,7 +436,6 @@ class Expert::QuestionsController < ApplicationController
         @question.assign_to(assignee: current_user, assigned_by: current_user, resolving_self_assignment: true)
       end
 
-      @related_question ? contributing_question = @related_question : contributing_question = nil
       (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? question_status = Question::STATUS_NO_ANSWER : question_status = Question::STATUS_RESOLVED
 
       begin

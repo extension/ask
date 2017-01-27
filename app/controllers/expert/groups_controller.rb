@@ -78,8 +78,8 @@ class Expert::GroupsController < ApplicationController
       return record_not_found
     end
     @question_list = "Rejected automatically due to location or expert unavailability"
-    @questions = @group.rejected_questions.page(params[:page]).order('resolved_at DESC')
-    @question_count = @group.rejected_questions.length
+    @questions = @group.questions.auto_rejected.page(params[:page]).order('resolved_at DESC')
+    @question_count = @group.questions.auto_rejected.count
     @group_members = @group.group_members_with_self_first(current_user, 5)
     @group_tags = @group.tags.limit(7).order('updated_at DESC')
     render :action => 'show'

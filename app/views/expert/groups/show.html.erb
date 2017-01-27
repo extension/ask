@@ -8,7 +8,7 @@
   <li><%= link_to "Group Home", expert_group_path(@group) %></li>
   <li><%= link_to "Needs an Answer (#{@group.open_questions.size})", expert_group_path(@group) %></li>
   <li><%= link_to "Answered (#{number_with_delimiter(@group.answered_questions.size, :delimiter => ',')})", expert_group_answered_path(@group) %></li>
-  <li><%= link_to "Rejected (#{number_with_delimiter(@group.rejected_questions.size, :delimiter => ',')})", expert_group_rejected_path(@group) %></li>
+  <li><%= link_to "Rejected (#{number_with_delimiter(@group.questions.auto_rejected.count, :delimiter => ',')})", expert_group_rejected_path(@group) %></li>
   <li><%= link_to 'Reports', expert_reports_locations_and_groups_path(:group_id => @group.id) %></li>
   <li><%= link_to 'History', expert_group_history_path() %></li>
   <li><%= link_to 'Settings', expert_group_profile_path() %></li>
