@@ -518,6 +518,7 @@ ActiveRecord::Schema.define(:version => 20170127163015) do
   add_index "questions", ["location_id"], :name => "fk_question_location"
   add_index "questions", ["original_group_id"], :name => "fk_original_group_id"
   add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"
+  add_index "questions", ["rejection_code"], :name => "idx_rejections"
   add_index "questions", ["resolved_at"], :name => "resolved_at_idx"
   add_index "questions", ["status_state"], :name => "status_state_idx"
   add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
