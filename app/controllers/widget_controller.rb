@@ -18,6 +18,9 @@ class WidgetController < ApplicationController
       if !@group.group_active?
         @status_message = "This group is not active."
         return render(:template => '/widget/status', :layout => false)
+      elsif !@group.assignees_available?
+        @status_message = "This group has no assignees available to take questions."
+        return render(:template => '/widget/status', :layout => false)
       end
     else
       @status_message = "Unknown widget specified."
@@ -48,6 +51,9 @@ class WidgetController < ApplicationController
     if !@group.blank?
       if !@group.group_active?
         @status_message = "This group is not active."
+        return render(:template => '/widget/status', :layout => false)
+      elsif !@group.assignees_available?
+        @status_message = "This group has no assignees available to take questions."
         return render(:template => '/widget/status', :layout => false)
       end
     else

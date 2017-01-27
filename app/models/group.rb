@@ -143,6 +143,10 @@ class Group < ActiveRecord::Base
     users.valid_users.not_away.auto_route
   end
 
+  def assignees_available?
+    self.assignees.count > 0
+  end
+
   def deactivate_if_no_assignees
     if(self.assignees.count == 0)
       change_hash = Hash.new

@@ -6,9 +6,11 @@
     </aside>
   <% end %>
 
-  <% if !@group.group_active? %>
+  <%- if !@group.group_active?-%>
     <h3>This group is not accepting questions at the current time</h3>
-  <% else %>
+  <%- elsif !@group.assignees_available? -%>
+    <h3>This group has no assignees available to take questions.</h3>
+  <%- else -%>
 
     <%- if @question.errors.any? -%>
     <div class="alert alert-error">
@@ -22,7 +24,7 @@
     <%- end -%>
 
     <%= render(:partial => 'groups/form') %>
-  <% end %>
+  <%- end -%>
 </div>
 
 <div class="col-md-4">
