@@ -37,7 +37,7 @@ class Group < ActiveRecord::Base
 
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED}"
 
-  has_many :rejected_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.rejection_code = #{Question::REJECTION_AUTO_LOCATION}"
+  has_many :rejected_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.rejection_code = #{(Question::REJECTION_AUTO_LOCATION || Question::REJECTION_AUTO_EXPERT_UNAVAILABLE)}"
 
 
   validates :name, :presence => {:message => "Group name can't be blank"}
