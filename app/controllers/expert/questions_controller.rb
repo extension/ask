@@ -437,10 +437,10 @@ class Expert::QuestionsController < ApplicationController
       end
 
       @related_question ? contributing_question = @related_question : contributing_question = nil
-      (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? q_status = Question::STATUS_NO_ANSWER : q_status = Question::STATUS_RESOLVED
+      (@status and @status.to_i == Question::STATUS_NO_ANSWER) ? question_status = Question::STATUS_NO_ANSWER : question_status = Question::STATUS_RESOLVED
 
       begin
-        @question.add_resolution(q_status, current_user, answer, @signature, contributing_question, params[:response])
+        @question.add_resolution(question_status, current_user, answer, @signature, contributing_question, params[:response])
       rescue Exception => e
         @answer = answer
         flash[:error] = "Error: #{e}"
@@ -462,8 +462,11 @@ class Expert::QuestionsController < ApplicationController
       end
 
       if request.post?
-        if (message = params[:reject_message]).present?
-          @question.add_resolution(Question::STATUS_REJECTED, current_user, message)
+        if (message = params[:reject_message])
+          # rejection_code will come from message
+          @question.add_resolution({question_status: STATUS_REJECTED,
+                                    resolver: current_user,
+                                    response: message})
           flash[:success] = "The question has been rejected."
           redirect_to expert_question_url(@question)
         else

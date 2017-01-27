@@ -75,11 +75,20 @@ class Question < ActiveRecord::Base
   STATUS_REJECTED = 4
   STATUS_CLOSED = 5
 
+  # reject codes
+  REJECTION_SPAM                     = 1
+  REJECTION_CONTENT                  = 2
+  REJECTION_DUPLICATE                = 3
+  REJECTION_EMAIL_INVALID            = 4
+  REJECTION_OTHER                    = 5
+  REJECTION_AUTO_LOCATION            = 6
+  REJECTION_AUTO_EXPERT_UNAVAILABLE  = 7
+
   # status text (to be used when a text version of the status is needed)
   STATUS_TEXT = {
     STATUS_SUBMITTED => 'submitted',
     STATUS_RESOLVED => 'answered',
-    STATUS_NO_ANSWER => 'not_answered',
+    STATUS_NO_ANSWER => 'no answered',
     STATUS_REJECTED => 'rejected',
     STATUS_CLOSED => 'closed'
   }
@@ -190,6 +199,10 @@ class Question < ActiveRecord::Base
   scope :answered, ->{ where(status_state: STATUS_RESOLVED) }
   scope :submitted, ->{ where(status_state: STATUS_SUBMITTED) }
   scope :not_rejected, ->{ where("status_state <> #{STATUS_REJECTED}") }
+  scope :rejected, -> { where(status_state: STATUS_REJECTED) }
+  scope :auto_rejected, -> { rejected.where("rejection_code IN (#{REJECTION_AUTO_LOCATION},#{REJECTION_AUTO_EXPERT_UNAVAILABLE})") }
+
+
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
@@ -220,21 +233,8 @@ class Question < ActiveRecord::Base
   end
 
   # utility function to convert status_state numbers to status strings
-  def self.convert_to_string(status_number)
-    case status_number
-    when STATUS_SUBMITTED
-      'submitted'
-    when STATUS_RESOLVED
-      'resolved'
-    when STATUS_NO_ANSWER
-      'no answer'
-    when STATUS_REJECTED
-      'rejected'
-    when STATUS_CLOSED
-      'closed'
-    else
-      nil
-    end
+  def self.convert_to_string(question_status)
+    STATUS_TEXT[question_status]
   end
 
 
@@ -763,29 +763,34 @@ class Question < ActiveRecord::Base
   # runs after creation
   def reject_if_spam_or_duplicate
     if(self.spam?)
-      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: 'Spam',
+                           rejection_code: REJECTION_SPAM})
     elsif(self.has_blank_body_when_links_removed?)
       self.spam!
-      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: 'Spam',
+                           rejection_code: REJECTION_SPAM})
     elsif existing_question = self.check_for_duplicate
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
-      self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: reject_msg,
+                           rejection_code: REJECTION_DUPLICATE})
     end
     return true
   end
+
+
 
   def queue_initial_assignment
     return true if self.status_state != STATUS_SUBMITTED
     group = self.assigned_group
 
     if(!group.will_accept_question_location(self))
-      reason = <<-END_TEXT.gsub(/\s+/, " ").strip
-      The assigned group for this question #{group.name} does not accept
-      questions outside its locations. Transferring to the Question Wrangler
-      group.
-      END_TEXT
-      self.kick_out_to_wrangler_group(reason)
-      group = Group.question_wrangler_group
+
     end
 
     if(!Settings.sidekiq_enabled)
@@ -835,14 +840,7 @@ class Question < ActiveRecord::Base
     end
   end
 
-  def kick_out_to_wrangler_group(reason)
-    question_wrangler_group = Group.question_wrangler_group
-    current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => question_wrangler_group, :assignee => nil, :working_on_this => nil)
-    QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: question_wrangler_group, initiated_by: User.system_user)
-    QuestionEvent.log_group_assignment(self,question_wrangler_group,User.system_user,reason)
-    true
-  end
+
 
   def add_history_comment(user, comment)
     QuestionEvent.log_history_comment(self, user, comment)
@@ -971,22 +969,30 @@ class Question < ActiveRecord::Base
 
   # updates the question, creates a response and
   # calls the function to log a new resolved question event
-  def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil, response_params = nil)
+  def add_resolution(options = {})
+    question_status = options[:question_status]
+    rejection_code = options[:rejection_code]
+    resolver = options[:resolver]
+    response = options[:response]
+    signature = options[:signature]
+    response_params = options[:response_params]
 
-    t = Time.now
-
-    case q_status
+    case question_status
       when STATUS_RESOLVED
         response_attributes = {:resolver => resolver,
                                :question => self,
                                :body => response,
                                :sent => true,
-                               :contributing_question => contributing_question,
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)
+          self.update_attributes(:status => Question.convert_to_string(question_status),
+                                 :status_state =>  question_status,
+                                 :current_resolver => resolver,
+                                 :current_response => response,
+                                 :resolved_at => Time.now,
+                                 :working_on_this => nil)
           @response.save
           QuestionEvent.log_resolution(self)
         else
@@ -997,20 +1003,47 @@ class Question < ActiveRecord::Base
                                :question => self,
                                :body => response,
                                :sent => true,
-                               :contributing_question => contributing_question,
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)
+          self.update_attributes(:status => Question.convert_to_string(question_status),
+                                 :status_state =>  question_status,
+                                 :current_resolver => resolver,
+                                 :current_response => response,
+                                 :resolved_at => Time.now,
+                                 :working_on_this => nil)
           @response.save
           QuestionEvent.log_no_answer(self)
         else
           raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
         end
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED, :working_on_this => nil)
+        rejection_code = self.class.rejection_code_from_response(response) if rejection_code.nil?
+        self.update_attributes(:status => Question.convert_to_string(question_status),
+                               :status_state => question_status,
+                               :current_response => response,
+                               :current_resolver => resolver,
+                               :resolved_at => Time.now,
+                               :is_private => true,
+                               :is_private_reason => PRIVACY_REASON_REJECTED,
+                               :working_on_this => nil,
+                               :rejection_code => rejection_code)
         QuestionEvent.log_rejection(self)
+    end
+  end
+
+  def self.rejection_code_from_response(response)
+    if(response =~ %r{spam}i)
+      REJECTION_SPAM
+    elsif(response =~ %r{duplicate}i)
+      REJECTION_DUPLICATE
+    elsif(response =~ %r{nappropriate content}i)
+      REJECTION_CONTENT
+    elsif(response =~ %r{Submitter email invalid}i)
+      REJECTION_EMAIL_INVALID
+    else
+      REJECTION_OTHER
     end
   end
 
@@ -1454,6 +1487,16 @@ class Question < ActiveRecord::Base
 
   def has_blank_body_when_links_removed?
     CGI.unescapeHTML(self.class.remove_links(self.body)).gsub(/\s+/,'').blank?
+  end
+
+  def self.set_rejection_code_from_last_event
+    self.rejected.all.each do |q|
+      if(last_rejected_event = q.question_events.where(event_state: QuestionEvent::REJECTED).latest.first)
+        q.update_column(:rejection_code, self.rejection_code_from_response(last_rejected_event.response))
+      else
+        q.update_column(:rejection_code, REJECTION_OTHER)
+      end
+    end
   end
 
 
