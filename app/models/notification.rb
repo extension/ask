@@ -192,7 +192,7 @@ class Notification < ActiveRecord::Base
   end
 
   def aae_public_rejection_location
-    PublicMailer.public_reject_location(user:self.notifiable.submitter, question: self.notifiable).deliver
+    PublicMailer.public_rejection_location(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
 
   def aae_public_rejection_experts_unavailable
