@@ -107,7 +107,11 @@ class GroupsController < ApplicationController
     @question.original_group_id = @group.id
     @question.user_ip = request.remote_ip
     @question.user_agent = request.env['HTTP_USER_AGENT']
-    @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).firt)
+      @question.referrer = referer_track.referer
+    else
+      @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+    end
     @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
 
