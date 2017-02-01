@@ -280,6 +280,12 @@ class ApplicationController < ActionController::Base
   end
 
   def set_referer_track
+    # ignore bots
+    return true if request.bot?
+
+    # ignore StatusCake
+    return true if(request.env['HTTP_USER_AGENT'] =~ %r{StatusCake}i)
+
     if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).first)
       referer_track.increment!(:load_count)
     else
