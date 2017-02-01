@@ -171,7 +171,14 @@
 
   <% end %>
 
-  <% if @question_responses.size < 1 %>
+  <% if @question.status_state == Question::STATUS_REJECTED %>
+    <div class="not_answered">
+      <h4>This question could not be assigned to the <%= link_to @question.assigned_group.name, group_path(@question.assigned_group.id) %> group and the question has been closed.</h4>
+      <p><strong>Reason:</strong> <%= wrap_text(@question.current_response) %></p>
+
+      <h3>Please select your location and <%= link_to("ask your question again", ask_index_path()) %> to get in touch with local experts.</h3>
+    </div>
+  <% elsif @question_responses.size < 1 %>
     <div class="not_answered">
       <h3>This Question is Waiting for an eXtension Answer</h3>
       <p><strong>What's an eXtension Answer?</strong> Your questions are answered by Cooperative Extension and University staff and volunteers from across the United States. That means the answer given here will be objective, research-based and credible.</p>
@@ -185,12 +192,7 @@
       <p><%= link_to "Expert view", expert_question_path(@question.id), :class => "btn btn-default" %></p>
   <% end %>
 
-  <% if @question.status_state == Question::STATUS_REJECTED %>
-    <aside class="public_rejected">
-      <h3>This question has been rejected</h3>
-      <p><strong>Rejection comment:</strong> <%= wrap_text(@question.current_response) %></p>
-    </aside>
-  <% elsif @question.status_state != Question::STATUS_REJECTED %>
+  <% if @question.status_state != Question::STATUS_REJECTED %>
     <aside>
 
       <% if (@question.status_state == Question::STATUS_RESOLVED) || (@question.status_state == Question::STATUS_NO_ANSWER) %>
