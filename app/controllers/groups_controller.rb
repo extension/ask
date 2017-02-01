@@ -114,6 +114,7 @@ class GroupsController < ApplicationController
     end
     @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
+    @question.source = Question::FROM_WEBSITE
 
     # record the original location and county
     @question.original_location = @question.location

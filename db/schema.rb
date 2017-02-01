@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170131205524) do
+ActiveRecord::Schema.define(:version => 20170201153038) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -529,6 +529,7 @@ ActiveRecord::Schema.define(:version => 20170131205524) do
     t.text     "widget_parent_url"
     t.text     "cached_tag_hash"
     t.integer  "rejection_code"
+    t.integer  "source"
   end
 
   add_index "questions", ["assigned_group_id"], :name => "fk_group_assignee"
@@ -544,6 +545,7 @@ ActiveRecord::Schema.define(:version => 20170131205524) do
   add_index "questions", ["question_fingerprint"], :name => "question_fingerprint_idx"
   add_index "questions", ["rejection_code"], :name => "idx_rejections"
   add_index "questions", ["resolved_at"], :name => "resolved_at_idx"
+  add_index "questions", ["source"], :name => "source_ndx"
   add_index "questions", ["status_state"], :name => "status_state_idx"
   add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
 

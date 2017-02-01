@@ -68,6 +68,10 @@ class Question < ActiveRecord::Base
   ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
   TITLE_MAX_LENGTH = 100
 
+  # QUESTION SOURCE
+  FROM_WIDGET = 1
+  FROM_WEBSITE = 2
+
   # status numbers (for status_state)
   STATUS_SUBMITTED = 1
   STATUS_RESOLVED = 2
@@ -1252,11 +1256,15 @@ class Question < ActiveRecord::Base
     (self.created_at >= Time.parse(AAE_V2_TRANSITION)) ? 2 : 1
   end
 
-  def source
-    if(self.aae_version == 1)
-      (self.external_app_id == 'widget') ? 'widget' : 'website'
+  def source_to_s
+    if(self.source.blank?)
+      'unknown'
+    elsif(self.source == FROM_WIDGET)
+      'widget'
+    elsif(self.source == FROM_WEBSITE)
+      'website'
     else
-      (self.referrer =~ %r{widget}) ? 'widget' : 'website'
+      'unknown'
     end
   end
 
