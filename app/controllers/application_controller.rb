@@ -25,6 +25,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_retired
   before_filter :store_redirect_url
   before_filter :set_yolo
+  before_filter :set_referer_track
 
   # identify the culprit of the papertrail revisions, it's either someone logged in that creates or edits a question or someone from the public who has a user record created and associated with them
   def user_for_paper_trail
@@ -275,6 +276,18 @@ class ApplicationController < ActionController::Base
   def refered_from_our_site?
     if uri = http_referer_uri
       uri.host == request.host
+    end
+  end
+
+  def set_referer_track
+    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).first)
+      referer_track.increment!(:load_count)
+    else
+      referer_track = RefererTrack.create(ipaddr: request.remote_ip,
+                                          referer: request.env["HTTP_REFERER"],
+                                          user_agent: request.env['HTTP_USER_AGENT'],
+                                          landing_page: "#{request.protocol}#{request.host_with_port}#{request.fullpath}")
+      session[:rt] = referer_track.id
     end
   end
 

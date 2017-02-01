@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170127163015) do
+ActiveRecord::Schema.define(:version => 20170131205524) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -23,6 +23,19 @@ ActiveRecord::Schema.define(:version => 20170127163015) do
   end
 
   add_index "activity_logs", ["user_id", "loggable_id", "loggable_type"], :name => "activity_ndx"
+
+  create_table "ask_tracks", :force => true do |t|
+    t.string   "ipaddr"
+    t.integer  "referer_track_id"
+    t.integer  "location_track_id"
+    t.integer  "group_id"
+    t.boolean  "group_active"
+    t.integer  "question_id"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "ask_tracks", ["referer_track_id", "location_track_id", "group_id", "question_id"], :name => "association_ndx"
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -312,6 +325,17 @@ ActiveRecord::Schema.define(:version => 20170127163015) do
 
   add_index "location_messages", ["location_id", "edited_by"], :name => "idx_who_where"
 
+  create_table "location_tracks", :force => true do |t|
+    t.string   "ipaddr"
+    t.integer  "referer_track_id"
+    t.integer  "location_id"
+    t.integer  "group_count"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  add_index "location_tracks", ["referer_track_id", "location_id"], :name => "association_ndx"
+
   create_table "locations", :force => true do |t|
     t.integer  "fipsid",                     :null => false
     t.integer  "entrytype",                  :null => false
@@ -530,6 +554,16 @@ ActiveRecord::Schema.define(:version => 20170127163015) do
     t.integer  "user_id"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+  end
+
+  create_table "referer_tracks", :force => true do |t|
+    t.string   "ipaddr"
+    t.text     "referer"
+    t.string   "landing_page"
+    t.text     "user_agent"
+    t.integer  "load_count",   :default => 1, :null => false
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
   create_table "responses", :force => true do |t|

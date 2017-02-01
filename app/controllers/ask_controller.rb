@@ -13,6 +13,18 @@ class AskController < ApplicationController
   def show
     @location = Location.find(params[:id])
     @yolo.set_location(@location)
+
+    # ask tracking
+    create_location_track(@location)
+  end
+
+
+  def create_location_track(location)
+    location_track = LocationTrack.create(ipaddr: request.remote_ip,
+                                          referer_track_id: session[:rt],
+                                          location_id: location.id,
+                                          group_count: location.active_primary_groups.count)
+    session[:lt] = location_track.id
   end
 
 end
