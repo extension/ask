@@ -140,10 +140,11 @@ class GroupsController < ApplicationController
       # update ask_track
       if(session[:at] and ask_track = AskTrack.where(id: session[:at]).first)
         ask_track.update_attribute(:question_id, @question.id)
-        # clear ask_track
+        # clear tracking
+        session[:lt] = nil
         session[:at] = nil
       end
-      
+
       if(!@question.spam?)
         session[:question_id] = @question.id
         session[:submitter_id] = @submitter.id
