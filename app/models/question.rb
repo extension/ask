@@ -842,12 +842,14 @@ class Question < ActiveRecord::Base
         return true
      else
 
-      # assign_to
-      assign_to(assignee: results[:assignee],
-                assigned_by: system_user,
-                comment: (assignment_comment.nil? ? "Reason assigned: " + log.auto_assignment_reason : assignment_comment),
-                is_auto_assignment: true,
-                auto_assignment_log: log)
+       log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+
+        # assign_to
+        assign_to(assignee: results[:assignee],
+                  assigned_by: system_user,
+                  comment: (assignment_comment.nil? ? "Reason assigned: " + log.auto_assignment_reason : assignment_comment),
+                  is_auto_assignment: true,
+                  auto_assignment_log: log)
     end
   end
 
