@@ -107,7 +107,7 @@ class GroupsController < ApplicationController
     @question.original_group_id = @group.id
     @question.user_ip = request.remote_ip
     @question.user_agent = request.env['HTTP_USER_AGENT']
-    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).firt)
+    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).first)
       @question.referrer = referer_track.referer
     else
       @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
