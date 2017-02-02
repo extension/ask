@@ -23,6 +23,7 @@ class AskController < ApplicationController
 
 
   def create_location_track(location)
+    return true if request.bot?
     location_track = LocationTrack.create(ipaddr: request.remote_ip,
                                           referer_track_id: session[:rt],
                                           location_id: location.id,
