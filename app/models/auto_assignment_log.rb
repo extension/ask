@@ -31,7 +31,7 @@ class AutoAssignmentLog < ActiveRecord::Base
 
   REJECTION_EMPTY_GROUP = 302
   REJECTION_NO_MATCHES = 303
-  
+
   # doh!
   FAILURE = 13
 
@@ -94,7 +94,10 @@ class AutoAssignmentLog < ActiveRecord::Base
     question = log_values[:question]
     group = log_values[:group]
     user_pool = log_values[:user_pool]
-    pool_floor = user_pool.values.map{|h| h[:open_question_count]}.min
+    if(!user_pool.nil?)
+      pool_floor = user_pool.values.map{|h| h[:open_question_count]}.min
+    end
+
     self.create(question: question,
                 question_location_id: question.location_id,
                 question_county_id: question.county_id,
