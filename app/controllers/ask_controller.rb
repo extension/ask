@@ -11,6 +11,9 @@ class AskController < ApplicationController
   end
 
   def show
+    if(params[:id] and params[:id].length == 32)
+      return redirect_to(submitter_view_url(fingerprint: params[:id]))
+    end
     @location = Location.find(params[:id])
     @yolo.set_location(@location)
 
