@@ -6,6 +6,8 @@
 
 class Webmail::ExamplesController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :require_exid
+
   skip_before_filter :set_yolo
 
   def index
@@ -47,7 +49,7 @@ class Webmail::ExamplesController < ApplicationController
   end
 
   def internal_aae_daily_summary
-    mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last,Group.find(Group::QUESTION_WRANGLER_GROUP_ID)], cache_email: false)
+    mail = InternalMailer.aae_daily_summary(user: User.first, groups: [Group.first,Group.last], cache_email: false)
     return render_mail(mail)
   end
 
@@ -131,6 +133,27 @@ class Webmail::ExamplesController < ApplicationController
     else
       return render_mail(mail)
     end
+  end
+
+  def public_rejection_location
+    # try to find a question that would be rejected.
+    if(@group = Group.active.where(assignment_outside_locations: false).first)
+      if(!@question = @group.answered_questions.last)
+        @question = Question.answered.last
+      end
+    else
+      @question = Question.answered.last
+    end
+
+
+    mail = PublicMailer.public_rejection_location(user: User.first, question: @question, cache_email: false)
+    return render_mail(mail)
+  end
+
+  def public_rejection_experts_unavailable
+    @question = Question.answered.last
+    mail = PublicMailer.public_rejection_experts_unavailable(user: User.first, question: @question, cache_email: false)
+    return render_mail(mail)
   end
 
   def public_evaluation_request

@@ -72,6 +72,9 @@ class Notification < ActiveRecord::Base
   AAE_PUBLIC_COMMENT_REPLY = 2011
   AAE_PUBLIC_COMMENT = 2012
   AAE_EXPERT_RESPONSE_EDIT_TO_SUBMITTER = 2013
+  AAE_PUBLIC_REJECTION_LOCATION = 2014
+  AAE_PUBLIC_REJECTION_EXPERTS_UNAVAILABLE = 2015
+
 
   ##########################################
 
@@ -186,6 +189,14 @@ class Notification < ActiveRecord::Base
 
   def aae_public_submission_acknowledgement
     PublicMailer.public_submission_acknowledgement(user:self.notifiable.submitter, question: self.notifiable).deliver
+  end
+
+  def aae_public_rejection_location
+    PublicMailer.public_rejection_location(user:self.notifiable.submitter, question: self.notifiable).deliver
+  end
+
+  def aae_public_rejection_experts_unavailable
+    PublicMailer.public_rejection_experts_unavailable(user:self.notifiable.submitter, question: self.notifiable).deliver
   end
 
   def aae_expert_response_edit

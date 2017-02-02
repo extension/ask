@@ -5,6 +5,9 @@
   <li><%= link_to "Your question has been submitted", {:action => "public_submission_acknowledgement"} %></li>
   <li><%= link_to "There's a response to your question", {:action => "public_expert_response"} %></li>
   <li><%= link_to "Ask an Expert evaluation", {:action => "public_evaluation_request"} %></li>
+  <li><%= link_to "Your Question Can Not Be Assigned (location)", {:action => "public_rejection_location"} %></li>
+  <li><%= link_to "Your Question Can Not Be Assigned (no one available)", {:action => "public_rejection_experts_unavailable"} %></li>
+
 </ul>
 
 <h3>These emails are sent to experts</h3>

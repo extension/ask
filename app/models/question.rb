@@ -68,6 +68,10 @@ class Question < ActiveRecord::Base
   ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
   TITLE_MAX_LENGTH = 100
 
+  # QUESTION SOURCE
+  FROM_WIDGET = 1
+  FROM_WEBSITE = 2
+
   # status numbers (for status_state)
   STATUS_SUBMITTED = 1
   STATUS_RESOLVED = 2
@@ -75,19 +79,20 @@ class Question < ActiveRecord::Base
   STATUS_REJECTED = 4
   STATUS_CLOSED = 5
 
-  # status text (to be used when a text version of the status is needed)
-  SUBMITTED_TEXT = 'submitted'
-  RESOLVED_TEXT = 'resolved'
-  ANSWERED_TEXT = 'answered'
-  NO_ANSWER_TEXT = 'not_answered'
-  REJECTED_TEXT = 'rejected'
-  CLOSED_TEXT = 'closed'
+  # reject codes
+  REJECTION_SPAM                     = 1
+  REJECTION_CONTENT                  = 2
+  REJECTION_DUPLICATE                = 3
+  REJECTION_EMAIL_INVALID            = 4
+  REJECTION_OTHER                    = 5
+  REJECTION_AUTO_LOCATION            = 6
+  REJECTION_AUTO_EXPERT_UNAVAILABLE  = 7
 
   # status text (to be used when a text version of the status is needed)
   STATUS_TEXT = {
     STATUS_SUBMITTED => 'submitted',
     STATUS_RESOLVED => 'answered',
-    STATUS_NO_ANSWER => 'not_answered',
+    STATUS_NO_ANSWER => 'no answered',
     STATUS_REJECTED => 'rejected',
     STATUS_CLOSED => 'closed'
   }
@@ -109,11 +114,6 @@ class Question < ActiveRecord::Base
 
 
   DEFAULT_SUBMITTER_NAME = "Anonymous Guest"
-
-  WRANGLER_REASSIGN_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
-  This question has been assigned to you because the previous assignee
-  clicked the 'Hand off to a Question Wrangler' button.
-  END_TEXT
 
   PUBLIC_RESPONSE_REASSIGNMENT_COMMENT = <<-END_TEXT.gsub(/\s+/, " ").strip
   This question has been reassigned to you because a new comment has
@@ -159,7 +159,6 @@ class Question < ActiveRecord::Base
   belongs_to :widget
   belongs_to :submitter, :class_name => "User", :foreign_key => "submitter_id"
   belongs_to :assigned_group, :class_name => "Group", :foreign_key => "assigned_group_id"
-  belongs_to :contributing_question, :class_name => "Question", :foreign_key => "contributing_question_id"
   belongs_to :original_group, :class_name => "Group", :foreign_key => "original_group_id"
   belongs_to :initial_response,  class_name: 'Response', :foreign_key => "initial_response_id"
   belongs_to :initial_responder, :class_name => "User", :foreign_key => "initial_responder_id"
@@ -198,6 +197,10 @@ class Question < ActiveRecord::Base
   scope :answered, ->{ where(status_state: STATUS_RESOLVED) }
   scope :submitted, ->{ where(status_state: STATUS_SUBMITTED) }
   scope :not_rejected, ->{ where("status_state <> #{STATUS_REJECTED}") }
+  scope :rejected, -> { where(status_state: STATUS_REJECTED) }
+  scope :auto_rejected, -> { rejected.where("rejection_code IN (#{REJECTION_AUTO_LOCATION},#{REJECTION_AUTO_EXPERT_UNAVAILABLE})") }
+
+
   # special scope for returning an empty AR association
   scope :none, where('1 = 0')
 
@@ -228,21 +231,8 @@ class Question < ActiveRecord::Base
   end
 
   # utility function to convert status_state numbers to status strings
-  def self.convert_to_string(status_number)
-    case status_number
-    when STATUS_SUBMITTED
-      'submitted'
-    when STATUS_RESOLVED
-      'resolved'
-    when STATUS_NO_ANSWER
-      'no answer'
-    when STATUS_REJECTED
-      'rejected'
-    when STATUS_CLOSED
-      'closed'
-    else
-      nil
-    end
+  def self.convert_to_string(question_status)
+    STATUS_TEXT[question_status]
   end
 
 
@@ -617,16 +607,11 @@ class Question < ActiveRecord::Base
     end
 
     if(base_assignee_scope.count  == 0)
-      # no one is home, wrangle it
-      assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP
+      assignee_tests << AutoAssignmentLog::REJECTION_EMPTY_GROUP
 
-      # find a wrangler
-      results = find_question_wrangler(assignees_to_exclude)
-      return { assignee: results[:assignee],
-               user_pool:  results[:user_pool],
-               wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_EMPTY_GROUP,
-               assignment_code: results[:assignment_code],
-               assignee_tests: assignee_tests + results[:assignee_tests] }
+      return { assignee: nil,
+               assignment_code: AutoAssignmentLog::REJECTION_EMPTY_GROUP,
+               assignee_tests: assignee_tests }
     end
 
     if(self.location_id.present?)
@@ -699,16 +684,11 @@ class Question < ActiveRecord::Base
     end
 
 
-    # find a wrangler
-    assignee_tests << AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES
-    results = find_question_wrangler(assignees_to_exclude)
-
-    return { assignee: results[:assignee],
-             user_pool:  results[:user_pool],
-             wrangler_assignment_code: AutoAssignmentLog::WRANGLER_HANDOFF_NO_MATCHES,
-             assignment_code: results[:assignment_code],
-             assignee_tests: assignee_tests + results[:assignee_tests] }
-
+    # fail
+    assignee_tests << AutoAssignmentLog::REJECTION_NO_MATCHES
+    return { assignee: nil,
+             assignment_code: AutoAssignmentLog::REJECTION_NO_MATCHES,
+             assignee_tests: assignee_tests }
   end
 
   def find_question_wrangler(assignees_to_exclude = nil)
@@ -771,29 +751,47 @@ class Question < ActiveRecord::Base
   # runs after creation
   def reject_if_spam_or_duplicate
     if(self.spam?)
-      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: 'Spam',
+                           rejection_code: REJECTION_SPAM})
     elsif(self.has_blank_body_when_links_removed?)
       self.spam!
-      self.add_resolution(STATUS_REJECTED, User.system_user, 'Spam')
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: 'Spam',
+                           rejection_code: REJECTION_SPAM})
     elsif existing_question = self.check_for_duplicate
       reject_msg = "This question is a duplicate of question ##{existing_question.id}"
-      self.add_resolution(STATUS_REJECTED, User.system_user, reject_msg)
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: reject_msg,
+                           rejection_code: REJECTION_DUPLICATE})
     end
     return true
   end
+
+
 
   def queue_initial_assignment
     return true if self.status_state != STATUS_SUBMITTED
     group = self.assigned_group
 
     if(!group.will_accept_question_location(self))
-      reason = <<-END_TEXT.gsub(/\s+/, " ").strip
-      The assigned group for this question #{group.name} does not accept
-      questions outside its locations. Transferring to the Question Wrangler
-      group.
-      END_TEXT
-      self.kick_out_to_wrangler_group(reason)
-      group = Group.question_wrangler_group
+      # auto reject
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: "Automatically Rejected because group does not accept question's location",
+                           rejection_code: REJECTION_AUTO_LOCATION})
+
+       if(!self.submitter.nil? and !self.submitter.id.nil?)
+         Notification.create(notifiable: self,
+                             created_by: 1,
+                             recipient_id: self.submitter.id,
+                             notification_type: Notification::AAE_PUBLIC_REJECTION_LOCATION,
+                             delivery_time: 1.minute.from_now )
+        end
+        return true
     end
 
     if(!Settings.sidekiq_enabled)
@@ -813,7 +811,9 @@ class Question < ActiveRecord::Base
 
   end
 
-  def find_group_assignee_and_assign(assignees_to_exclude = nil)
+  def find_group_assignee_and_assign(options = {})
+    assignees_to_exclude = options[:assignees_to_exclude]
+    assignment_comment = options[:assignment_comment]
     system_user = User.system_user
     group = self.assigned_group
 
@@ -825,16 +825,36 @@ class Question < ActiveRecord::Base
     # find
     results = self.find_group_assignee(assignees_to_exclude)
 
-    # log auto assignment
-    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+    # no results? no one was home, reject it
+    if(results[:assignee].nil?)
+      # log auto assignment rejection
+      log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
 
-    # assign_to
-    assign_to(assignee: results[:assignee],
-              assigned_by: system_user,
-              comment: "Reason assigned: " + log.auto_assignment_reason,
-              is_auto_assignment: true,
-              auto_assignment_log: log)
+      # auto reject
+      self.add_resolution({question_status: STATUS_REJECTED,
+                           resolver: User.system_user,
+                           response: "Automatically Rejected because no assignees could be found to take the question",
+                           rejection_code: REJECTION_AUTO_EXPERT_UNAVAILABLE})
 
+       if(!self.submitter.nil? and !self.submitter.id.nil?)
+         Notification.create(notifiable: self,
+                             created_by: 1,
+                             recipient_id: self.submitter.id,
+                             notification_type: Notification::AAE_PUBLIC_REJECTION_EXPERTS_UNAVAILABLE,
+                             delivery_time: 1.minute.from_now )
+        end
+        return true
+     else
+
+       log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: group))
+
+        # assign_to
+        assign_to(assignee: results[:assignee],
+                  assigned_by: system_user,
+                  comment: (assignment_comment.nil? ? "Reason assigned: " + log.auto_assignment_reason : assignment_comment),
+                  is_auto_assignment: true,
+                  auto_assignment_log: log)
+    end
   end
 
   def self.delayed_find_group_assignee_and_assign(question_id)
@@ -843,14 +863,7 @@ class Question < ActiveRecord::Base
     end
   end
 
-  def kick_out_to_wrangler_group(reason)
-    question_wrangler_group = Group.question_wrangler_group
-    current_assigned_group = self.assigned_group
-    self.update_attributes(:assigned_group => question_wrangler_group, :assignee => nil, :working_on_this => nil)
-    QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: question_wrangler_group, initiated_by: User.system_user)
-    QuestionEvent.log_group_assignment(self,question_wrangler_group,User.system_user,reason)
-    true
-  end
+
 
   def add_history_comment(user, comment)
     QuestionEvent.log_history_comment(self, user, comment)
@@ -868,7 +881,6 @@ class Question < ActiveRecord::Base
     resolving_self_assignment = options[:resolving_self_assignment].present? ? options[:resolving_self_assignment] : false
     auto_assignment_log = options[:auto_assignment_log].present? ? options[:auto_assignment_log] : nil
     is_auto_assignment = options[:is_auto_assignment].present? ? options[:is_auto_assignment] : false
-    is_wrangler_handoff = options[:is_wrangler_handoff].present? ? options[:is_wrangler_handoff] : false
 
     # this doesn't appear to be used at all at the moment, leaving because
     # I need to figure out how it was supposed to have been used - jayoung
@@ -893,13 +905,7 @@ class Question < ActiveRecord::Base
     assign_to.update_column(:open_question_count, assign_to.open_questions.count)
     assign_to.update_column(:last_question_assigned_at, Time.zone.now)
 
-    if is_wrangler_handoff
-      QuestionEvent.log_wrangler_handoff(question: self,
-                                         recipient: assign_to,
-                                         initiated_by: assigned_by,
-                                         handoff_reason: comment,
-                                         auto_assignment_log: auto_assignment_log)
-    elsif is_auto_assignment
+    if is_auto_assignment
       QuestionEvent.log_auto_assignment(question: self,
                                         recipient: assign_to,
                                         assignment_comment: comment,
@@ -962,7 +968,7 @@ class Question < ActiveRecord::Base
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
     if group.individual_assignment?
-      self.find_group_assignee_and_assign(previously_assigned_user.present? ? [previously_assigned_user] : nil)
+      self.find_group_assignee_and_assign(assignees_to_exclude: previously_assigned_user.present? ? [previously_assigned_user] : nil)
     else
       if(is_reassign)
         Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
@@ -986,22 +992,30 @@ class Question < ActiveRecord::Base
 
   # updates the question, creates a response and
   # calls the function to log a new resolved question event
-  def add_resolution(q_status, resolver, response, signature = nil, contributing_question = nil, response_params = nil)
+  def add_resolution(options = {})
+    question_status = options[:question_status]
+    rejection_code = options[:rejection_code]
+    resolver = options[:resolver]
+    response = options[:response]
+    signature = options[:signature]
+    response_params = options[:response_params]
 
-    t = Time.now
-
-    case q_status
+    case question_status
       when STATUS_RESOLVED
         response_attributes = {:resolver => resolver,
                                :question => self,
                                :body => response,
                                :sent => true,
-                               :contributing_question => contributing_question,
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)
+          self.update_attributes(:status => Question.convert_to_string(question_status),
+                                 :status_state =>  question_status,
+                                 :current_resolver => resolver,
+                                 :current_response => response,
+                                 :resolved_at => Time.now,
+                                 :working_on_this => nil)
           @response.save
           QuestionEvent.log_resolution(self)
         else
@@ -1012,30 +1026,48 @@ class Question < ActiveRecord::Base
                                :question => self,
                                :body => response,
                                :sent => true,
-                               :contributing_question => contributing_question,
                                :signature => signature}
         response_attributes.merge!(response_params) if response_params.present?
         @response = Response.new(response_attributes)
         if @response.valid?
-          self.update_attributes(:status => Question.convert_to_string(q_status), :status_state =>  q_status, :current_resolver => resolver, :current_response => response, :contributing_question => contributing_question, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :working_on_this => nil)
+          self.update_attributes(:status => Question.convert_to_string(question_status),
+                                 :status_state =>  question_status,
+                                 :current_resolver => resolver,
+                                 :current_response => response,
+                                 :resolved_at => Time.now,
+                                 :working_on_this => nil)
           @response.save
           QuestionEvent.log_no_answer(self)
         else
           raise "There is an error in your response: #{@response.errors.full_messages.to_sentence}"
         end
       when STATUS_REJECTED
-        self.update_attributes(:status => Question.convert_to_string(q_status), :status_state => q_status, :current_response => response, :current_resolver => resolver, :resolved_at => t.strftime("%Y-%m-%dT%H:%M:%SZ"), :is_private => true, :is_private_reason => PRIVACY_REASON_REJECTED, :working_on_this => nil)
+        rejection_code = self.class.rejection_code_from_response(response) if rejection_code.nil?
+        self.update_attributes(:status => Question.convert_to_string(question_status),
+                               :status_state => question_status,
+                               :current_response => response,
+                               :current_resolver => resolver,
+                               :resolved_at => Time.now,
+                               :is_private => true,
+                               :is_private_reason => PRIVACY_REASON_REJECTED,
+                               :working_on_this => nil,
+                               :rejection_code => rejection_code)
         QuestionEvent.log_rejection(self)
     end
   end
 
-  # for the 'Hand off to a Question Wrangler' functionality
-  def assign_to_question_wrangler(assigned_by, comment, wrangler_assignment_code)
-    exclude_assignees = (self.assignee.present? ? [self.assignee] : nil)
-    results = self.find_question_wrangler(exclude_assignees)
-    log = AutoAssignmentLog.log_assignment(results.merge(question: self, group: self.assigned_group, wrangler_assignment_code: wrangler_assignment_code))
-    assign_to(assignee: results[:assignee], assigned_by: assigned_by, comment: comment, is_wrangler_handoff: true)
-    return assignee
+  def self.rejection_code_from_response(response)
+    if(response =~ %r{spam}i)
+      REJECTION_SPAM
+    elsif(response =~ %r{duplicate}i)
+      REJECTION_DUPLICATE
+    elsif(response =~ %r{nappropriate content}i)
+      REJECTION_CONTENT
+    elsif(response =~ %r{Submitter email invalid}i)
+      REJECTION_EMAIL_INVALID
+    else
+      REJECTION_OTHER
+    end
   end
 
   def resolved?
@@ -1224,11 +1256,15 @@ class Question < ActiveRecord::Base
     (self.created_at >= Time.parse(AAE_V2_TRANSITION)) ? 2 : 1
   end
 
-  def source
-    if(self.aae_version == 1)
-      (self.external_app_id == 'widget') ? 'widget' : 'website'
+  def source_to_s
+    if(self.source.blank?)
+      'unknown'
+    elsif(self.source == FROM_WIDGET)
+      'widget'
+    elsif(self.source == FROM_WEBSITE)
+      'website'
     else
-      (self.referrer =~ %r{widget}) ? 'widget' : 'website'
+      'unknown'
     end
   end
 
@@ -1478,6 +1514,16 @@ class Question < ActiveRecord::Base
 
   def has_blank_body_when_links_removed?
     CGI.unescapeHTML(self.class.remove_links(self.body)).gsub(/\s+/,'').blank?
+  end
+
+  def self.set_rejection_code_from_last_event
+    self.rejected.all.each do |q|
+      if(last_rejected_event = q.question_events.where(event_state: QuestionEvent::REJECTED).latest.first)
+        q.update_column(:rejection_code, self.rejection_code_from_response(last_rejected_event.response))
+      else
+        q.update_column(:rejection_code, REJECTION_OTHER)
+      end
+    end
   end
 
 

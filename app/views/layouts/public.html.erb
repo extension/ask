@@ -112,7 +112,7 @@
             <ul class="app-navbar-list list-inline pull-right app-navbar-items">
               <li><%= link_to 'Home', root_path() %></li>
               <li><%= link_to "About", home_about_path() %></li>
-              <li><%= link_to("Ask a Question", ask_path()) %></li>
+              <li><%= link_to("Ask a Question", ask_index_path()) %></li>
 
               <% if current_user && !current_user.has_exid? %>
                 <li><%= link_to(current_user.public_name, nonexid_profile_edit_path()) %></li>
@@ -158,8 +158,8 @@
       <footer>
         <span id="extension_icon_512" class="pull-left noprint"><%= image_tag "extension_logo.jpg", :class => "hidden-xs", :id => "extension_logo", :alt => "eXtension" %></span>
         <ul class="footer-links list-inline noprint">
-          <li><%= link_to "Institutional Partners", "http://www.extension.org/main/partners" %></li>
-          <li><%= link_to("Privacy","http://www.extension.org/main/privacy")%></li>
+          <li><%= link_to "Institutional Partners", "http://articles.extension.org/main/partners" %></li>
+          <li><%= link_to("Privacy","https://extension.org/privacy")%></li>
           <li><%= link_to "Contact Us", ask_group_path(Group::EXTENSION_SUPPORT_ID) %></li>
           <li><%= link_to "Disclaimer", "http://www.extension.org/main/disclaimer" %></li>
           <li><%= link_to("Terms of Use","https://extension.org/terms-of-use/")%></li>

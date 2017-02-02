@@ -125,7 +125,7 @@ class QuestionsController < ApplicationController
     redirect_to question_url(@question)
   end
 
-  # TODO: incorporate title into this.
+  #TODO : incorporate title into this.
   def create
     if request.post?
 
@@ -177,8 +177,9 @@ class QuestionsController < ApplicationController
         @question.user_agent = request.env['HTTP_USER_AGENT']
         @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.widget_parent_url = @widget_parent_url
-        @question.status = Question::SUBMITTED_TEXT
+        @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
         @question.status_state = Question::STATUS_SUBMITTED
+        @question.source = Question::FROM_WIDGET
 
         # record the original location and county
         @question.original_location = @question.location
@@ -187,7 +188,7 @@ class QuestionsController < ApplicationController
         # set the yolo location/county as well
         @yolo.set_location(@question.location)
         @yolo.set_county(@question.county)
-        
+
         if !@group.widget_public_option
           @question.is_private = true
           # in this case, the check box does not show for privacy for the submitter, everything that comes through this group is private,
@@ -333,7 +334,7 @@ class QuestionsController < ApplicationController
     @question.user_ip = request.remote_ip
     @question.user_agent = (request.env['HTTP_USER_AGENT'] ? request.env['HTTP_USER_AGENT'] : '')
     @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-    @question.status = Question::SUBMITTED_TEXT
+    @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
     if(@question.save)
       returninformation = {'question_id' => @question.id, 'success' => true}

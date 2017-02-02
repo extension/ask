@@ -2,7 +2,7 @@
 
 <div id="location_picker">
   <select id="location_option" name="location_option">
-    <% # TODO: figure out a better way to generate the select dropdown %>
+    <% #TODO : figure out a better way to generate the select dropdown %>
     <option value="">Add a location</option>
     <% @locations.each do |l| %>
       <option value="<%= l.id %>"><%= l.name %></option>

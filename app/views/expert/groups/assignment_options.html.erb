@@ -14,8 +14,8 @@
     <h4>How else are questions assigned?</h4>
     <p>Experts can manually assign questions to any group or individual.</p>
   </div>
-  
-  
+
+
   <fieldset>
     <div>
       <h3>Where can questions come from?</h3>
@@ -24,22 +24,21 @@
         <label>
           <%= f.radio_button :assignment_outside_locations, true %>
           Questions can come from any location
-          <span>(Best for groups who want to be aware of every question that comes in through their widget.)</span>
+          <span>(For groups who want to be aware of every question that comes in through their question form.)</span>
         </label>
       </p>
       <p>
         <label>
           <%= f.radio_button :assignment_outside_locations, false %>
-          Questions must come from this group's locations
-          <span>(Best for groups that don't want to answer questions outside a specific geographic area.)</span>
-          <span>*Selecting this option will automatically enable the location field on widgets.</span>
+          Reject questions from outside this group's locations
+          <span>(The submitter will get an email saying this group only accepts questions from certain locations and will be directed to use the location picker to find a local expert/group.)</span>
         </label>
       </p>
-      
+
       </div>
     </div>
   </fieldset>
-  
+
   <fieldset>
     <div>
       <h3>How should questions be assigned?</h3>
@@ -58,7 +57,7 @@
           <span>(Assignments respect individual member location preferences)</span>
         </label>
       </p>
-      
+
       <p>
 	    <label>
 		  <%= f.check_box 'ignore_county_routing' %>
@@ -69,10 +68,10 @@
     </div>
     </div>
   </fieldset>
-  
-  
+
+
   <fieldset>
     <p><%= f.submit "Save Changes", :class => "btn btn-large btn-primary" %></p>
   </fieldset>
-    
+
 <% end %>

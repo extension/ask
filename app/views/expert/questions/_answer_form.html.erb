@@ -1,4 +1,4 @@
-<%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :related_question => @related_question ? @related_question.id : nil, :type => params[:type]), {:multipart => true, id: "response_form"}) do %>
+<%= form_tag(answer_expert_question_path(:id => @question.id, :status_state => @status, :type => params[:type]), {:multipart => true, id: "response_form"}) do %>
 
   <p><%= text_area_tag('current_response', @answer ? @answer : nil, {class: 'form-control wysiwyg', rows: 8}) %></p>
   <p>If we can't answer this question, use the <a id="canned_response" class="cursor">canned response</a> to suggest their local office.</p>

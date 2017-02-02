@@ -303,6 +303,8 @@ GEM
       unf_ext
     unf_ext (0.0.7.2)
     useragent (0.16.7)
+    voight_kampff (1.1.1)
+      rack (>= 1.4, < 3.0)
     warden (1.2.1)
       rack (>= 1.0)
 
@@ -371,6 +373,7 @@ DEPENDENCIES
   turbo-sprockets-rails3
   uglifier (>= 1.0.3)
   useragent
+  voight_kampff
 
 BUNDLED WITH
    1.12.5

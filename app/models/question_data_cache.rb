@@ -47,7 +47,7 @@ class QuestionDataCache < ActiveRecord::Base
     data << question.submitter_id
     data << question.submitter_is_extension?
     data << question.aae_version
-    data << question.source
+    data << question.source_to_s
     data << question.responses.non_expert.count
     data << question.responses.expert.count
     data << question.responses.expert.count('distinct(resolver_id)')

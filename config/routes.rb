@@ -12,6 +12,10 @@ Aae::Application.routes.draw do
     get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
   end
 
+  # locations redirects to ask controller (temporary, but we've promoted them a fair amount during transition)
+  match "/locations", to: redirect("/ask")
+  match "/locations/:id", to: redirect("/ask/%{id}")
+
   # expert redirect routes
   match "/expert/home/locations/:id", to: redirect("/expert/locations/%{id}")
   match "/expert/home/users/locations/:id", to: redirect("/expert/locations/%{id}/experts")
@@ -48,8 +52,6 @@ Aae::Application.routes.draw do
         post 'reject'
         get  'reassign'
         post 'reassign'
-        get  'wrangle'
-        post 'wrangle'
         post 'reactivate'
         get  'close_out'
         post 'close_out'
@@ -134,6 +136,7 @@ Aae::Application.routes.draw do
     match "groups/:id/history" => "groups#history", :via => [:get, :put], :as => 'group_history'
     match "groups/:id/about" => "groups#about", :via => [:get, :put], :as => 'about_group'
     match "groups/:id/answered" => "groups#answered", :via => [:get, :put], :as => 'group_answered'
+    match "groups/:id/rejected" => "groups#rejected", :via => [:get, :put], :as => 'group_rejected'
     match "groups/:id/join" => "groups#join", :via => [:post], :as => 'group_join'
     match "groups/:id/leave" => "groups#leave", :via => [:post], :as => 'group_leave'
     match "groups/:id/lead" => "groups#lead", :via => [:post], :as => 'group_lead'
@@ -207,7 +210,7 @@ Aae::Application.routes.draw do
     end
   end
 
-  resources :locations
+  resources :ask
 
   # retired url
   match "users/retired" => "users#retired", :via => [:get]
@@ -253,7 +256,6 @@ Aae::Application.routes.draw do
 
   match "home/questions/tags/:name" => "home#questions_by_tag", :as => 'questions_by_tag'
 
-  match "ask" => "groups#ask", :id => "38" #id for QW group
 
   match "ajax/tags" => "ajax#tags", :via => [:get]
   match "ajax/groups" => "ajax#groups", :via => [:get]

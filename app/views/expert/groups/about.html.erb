@@ -23,8 +23,11 @@
 
 <% if @group.assignment_outside_locations == false %>
   <div class="well">
-    <h3>This Group Only Accepts Questions From Certain Locations.</h3>
-    <p>If the question <strong>doesn't have a location</strong>, or <strong>its state doesn't match this group's states</strong>, it will be automatically assigned to the Question Wrangler group. A QW may add a matching location, if appropriate, and assign it back to this group.</p>
+    <h3>Questions Outside This Group's Locations Are Rejected.</h3>
+    <ul>
+      <li>If the question <strong>doesn't have a location</strong>, or <strong>its state doesn't match this group's states</strong>, it is automatically rejected.</li>
+      <li>The submitter will get an email saying this group only accepts questions from certain locations and will be directed to use the location picker to find a local expert/group.</li>
+    </ul>
     <p>This group has <%= link_to "#{@group_members.count} members", expert_group_members_path(@group) %>. <%= @group_members_route_from_anywhere.count %> members accept questions from anywhere.</p>
 
   </div>

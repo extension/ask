@@ -43,6 +43,21 @@ class GroupsController < ApplicationController
 
   def ask
     @group = Group.find(params[:id])
+    # redirect if question wrangler group
+
+    if(@group.id == Group::QUESTION_WRANGLER_GROUP_ID)
+      return redirect_to(ask_index_path)
+    end
+
+    # no linking directly to this form when a group doesn't
+    # take questions outside the location
+    if(!@group.assignment_outside_locations? and !refered_from_our_site?)
+      return redirect_to(ask_index_path)
+    end
+
+    # tracking
+    create_ask_track(@group)
+
     params[:fingerprint] = @group.widget_fingerprint
     @question = Question.new
 
@@ -74,7 +89,7 @@ class GroupsController < ApplicationController
       if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
         @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
         if !@submitter.valid?
-          # TODO: to be sure there's a better way to combine errors?
+          #TODO : to be sure there's a better way to combine errors?
           @submitter.errors.each do |attribute,message|
             # message could be an array, but not going to be for User
             @question.errors[attribute] = message
@@ -92,9 +107,14 @@ class GroupsController < ApplicationController
     @question.original_group_id = @group.id
     @question.user_ip = request.remote_ip
     @question.user_agent = request.env['HTTP_USER_AGENT']
-    @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-    @question.status = Question::SUBMITTED_TEXT
+    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).first)
+      @question.referrer = referer_track.referer
+    else
+      @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
+    end
+    @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
+    @question.source = Question::FROM_WEBSITE
 
     # record the original location and county
     @question.original_location = @question.location
@@ -122,6 +142,14 @@ class GroupsController < ApplicationController
 
 
     if @question.save
+      # update ask_track
+      if(session[:at] and ask_track = AskTrack.where(id: session[:at]).first)
+        ask_track.update_attribute(:question_id, @question.id)
+        # clear tracking
+        session[:lt] = nil
+        session[:at] = nil
+      end
+
       if(!@question.spam?)
         session[:question_id] = @question.id
         session[:submitter_id] = @submitter.id
@@ -140,6 +168,15 @@ class GroupsController < ApplicationController
   def widget
     @group = Group.find(params[:id])
     return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
+  end
+
+  def create_ask_track(group)
+    ask_track = AskTrack.create(ipaddr: request.remote_ip,
+                                referer_track_id: session[:rt],
+                                location_track_id: session[:lt],
+                                group_id: group.id,
+                                group_active: group.group_active?)
+    session[:at] = ask_track.id
   end
 
 end
