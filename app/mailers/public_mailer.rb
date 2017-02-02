@@ -70,7 +70,7 @@ class PublicMailer < BaseMailer
   def public_rejection_location(options = {})
       @user = options[:user]
       @question = options[:question]
-      @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
+      @subject = "Your Ask an Expert question can not be assigned (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       @title = "Your Question Can Not Be Assigned"
       @group = @question.assigned_group
@@ -99,7 +99,7 @@ class PublicMailer < BaseMailer
   def public_rejection_experts_unavailable(options = {})
       @user = options[:user]
       @question = options[:question]
-      @subject = "Your Ask an Expert question has been rejected (Question:#{@question.id})"
+      @subject = "Your Ask an Expert question can not be assigned (Question:#{@question.id})"
       @will_cache_email = options[:cache_email].nil? ? true : options[:cache_email]
       @title = "Your Question Can Not Be Assigned"
       @group = @question.assigned_group
