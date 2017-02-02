@@ -171,6 +171,7 @@ class GroupsController < ApplicationController
   end
 
   def create_ask_track(group)
+    return true if request.bot?
     ask_track = AskTrack.create(ipaddr: request.remote_ip,
                                 referer_track_id: session[:rt],
                                 location_track_id: session[:lt],
