@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170201153038) do
+ActiveRecord::Schema.define(:version => 20170202173853) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -561,7 +561,7 @@ ActiveRecord::Schema.define(:version => 20170201153038) do
   create_table "referer_tracks", :force => true do |t|
     t.string   "ipaddr"
     t.text     "referer"
-    t.string   "landing_page"
+    t.text     "landing_page"
     t.text     "user_agent"
     t.integer  "load_count",   :default => 1, :null => false
     t.datetime "created_at",                  :null => false
