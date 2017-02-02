@@ -467,7 +467,7 @@ class Expert::QuestionsController < ApplicationController
       if request.post?
         if (message = params[:reject_message])
           # rejection_code will come from message
-          @question.add_resolution({question_status: STATUS_REJECTED,
+          @question.add_resolution({question_status: Question::STATUS_REJECTED,
                                     resolver: current_user,
                                     response: message})
           flash[:success] = "The question has been rejected."
