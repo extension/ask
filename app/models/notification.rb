@@ -280,7 +280,7 @@ class Notification < ActiveRecord::Base
   end
 
   def self.pending_location_edit_notification?(user_event)
-     Notification.where(notification_type: AAE_EXPERT_LOCATION_EDIT, recipient_id: user_event.user.id,
+     Notification.where(notification_type: AAE_EXPERT_LOCATION_EDIT, recipient_id: user_event.user_id,
                         delivery_time: Settings.user_event_notification_interval.ago..Time.zone.now + 1.minute).size > 0
   end
 
