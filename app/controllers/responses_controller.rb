@@ -34,7 +34,7 @@ class ResponsesController < ApplicationController
       QuestionEvent.log_public_response(question, submitter.id)
       # away check, whether this is a reopen or not
       if(question.assignee.present? and question.assignee.away?)
-        Question.find_group_assignee_and_assign(assignment_comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT)
+        question.find_group_assignee_and_assign(assignment_comment: Question::PUBLIC_RESPONSE_REASSIGNMENT_BACKUP_COMMENT)
       elsif submitter_reopen
         question.assign_to(assignee: question.assignee,
                            assigned_by: User.system_user,
