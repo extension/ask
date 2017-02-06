@@ -128,6 +128,8 @@ class ApplicationController < ActionController::Base
         filter_description_array << "Answered"
       elsif @status == "unanswered"
         filter_description_array << "Needs an Answer"
+      elsif @status == "autorejects"
+        filter_description_array << "Automatically Rejected"
       else
         # all questions
       end
@@ -206,6 +208,8 @@ class ApplicationController < ActionController::Base
       return q.answered.where(condition_string).order("questions.resolved_at DESC").page(params[:page])
     elsif @status == 'unanswered'
       return q.submitted.where(condition_string).order("questions.created_at DESC").page(params[:page])
+    elsif @status == 'autorejected'
+      return q.auto_rejected.where(condition_string).order("questions.created_at DESC").page(params[:page])
     else
       return q.where(condition_string).order("questions.created_at DESC").page(params[:page])
     end

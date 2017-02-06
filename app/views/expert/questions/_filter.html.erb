@@ -1,6 +1,6 @@
 <div id="location_filter">
   <div class="form-group form-inline">
-    <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"]], params[:status] ), {:prompt => "All questions", :name => "status", :class => "form-control"} %>
+    <%= select_tag "status", options_for_select([["Needs an Answer", "unanswered"], ["Answered", "answered"], ["Automaticaly Rejected", "autorejected"]], params[:status] ), {:prompt => "All questions", :name => "status", :class => "form-control"} %>
     <%= select_tag "privacy", options_for_select([["Private", "private"], ["Public", "public"], ["Switched to Private", "switched_to_private"]], params[:privacy] ), {:prompt => "Privacy (any status)", :name => "privacy", :class => "form-control"} %>
   </div>
 
