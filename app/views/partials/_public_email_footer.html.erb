@@ -3,7 +3,7 @@
 </tr>
 
 <tr>
-  <td class="thank_you"><%= link_to("Find your local Extension institution", "http://articles.extension.org/main/partners")%>.</td>
+  <td class="thank_you"><%= link_to("Find your local Extension institution", "https://extension.org/membership/current/")%>.</td>
 </tr>
 
 <tr>
@@ -19,7 +19,7 @@
           <%- if @mailer_cache -%>
             <%= link_to('View in a browser', webmail_view_url(hashvalue: @mailer_cache.hashvalue)) %>
           <%- else -%>
-            <a href="">View in a browser</a> 
+            <a href="">View in a browser</a>
           <%- end -%>
         </td>
       </tr>
@@ -32,6 +32,6 @@
 </tr>
 
 </table>
-</div>  
+</div>
 </body>
 </html>
