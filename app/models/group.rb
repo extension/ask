@@ -12,13 +12,13 @@ class Group < ActiveRecord::Base
   # remove extra whitespace from these attributes
   auto_strip_attributes :name, :squish => true
 
-  has_many :group_connections, :dependent => :destroy
-  has_many :group_events
-  has_many :question_events
+  has_many :group_connections, dependent: :destroy
+  has_many :group_events, dependent: :destroy
+  has_many :assigned_question_events, :class_name => "QuestionEvent", :foreign_key => "recipient_group_id"
   has_many :questions, :class_name => "Question", :foreign_key => "assigned_group_id"
-  has_many :group_locations
+  has_many :group_locations, dependent: :destroy
   has_many :locations, :through => :group_locations
-  has_many :group_counties
+  has_many :group_counties, dependent: :destroy
   has_many :open_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "status_state = #{Question::STATUS_SUBMITTED}"
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   belongs_to :widget_location, :foreign_key => "widget_location_id", :class_name => "Location"
@@ -43,6 +43,7 @@ class Group < ActiveRecord::Base
     :unless => Proc.new { |a| a.name.blank? }
 
   scope :active, -> {where(group_active: true)}
+  scope :inactive, -> {where(group_active: false)}
   scope :assignable, -> {active.where(is_test: false)}
 
   scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
@@ -145,6 +146,14 @@ class Group < ActiveRecord::Base
 
   def assignees_available?
     self.assignees.count > 0
+  end
+
+  def all_question_events
+    QuestionEvent.where("recipient_group_id = #{self.id} or previous_group_id = #{self.id} or changed_group_id = #{self.id}")
+  end
+
+  def all_questions
+    Question.where("assigned_group_id = #{self.id} or original_group_id = #{self.id}")
   end
 
   def deactivate_if_no_assignees
@@ -420,6 +429,7 @@ class Group < ActiveRecord::Base
         csv << row
       end
     end
+
   end
 
 end
