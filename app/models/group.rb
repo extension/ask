@@ -45,6 +45,7 @@ class Group < ActiveRecord::Base
   scope :active, -> {where(group_active: true)}
   scope :inactive, -> {where(group_active: false)}
   scope :assignable, -> {active.where(is_test: false)}
+  scope :test_groups, ->{where(is_test: true)}
 
   scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("group_counties.county_id = #{county_id}")}
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("group_locations.location_id = #{location_id}")}
@@ -331,7 +332,29 @@ class Group < ActiveRecord::Base
     deactivated_list
   end
 
-
+  def remove_if_inactive_or_test
+    return false if(self.all_questions.count > 0)
+    return false if(self.group_active? and !self.is_test?)
+    # loop through any question events and handle the deleted group
+    self.all_question_events.each do |qe|
+      # these should be mutually exclusive
+      if(!qe.recipient_group_id.nil? and qe.recipient_group_id == self.id)
+        group_logs = qe.group_logs || {}
+        group_logs[:recipient_group_name] = self.name
+        qe.update_attributes(recipient_group_id: nil, group_logs: group_logs)
+      elsif(!qe.previous_group_id.nil? and qe.previous_group_id == self.id)
+        group_logs = qe.group_logs || {}
+        group_logs[:previous_group_name] = self.name
+        qe.update_attributes(previous_group_id: nil, group_logs: group_logs)
+      elsif(!qe.changed_group_id.nil? and qe.changed_group_id == self.id)
+        group_logs = qe.group_logs || {}
+        group_logs[:changed_group_name] = self.name
+        qe.update_attributes(changed_group_id: nil, group_logs: group_logs)
+      end
+    end
+    self.destroy
+    true
+  end
 
   def self.asked_answered_metrics_for_date_range(start_date,end_date)
     asked_answered = {}
