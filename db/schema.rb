@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170202173853) do
+ActiveRecord::Schema.define(:version => 20170217181155) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -386,6 +386,8 @@ ActiveRecord::Schema.define(:version => 20170202173853) do
     t.text     "results"
   end
 
+  add_index "notifications", ["notifiable_type", "notifiable_id"], :name => "notifiable_ndx"
+
   create_table "old_evaluation_answers", :force => true do |t|
     t.integer  "evaluation_question_id", :null => false
     t.integer  "user_id",                :null => false
@@ -452,12 +454,14 @@ ActiveRecord::Schema.define(:version => 20170202173853) do
     t.boolean  "is_extension",                       :default => false
     t.string   "changed_tag"
     t.integer  "auto_assignment_log_id"
+    t.text     "group_logs"
   end
 
   add_index "question_events", ["created_at", "event_state", "previous_handling_recipient_id"], :name => "idx_handling"
   add_index "question_events", ["event_state"], :name => "index_question_events_on_event_state"
   add_index "question_events", ["initiated_by_id"], :name => "idx_initiated_by"
   add_index "question_events", ["question_id"], :name => "idx_question_id"
+  add_index "question_events", ["recipient_group_id", "previous_group_id", "changed_group_id"], :name => "group_ndx"
   add_index "question_events", ["recipient_id"], :name => "idx_recipient_id"
   add_index "question_events", ["submitter_id"], :name => "idx_submitter_id"
 

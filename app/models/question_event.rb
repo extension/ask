@@ -12,6 +12,7 @@ class QuestionEvent < ActiveRecord::Base
   extend YearWeek
   # attributes
   serialize :updated_question_values
+  serialize :group_logs
 
   # constants
   # date of first QuestionEvent for default dates to avoid hitting db
