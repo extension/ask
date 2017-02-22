@@ -4,26 +4,26 @@
   <td class="content padding">
     <p>Hello,</p>
     <p>A week ago, you received an answer to a <%= link_to("question you asked", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>  using our eXtension Ask an Expert system. (You can <%= link_to("see your answer here", submitter_view_url(:fingerprint => @question.question_fingerprint)) -%>.)</p>
-    <p>We’re working to improve the question and answer experience, and your feedback is very important.  Your responses are confidential, and will only be viewed when grouped with other responses. Any information that might identify you personally will be removed before the results are shared. We hope you will take a few minutes and complete our 
+    <p>We’re working to improve the question and answer experience, and your feedback is very important.  Your responses are confidential, and will only be viewed when grouped with other responses. Any information that might identify you personally will be removed before the results are shared. We hope you will take a few minutes and complete our
       <%- if @example_survey %>
         <%= link_to("short evaluation survey", example_evaluation_url) -%>
       <%- else -%>
         <%= link_to("short evaluation survey", view_evaluation_url(:fingerprint => @question.question_fingerprint)) -%>
       <%- end -%>
       .</p>
-    
+
     <%- if @example_survey %>
       <p class="button longtext"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_evaluation_survey.png", alt: "View Evaluation Survey", width: "245"), example_evaluation_url) -%></p>
     <%- else -%>
       <p class="button longtext"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_evaluation_survey.png", alt: "View Evaluation Survey", width: "245"), view_evaluation_url(:fingerprint => @question.question_fingerprint)) -%></p>
     <%- end -%>
-    
+
     <p>Thank you for using eXtension Ask an Expert!</p>
 
     <p>Sincerely,<br />
-    Beth Raney<br />
+    Jason Young<br />
     National eXtension Initiative<br />
-    beth.raney@extension.org</p>
+    jayoung@extension.org</p>
   </td>
 </tr>
 
