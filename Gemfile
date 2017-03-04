@@ -137,7 +137,8 @@ gem 'rack-attack'
 gem 'test-unit'
 
 # monitoring
-gem 'scout_apm', '~> 3.0.x'
+#gem 'scout_apm', '~> 3.0.x'
+gem 'ddtrace'
 
 # spam prevention
 gem 'invisible_captcha'
