@@ -6,7 +6,7 @@
       </ol>
 
       <h1><%= @location.name -%> Custom Message</h1>
-      <p class="subhead">This message is displayed to site visitors that select a group entry page for a location that has no primary groups defined. <%= link_to "View entry page", location_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
+      <p class="subhead">This message is displayed when this location is selected and there are no primary groups set. <%= link_to "View entry page", ask_path(@location.id), :class => "btn btn-default btn-xs" -%></p>
 
       <%= form_for @location, :url => set_message_expert_location_path(@location), :method => :post,  :html => { :class => "form-stacked no_m_t well"} do |f| %>
 
