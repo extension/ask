@@ -136,10 +136,6 @@ gem 'rack-attack'
 # Ruby 2.2 requirement
 gem 'test-unit'
 
-# monitoring
-#gem 'scout_apm', '~> 3.0.x'
-gem 'ddtrace'
-
 # spam prevention
 gem 'invisible_captcha'
 
