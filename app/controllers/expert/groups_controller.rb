@@ -21,7 +21,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def email_csv
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @group_members = @group.joined
     respond_to do |format|
       format.csv { send_data User.to_csv(@group_members, ["first_name", "last_name", "email"]), :filename => "#{@group.name.gsub(' ', '_')}_Member_Emails.csv" }
@@ -29,29 +29,19 @@ class Expert::GroupsController < ApplicationController
   end
 
   def about
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
+    @group = Group.find(params[:id])
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
     @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
 
   def leaders
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
+    @group = Group.find(params[:id])
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
     @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
 
   def show
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
-
+    @group = Group.find(params[:id])
     @question_list = "Needs an Answer"
     @questions = @group.open_questions.page(params[:page]).order('created_at DESC')
     @question_count = @group.open_questions.length
@@ -60,10 +50,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def answered
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
+    @group = Group.find(params[:id])
     @question_list = "Answered"
     @questions = @group.answered_questions.page(params[:page]).order('resolved_at DESC')
     @question_count = @group.answered_questions.length
@@ -73,10 +60,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def rejected
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
+    @group = Group.find(params[:id])
     @question_list = "Rejected automatically due to location or expert unavailability"
     @questions = @group.questions.auto_rejected.page(params[:page]).order('resolved_at DESC')
     @question_count = @group.questions.auto_rejected.count
@@ -86,25 +70,20 @@ class Expert::GroupsController < ApplicationController
   end
 
   def members
-    @group = Group.find_by_id(params[:id])
-    if !@group
-      return record_not_found
-    end
+    @group = Group.find(params[:id])
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @group_members.map(&:id)})
   end
 
   def questions_by_tag
-    @group = Group.find_by_id(params[:group_id])
+    @group = Group.find(params[:group_id])
     @tag = Tag.find_by_id(params[:tag_id])
-
-    return record_not_found if (!@group || !@tag)
-
+    return record_not_found if (!@tag)
     @questions = Question.from_group(@group.id).tagged_with(@tag.id).not_rejected.order("questions.status_state ASC").limit(25)
   end
 
   def profile
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     if request.put?
       change_hash = Hash.new
       @group.attributes = params[:group]
@@ -149,18 +128,18 @@ class Expert::GroupsController < ApplicationController
   end
 
   def locations
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @locations = Location.order('fipsid ASC')
     @object = @group
   end
 
   def tags
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @group_tags = @group.tags.order('name ASC')
   end
 
   def add_tag
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @tag = @group.set_tag(params[:tag])
     if @tag.blank?
       render :nothing => true
@@ -168,14 +147,14 @@ class Expert::GroupsController < ApplicationController
   end
 
   def remove_tag
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     tag = Tag.find(params[:tag_id])
     @group.tags.delete(tag)
   end
 
 
   def assignment_options
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     if request.put?
       change_hash = Hash.new
       @group.attributes = params[:group]
@@ -202,7 +181,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def widget
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @widget_url = ask_widget_group_url + ".js"
     if request.put?
       @group.attributes = params[:group]
@@ -230,7 +209,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def history
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     @group_events = @group.group_events.order('created_at DESC')
   end
 
@@ -252,13 +231,13 @@ class Expert::GroupsController < ApplicationController
   end
 
   def join
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     current_user.join_group(@group,"member")
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
 
   def lead
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     current_user.join_group(@group,"leader")
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
@@ -270,7 +249,7 @@ class Expert::GroupsController < ApplicationController
   end
 
   def unlead
-    @group = Group.find_by_id(params[:id])
+    @group = Group.find(params[:id])
     current_user.leave_group_leadership(@group)
     @group_members = @group.group_members_with_self_first(current_user, 5)
   end
