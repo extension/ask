@@ -640,18 +640,14 @@ class Question < ActiveRecord::Base
           end
         end
 
-        # get a location + "all" county match
-        # this probably should also get the pool of people with any kind of location
-        # match, as long as their routing instructions don't have a county specificity
-        # but it was working and we didn't change it per Slack discussion on
-        # 2016-06-15 - jayoung
-        assignee_pool = base_assignee_scope.with_expertise_location_all_counties(self.location_id)
-        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY
+        # get a location match, as long as routing instructions aren't county only
+        assignee_pool = base_assignee_scope.route_from_location.with_expertise_location(self.location_id)
+        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_ANY_COUNTY
         assignee = User.pick_assignee_from_pool(assignee_pool)
         if(assignee)
           return { assignee: assignee,
                    user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY,
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ANY_COUNTY,
                    assignee_tests: assignee_tests }
         end
       end # no group override of county
