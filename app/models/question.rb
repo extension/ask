@@ -687,63 +687,6 @@ class Question < ActiveRecord::Base
              assignee_tests: assignee_tests }
   end
 
-  def find_question_wrangler(assignees_to_exclude = nil)
-    assignee_tests = []
-    wrangler_group = Group.question_wrangler_group
-
-    if(assignees_to_exclude.present?)
-      base_assignee_scope = wrangler_group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
-    else
-      base_assignee_scope = wrangler_group.assignees
-    end
-
-    # check for county match, then location match, then anywhere
-
-    # county
-    if(self.county_id.present?)
-      assignee_pool = base_assignee_scope.with_expertise_county(self.county_id)
-      assignee_tests << AutoAssignmentLog::WRANGLER_COUNTY_MATCH
-      assignee = User.pick_assignee_from_pool(assignee_pool)
-      if(assignee)
-        return { assignee: assignee,
-                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 assignment_code: AutoAssignmentLog::WRANGLER_COUNTY_MATCH,
-                 assignee_tests: assignee_tests }
-      end
-    end
-
-    # location
-    if(self.location_id.present?)
-      assignee_pool = base_assignee_scope.with_expertise_county(self.location_id)
-      assignee_tests << AutoAssignmentLog::WRANGLER_LOCATION_MATCH
-      assignee = User.pick_assignee_from_pool(assignee_pool)
-      if(assignee)
-        return { assignee: assignee,
-                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 assignment_code: AutoAssignmentLog::WRANGLER_LOCATION_MATCH,
-                 assignee_tests: assignee_tests }
-      end
-    end
-
-    # anywhere
-    assignee_pool = base_assignee_scope.route_from_anywhere
-    assignee_tests << AutoAssignmentLog::WRANGLER_ANYWHERE
-    assignee = User.pick_assignee_from_pool(assignee_pool)
-    if(assignee)
-      return { assignee: assignee,
-               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-               assignment_code: AutoAssignmentLog::WRANGLER_ANYWHERE,
-               assignee_tests: assignee_tests }
-    end
-
-    # uh-oh!
-    return { assignee: nil,
-             user_pool:  {},
-             assignment_code: AutoAssignmentLog::FAILURE,
-             assignee_tests: assignee_tests }
-
-  end
-
   # runs after creation
   def reject_if_spam_or_duplicate
     if(self.spam?)
