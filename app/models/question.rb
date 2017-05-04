@@ -640,18 +640,14 @@ class Question < ActiveRecord::Base
           end
         end
 
-        # get a location + "all" county match
-        # this probably should also get the pool of people with any kind of location
-        # match, as long as their routing instructions don't have a county specificity
-        # but it was working and we didn't change it per Slack discussion on
-        # 2016-06-15 - jayoung
-        assignee_pool = base_assignee_scope.with_expertise_location_all_counties(self.location_id)
-        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY
+        # get a location match, as long as routing instructions aren't county only
+        assignee_pool = base_assignee_scope.route_from_location.with_expertise_location(self.location_id)
+        assignee_tests << AutoAssignmentLog::LOCATION_MATCH_ANY_COUNTY
         assignee = User.pick_assignee_from_pool(assignee_pool)
         if(assignee)
           return { assignee: assignee,
                    user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ALL_COUNTY,
+                   assignment_code: AutoAssignmentLog::LOCATION_MATCH_ANY_COUNTY,
                    assignee_tests: assignee_tests }
         end
       end # no group override of county
@@ -689,63 +685,6 @@ class Question < ActiveRecord::Base
     return { assignee: nil,
              assignment_code: AutoAssignmentLog::REJECTION_NO_MATCHES,
              assignee_tests: assignee_tests }
-  end
-
-  def find_question_wrangler(assignees_to_exclude = nil)
-    assignee_tests = []
-    wrangler_group = Group.question_wrangler_group
-
-    if(assignees_to_exclude.present?)
-      base_assignee_scope = wrangler_group.assignees.where("users.id NOT IN (#{assignees_to_exclude.map(&:id).join(',')})")
-    else
-      base_assignee_scope = wrangler_group.assignees
-    end
-
-    # check for county match, then location match, then anywhere
-
-    # county
-    if(self.county_id.present?)
-      assignee_pool = base_assignee_scope.with_expertise_county(self.county_id)
-      assignee_tests << AutoAssignmentLog::WRANGLER_COUNTY_MATCH
-      assignee = User.pick_assignee_from_pool(assignee_pool)
-      if(assignee)
-        return { assignee: assignee,
-                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 assignment_code: AutoAssignmentLog::WRANGLER_COUNTY_MATCH,
-                 assignee_tests: assignee_tests }
-      end
-    end
-
-    # location
-    if(self.location_id.present?)
-      assignee_pool = base_assignee_scope.with_expertise_county(self.location_id)
-      assignee_tests << AutoAssignmentLog::WRANGLER_LOCATION_MATCH
-      assignee = User.pick_assignee_from_pool(assignee_pool)
-      if(assignee)
-        return { assignee: assignee,
-                 user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-                 assignment_code: AutoAssignmentLog::WRANGLER_LOCATION_MATCH,
-                 assignee_tests: assignee_tests }
-      end
-    end
-
-    # anywhere
-    assignee_pool = base_assignee_scope.route_from_anywhere
-    assignee_tests << AutoAssignmentLog::WRANGLER_ANYWHERE
-    assignee = User.pick_assignee_from_pool(assignee_pool)
-    if(assignee)
-      return { assignee: assignee,
-               user_pool:  AutoAssignmentLog.mapped_user_pool(assignee_pool),
-               assignment_code: AutoAssignmentLog::WRANGLER_ANYWHERE,
-               assignee_tests: assignee_tests }
-    end
-
-    # uh-oh!
-    return { assignee: nil,
-             user_pool:  {},
-             assignment_code: AutoAssignmentLog::FAILURE,
-             assignee_tests: assignee_tests }
-
   end
 
   # runs after creation

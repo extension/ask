@@ -91,16 +91,17 @@ class User < ActiveRecord::Base
   scope :with_expertise_county, lambda {|county_id| joins(:expertise_counties).where("user_counties.county_id = #{county_id}") }
   scope :with_expertise_location, lambda {|location_id| joins(:expertise_locations).where("user_locations.location_id = #{location_id}") }
   scope :with_expertise_location_all_counties, lambda {|location_id| joins(:expertise_counties).where("counties.location_id = #{location_id} AND counties.name = 'All'")}
-  scope :question_wranglers, conditions: { is_question_wrangler: true }
-  scope :route_from_anywhere, conditions: { routing_instructions: 'anywhere' }
+  scope :question_wranglers, -> {where(is_question_wrangler: true)}
+  scope :route_from_anywhere, -> {where(routing_instructions: 'anywhere')}
+  scope :route_from_location, -> {where(routing_instructions: ['anywhere','locations_only'])}
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :not_retired, ->{ where(retired: false) }
-  scope :not_blocked, ->{ where(is_blocked: false) }
-  scope :not_system,  ->{ where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
-  scope :valid_users, ->{ not_retired.not_blocked.not_system }
-  scope :not_away, ->{ where(away:false) }
-  scope :auto_route, ->{ where(auto_route:true) }
-  scope :assignable, ->{ exid_holder.valid_users.not_away }
+  scope :not_retired, -> { where(retired: false) }
+  scope :not_blocked, -> { where(is_blocked: false) }
+  scope :not_system,  -> { where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
+  scope :valid_users, -> { not_retired.not_blocked.not_system }
+  scope :not_away, -> { where(away:false) }
+  scope :auto_route, -> { where(auto_route:true) }
+  scope :assignable, -> { exid_holder.valid_users.not_away }
 
   scope :daily_summary_notification_list, joins(:preferences).where("preferences.name = '#{Preference::NOTIFICATION_DAILY_SUMMARY}'").where("preferences.value = #{true}").group('users.id')
   # special scope for returning an empty AR association
@@ -657,10 +658,6 @@ class User < ActiveRecord::Base
     possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
     return possible_user_pool.first
   end
-
-
-
-
 
   private
 

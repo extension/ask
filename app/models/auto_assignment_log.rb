@@ -17,7 +17,7 @@ class AutoAssignmentLog < ActiveRecord::Base
   # auto assignment constants
   LOCATION_MATCH_GROUP_IGNORES_COUNTY = 101
   COUNTY_MATCH = 102
-  LOCATION_MATCH_ALL_COUNTY = 103
+  LOCATION_MATCH_ANY_COUNTY = 103
   ANYWHERE = 104
   LEADER = 105
   WRANGLER_HANDOFF_OUTSIDE_LOCATION = 201
@@ -54,8 +54,8 @@ class AutoAssignmentLog < ActiveRecord::Base
       "The question location (#{self.question_location.name}) matched the your expertise location. Note: This group ignores counties when automatically assigning questions."
     when COUNTY_MATCH
       "You chose to accept questions based on county and location (#{self.question_county.name}, #{self.question_location.name})."
-    when LOCATION_MATCH_ALL_COUNTY
-      "You chose to accept questions based on location (all counties in #{self.question_location.name})."
+    when LOCATION_MATCH_ANY_COUNTY
+      "You chose to accept questions based on location (any county in #{self.question_location.name})."
     when ANYWHERE
       "You chose to accept questions from any location, and no specific location matched for this question."
     when LEADER
