@@ -1,0 +1,71 @@
+<h1><%= link_to @group.name, expert_group_path() -%> </h1>
+<p id="aaeid">Group #<%= @group.id -%> </p>
+
+<h2>Auto Assignment Logs</h2>
+
+<%= paginate @assignment_log_entries %>
+<%- @assignment_log_entries.each do |assignment_log| -%>
+  <div class="row" id="<%= "assignement_log_#{assignment_log.id}" -%>" >
+    <%- question = assignment_log.question
+        assignee = assignment_log.assignee -%>
+    <div class="col-md-12">
+      <%- if question.is_being_worked_on? -%>
+        <h3 class="answer_in_progress"><span>Answer in Progress</span></h3>
+      <%- end -%>
+      <h3><%= link_to("Question ##{question.id} : #{question.title}".html_safe, expert_question_path(question.id)) %></h3>
+      <p><strong>Submitted at: <%= question.created_at.strftime("%B %e, %Y, %l:%M %p %Z") -%></strong></p>
+
+      <h4>Question Status</h4>
+      <%- if question.status_state == Question::STATUS_REJECTED %>
+        <p class="rejected"><span class="label label-danger">Rejected</span> <%= wrap_text(question.current_response) -%></p>
+      <%- elsif question.status_state == Question::STATUS_NO_ANSWER -%>
+        <p>A canned response was used to answer this question</p>
+      <%- elsif question.status_state == Question::STATUS_CLOSED -%>
+        <p><span class="label label-default">Closed</span> because <%= wrap_text(question.current_response) %></p>
+      <%- elsif question.status_state == Question::STATUS_RESOLVED -%>
+        <p><span class="label label-default">Resolved</span></p>
+      <%- else -%>
+        <p><span class="needs_an_answer">Needs an answer</span></p>
+      <% end %>
+
+      <h4>Question Assigned To</h4>
+      <%- if assignment_log.assignee.present? -%>
+        <%= link_expert_user_avatar(assignment_log.assignee, :thumb, current_user.id == assignment_log.assignee.id ? true : false) %> <%= link_expert_user(assignment_log.assignee) %>
+      <%- else -%>
+        <p><strong>No assignee.</strong></p>
+      <%- end -%>
+
+      <h4>Assignment Tests</h4>
+      <ol>
+        <%- assignment_log.assignee_tests.each do |assignment_code| -%>
+        <%= (AutoAssignmentLog.code_to_constant_string(assignment_code).blank? ? 'Unknown' : AutoAssignmentLog.code_to_constant_string(assignment_code)) -%>
+        <%- end -%>
+      </ol>
+
+      <h4>User Pool for Assignment</h4>
+      <table class='table'>
+        <thead>
+          <td>Expert</td>
+          <td>Open Questions when assigned</td>
+          <td>Last Assignment</td>
+          <td>Routing Instructions</td>
+          <td>Auto Route?</td>
+        <tbody>
+          <%- assignment_log.user_pool.each do |user_id, pool_settings| -%>
+            <%- if(user = User.find_by_id(user_id)) -%>
+              <tr>
+                <td><%= link_to(user.name, expert_user_url(user.id)) -%></td>
+                <td><%= pool_settings[:open_question_count] -%></td>
+                <td><%= display_last_assignment_time(pool_settings[:last_question_assigned_at]) -%></td>
+                <td><%= pool_settings[:routing_instructions] -%></td>
+                <td><%= pool_settings[:auto_route] -%></td>
+              </tr>
+            <%- end -%>
+          <%- end -%>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <hr/>
+<%- end -%>
+<%= paginate @assignment_log_entries %>

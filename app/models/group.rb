@@ -37,6 +37,8 @@ class Group < ActiveRecord::Base
 
   has_many :answered_questions, :class_name => "Question", :foreign_key => "assigned_group_id", :conditions => "questions.status_state = #{Question::STATUS_RESOLVED}"
 
+  has_many :auto_assignment_logs
+
   validates :name, :presence => {:message => "Group name can't be blank"}
   validates :name,
     :uniqueness => {:message => "The name \"%{value}\" is being used by another group.", :case_sensitive => false},

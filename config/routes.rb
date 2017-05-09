@@ -88,6 +88,7 @@ Aae::Application.routes.draw do
       end
       member do
         get 'email_csv'
+        get 'auto_assignment_log'
       end
     end
 
