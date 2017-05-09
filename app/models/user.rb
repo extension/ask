@@ -503,6 +503,7 @@ class User < ActiveRecord::Base
     assigned_questions.submitted
   end
 
+  # this is a utility routine to manually run for accounts
   def set_assignment_values
     self.update_column(:open_question_count, self.open_questions.count)
     self.update_column(:last_question_touched_at, self.initiated_question_events.order('created_at DESC').pluck(:created_at).first)
