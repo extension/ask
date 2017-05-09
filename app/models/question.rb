@@ -840,10 +840,6 @@ class Question < ActiveRecord::Base
     # set the assignee - log it, and notify them
     self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil, :last_assigned_at => Time.zone.now )
 
-    # update assignment stats for the assignee
-    assign_to.update_column(:open_question_count, assign_to.open_questions.count)
-    assign_to.update_column(:last_question_assigned_at, Time.zone.now)
-
     if is_auto_assignment
       QuestionEvent.log_auto_assignment(question: self,
                                         recipient: assign_to,
@@ -874,6 +870,14 @@ class Question < ActiveRecord::Base
                           recipient_id: previously_assigned_to.id,
                           notification_type: Notification::AAE_REASSIGNMENT,
                           delivery_time: 1.minute.from_now )
+    end
+
+    # update assignment stats for the assignee
+    assign_to.update_column(:open_question_count, assign_to.open_questions.count)
+    assign_to.update_column(:last_question_assigned_at, Time.zone.now)
+
+    if(!previously_assigned_to.nil?)
+      previously_assigned_to.update_column(:open_question_count, previously_assigned_to.open_questions.count)
     end
 
   end
@@ -993,6 +997,9 @@ class Question < ActiveRecord::Base
                                :rejection_code => rejection_code)
         QuestionEvent.log_rejection(self)
     end
+
+    # update open question count for resolver
+    resolver.update_column(:open_question_count, resolver.open_questions.count)
   end
 
   def self.rejection_code_from_response(response)

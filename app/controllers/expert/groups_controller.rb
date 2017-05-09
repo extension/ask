@@ -28,6 +28,11 @@ class Expert::GroupsController < ApplicationController
     end
   end
 
+  def auto_assignment_log
+    @group = Group.find(params[:id])
+    @assignment_log_entries = @group.auto_assignment_logs.order('created_at DESC').page(params[:page])
+  end
+
   def about
     @group = Group.find(params[:id])
     @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")

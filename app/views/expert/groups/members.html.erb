@@ -22,7 +22,7 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Primary Location</th>
+      <th>Expertise Locations</th>
       <th>Accepts Questions from</th>
       <%- if @group.individual_assignment -%>
         <th>Auto-assignments</th>
@@ -44,12 +44,26 @@
         <%= link_to('Edit group membership', expert_edit_attributes_path(member), {:class => "btn btn-default btn-xs"}) -%>
       </td>
       <td>
-        <% if member.location %>
-          <% if member.county %>
-            <%= member.county.name %>,
-          <% end %>
-          <%= member.location.abbreviation %>
-        <% end %>
+        <%- if member.expertise_locations.count > 0 -%>
+          <%- member.expertise_locations.each do |l| -%>
+            <div class="location">
+              <strong><span class="tag tag-geography"><%= link_to l.name, view_location_path(l.id) -%></span></strong>
+              <%- if member.expertise_counties.where("location_id = ?", l.id).size > 0 -%>
+                <ul>
+                  <%- member.expertise_counties.where("location_id = ?", l.id).each do |c| -%>
+                    <li><span class="tag tag-geography"><%= link_to "#{c.name}", view_county_path(c.id) -%></span></li>
+                  <%- end -%>
+                </ul>
+              <%- else -%>
+                  <ul>
+                    <li class="all_counties">All counties</li>
+                  </ul>
+              <%- end -%>
+            </div>
+          <%- end -%>
+        <%- else -%>
+          <span class="group-member-warning">This expert does not have any expertise locations.</span>
+        <%- end -%>
       </td>
       <td>
         <% case member.routing_instructions

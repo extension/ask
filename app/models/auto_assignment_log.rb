@@ -6,6 +6,8 @@
 
 class AutoAssignmentLog < ActiveRecord::Base
   serialize :user_pool
+  serialize :assignee_tests
+  
   belongs_to :question
   belongs_to :assignee, :foreign_key => "assignee_id", :class_name => "User"
   belongs_to :group
