@@ -337,6 +337,7 @@ class QuestionsController < ApplicationController
     @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
     if(@question.save)
+      @question.set_tag('accountreview')
       returninformation = {'question_id' => @question.id, 'success' => true}
       return render :json => returninformation.to_json, :status => :ok
     else
