@@ -34,7 +34,9 @@
 
   <div id="tag_list">
   <% @tags.each do |tag| %>
-    <p><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> <%= number_with_delimiter(tag.tag_count, :delimiter => ',') %></p>
+    <%- if tag.name -%>
+      <p><span class="tag tag-topic"><%= link_to tag.name, expert_show_tag_path(tag.name) %></span> <%= number_with_delimiter(tag.tag_count, :delimiter => ',') %></p>
+    <%- end -%>
   <% end %>
   </div>
 
