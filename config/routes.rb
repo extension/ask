@@ -3,14 +3,14 @@ require 'admin_constraint'
 
 Aae::Application.routes.draw do
   mount Sidekiq::Web => '/queues', :constraints => AdminConstraint.new
+  
+  # auth
+  match '/logout', to:'auth#end', :as => 'logout'
+  match '/auth/:provider/callback', to: 'auth#success'
+  match '/auth/failure', to: 'auth#failure'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
-
-  devise_for :users, :path => '/', :controllers => { :sessions => "users/sessions", :registrations => "users/registrations" }
-  devise_for :authmaps, :controllers => { :omniauth_callbacks => "authmaps/omniauth_callbacks" } do
-    get '/authmaps/auth/:provider' => 'authmaps/omniauth_callbacks#passthru'
-  end
 
   # locations redirects to ask controller (temporary, but we've promoted them a fair amount during transition)
   match "/locations", to: redirect("/ask")

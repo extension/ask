@@ -34,7 +34,7 @@
         <% end %>
 
           <% else %>
-            <p>To get the widget code for one of your groups, please <%= link_to("Sign in with your eXtension account", authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => request.fullpath), :class => "btn btn-default" )%></p>
+            <p>To get the widget code for one of your groups, please <%= link_to("Sign in with your eXtension account", '/auth/people', :class => "btn btn-default" )%></p>
           <% end %>
 
 

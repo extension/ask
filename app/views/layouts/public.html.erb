@@ -114,11 +114,10 @@
               <li><%= link_to "About", home_about_path() %></li>
               <li><%= link_to("Ask a Question", ask_index_path()) %></li>
 
-              <% if current_user && !current_user.has_exid? %>
-                <li><%= link_to(current_user.public_name, nonexid_profile_edit_path()) %></li>
-                <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
-              <% elsif !current_user %>
-                <li><%= link_to("Sign in", authmap_omniauth_authorize_path(:people, :explicit_login => true, :redirect_to => request.fullpath) )%></li>
+              <% if current_user %>
+                <li><%= link_to('Logout', logout_path) %></li>
+              <% else %>
+                <li><%= link_to("Sign in", '/auth/people')%></li>
               <% end %>
             </ul>
 

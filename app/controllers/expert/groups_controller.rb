@@ -6,8 +6,8 @@
 
 class Expert::GroupsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def index
     @my_groups = current_user.group_memberships

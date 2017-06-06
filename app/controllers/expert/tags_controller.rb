@@ -6,8 +6,8 @@
 
 class Expert::TagsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def index
     @tags_total_count = Tag.used_at_least_once.length

@@ -6,8 +6,8 @@
 #  see LICENSE file
 
 class EvaluationController < ApplicationController
-  before_filter :authenticate_user!, only: [:example]
-  before_filter :require_exid, only: [:example]
+  before_filter :signin_required, only: [:example]
+  , only: [:example]
 
   before_filter :set_format, :only => [:view]
 

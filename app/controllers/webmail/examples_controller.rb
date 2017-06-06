@@ -5,8 +5,8 @@
 # see LICENSE file
 
 class Webmail::ExamplesController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   skip_before_filter :set_yolo
 

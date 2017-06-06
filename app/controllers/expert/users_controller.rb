@@ -6,8 +6,8 @@
 
 class Expert::UsersController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def show
     @user = User.exid_holder.find_by_id(params[:id])

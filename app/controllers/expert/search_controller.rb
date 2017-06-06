@@ -6,8 +6,8 @@
 
 class Expert::SearchController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def all
     # take quotes out to see if it's a blank field and also strip out +, -, and "  as submitted by themselves are apparently special characters

@@ -27,10 +27,6 @@ class User < ActiveRecord::Base
     time :last_active_at
   end
 
-
-  devise :rememberable, :trackable, :database_authenticatable
-
-
   # constants
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"Anonymous"'
@@ -658,6 +654,14 @@ class User < ActiveRecord::Base
     # out of the list with the oldest last assignment time
     possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
     return possible_user_pool.first
+  end
+
+  def self.find_by_openid(uid_string)
+    if !uid_string.blank? and learner = Learner.authmaps.where({:openid => uid_string}).first
+      learner
+    else
+      nil
+    end
   end
 
   private
