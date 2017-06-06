@@ -57,7 +57,7 @@ class Expert::HomeController < ApplicationController
   def users_by_tag
     @tag = Tag.find_by_name(params[:name])
     return record_not_found if (!@tag)
-    @experts = User.tagged_with(@tag.id).page(params[:page]).exid_holder.not_retired.order("users.last_active_at DESC")
+    @experts = User.tagged_with(@tag.id).page(params[:page]).exid_holder.not_unavailable.order("users.last_active_at DESC")
     @expert_total_count = User.tagged_with(@tag.id).count
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
@@ -78,8 +78,8 @@ class Expert::HomeController < ApplicationController
   def users_by_county
     @county = County.find_by_id(params[:id])
     return record_not_found if @county.blank?
-    @experts = User.with_expertise_county(@county.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
-    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_retired.count
+    @experts = User.with_expertise_county(@county.id).exid_holder.not_unavailable.page(params[:page]).order("users.last_active_at DESC")
+    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_unavailable.count
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
 
@@ -132,8 +132,8 @@ class Expert::HomeController < ApplicationController
 
     @questions = Question.where("county_id = ?", @county.id).not_rejected.order("questions.status_state DESC").limit(5)
     @question_total_count = Question.where("county_id = ?", @county.id).not_rejected.count
-    @experts = User.with_expertise_county(@county.id).exid_holder.not_retired.order("users.last_active_at DESC").limit(5)
-    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_retired.count
+    @experts = User.with_expertise_county(@county.id).exid_holder.not_unavailable.order("users.last_active_at DESC").limit(5)
+    @expert_total_count = User.with_expertise_county(@county.id).exid_holder.not_unavailable.count
     @groups = Group.with_expertise_county(@county.id).limit(8)
     @group_total_count = Group.with_expertise_county(@county.id).count
   end

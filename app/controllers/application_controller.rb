@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_time_zone_from_user
   before_filter :set_last_active_at_for_user
-  before_filter :check_retired
+  before_filter :check_unavailable
   before_filter :set_yolo
   before_filter :set_referer_track
 
@@ -92,8 +92,8 @@ class ApplicationController < ActionController::Base
     return true
   end
 
-  def check_retired
-    if current_user && current_user.retired
+  def check_unavailable
+    if current_user && current_user.unavailable
       return sign_out current_user
     end
   end
