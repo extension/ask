@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170217181155) do
+ActiveRecord::Schema.define(:version => 20170605154823) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -658,7 +658,7 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
     t.integer  "position_id"
     t.integer  "location_id",                              :default => 0
     t.integer  "county_id",                                :default => 0
-    t.boolean  "retired",                                  :default => false
+    t.boolean  "unavailable",                              :default => false
     t.boolean  "is_admin",                                 :default => false
     t.boolean  "auto_route",                               :default => true,       :null => false
     t.string   "phone_number"
@@ -669,7 +669,6 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
     t.boolean  "first_aae_away_reminder",                  :default => false
     t.boolean  "second_aae_away_reminder",                 :default => false
     t.text     "bio"
-    t.boolean  "is_blocked",                               :default => false,      :null => false
     t.text     "signature"
     t.string   "routing_instructions",                     :default => "anywhere", :null => false
     t.string   "avatar_file_name"
@@ -692,14 +691,15 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
     t.integer  "open_question_count",                      :default => 0
     t.datetime "last_question_touched_at"
     t.datetime "last_question_assigned_at"
+    t.integer  "unavailable_reason"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"
   add_index "users", ["email"], :name => "email"
   add_index "users", ["login"], :name => "login"
   add_index "users", ["needs_search_update"], :name => "search_update_flag_ndx"
-  add_index "users", ["retired"], :name => "retired"
   add_index "users", ["routing_instructions"], :name => "routing_instructions"
+  add_index "users", ["unavailable"], :name => "retired"
 
   create_table "versions", :force => true do |t|
     t.string   "item_type",                           :null => false
