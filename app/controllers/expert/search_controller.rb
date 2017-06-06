@@ -56,7 +56,7 @@ class Expert::SearchController < ApplicationController
                 end
                 with :unavailable, false
                 with :kind, 'User'
-                order_by :last_active_at, :desc
+                order_by :last_activity_at, :desc
                 paginate :page => 1, :per_page => 10
               end
       @experts = experts.results
@@ -104,7 +104,7 @@ class Expert::SearchController < ApplicationController
               with :is_blocked, false
               with :unavailable, false
               with :kind, 'User'
-              order_by :last_active_at, :desc
+              order_by :last_activity_at, :desc
               fulltext(params[:q]) do
                 fields(:name)
                 fields(:bio)

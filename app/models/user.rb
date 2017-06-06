@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
     text :tag_fulltext
     boolean :unavailable
     string :kind
-    time :last_active_at
+    time :last_activity_at
   end
 
   # constants

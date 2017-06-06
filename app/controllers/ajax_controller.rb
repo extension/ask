@@ -77,7 +77,7 @@ class AjaxController < ApplicationController
                 end
                 with :unavailable, false
                 with :kind, 'User'
-                order_by :last_active_at, :desc
+                order_by :last_activity_at, :desc
                 paginate :page => 1, :per_page => 18 - groups.size
               end
       experts = experts_solr.results

@@ -3,6 +3,7 @@ class RemoveDevise < ActiveRecord::Migration
     add_column(:users, :openid, :string, :null => true)
     add_column(:users, :institution_id, :integer, :null => true)
     add_column(:users, :last_activity_at, :datetime, :null => true)
+    remove_column(:users, :last_active_at)
 
     # set openid from authmaps
     execute "UPDATE users,authmaps set users.openid = authmaps.authname where authmaps.source = 'people' and authmaps.user_id = users.id"

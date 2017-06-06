@@ -137,7 +137,7 @@ class Expert::TagsController < ApplicationController
       @questions = Question.tagged_with(@tag.id).not_rejected.order("questions.created_at DESC").limit(25)
       @question_total_count = Question.tagged_with(@tag.id).order("questions.status_state ASC").count
 
-      @experts = User.tagged_with(@tag.id).order("users.last_active_at DESC").limit(5)
+      @experts = User.tagged_with(@tag.id).order("users.last_activity_at DESC").limit(5)
       @expert_total_count = User.tagged_with(@tag.id).count
       @groups = Group.tagged_with(@tag.id).limit(5)
       @group_total_count = Group.tagged_with(@tag.id).count

@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   helper_method :county_names
 
   before_filter :set_time_zone_from_user
-  before_filter :set_last_active_at_for_user
+  before_filter :update_last_activity
   before_filter :check_unavailable
   before_filter :set_yolo
   before_filter :set_referer_track
@@ -83,13 +83,9 @@ class ApplicationController < ActionController::Base
     true
   end
 
-  def set_last_active_at_for_user
-    if current_user
-      if current_user.last_active_at != Date.today
-        current_user.update_attribute(:last_active_at, Date.today)
-      end
-    end
-    return true
+  def update_last_activity
+    current_user.update_column(:last_activity_at,Time.now.utc) if current_user
+    true
   end
 
   def check_unavailable
