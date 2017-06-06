@@ -666,7 +666,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
     t.datetime "avatar_updated_at"
     t.datetime "created_at",                                                      :null => false
     t.datetime "updated_at",                                                      :null => false
-    t.date     "last_active_at"
     t.boolean  "needs_search_update"
     t.boolean  "has_invalid_email",                       :default => false
     t.string   "invalid_email"
