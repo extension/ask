@@ -96,9 +96,8 @@ class User < ActiveRecord::Base
   scope :route_from_location, -> {where(routing_instructions: ['anywhere','locations_only'])}
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
   scope :not_unavailable, -> { where(unavailable: false) }
-  scope :not_blocked, -> { where(is_blocked: false) }
   scope :not_system,  -> { where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
-  scope :valid_users, -> { not_unavailable.not_blocked.not_system }
+  scope :valid_users, -> { not_unavailable.not_system }
   scope :not_away, -> { where(away:false) }
   scope :auto_route, -> { where(auto_route:true) }
   scope :assignable, -> { exid_holder.valid_users.not_away }

@@ -63,7 +63,7 @@ class Group < ActiveRecord::Base
 
   scope :order_by_assignee_count, lambda {
     joins(:users)
-    .where('users.unavailable = ?',false).where('users.is_blocked = ?',false).where("users.id NOT IN (#{User::SYSTEMS_USERS.join(',')})")
+    .where('users.unavailable = ?',false).where("users.id NOT IN (#{User::SYSTEMS_USERS.join(',')})")
     .where('users.away = ?',false).where('users.auto_route = ?',true)
     .group('groups.id').order('COUNT(users.id) DESC') }
 

@@ -155,7 +155,7 @@ class Notification < ActiveRecord::Base
   end
 
   def aae_daily_summary
-    User.not_unavailable.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or user.daily_summary_group_list.empty?}
+    User.not_unavailable.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or user.daily_summary_group_list.empty?}
   end
 
   def aae_public_edit

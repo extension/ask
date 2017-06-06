@@ -101,7 +101,6 @@ class Expert::SearchController < ApplicationController
     @list_title = "Search for Experts with '#{params[:q]}' in the name or bio"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     experts = User.search do
-              with :is_blocked, false
               with :unavailable, false
               with :kind, 'User'
               order_by :last_activity_at, :desc
