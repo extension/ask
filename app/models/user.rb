@@ -250,15 +250,24 @@ class User < ActiveRecord::Base
     return self.kind == 'User'
   end
 
-  def retired?
-    return self.retired
-  end
-
   def available?
-    if self.away == true || self.retired == true
+    if(self.away? or self.unavailable?)
       return false
     end
     return true
+  end
+
+  def unavailable_reason_to_s
+    case unavailable_reason
+    when UNAVAILABLE_RETIRED
+      "Retired Account"
+    when UNAVAILABLE_CONFIRM_EMAIL
+      "Waiting Email confirmation"
+    when UNAVAILABLE_TOU_HALT
+      "Waiting Terms of Use Acceptance"
+    else
+      ''
+    end
   end
 
   def previously_assigned(question)
@@ -661,8 +670,8 @@ class User < ActiveRecord::Base
   end
 
   def self.find_by_openid(uid_string)
-    if !uid_string.blank? and learner = Learner.authmaps.where({:openid => uid_string}).first
-      learner
+    if !uid_string.blank? and user = self.where({:openid => uid_string}).first
+      user
     else
       nil
     end

@@ -29,7 +29,7 @@ class AuthController < ApplicationController
 
     if(user)
       if(user.unavailable?)
-        flash[:error] = "Your account is currently marked as retired."
+        flash[:error] = "Your account is currently marked as unavailable."
         return redirect_to(root_url)
       else
         set_current_user(user)

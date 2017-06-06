@@ -7,7 +7,7 @@
 class Expert::SearchController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def all
     # take quotes out to see if it's a blank field and also strip out +, -, and "  as submitted by themselves are apparently special characters
@@ -54,8 +54,7 @@ class Expert::SearchController < ApplicationController
                   fields(:bio)
                   fields(:login)
                 end
-                with :is_blocked, false
-                with :retired, false
+                with :unavailable, false
                 with :kind, 'User'
                 order_by :last_active_at, :desc
                 paginate :page => 1, :per_page => 10
@@ -103,7 +102,7 @@ class Expert::SearchController < ApplicationController
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
     experts = User.search do
               with :is_blocked, false
-              with :retired, false
+              with :unavailable, false
               with :kind, 'User'
               order_by :last_active_at, :desc
               fulltext(params[:q]) do

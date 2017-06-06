@@ -7,7 +7,7 @@ module AuthLib
   def current_user
     if(!@current_user)
       if(session[:user_id])
-        @current_user = Learner.find_by_id(session[:user_id])
+        @current_user = User.find_by_id(session[:user_id])
       end
     end
 
@@ -37,7 +37,7 @@ module AuthLib
 
   def signin_required
     if session[:user_id]
-      user = Learner.find_by_id(session[:user_id])
+      user = User.find_by_id(session[:user_id])
       if (user.signin_allowed?)
         set_current_user(user)
         return true

@@ -3,7 +3,7 @@ require 'admin_constraint'
 
 Aae::Application.routes.draw do
   mount Sidekiq::Web => '/queues', :constraints => AdminConstraint.new
-  
+
   # auth
   match '/logout', to:'auth#end', :as => 'logout'
   match '/auth/:provider/callback', to: 'auth#success'
@@ -212,9 +212,6 @@ Aae::Application.routes.draw do
   end
 
   resources :ask
-
-  # retired url
-  match "users/retired" => "users#retired", :via => [:get]
 
   resources :users, :only => [:show]
 

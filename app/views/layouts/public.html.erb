@@ -67,7 +67,7 @@
             <li><%= link_to "My Profile", expert_user_path(current_user.id) %></li>
             <li><%= link_to "My Groups", expert_user_groups_path(current_user) %></li>
             <li><%= link_to "Edit Profile", expert_profile_settings_path(current_user) %></li>
-            <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %></li>
+            <li><%= link_to('Logout', logout_path) %></li>
           </ul>
         </div>
         </div>

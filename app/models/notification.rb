@@ -201,7 +201,7 @@ class Notification < ActiveRecord::Base
 
   def aae_expert_response_edit
     recipient = User.find_by_id(self.recipient_id)
-    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
+    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.unavailable? || recipient.email.blank?)
   end
 
   def aae_expert_response_edit_to_submitter
