@@ -9,7 +9,7 @@
   <p><%= link_to image_tag("Ask_An_Expert_logo_color.png", :class => "ask-an-expert-button", :alt =>"Ask an Expert"), ask_group_path(Group::EXTENSION_SUPPORT_ID), :title => "One-to-one answers from a network of experts at universities across America." %></p>
 
   <% if !current_user %>
-    <p>If you are a part of Cooperative Extension, please <%= link_to("sign in and tour the new site", new_user_session_path(:redirect_to => expert_home_url) )%>.</p>
+    <p>If you are a part of Cooperative Extension and have an eXtensionID, please <%= link_to("sign in", '/auth/people' )%>.</p>
   <% end %>
 
 </div>
