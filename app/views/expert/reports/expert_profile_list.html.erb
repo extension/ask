@@ -8,9 +8,9 @@
 <div class="well">
   <%= link_expert_user_avatar(@expert, :medium, current_user.id == @expert.id ? true : false) %>
   <h1>
-    <span class=''><%= @expert.name %></span> <%= @expert.retired ? "(Retired Account)" : "" %>
+    <span class=''><%= @expert.name %></span> <%= @expert.unavailable? ? "(#{@expert.unavailable_reason_to_s})" : "" %>
   </h1>
-  <%= @expert.retired ? "(Retired Account)" : "" %>
+  <%= @expert.unavailable? ? "(#{@expert.unavailable_reason_to_s})" : "" %>
 
 </div>
 

@@ -41,12 +41,8 @@ module ApplicationHelper
   end
 
   def get_last_active_time(user)
-    if user.last_active_at.present?
-      if user.last_active_at.to_s == Date.today.to_s
-        return 'today'
-      else
-        return time_ago_in_words(user.last_active_at) + ' ago'
-      end
+    if user.last_activity_at.present?
+      return time_ago_in_words(user.last_activity_at) + ' ago'
     else
       return 'No activity to date'
     end

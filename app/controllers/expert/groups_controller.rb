@@ -6,8 +6,8 @@
 
 class Expert::GroupsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def index
     @my_groups = current_user.group_memberships
@@ -35,13 +35,13 @@ class Expert::GroupsController < ApplicationController
 
   def about
     @group = Group.find(params[:id])
-    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_activity_at DESC")
     @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
 
   def leaders
     @group = Group.find(params[:id])
-    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_activity_at DESC")
     @group_members_route_from_anywhere = @group.joined.route_from_anywhere
   end
 
@@ -76,7 +76,7 @@ class Expert::GroupsController < ApplicationController
 
   def members
     @group = Group.find(params[:id])
-    @group_members = @group.joined.order('connection_type ASC').order("users.last_active_at DESC")
+    @group_members = @group.joined.order('connection_type ASC').order("users.last_activity_at DESC")
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @group_members.map(&:id)})
   end
 

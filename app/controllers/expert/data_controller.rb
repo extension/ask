@@ -7,8 +7,7 @@
 
 class Expert::DataController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
 
   def index
     if(params[:forcecacheupdate])

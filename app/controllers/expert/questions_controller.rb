@@ -6,7 +6,7 @@
 
 class Expert::QuestionsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!, :require_exid
+  before_filter :signin_required
   before_filter :set_format, :only => [:show]
 
   def index
@@ -309,8 +309,8 @@ class Expert::QuestionsController < ApplicationController
 
     user = User.find_by_id(params[:assignee_id])
 
-    if !user || user.retired?
-      !user ? err_msg = "User does not exist." : err_msg = "User is retired from the system"
+    if !user || user.unavailable?
+      !user ? err_msg = "User does not exist." : err_msg = "User is unavailable"
       flash[:error] = err_msg
       return redirect_to expert_question_url(@question)
     end

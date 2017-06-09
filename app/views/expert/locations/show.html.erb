@@ -111,7 +111,7 @@
     <div class="county-columns">
       <ul class="county_list">
       <% @counties.each do |county| %>
-        <li><span class="tag tag-geography"><%= link_to "#{county.name}", expert_view_county_path(county.id) %></span> <%= User.with_expertise_county(county.id).exid_holder.not_retired.count > 0 ? "#{User.with_expertise_county(county.id).exid_holder.not_retired.count} experts" : "" %></li>
+        <li><span class="tag tag-geography"><%= link_to "#{county.name}", expert_view_county_path(county.id) %></span> <%= User.with_expertise_county(county.id).exid_holder.not_unavailable.count > 0 ? "#{User.with_expertise_county(county.id).exid_holder.not_unavailable.count} experts" : "" %></li>
       <% end %>
       </ul>
     </div>

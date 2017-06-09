@@ -6,6 +6,9 @@
 #  see LICENSE file
 
 class ApplicationController < ActionController::Base
+  include AuthLib
+  helper_method :current_user
+
   protect_from_forgery
   layout "public"
 
@@ -21,9 +24,8 @@ class ApplicationController < ActionController::Base
   helper_method :county_names
 
   before_filter :set_time_zone_from_user
-  before_filter :set_last_active_at_for_user
-  before_filter :check_retired
-  before_filter :store_redirect_url
+  before_filter :update_last_activity
+  before_filter :check_unavailable
   before_filter :set_yolo
   before_filter :set_referer_track
 
@@ -46,28 +48,6 @@ class ApplicationController < ActionController::Base
   # turn off paper trail on the create action. we have it configured for updates only, but somehow papertrail is detecting an update on body and title (thus generating a new revision) on create
   def paper_trail_enabled_for_controller
     params[:action] != 'create' && params[:action] != 'ask' && params[:action] != 'answer'
-  end
-
-  def store_redirect_url
-    session[:user_return_to] = request.url unless (params[:controller] == "authmaps/omniauth_callbacks" || params[:controller] == "users/sessions")
-  end
-
-  # devise hook for the url to redirect to after a user has authenticated
-  def after_sign_in_path_for(resource)
-    stored_location_for(resource) || root_path
-  end
-
-  def stored_location_for(resource)
-    if current_user && !params[:redirect_to].blank?
-      return params[:redirect_to]
-    end
-    return nil
-  end
-
-  def require_exid
-    if(!(current_user && current_user.has_exid?))
-      return redirect_to(root_url)
-    end
   end
 
   def record_not_found
@@ -103,17 +83,13 @@ class ApplicationController < ActionController::Base
     true
   end
 
-  def set_last_active_at_for_user
-    if current_user
-      if current_user.last_active_at != Date.today
-        current_user.update_attribute(:last_active_at, Date.today)
-      end
-    end
-    return true
+  def update_last_activity
+    current_user.update_column(:last_activity_at,Time.now.utc) if current_user
+    true
   end
 
-  def check_retired
-    if current_user && current_user.retired
+  def check_unavailable
+    if current_user && current_user.unavailable
       return sign_out current_user
     end
   end

@@ -6,8 +6,8 @@
 
 class Expert::LocationsController < ApplicationController
   layout 'expert'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
 
   def index
@@ -15,8 +15,8 @@ class Expert::LocationsController < ApplicationController
 
   def show
     @location = Location.find_by_id(params[:id])
-    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.order("users.last_active_at DESC").limit(5)
-    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_unavailable.order("users.last_activity_at DESC").limit(5)
+    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_unavailable.count
     @groups = Group.where(group_active: true).with_expertise_location(@location.id).limit(5)
     @group_total_count_active = Group.where(group_active: true).with_expertise_location(@location.id).count
     @group_total_count_inactive = Group.where(group_active: false).with_expertise_location(@location.id).count
@@ -59,8 +59,8 @@ class Expert::LocationsController < ApplicationController
 
   def experts
     @location = Location.find(params[:id])
-    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.page(params[:page]).order("users.last_active_at DESC")
-    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_retired.count
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_unavailable.page(params[:page]).order("users.last_activity_at DESC")
+    @expert_total_count = User.with_expertise_location(@location.id).exid_holder.not_unavailable.count
     @handling_rates = User.aae_handling_event_count({:group_by_id => true, :limit_to_handler_ids => @experts.map(&:id)})
   end
 
@@ -68,7 +68,7 @@ class Expert::LocationsController < ApplicationController
   def experts_email_csv
     @location = Location.find_by_id(params[:id])
     return record_not_found if @location.blank?
-    @experts = User.with_expertise_location(@location.id).exid_holder.not_retired.order("users.last_active_at DESC")
+    @experts = User.with_expertise_location(@location.id).exid_holder.not_unavailable.order("users.last_activity_at DESC")
     respond_to do |format|
       format.csv { send_data User.to_csv(@experts, ["first_name", "last_name", "email"]), :filename => "#{@location.name.gsub(' ', '_')}_Expert_Emails.csv" }
     end

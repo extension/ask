@@ -63,7 +63,7 @@ class Group < ActiveRecord::Base
 
   scope :order_by_assignee_count, lambda {
     joins(:users)
-    .where('users.retired = ?',false).where('users.is_blocked = ?',false).where("users.id NOT IN (#{User::SYSTEMS_USERS.join(',')})")
+    .where('users.unavailable = ?',false).where("users.id NOT IN (#{User::SYSTEMS_USERS.join(',')})")
     .where('users.away = ?',false).where('users.auto_route = ?',true)
     .group('groups.id').order('COUNT(users.id) DESC') }
 
@@ -175,7 +175,7 @@ class Group < ActiveRecord::Base
   end
 
   def group_members_with_self_first(user, limit)
-    group_members = self.joined.where("user_id != ?", user.id).order('connection_type ASC').order("users.last_active_at DESC").limit(limit).to_a
+    group_members = self.joined.where("user_id != ?", user.id).order('connection_type ASC').order("users.last_activity_at DESC").limit(limit).to_a
     if (user.member_of_group(self))
       # push this person on the front of the list
       group_members = group_members.unshift(user)

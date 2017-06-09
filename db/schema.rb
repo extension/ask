@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170217181155) do
+ActiveRecord::Schema.define(:version => 20170606123725) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -50,17 +50,6 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
   end
 
   add_index "assets", ["type", "assetable_id", "assetable_type"], :name => "assetable_ndx"
-
-  create_table "authmaps", :force => true do |t|
-    t.integer  "user_id",    :null => false
-    t.string   "authname",   :null => false
-    t.string   "source",     :null => false
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "authmaps", ["authname", "source"], :name => "index_authmaps_on_authname_and_source", :unique => true
-  add_index "authmaps", ["user_id"], :name => "index_authmaps_on_user_id"
 
   create_table "auto_assignment_logs", :force => true do |t|
     t.integer  "question_id"
@@ -648,7 +637,7 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
 
   create_table "users", :force => true do |t|
     t.integer  "darmok_id"
-    t.string   "kind",                                     :default => "",         :null => false
+    t.string   "kind",                                    :default => "",         :null => false
     t.string   "login",                     :limit => 80
     t.string   "first_name"
     t.string   "last_name"
@@ -656,50 +645,45 @@ ActiveRecord::Schema.define(:version => 20170217181155) do
     t.string   "email"
     t.string   "title"
     t.integer  "position_id"
-    t.integer  "location_id",                              :default => 0
-    t.integer  "county_id",                                :default => 0
-    t.boolean  "retired",                                  :default => false
-    t.boolean  "is_admin",                                 :default => false
-    t.boolean  "auto_route",                               :default => true,       :null => false
+    t.integer  "location_id",                             :default => 0
+    t.integer  "county_id",                               :default => 0
+    t.boolean  "unavailable",                             :default => false
+    t.boolean  "is_admin",                                :default => false
+    t.boolean  "auto_route",                              :default => true,       :null => false
     t.string   "phone_number"
-    t.boolean  "away",                                     :default => false
+    t.boolean  "away",                                    :default => false
     t.string   "time_zone"
-    t.boolean  "is_question_wrangler",                     :default => false
+    t.boolean  "is_question_wrangler",                    :default => false
     t.datetime "vacated_aae_at"
-    t.boolean  "first_aae_away_reminder",                  :default => false
-    t.boolean  "second_aae_away_reminder",                 :default => false
+    t.boolean  "first_aae_away_reminder",                 :default => false
+    t.boolean  "second_aae_away_reminder",                :default => false
     t.text     "bio"
-    t.boolean  "is_blocked",                               :default => false,      :null => false
     t.text     "signature"
-    t.string   "routing_instructions",                     :default => "anywhere", :null => false
+    t.string   "routing_instructions",                    :default => "anywhere", :null => false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.string   "encrypted_password",        :limit => 128
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                            :default => 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at",                                                       :null => false
-    t.datetime "updated_at",                                                       :null => false
-    t.date     "last_active_at"
+    t.datetime "created_at",                                                      :null => false
+    t.datetime "updated_at",                                                      :null => false
     t.boolean  "needs_search_update"
-    t.boolean  "has_invalid_email",                        :default => false
+    t.boolean  "has_invalid_email",                       :default => false
     t.string   "invalid_email"
-    t.integer  "open_question_count",                      :default => 0
+    t.integer  "open_question_count",                     :default => 0
     t.datetime "last_question_touched_at"
     t.datetime "last_question_assigned_at"
+    t.integer  "unavailable_reason"
+    t.string   "openid"
+    t.integer  "institution_id"
+    t.datetime "last_activity_at"
   end
 
   add_index "users", ["darmok_id"], :name => "people_id_ndx"
   add_index "users", ["email"], :name => "email"
   add_index "users", ["login"], :name => "login"
   add_index "users", ["needs_search_update"], :name => "search_update_flag_ndx"
-  add_index "users", ["retired"], :name => "retired"
   add_index "users", ["routing_instructions"], :name => "routing_instructions"
+  add_index "users", ["unavailable"], :name => "retired"
 
   create_table "versions", :force => true do |t|
     t.string   "item_type",                           :null => false

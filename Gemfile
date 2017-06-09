@@ -47,10 +47,7 @@ gem 'geocoder'
 gem 'geoip'
 
 # authentication
-gem 'devise', "~> 1.5.1"
-gem 'omniauth-facebook'
 gem 'omniauth-openid'
-gem 'omniauth-twitter'
 
 # oauth integration
 gem 'omniauth', "~> 1.0"

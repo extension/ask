@@ -155,7 +155,7 @@ class Notification < ActiveRecord::Base
   end
 
   def aae_daily_summary
-    User.not_retired.not_blocked.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or user.daily_summary_group_list.empty?}
+    User.not_unavailable.daily_summary_notification_list.each{|user| InternalMailer.aae_daily_summary(user: user, groups: user.daily_summary_group_list).deliver unless user.email.nil? or user.away? or user.daily_summary_group_list.empty?}
   end
 
   def aae_public_edit
@@ -201,7 +201,7 @@ class Notification < ActiveRecord::Base
 
   def aae_expert_response_edit
     recipient = User.find_by_id(self.recipient_id)
-    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.retired? || recipient.email.blank?)
+    InternalMailer.aae_response_edit(user: recipient, question: self.notifiable.question, response: self.notifiable).deliver unless ((recipient.id == self.created_by) || recipient.blank? || recipient.unavailable? || recipient.email.blank?)
   end
 
   def aae_expert_response_edit_to_submitter

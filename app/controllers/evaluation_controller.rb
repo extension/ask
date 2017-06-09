@@ -2,13 +2,11 @@
 #  Copyright (c) North Carolina State University
 #  Developed with funding for the National eXtension Initiative.
 # === LICENSE:
-# 
+#
 #  see LICENSE file
 
 class EvaluationController < ApplicationController
-  before_filter :authenticate_user!, only: [:example]
-  before_filter :require_exid, only: [:example]
-
+  before_filter :signin_required, only: [:example]
   before_filter :set_format, :only => [:view]
 
   def view
@@ -21,7 +19,7 @@ class EvaluationController < ApplicationController
       return record_not_found
     end
   end
-  
+
   def example
     @evaluator = current_user
     @question = Question.last

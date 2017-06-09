@@ -75,10 +75,9 @@ class AjaxController < ApplicationController
                   fields(:name)
                   fields(:login)
                 end
-                with :is_blocked, false
-                with :retired, false
+                with :unavailable, false
                 with :kind, 'User'
-                order_by :last_active_at, :desc
+                order_by :last_activity_at, :desc
                 paginate :page => 1, :per_page => 18 - groups.size
               end
       experts = experts_solr.results
@@ -87,7 +86,7 @@ class AjaxController < ApplicationController
       # this conditional should not be triggered during normal app usage, but
       # return something for testing
       groups = Group.where(group_active: true).order('created_at DESC').limit(6)
-      experts = User.exid_holder.not_away.not_blocked.not_retired.order('created_at DESC').limit(6)
+      experts = User.exid_holder.not_away.not_unavailable.order('created_at DESC').limit(6)
     end
 
     combined_array = groups + experts

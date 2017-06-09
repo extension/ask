@@ -6,8 +6,8 @@
 
 class SettingsController < ApplicationController
   layout 'public'
-  before_filter :authenticate_user!
-  before_filter :require_exid
+  before_filter :signin_required
+  
 
   def profile
     @user = current_user

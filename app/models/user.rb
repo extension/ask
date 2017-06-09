@@ -21,21 +21,21 @@ class User < ActiveRecord::Base
     text :login, :as => :login_textp
     text :email
     text :tag_fulltext
-    boolean :retired
-    boolean :is_blocked
+    boolean :unavailable
     string :kind
-    time :last_active_at
+    time :last_activity_at
   end
-
-
-  devise :rememberable, :trackable, :database_authenticatable
-
 
   # constants
   DEFAULT_TIMEZONE = 'America/New_York'
   DEFAULT_NAME = '"Anonymous"'
   SYSTEMS_USERS = [1,2,3,4,5,6,7,8]
   EMAIL_VALIDATION_REGEX = Regexp.new('\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z',Regexp::IGNORECASE)
+
+  # unavailable reasons
+  UNAVAILABLE_RETIRED = 1
+  UNAVAILABLE_CONFIRM_EMAIL = 2
+  UNAVAILABLE_TOU_HALT = 3
 
   # associations
   has_many :authmaps
@@ -95,10 +95,9 @@ class User < ActiveRecord::Base
   scope :route_from_anywhere, -> {where(routing_instructions: 'anywhere')}
   scope :route_from_location, -> {where(routing_instructions: ['anywhere','locations_only'])}
   scope :exid_holder, conditions: "kind = 'User' AND users.id NOT IN (#{SYSTEMS_USERS.join(',')})"
-  scope :not_retired, -> { where(retired: false) }
-  scope :not_blocked, -> { where(is_blocked: false) }
+  scope :not_unavailable, -> { where(unavailable: false) }
   scope :not_system,  -> { where("users.id NOT IN (#{SYSTEMS_USERS.join(',')})") }
-  scope :valid_users, -> { not_retired.not_blocked.not_system }
+  scope :valid_users, -> { not_unavailable.not_system }
   scope :not_away, -> { where(away:false) }
   scope :auto_route, -> { where(auto_route:true) }
   scope :assignable, -> { exid_holder.valid_users.not_away }
@@ -171,14 +170,14 @@ class User < ActiveRecord::Base
   end
 
   def signin_allowed?
-    !self.is_blocked? and !self.retired? and !is_systems_account?
+    !self.unavailable? and !is_systems_account?
   end
 
   def self.by_question_event_count(event_state,options = {})
     with_scope do
       (options[:yearmonth].present? && options[:yearmonth] =~ /-/) ? date_string = '%Y-%m' : date_string = '%Y'
 
-      qe_scope = self.exid_holder.not_retired
+      qe_scope = self.exid_holder.not_unavailable
       .select("users.*,
                COUNT(DISTINCT IF(question_events.event_state = #{event_state}, question_id, NULL)) AS resolved_count")
       .joins("LEFT JOIN question_events on question_events.initiated_by_id = users.id")
@@ -250,15 +249,24 @@ class User < ActiveRecord::Base
     return self.kind == 'User'
   end
 
-  def retired?
-    return self.retired
-  end
-
   def available?
-    if self.away == true || self.retired == true
+    if(self.away? or self.unavailable?)
       return false
     end
     return true
+  end
+
+  def unavailable_reason_to_s
+    case unavailable_reason
+    when UNAVAILABLE_RETIRED
+      "Retired Account"
+    when UNAVAILABLE_CONFIRM_EMAIL
+      "Waiting Email confirmation"
+    when UNAVAILABLE_TOU_HALT
+      "Waiting Terms of Use Acceptance"
+    else
+      ''
+    end
   end
 
   def previously_assigned(question)
@@ -658,6 +666,14 @@ class User < ActiveRecord::Base
     # out of the list with the oldest last assignment time
     possible_user_pool.sort! { |a, b| a.last_question_assigned_at(true) <=> b.last_question_assigned_at(true) }
     return possible_user_pool.first
+  end
+
+  def self.find_by_openid(uid_string)
+    if !uid_string.blank? and user = self.where({:openid => uid_string}).first
+      user
+    else
+      nil
+    end
   end
 
   private
