@@ -561,8 +561,20 @@ class Question < ActiveRecord::Base
     self.submitter.present? ? self.submitter.email : ''
   end
 
+  def was_auto_rejected?
+    (status_state == STATUS_REJECTED && [REJECTION_AUTO_LOCATION,REJECTION_AUTO_EXPERT_UNAVAILABLE].include?(rejection_code))
+  end
+
   def check_for_duplicate
-    Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first
+    if(question = Question.joins(:submitter).where("questions.id != ?",self.id).where(body: self.body).where("users.email = ?",self.email).first)
+      if(question.was_auto_rejected?)
+        nil
+      else
+        question
+      end
+    else
+      nil
+    end
   end
 
 
