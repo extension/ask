@@ -907,13 +907,17 @@ class Question < ActiveRecord::Base
 
     #keep track of the previously assigned user for reassignment if there was one
     if self.assignee.present?
-      previously_assigned_user = self.assignee
+      previously_assigned_to = self.assignee
       is_reassign = true
     end
 
     # update and log
     current_assigned_group = self.assigned_group
     self.update_attributes(:assigned_group => group, :assignee => nil, :working_on_this => nil)
+    # since we cleared out the assignee - update their question count
+    if(!previously_assigned_to.nil?)
+      previously_assigned_to.update_column(:open_question_count, previously_assigned_to.open_questions.count)
+    end
     QuestionEvent.log_group_assignment(self,group,assigned_by,comment)
     if(current_assigned_group != group)
       QuestionEvent.log_group_change(question: self, old_group: current_assigned_group, new_group: group, initiated_by: assigned_by)
@@ -923,10 +927,10 @@ class Question < ActiveRecord::Base
     # if the individual assignment flag is set to true for this group, assign to an individual within this group using the routing algorithm.
     Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: 1, notification_type: Notification::AAE_ASSIGNMENT_GROUP, delivery_time: 1.minute.from_now )  unless self.assigned_group.incoming_notification_list.empty?
     if group.individual_assignment?
-      self.find_group_assignee_and_assign(assignees_to_exclude: previously_assigned_user.present? ? [previously_assigned_user] : nil)
+      self.find_group_assignee_and_assign(assignees_to_exclude: previously_assigned_to.present? ? [previously_assigned_to] : nil)
     else
       if(is_reassign)
-        Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_user.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
+        Notification.create(notifiable: self, created_by: assigned_by.id, recipient_id: previously_assigned_to.id, notification_type: Notification::AAE_REASSIGNMENT, delivery_time: 1.minute.from_now )
       end
     end
   end
