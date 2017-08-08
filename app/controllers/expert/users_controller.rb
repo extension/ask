@@ -7,7 +7,7 @@
 class Expert::UsersController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def show
     @user = User.exid_holder.find_by_id(params[:id])
@@ -17,6 +17,8 @@ class Expert::UsersController < ApplicationController
     end
     @question_list = "assigned"
     @questions = @user.open_questions.page(params[:page]).order('created_at DESC')
+    # while we're looking, update the cached values
+    @user.set_assignment_values
     @question_count = @user.open_questions.length
     @user_groups = @user.group_memberships
     @handling_event_count = @user.aae_handling_event_count
