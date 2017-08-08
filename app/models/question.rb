@@ -844,12 +844,12 @@ class Question < ActiveRecord::Base
     # is this being reassigned?
     if(current_assignee.present? and (assigned_by.id != current_assignee.id))
       is_reassign = true
-      previously_assigned_to = current_assignee
     else
       is_reassign = false
     end
 
     # set the assignee - log it, and notify them
+    previously_assigned_to = current_assignee
     self.update_attributes(:assignee_id => assign_to.id, :working_on_this => nil, :last_assigned_at => Time.zone.now )
 
     if is_auto_assignment
@@ -884,7 +884,7 @@ class Question < ActiveRecord::Base
                           delivery_time: 1.minute.from_now )
     end
 
-    # update assignment stats for the assignee
+    # update assignment stats for the assignee and previous_assignee
     assign_to.update_column(:open_question_count, assign_to.open_questions.count)
     assign_to.update_column(:last_question_assigned_at, Time.zone.now)
 
