@@ -1014,8 +1014,10 @@ class Question < ActiveRecord::Base
         QuestionEvent.log_rejection(self)
     end
 
-    # update open question count for resolver
-    resolver.update_column(:open_question_count, resolver.open_questions.count)
+    # update open question count for assignee
+    if(self.assignee)
+      self.assignee.update_column(:open_question_count, self.assignee.open_questions.count)
+    end
   end
 
   def self.rejection_code_from_response(response)
