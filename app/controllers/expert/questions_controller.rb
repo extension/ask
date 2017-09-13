@@ -532,6 +532,10 @@ class Expert::QuestionsController < ApplicationController
       end
 
       QuestionEvent.log_close(@question, current_user, close_out_reason)
+      # update open question count for assignee
+      if(@question.assignee)
+        @question.assignee.update_column(:open_question_count, @question.assignee.open_questions.count)
+      end
       flash[:success] = "Question closed successfully!"
       redirect_to expert_question_url(@question)
     end
@@ -541,6 +545,10 @@ class Expert::QuestionsController < ApplicationController
     question = Question.find_by_id(params[:id])
     question.update_attributes(:status => Question::STATUS_TEXT[Question::STATUS_SUBMITTED], :status_state => Question::STATUS_SUBMITTED, :current_resolver_id => nil, :current_response => nil, :resolved_at => nil)
     QuestionEvent.log_reactivate(question, current_user)
+    # update open question count for assignee
+    if(question.assignee)
+      question.assignee.update_column(:open_question_count, question.assignee.open_questions.count)
+    end
     flash[:success] = "Question re-activated"
     redirect_to expert_question_url(question)
   end
