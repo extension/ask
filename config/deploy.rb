@@ -12,6 +12,7 @@ set :application, "aae"
 set :repository,  "git@github.com:extension/aae.git"
 set :scm, "git"
 set :user, "pacecar"
+set :gateway, 'deploy.extension.org'
 set :use_sudo, false
 set :keep_releases, 5
 ssh_options[:forward_agent] = true
