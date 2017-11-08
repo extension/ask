@@ -144,7 +144,6 @@ GEM
     omniauth-openid (1.0.1)
       omniauth (~> 1.0)
       rack-openid (~> 1.3.1)
-    options (2.3.2)
     outfielding-jqplot-rails (1.0.8)
     paper_trail (2.7.1)
       activerecord (~> 3.0)
@@ -161,9 +160,6 @@ GEM
       thor (>= 0.11.5)
     power_assert (0.3.1)
     pr_geohash (1.0.0)
-    progress_bar (1.0.3)
-      highline (~> 1.6.1)
-      options (~> 2.3.0)
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -314,7 +310,6 @@ DEPENDENCIES
   paper_trail (~> 2)!
   paperclip (~> 3.0)
   powder
-  progress_bar
   pry
   quiet_assets
   rack-attack
@@ -339,4 +334,4 @@ DEPENDENCIES
   voight_kampff
 
 BUNDLED WITH
-   1.15.4
+   1.16.0
