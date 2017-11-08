@@ -126,7 +126,7 @@ GEM
     mime-types (1.25.1)
     mini_portile2 (2.3.0)
     multi_json (1.12.1)
-    mysql2 (0.3.16)
+    mysql2 (0.3.21)
     net-http-spy (0.2.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
