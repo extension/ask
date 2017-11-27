@@ -1468,6 +1468,8 @@ class Question < ActiveRecord::Base
               base_scope = base_scope.where("questions.assigned_group_id IN (#{settings[filter_key].join(',')})")
             when 'tags'
               base_scope = base_scope.joins(:tags).where("tags.id IN (#{settings[filter_key].join(',')})")
+            when 'involved_experts'
+              base_scope = base_scope.joins(:question_events).where("event_state IN (#{QuestionEvent::HANDLING_EVENTS.join(',')})").where("question_events.initiated_by_id IN (#{settings[filter_key].join(',')})")
             end
           end
         end

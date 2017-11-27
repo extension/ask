@@ -336,6 +336,7 @@ Aae::Application.routes.draw do
     simple_named_route 'locations', via: [:get]
     simple_named_route 'counties', via: [:get]
     simple_named_route 'tags', via: [:get]
+    simple_named_route 'experts', via: [:get]
   end
 
 
