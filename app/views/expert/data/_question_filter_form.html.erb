@@ -37,6 +37,11 @@
         <%= text_field_tag("tags","", class: 'form-control' ) -%>
       </div>
 
+      <div class="form-group col-lg-7 col-md-8">
+        <%= label_tag('involved_experts', 'Involved Experts') -%>
+        <%= text_field_tag("involved_experts","", class: 'form-control' ) -%>
+      </div>
+
     </fieldset>
 
       <p><%= submit_tag "Apply filter", :class => "btn btn-primary" %> <%= link_to "cancel", '#', :class => "btn btn-default", :id => 'cancel_button' %></p>
@@ -148,5 +153,29 @@
       $('#tags').select2('data', <%= @question_filter_objects['tags'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
     <%- end -%>
    });
+
+   $(function () {
+     $('#involved_experts').select2({
+       minimumInputLength: 2,
+       multiple: true,
+       ajax: {
+         url: "<%= selectdata_experts_path -%>",
+         dataType: 'json',
+         data: function(term,page) {
+           return {
+             q: term
+           };
+         },
+         results: function (data, page) {
+           return { results: data };
+         }
+       }
+    });
+
+    <%- if (@question_filter_objects && @question_filter_objects['involved_experts']) -%>
+     $('#involved_experts').select2('data', <%= @question_filter_objects['involved_experts'].map{|c|  {id: c.id, text: c.name}}.to_json.html_safe %>);
+   <%- end -%>
+
+  });
 
  </script>

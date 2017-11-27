@@ -9,7 +9,7 @@ class QuestionFilter < ActiveRecord::Base
   serialize :settings
   attr_accessible :creator, :created_by, :settings, :use_count
 
-  KNOWN_KEYS = ['question_locations','question_counties','assigned_groups','tags','date_range']
+  KNOWN_KEYS = ['question_locations','question_counties','assigned_groups','tags','date_range','involved_experts']
 
   belongs_to :creator, :class_name => "User", :foreign_key => "created_by"
   before_save :set_fingerprint
@@ -37,6 +37,8 @@ class QuestionFilter < ActiveRecord::Base
         objecthash[filter_key] = Location.where("id in (#{id_list.join(',')})").order(:name).all
       when 'question_counties'
         objecthash[filter_key] = County.where("id in (#{id_list.join(',')})").order(:name).all
+      when 'involved_experts'
+        objecthash[filter_key] = User.where("id in (#{id_list.join(',')})").order(:id).all
       end
     end
     objecthash
