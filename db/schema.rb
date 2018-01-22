@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180122175148) do
+ActiveRecord::Schema.define(:version => 20170606123725) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "user_id",                     :null => false
@@ -604,7 +604,7 @@ ActiveRecord::Schema.define(:version => 20180122175148) do
   add_index "taggings", ["tag_id", "taggable_id", "taggable_type"], :name => "taggingindex", :unique => true
 
   create_table "tags", :force => true do |t|
-    t.string   "name",       :default => "", :null => false
+    t.string   "name"
     t.datetime "created_at"
   end
 
