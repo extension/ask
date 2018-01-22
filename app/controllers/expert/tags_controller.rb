@@ -7,7 +7,7 @@
 class Expert::TagsController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def index
     @tags_total_count = Tag.used_at_least_once.length
@@ -58,6 +58,11 @@ class Expert::TagsController < ApplicationController
       return redirect_to expert_tags_path()
     end
 
+    if(params[:replacement_tag].blank?)
+      flash[:error] = "The replacement tag cannot be blank."
+      return redirect_to expert_tag_edit_path(@current_tag.name)
+    end
+
     @replacement_tag = Tag.find_by_name(Tag.normalizename(params[:replacement_tag]))
     @replacement_tag_count = 0
 
@@ -81,6 +86,11 @@ class Expert::TagsController < ApplicationController
     if(@current_tag.nil?)
       # silently redirect because of the missing param - probably a double form hit
       return redirect_to expert_tags_path()
+    end
+
+    if(params[:replacement_tag].blank?)
+      flash[:error] = "Tag names cannot be blank"
+      return redirect_to expert_show_tag_path(@current_tag.name)
     end
 
     @replacement_tag = Tag.find_or_create_by_name(Tag.normalizename(params[:replacement_tag]))
