@@ -199,11 +199,7 @@ Aae::Application.routes.draw do
 
   end # expert namespace
 
-  resources :questions do
-    collection do
-      post 'account_review_request'
-    end
-  end
+  resources :questions
 
   resources :responses, :only => [:create] do
     member do

@@ -65,7 +65,6 @@ class Question < ActiveRecord::Base
 
 
   ## constants
-  ACCOUNT_REVIEW_REQUEST_TITLE = 'Account Review Request'
   TITLE_MAX_LENGTH = 100
 
   # QUESTION SOURCE
