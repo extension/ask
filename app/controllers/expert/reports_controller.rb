@@ -7,7 +7,7 @@
 class Expert::ReportsController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def index
     @user = current_user
@@ -299,6 +299,10 @@ class Expert::ReportsController < ApplicationController
       @question_list = location_scope.not_rejected.answered_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     when 'asked'
       @question_list = location_scope.not_rejected.asked_list_for_year_month(@year_month).order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
+    when 'diff'
+      answered = location_scope.not_rejected.answered_list_for_year_month(@year_month)
+      asked = location_scope.not_rejected.asked_list_for_year_month(@year_month)
+      @question_list = (answered - asked) && (asked - answered)
     else
       @question_list = location_scope.submitted.not_rejected.order('created_at DESC').page((params[:page].present?) ? params[:page] : 1).per(30)
     end
