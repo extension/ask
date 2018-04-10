@@ -20,16 +20,21 @@ class QuestionsController < ApplicationController
 
     ga_tracking = []
 
-    if @question.tags.length > 0
-      ga_tracking = ["|tags"] + @question.tags.map(&:name)
+    if @question.tags.length != 0
+      tracker do |t|
+        t.google_tag_manager :push, { pageAttributes: @question.tags.map(&:name) }
+      end
     end
+
 
     question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
 
     if question_resolves_with_resolver.length > 0
-      ga_tracking += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
+      tracker do |t|
+        t.google_tag_manager :push, { questionExperts: question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq }
+      end
     end
-
+    
     if @question.assigned_group
       ga_tracking += ["|group"] + [@question.assigned_group.name]
     end
@@ -37,6 +42,9 @@ class QuestionsController < ApplicationController
     if ga_tracking.length > 0
       flash.now[:googleanalytics] = question_path(@question.id) + "?" + ga_tracking.join(",")
     end
+
+
+
 
     # should this show as private?
     @private_view = true
