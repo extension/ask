@@ -46,6 +46,9 @@ class QuestionsController < ApplicationController
       end
     end
 
+    tracker do |t|
+      t.google_tag_manager :push, { pageTitle: @question.title.html_safe }
+    end
 
     # should this show as private?
     @private_view = true
