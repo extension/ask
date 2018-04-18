@@ -30,24 +30,32 @@ class Expert::QuestionsController < ApplicationController
     @last_question_response = @question.last_response
     @original_group = @question.original_group
 
-    ga_tracking = []
+    analytics_url = []
 
-    if @question.tags.length > 0
-      ga_tracking = ["|tags"] + @question.tags.map(&:name)
+    if @question.tags.length != 0
+      analytics_url = ["|tags"] + @question.tags.map(&:name)
+      tracker do |t|
+        t.google_tag_manager :push, { pageAttributes: @question.tags.map(&:name) }
+      end
     end
 
     question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
 
     if question_resolves_with_resolver.length > 0
-      ga_tracking += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
+      analytics_url += ["|experts"] + question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq
+      tracker do |t|
+        t.google_tag_manager :push, { questionExperts: question_resolves_with_resolver.map{|qe| qe.initiator.login}.uniq }
+      end
     end
 
     if @question.assigned_group
-      ga_tracking += ["|group"] + [@question.assigned_group.name]
+      analytics_url += ["|group"] + [@question.assigned_group.name]
     end
 
-    if ga_tracking.length > 0
-      flash.now[:googleanalytics] = expert_question_path(@question.id) + "?" + ga_tracking.join(",")
+    if analytics_url.length > 0
+      tracker do |t|
+        t.google_tag_manager :push, { pageURL: question_path(@question.id) + "?" + analytics_url.join(",") }
+      end
     end
 
 
