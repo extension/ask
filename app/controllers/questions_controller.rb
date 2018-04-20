@@ -38,6 +38,9 @@ class QuestionsController < ApplicationController
 
     if @question.assigned_group
       analytics_url += ["|group"] + [@question.assigned_group.name]
+      tracker do |t|
+        t.google_tag_manager :push, { assignedGroup: @question.assigned_group.name }
+      end
     end
 
     if analytics_url.length > 0
