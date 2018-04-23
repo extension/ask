@@ -52,6 +52,9 @@ gem 'omniauth-openid'
 # oauth integration
 gem 'omniauth', "~> 1.0"
 
+# to enable Google Tag Manager
+gem 'rack-tracker', "1.1.0ex", :source => 'https://engineering.extension.org/rubygems'
+
 # pagination
 gem 'kaminari'
 

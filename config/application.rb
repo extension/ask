@@ -67,6 +67,10 @@ module Aae
 
     config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
 
+    config.middleware.use(Rack::Tracker) do
+      handler :google_tag_manager, { container: 'GTM-NGMVZ54' }
+    end
+
     # see https://github.com/rack/rack/issues/337
     config.middleware.use ::Rack::Robustness do |g|
       g.no_catch_all
