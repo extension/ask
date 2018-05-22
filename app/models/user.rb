@@ -48,7 +48,6 @@ class User < ActiveRecord::Base
   has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
   has_many :groups, through: :group_connections
-  has_many :ratings
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
