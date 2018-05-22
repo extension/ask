@@ -96,8 +96,8 @@ group :test, :development do
 end
 
 # sidekiq - must come before delayed job in the gemfile
-gem 'sidekiq', '< 4'
-gem 'sinatra'
+gem 'sidekiq', '< 3'
+gem 'sinatra', '< 2'
 
 # delayed_job
 # gem "delayed_job"
@@ -143,6 +143,8 @@ gem 'voight_kampff'
 group :development do
   # require the powder gem
   gem 'powder'
+  # require puma for those switching to puma
+  gem 'puma'
   # rails3 compatible generators
   gem "rails3-generators"
   gem 'capistrano', '~> 2.15'
