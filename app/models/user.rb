@@ -45,7 +45,6 @@ class User < ActiveRecord::Base
   has_one  :filter_preference
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
-  has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
   has_many :groups, through: :group_connections
   has_many :taggings, :as => :taggable, dependent: :destroy
