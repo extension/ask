@@ -62,19 +62,10 @@ class QuestionsController < ApplicationController
     if(current_user and current_user.id == @question.submitter_id)
       setup_images_for_edit
       @private_view = false
-      @viewer = current_user
     elsif (@authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id))
       setup_images_for_edit
       @private_view = false
-      @viewer = current_user
     end
-
-    if( @viewer)
-      @last_viewed_at = @viewer.last_view_for_question(@question)
-      # log view
-      QuestionViewlog.log_view(@viewer,@question)
-    end
-
 
   end
 
@@ -189,7 +180,6 @@ class QuestionsController < ApplicationController
         @question.original_group_id = @group.id
         @question.user_ip = request.remote_ip
         @question.user_agent = request.env['HTTP_USER_AGENT']
-        @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
         @question.widget_parent_url = @widget_parent_url
         @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
         @question.status_state = Question::STATUS_SUBMITTED

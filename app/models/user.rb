@@ -45,10 +45,8 @@ class User < ActiveRecord::Base
   has_one  :filter_preference
   has_many :expertise_locations, :through => :user_locations, :source => :location
   has_many :expertise_counties, :through => :user_counties, :source => :county
-  has_many :notification_exceptions
   has_many :group_connections, :dependent => :destroy
   has_many :groups, through: :group_connections
-  has_many :ratings
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :initiated_question_events, :class_name => 'QuestionEvent', :foreign_key => 'initiated_by_id'
@@ -60,13 +58,10 @@ class User < ActiveRecord::Base
   has_many :submitted_questions, :class_name => "Question", :foreign_key => "submitter_id"
   has_many :current_resolver_questions, :class_name => "Question", :foreign_key => "current_resolver_id"
   has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
-  has_many :question_viewlogs
   has_many :created_groups, :class_name => "Group", :foreign_key => "created_by"
-  has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
   has_many :user_events
-  has_many :activity_logs
   has_many :created_group_events, :class_name => "GroupEvent", :foreign_key => "created_by"
   has_many :recipient_group_events, :class_name => "GroupEvent", :foreign_key => "recipient_id"
   has_many :mailer_caches, :class_name => "MailerCache", :foreign_key => "user_id"
@@ -481,15 +476,6 @@ class User < ActiveRecord::Base
   def time_for_user(datetime)
     logger.debug "In time_for_user #{self.id}"
     self.has_time_zone? ? datetime.in_time_zone(self.time_zone) : datetime.in_time_zone(Settings.default_display_timezone)
-  end
-
-  def last_view_for_question(question)
-    activity = self.question_viewlogs.views.where(question_id: question.id).first
-    if(!activity.blank?)
-      activity.activity_logs.order('created_at DESC').pluck(:created_at).first
-    else
-      nil
-    end
   end
 
   def last_question_touched_at(return_default_date = false)

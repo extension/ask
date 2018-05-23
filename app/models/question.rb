@@ -162,11 +162,9 @@ class Question < ActiveRecord::Base
   belongs_to :initial_response,  class_name: 'Response', :foreign_key => "initial_response_id"
   belongs_to :initial_responder, :class_name => "User", :foreign_key => "initial_responder_id"
 
-  has_many :ratings
   has_many :responses
   accepts_nested_attributes_for :responses
   has_many :question_events
-  has_many :question_viewlogs, dependent: :destroy
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id'

@@ -15,21 +15,13 @@ class Demographic < ActiveRecord::Base
   ## associations
   belongs_to :demographic_question
   belongs_to :user
-  has_many :demographic_logs
 
   ## scopes
   ## validations
   ## filters
-  after_save :log_changed_answers
 
   ## class methods
   ## instance methods
-
-  def log_changed_answers
-    if(self.changed? and !self.changes[:response].blank? and !self.changes[:response][0].blank?)
-      self.demographic_logs.create(changed_answers: {original: self.changes[:response][0], new: self.changes[:response][1]})
-    end
-  end
 
   def response=(response_text)
     write_attribute(:response, self.html_to_text(response_text))
