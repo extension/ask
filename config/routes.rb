@@ -290,7 +290,6 @@ Aae::Application.routes.draw do
 
   # webmail routes
   scope "webmail" do
-    match "/:mailer_cache_id/logo" => "webmail#logo", :as => 'webmail_logo'
     match "/view/:hashvalue" => "webmail#view", :as => 'webmail_view'
   end
 

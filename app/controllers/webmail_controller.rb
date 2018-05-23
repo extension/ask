@@ -5,7 +5,7 @@
 # see LICENSE file
 
 class WebmailController < ApplicationController
-  
+
   def view
     if(mailer_cache = MailerCache.find_by_hashvalue(params[:hashvalue]))
       inlined_content = InlineStyle.process(mailer_cache.markup,ignore_linked_stylesheets: true)
@@ -15,16 +15,4 @@ class WebmailController < ApplicationController
     end
   end
     
-  def logo
-    logo_filename = Rails.root.join('public', 'email', 'logo_small.png')
-    if(mailer_cache = MailerCache.find_by_id(params[:mailer_cache_id]))
-      mailer_cache.increment!(:open_count)
-      ActivityLog.log_email_open(mailer_cache,{referer: request.env['HTTP_REFERER'], useragent: request.env['HTTP_USER_AGENT']})
-    end
-    
-    respond_to do |format|
-      format.png  { send_file(logo_filename, :type  => 'image/png', :disposition => 'inline') }
-    end
-  end
-  
 end
