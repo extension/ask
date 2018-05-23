@@ -6,6 +6,7 @@ class CleanupDataItems < ActiveRecord::Migration
     drop_table(:comments)
     drop_table(:question_viewlogs)
     drop_table(:activity_logs)
+    drop_table('old_evaluation_answers')
   end
 
   def down
