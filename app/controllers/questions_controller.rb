@@ -62,19 +62,10 @@ class QuestionsController < ApplicationController
     if(current_user and current_user.id == @question.submitter_id)
       setup_images_for_edit
       @private_view = false
-      @viewer = current_user
     elsif (@authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id))
       setup_images_for_edit
       @private_view = false
-      @viewer = current_user
     end
-
-    if( @viewer)
-      @last_viewed_at = @viewer.last_view_for_question(@question)
-      # log view
-      QuestionViewlog.log_view(@viewer,@question)
-    end
-
 
   end
 
