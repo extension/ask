@@ -11,31 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170606123725) do
-
-  create_table "activity_logs", :force => true do |t|
-    t.integer  "user_id",                     :null => false
-    t.integer  "loggable_id"
-    t.string   "loggable_type", :limit => 30
-    t.integer  "ipaddr"
-    t.text     "additional"
-    t.datetime "created_at"
-  end
-
-  add_index "activity_logs", ["user_id", "loggable_id", "loggable_type"], :name => "activity_ndx"
-
-  create_table "ask_tracks", :force => true do |t|
-    t.string   "ipaddr"
-    t.integer  "referer_track_id"
-    t.integer  "location_track_id"
-    t.integer  "group_id"
-    t.boolean  "group_active"
-    t.integer  "question_id"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-  end
-
-  add_index "ask_tracks", ["referer_track_id", "location_track_id", "group_id", "question_id"], :name => "association_ndx"
+ActiveRecord::Schema.define(:version => 20180522183758) do
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -67,19 +43,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
     t.datetime "created_at",                                   :null => false
   end
 
-  create_table "comments", :force => true do |t|
-    t.text     "content",                           :null => false
-    t.string   "ancestry"
-    t.integer  "user_id",                           :null => false
-    t.integer  "question_id",                       :null => false
-    t.boolean  "parent_removed", :default => false
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
-  end
-
-  add_index "comments", ["ancestry"], :name => "idx_comments_on_ancestry"
-  add_index "comments", ["user_id", "question_id"], :name => "idx_comments_on_user_id_and_question_id"
-
   create_table "counties", :force => true do |t|
     t.integer  "fipsid",                    :null => false
     t.integer  "location_id",               :null => false
@@ -93,14 +56,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
 
   add_index "counties", ["location_id"], :name => "idx_counties_on_location_id"
   add_index "counties", ["name"], :name => "idx_counties_on_name"
-
-  create_table "demographic_logs", :force => true do |t|
-    t.integer  "demographic_id",  :null => false
-    t.text     "changed_answers"
-    t.datetime "created_at"
-  end
-
-  add_index "demographic_logs", ["demographic_id"], :name => "log_ndx"
 
   create_table "demographic_questions", :force => true do |t|
     t.boolean  "is_active",     :default => true
@@ -162,14 +117,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
   end
 
   add_index "evaluation_answers", ["evaluation_question_id", "user_id", "question_id"], :name => "eq_u_q_ndx", :unique => true
-
-  create_table "evaluation_logs", :force => true do |t|
-    t.integer  "evaluation_answer_id", :null => false
-    t.text     "changed_answers"
-    t.datetime "created_at"
-  end
-
-  add_index "evaluation_logs", ["evaluation_answer_id"], :name => "log_ndx"
 
   create_table "evaluation_questions", :force => true do |t|
     t.boolean  "is_active",     :default => true
@@ -314,17 +261,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
 
   add_index "location_messages", ["location_id", "edited_by"], :name => "idx_who_where"
 
-  create_table "location_tracks", :force => true do |t|
-    t.string   "ipaddr"
-    t.integer  "referer_track_id"
-    t.integer  "location_id"
-    t.integer  "group_count"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
-  end
-
-  add_index "location_tracks", ["referer_track_id", "location_id"], :name => "association_ndx"
-
   create_table "locations", :force => true do |t|
     t.integer  "fipsid",                     :null => false
     t.integer  "entrytype",                  :null => false
@@ -338,27 +274,17 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
   add_index "locations", ["name"], :name => "idx_locations_on_name", :unique => true
 
   create_table "mailer_caches", :force => true do |t|
-    t.string   "hashvalue",      :limit => 40,                      :null => false
+    t.string   "hashvalue",      :limit => 40,       :null => false
     t.integer  "user_id"
     t.integer  "cacheable_id"
     t.string   "cacheable_type", :limit => 30
-    t.integer  "open_count",                         :default => 0
     t.text     "markup",         :limit => 16777215
-    t.datetime "created_at",                                        :null => false
-    t.datetime "updated_at",                                        :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
   end
 
   add_index "mailer_caches", ["hashvalue"], :name => "hashvalue_ndx"
-  add_index "mailer_caches", ["user_id", "open_count"], :name => "open_learner_ndx"
-
-  create_table "notification_exceptions", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "question_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "notification_exceptions", ["user_id", "question_id"], :name => "idx_connection", :unique => true
+  add_index "mailer_caches", ["user_id"], :name => "open_learner_ndx"
 
   create_table "notifications", :force => true do |t|
     t.integer  "notifiable_id"
@@ -376,18 +302,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
   end
 
   add_index "notifications", ["notifiable_type", "notifiable_id"], :name => "notifiable_ndx"
-
-  create_table "old_evaluation_answers", :force => true do |t|
-    t.integer  "evaluation_question_id", :null => false
-    t.integer  "user_id",                :null => false
-    t.integer  "question_id",            :null => false
-    t.text     "response"
-    t.integer  "value"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
-  end
-
-  add_index "old_evaluation_answers", ["evaluation_question_id", "user_id", "question_id"], :name => "eq_u_q_ndx", :unique => true
 
   create_table "preferences", :force => true do |t|
     t.integer  "prefable_id"
@@ -465,16 +379,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
 
   add_index "question_filters", ["fingerprint"], :name => "fingerprint_ndx", :unique => true
 
-  create_table "question_viewlogs", :force => true do |t|
-    t.integer  "user_id",                    :null => false
-    t.integer  "question_id"
-    t.integer  "activity"
-    t.integer  "view_count",  :default => 1, :null => false
-    t.datetime "updated_at"
-  end
-
-  add_index "question_viewlogs", ["user_id", "question_id", "activity"], :name => "activity_uniq_ndx", :unique => true
-
   create_table "questions", :force => true do |t|
     t.integer  "current_resolver_id"
     t.string   "status",                 :default => "",    :null => false
@@ -502,7 +406,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
     t.boolean  "spam_legacy",            :default => false, :null => false
     t.string   "user_ip",                :default => "",    :null => false
     t.text     "user_agent"
-    t.text     "referrer"
     t.integer  "status_state",                              :null => false
     t.string   "zip_code"
     t.integer  "original_group_id"
@@ -542,25 +445,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
   add_index "questions", ["status_state"], :name => "status_state_idx"
   add_index "questions", ["submitter_id"], :name => "submitter_id_idx"
 
-  create_table "ratings", :force => true do |t|
-    t.integer  "rateable_id",   :null => false
-    t.string   "rateable_type", :null => false
-    t.integer  "score",         :null => false
-    t.integer  "user_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
-
-  create_table "referer_tracks", :force => true do |t|
-    t.string   "ipaddr"
-    t.text     "referer"
-    t.text     "landing_page"
-    t.text     "user_agent"
-    t.integer  "load_count",   :default => 1, :null => false
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
-  end
-
   create_table "responses", :force => true do |t|
     t.integer  "resolver_id"
     t.integer  "submitter_id"
@@ -570,7 +454,6 @@ ActiveRecord::Schema.define(:version => 20170606123725) do
     t.text     "signature"
     t.string   "user_ip"
     t.string   "user_agent"
-    t.string   "referrer"
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
     t.boolean  "is_expert"
