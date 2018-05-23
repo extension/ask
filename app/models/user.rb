@@ -59,7 +59,6 @@ class User < ActiveRecord::Base
   has_many :current_resolver_questions, :class_name => "Question", :foreign_key => "current_resolver_id"
   has_many :watched_questions, :through => :preferences, :conditions => "(preferences.name = '#{Preference::NOTIFICATION_ACTIVITY}') AND (preferences.value = true)", :source => :question, :order => 'preferences.created_at DESC', :uniq => true
   has_many :created_groups, :class_name => "Group", :foreign_key => "created_by"
-  has_one  :yo_lo
   has_many :demographics
   has_many :evaluation_answers
   has_many :user_events
