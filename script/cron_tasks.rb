@@ -68,6 +68,10 @@ class CronTasks < Thor
       puts "Cleaned up Mailer Caches more than 2 months old"
     end
 
+    def clean_up_notifications
+      Notification.delete_all(["delivery_time < ?", 2.months.ago])
+      puts "Cleaned up Notifications delivered more than 2 months ago"
+    end
 
     def flag_accounts_for_search_update
       User.needs_search_update.all.each do |u|
@@ -76,8 +80,6 @@ class CronTasks < Thor
       end
       Sunspot.commit
     end
-
-
 
   end
 
@@ -98,6 +100,7 @@ class CronTasks < Thor
     create_daily_handling_reminder_notification
     create_daily_away_reminder_notification
     clean_up_mailer_caches
+    clean_up_notifications
   end
 
   desc "hourly", "All hourly cron tasks"
