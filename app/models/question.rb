@@ -165,7 +165,6 @@ class Question < ActiveRecord::Base
   has_many :responses
   accepts_nested_attributes_for :responses
   has_many :question_events
-  has_many :question_viewlogs, dependent: :destroy
   has_many :taggings, :as => :taggable, dependent: :destroy
   has_many :tags, :through => :taggings
   has_many :evaluation_answers, class_name: 'EvaluationAnswer', foreign_key: 'question_id'
