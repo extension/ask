@@ -9,6 +9,11 @@ class CleanupDataItems < ActiveRecord::Migration
     drop_table('old_evaluation_answers')
     drop_table('demographic_logs')
     drop_table('evaluation_logs')
+
+    drop_table('location_tracks')
+    drop_table('ask_tracks')
+    drop_table('referer_tracks')
+
   end
 
   def down

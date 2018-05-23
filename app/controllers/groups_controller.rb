@@ -55,9 +55,6 @@ class GroupsController < ApplicationController
       return redirect_to(ask_index_path)
     end
 
-    # tracking
-    create_ask_track(@group)
-
     params[:fingerprint] = @group.widget_fingerprint
     @question = Question.new
 
@@ -107,11 +104,6 @@ class GroupsController < ApplicationController
     @question.original_group_id = @group.id
     @question.user_ip = request.remote_ip
     @question.user_agent = request.env['HTTP_USER_AGENT']
-    if(session[:rt] and referer_track = RefererTrack.where(id: session[:rt]).first)
-      @question.referrer = referer_track.referer
-    else
-      @question.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
-    end
     @question.status = Question::STATUS_TEXT[Question::STATUS_SUBMITTED]
     @question.status_state = Question::STATUS_SUBMITTED
     @question.source = Question::FROM_WEBSITE
@@ -142,13 +134,6 @@ class GroupsController < ApplicationController
 
 
     if @question.save
-      # update ask_track
-      if(session[:at] and ask_track = AskTrack.where(id: session[:at]).first)
-        ask_track.update_attribute(:question_id, @question.id)
-        # clear tracking
-        session[:lt] = nil
-        session[:at] = nil
-      end
 
       if(!@question.spam?)
         session[:question_id] = @question.id
@@ -168,16 +153,6 @@ class GroupsController < ApplicationController
   def widget
     @group = Group.find(params[:id])
     return redirect_to group_widget_url(fingerprint: @group.widget_fingerprint)
-  end
-
-  def create_ask_track(group)
-    return true if request.bot?
-    ask_track = AskTrack.create(ipaddr: request.remote_ip,
-                                referer_track_id: session[:rt],
-                                location_track_id: session[:lt],
-                                group_id: group.id,
-                                group_active: group.group_active?)
-    session[:at] = ask_track.id
   end
 
 end

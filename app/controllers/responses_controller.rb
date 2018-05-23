@@ -7,7 +7,6 @@ class ResponsesController < ApplicationController
       response.submitter = submitter
       response.user_ip = request.remote_ip
       response.user_agent = (request.env['HTTP_USER_AGENT']) ? request.env['HTTP_USER_AGENT'] : ''
-      response.referrer = (request.env['HTTP_REFERER']) ? request.env['HTTP_REFERER'] : ''
       response.sent = true
 
       # validate question
