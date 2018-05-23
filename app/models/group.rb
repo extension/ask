@@ -367,7 +367,7 @@ class Group < ActiveRecord::Base
 
     asked_widget = Question.not_rejected \
                    .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
-                   .where("questions.referrer LIKE '%widget%'")
+                   .where("questions.source = #{Question::FROM_WIDGET}")
                    .group(:original_group_id) \
                    .count('DISTINCT(questions.id)')
 
@@ -385,7 +385,7 @@ class Group < ActiveRecord::Base
 
     moved_in_widget = Question.not_rejected \
               .where("DATE(questions.created_at) >= ? and DATE(questions.created_at) <= ?",start_date.to_s,end_date.to_s) \
-              .where("questions.referrer LIKE '%widget%'")
+              .where("questions.source = #{Question::FROM_WIDGET}")
               .where('assigned_group_id != original_group_id')
               .group(:assigned_group_id) \
               .count('DISTINCT(questions.id)')

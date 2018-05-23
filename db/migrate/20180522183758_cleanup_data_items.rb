@@ -14,6 +14,8 @@ class CleanupDataItems < ActiveRecord::Migration
     drop_table('ask_tracks')
     drop_table('referer_tracks')
 
+    remove_column(:questions, :referrer)
+    remove_column(:responses, :referrer)
   end
 
   def down
