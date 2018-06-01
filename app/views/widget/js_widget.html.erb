@@ -70,7 +70,6 @@
           <% end %>
         </p>
 
-    <% if @group.widget_upload_capable? %>
       <div class="image-upload-wrapper">
       <label>Image (optional)</label>
       <p><em>You can upload .jpg .png or .gif.</em></p>
@@ -81,7 +80,6 @@
           </p>
       <% end %>
     </div>
-    <% end %>
 
     <%- if !current_user or !current_user.email.present? -%>
     <p>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180522183758) do
+ActiveRecord::Schema.define(:version => 20180601154738) do
 
   create_table "assets", :force => true do |t|
     t.string   "type"
@@ -216,7 +216,6 @@ ActiveRecord::Schema.define(:version => 20180522183758) do
     t.integer  "created_by",                                      :null => false
     t.boolean  "is_test",                      :default => false
     t.string   "widget_fingerprint"
-    t.boolean  "widget_upload_capable",        :default => false
     t.boolean  "unused_widget_show_location",  :default => false
     t.boolean  "widget_show_title",            :default => false
     t.boolean  "widget_enable_tags",           :default => false

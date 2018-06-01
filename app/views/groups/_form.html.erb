@@ -48,7 +48,6 @@
     </fieldset>
 
 
-  <% if @group.widget_upload_capable? %>
     <fieldset class="image-upload-wrapper">
         <label>Image (optional)</label>
         <p><em>You can upload .jpg .png or .gif.</em></p>
@@ -56,7 +55,6 @@
           <p class="image-upload"><%= image_form.file_field :attachment  %></p>
         <% end %>
     </fieldset>
-  <% end %>
 
   <% if @group.is_australian? %>
   <fieldset>
