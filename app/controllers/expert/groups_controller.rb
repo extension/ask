@@ -7,7 +7,7 @@
 class Expert::GroupsController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def index
     @my_groups = current_user.group_memberships
@@ -194,10 +194,6 @@ class Expert::GroupsController < ApplicationController
 
       if @group.widget_public_option_changed?
         change_hash[:public_option] = {:old => @group.widget_public_option_was.to_s, :new => @group.widget_public_option.to_s}
-      end
-
-      if @group.widget_upload_capable_changed?
-        change_hash[:upload_capable] = {:old => @group.widget_upload_capable_was.to_s, :new => @group.widget_upload_capable.to_s}
       end
 
       if @group.widget_show_title_changed?

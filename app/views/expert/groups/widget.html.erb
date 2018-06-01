@@ -28,13 +28,6 @@
     </p>
 
 	<p>
-        <label>
-          <%= f.check_box 'widget_upload_capable' %>  Enable photo upload option
-        </label>
-    </p>
-
-
-	<p>
       <label>
         <%= f.check_box 'widget_show_title' %>  Display title field on first generation widgets
 		    <span>(This preference only applies to the first generation widget, which is being phased out. The title field is always displayed on the <%= link_to "Question form", ask_group_url(@group.id) %> and the current generation widget.)</span>
