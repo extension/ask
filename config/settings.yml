@@ -1,19 +1,12 @@
-account_review_key: 'notset'
-twitter_app_id: 'notset'
-twitter_app_secret: 'notset'
-facebook_app_id: 'notset'
-facebook_app_secret: 'notset'
 session_token: '1234567890123456789012345678901234567890'
 urlwriter_host: 'ask.dev'
-airbrake_api_key: 'notset'
 app_location: 'localdev'
-engineering_list: 'engineering@extension.org'
 email_bcc_address: 'systemsmirror@extension.org'
 email_from_address: 'aae-notify@extension.org'
 group_avatar_count: 3
 user_avatar_count: 2
 aae_escalation_delta: 24
-request_ip_address: "152.46.27.154"
+request_ip_address: "127.0.0.1"
 geoip_data_file: 'notset'
 geoname_data_file: 'notset'
 default_display_timezone: 'Eastern Time (US & Canada)'
@@ -24,9 +17,6 @@ activity_notification_interval: 28800.0
 user_event_notification_interval: 300.0
 expert_response_edit_interval: 900.0
 send_notifications: false
-notification_whitelist:
-   - 2001
-   - 2010
 days_closed_for_evaluation: 8
 display_percentiles: [99,90,75,50]
 display_percentiles_labels: ['99th percentile','90th percentile', '75th percentile', '50th percentile']
