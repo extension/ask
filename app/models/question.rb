@@ -54,15 +54,10 @@ class Question < ActiveRecord::Base
   # remove extra whitespace on these attributes
   auto_strip_attributes :submitter_email, :submitter_firstname, :submitter_lastname, :squish => true
 
-  # sunspot/solr search
-  searchable :auto_index => false do
-    text :title, more_like_this: true
-    text :body, more_like_this: true
-    text :response_list, more_like_this: true
-    integer :status_state
-    boolean :is_private
+  # elasticsearch
+  if(Settings.elasticsearch_enabled)
+    update_index('questions#question') { self }
   end
-
 
   ## constants
   TITLE_MAX_LENGTH = 100

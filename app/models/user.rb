@@ -14,17 +14,7 @@ class User < ActiveRecord::Base
   # remove extra whitespace from these attributes
   auto_strip_attributes :first_name, :last_name, :email, :squish => true
 
-  # sunspot/solr search
-  searchable :if => proc { |user| (user.has_exid? == true) && (user.id.present? && user.id > 8) } do
-    text :name, :as => :name_textp
-    text :bio
-    text :login, :as => :login_textp
-    text :email
-    text :tag_fulltext
-    boolean :unavailable
-    string :kind
-    time :last_activity_at
-  end
+
 
   # constants
   DEFAULT_TIMEZONE = 'America/New_York'
@@ -159,6 +149,11 @@ class User < ActiveRecord::Base
   # filters
   before_update :update_vacated_aae
   before_save :update_aae_status_for_public
+
+  # elasticsearch
+  if(Settings.elasticsearch_enabled)
+    update_index('users#user') { self }
+  end
 
   def is_systems_account?
     SYSTEMS_USERS.include?(self.id)

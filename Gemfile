@@ -79,8 +79,8 @@ gem "loofah"
 # htmlentities conversion
 gem "htmlentities"
 
-# search on solr
-gem "sunspot_rails"
+# elasticsearch
+gem "chewy"
 
 # used to post-process mail to convert styles to inline
 gem "csspool"
@@ -89,11 +89,6 @@ gem "inline-style", "0.5.2ex", source: 'https://engineering.extension.org/rubyge
 
 # auto_link replacement
 gem "rinku", :require => 'rails_rinku'
-
-# require sunspot_solr for test and dev
-group :test, :development do
-  gem 'sunspot_solr'
-end
 
 # sidekiq - must come before delayed job in the gemfile
 gem 'sidekiq', '< 3'
@@ -151,7 +146,7 @@ group :development do
   gem 'capatross'
   gem 'quiet_assets'
   gem 'pry'
-  gem 'net-http-spy'
+  # gem 'net-http-spy'
 
   # pretty error handling
   gem 'better_errors'

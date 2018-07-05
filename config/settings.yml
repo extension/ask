@@ -29,3 +29,6 @@ sitemap_dir: 'notset'
 downloads_data_dir: 'notset'
 sidekiq_enabled: true
 block_user_agent_regex: 'use_local_settings'
+elasticsearch_prefix: 'localdev_ask'
+elasticsearch_host_and_port: 'localhost:9200'
+elasticsearch_enabled: false

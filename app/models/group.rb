@@ -89,15 +89,14 @@ class Group < ActiveRecord::Base
   validates_attachment :avatar, :size => { :less_than => 8.megabytes },
     :content_type => { :content_type => ['image/jpeg','image/png','image/gif','image/pjpeg','image/x-png'] }
 
-  # sunspot/solr search
-  searchable do
-    text :name, :as => :name_textp
-    text :description
-    boolean :group_active
-  end
-
   # pagination per page default
   paginates_per = 15
+
+  # elasticsearch
+  if(Settings.elasticsearch_enabled)
+    update_index('groups#group') { self }
+  end
+
 
   CONNECTIONS = {'member' => 'Group Member',
     'leader' => 'Group Leader'}
