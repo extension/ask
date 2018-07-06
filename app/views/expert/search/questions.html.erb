@@ -3,6 +3,6 @@
 <div id="main" class="col-md-12">
   <p>Displaying <strong><%= @questions.offset_value + 1 %>-<%= @questions.offset_value + @questions.size %> of <%= @questions.total_entries %></strong></p>
   <%= paginate @questions %>
-  <%= render :partial => 'question_list', -%>
+  <%= render :partial => 'question_list' -%>
   <%= paginate @questions %>
 </div>
