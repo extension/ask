@@ -60,8 +60,8 @@ class AjaxController < ApplicationController
   def experts
     if params[:term]
       search_term = params[:term]
-      groups = GroupsIndex.active_groups.name_search(params[:term]).limit(9).load
-      experts = UsersIndex.available.name_or_login_search(params[:term]).limit(18 - groups.size).load
+      groups = GroupsIndex.active_groups.name_search(params[:term]).limit(9).load.to_a
+      experts = UsersIndex.available.name_or_login_search(params[:term]).limit(18 - groups.size).load.to_a
     else
       # this conditional should not be triggered during normal app usage, but
       # return something for testing
