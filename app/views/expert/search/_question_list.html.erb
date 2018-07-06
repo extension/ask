@@ -1,5 +1,3 @@
-<%- @questions.each do |indexed_question| -%>
-  <%- if(question = Question.find_by_id(indexed_question.id)) -%>
+<%- @questions.each do |question| -%>
     <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
-  <%- end -%>
 <%- end -%>

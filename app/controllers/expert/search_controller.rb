@@ -60,7 +60,7 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search on questions for '#{params[:q]}'"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(15).page(params[:page])
+    @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -74,7 +74,7 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Experts with '#{params[:q]}' in the name or bio"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page])
+    @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page]).load
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -88,7 +88,7 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Groups with '#{params[:q]}' in the name or description"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @groups = GroupsIndex.fulltextsearch(params[:q]).limit(15).page(params[:page])
+    @groups = GroupsIndex.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
