@@ -33,7 +33,11 @@ class SelectdataController < ApplicationController
   end
 
   def experts
-    @experts = UsersIndex.available.name_or_login_search(params[:q]).order(last_activity_at: :desc).load
+    if(Settings.elasticsearch_enabled)
+      @experts = UsersIndex.available.name_or_login_search(params[:q]).order(last_activity_at: :desc).load
+    else
+      @experts = User.not_unavailable.pattern_search(params[:q]).order(last_activity_at: :desc)
+    end
     token_hash = @experts.collect{|expert| {id: expert.id, text: expert.name}}
     render(json: token_hash)
   end

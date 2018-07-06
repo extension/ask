@@ -201,6 +201,23 @@ class Question < ActiveRecord::Base
   scope :evaluation_eligible, lambda { where("questions.created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true) }
   scope :demographic_eligible, lambda { where("questions.created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true) }
 
+  # only as a search fallback if elasticsearch isn't available - it's going to be sooooo slloooooowwww
+  scope :pattern_search, lambda {|searchterm, type = nil|
+    # remove any leading * to avoid borking mysql
+    # remove any '\' characters because it's WAAAAY too close to the return key
+    # strip '+' and '?' characters because it's causing a repetition search error
+    # strip parens '()' to keep it from messing up mysql query
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
+    if sanitizedsearchterm == ''
+      return {:conditions => 'false'}
+    end
+
+    if type.nil?
+      where("body rlike ? or title rlike ?", sanitizedsearchterm,sanitizedsearchterm)
+    elsif type == 'prefix'
+      where("body rlike ? or title rlike ?", "^#{sanitizedsearchterm}","^#{sanitizedsearchterm}")
+    end
+  }
 
   ## validations
   validates :body, :presence => true

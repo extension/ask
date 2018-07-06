@@ -5,8 +5,8 @@
     <h2>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h2>
 
 
-    <% if @questions and @questions.total_entries > 0 %>
-      <p>Displaying <strong><%= @questions.offset_value + 1 %>-<%= @questions.offset_value + @questions.size %> of <%= @questions.total_entries %></strong></p>
+    <% if @questions and @questions.total_count > 0 %>
+      <p>Displaying <strong><%= @questions.offset_value + 1 %>-<%= @questions.offset_value + @questions.size %> of <%= @questions.total_count %></strong></p>
       <%= paginate @questions %>
 
       <% @questions.each do |indexed_question| %>

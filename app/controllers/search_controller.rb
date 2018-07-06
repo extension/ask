@@ -19,7 +19,7 @@ class SearchController < ApplicationController
     if(Settings.elasticsearch_enabled)
       @questions = QuestionsIndex.not_rejected.public_questions.fulltextsearch(params[:q]).page(params[:page])
     else
-      @questions = []
+      @questions = Question.not_rejected.public_visible.pattern_search(params[:q]).page(params[:page])
     end
   end
 end

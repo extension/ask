@@ -42,9 +42,15 @@ class Expert::SearchController < ApplicationController
       end
 
       limit_to_count = 10
-      @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(limit_to_count).load
-      @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(limit_to_count).order(last_activity_at: :desc).load
-      @groups = GroupsIndex.fulltextsearch(params[:q]).limit(limit_to_count).load
+      if(Settings.elasticsearch_enabled)
+        @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(limit_to_count).load
+        @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(limit_to_count).order(last_activity_at: :desc).load
+        @groups = GroupsIndex.fulltextsearch(params[:q]).limit(limit_to_count).load
+      else
+        @questions = Question.not_rejected.pattern_search(params[:q]).limit(limit_to_count)
+        @experts = User.exid_holder.not_unavailable.pattern_search(params[:q]).limit(limit_to_count).order(last_activity_at: :desc)
+        @groups = Group.where(group_active: true).pattern_search(params[:q]).limit(limit_to_count)
+      end
     end
 
     render :action => 'index'
@@ -60,7 +66,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search on questions for '#{params[:q]}'"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    if(Settings.elasticsearch_enabled)
+      @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    else
+      @questions = Question.not_rejected.pattern_search(params[:q]).limit(15).page(params[:page])
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -74,7 +84,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Experts with '#{params[:q]}' in the name or bio"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page]).load
+    if(Settings.elasticsearch_enabled)
+      @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page]).load
+    else
+      @experts = User.exid_holder.not_unavailable.pattern_search(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page])
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -88,7 +102,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Groups with '#{params[:q]}' in the name or description"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    @groups = GroupsIndex.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    if(Settings.elasticsearch_enabled)
+      @groups = GroupsIndex.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    else
+      @groups = Group.where(group_active: true).pattern_search(params[:q]).page(params[:page]).per(15)
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
