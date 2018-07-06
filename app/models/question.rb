@@ -519,32 +519,27 @@ class Question < ActiveRecord::Base
 
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
-    search_results = self.more_like_this do
-      without(:status_state, STATUS_REJECTED)
-      paginate(:page => 1, :per_page => count)
-      adjust_solr_params do |params|
-        params[:fl] = 'id,score'
-      end
-    end
     return_results = {}
-    search_results.each_hit_with_result do |hit,event|
-      return_results[event] = hit.score
+    if(Settings.elasticsearch_enabled)
+      search_results = QuestionsIndex.not_rejected.similar_to_question(self).limit(count)
+      search_results.each do |indexed_question|
+        if(db_question = self.class.find_by_id(indexed_question.id))
+          return_results[db_question] = indexed_question._score
+        end
+      end
     end
     return_results
   end
 
   def public_similar_questions(count = 4)
-    search_results = self.more_like_this do
-      with(:is_private, false)
-      without(:status_state, STATUS_REJECTED)
-      paginate(:page => 1, :per_page => count)
-      adjust_solr_params do |params|
-        params[:fl] = 'id,score'
-      end
-    end
     return_results = {}
-    search_results.each_hit_with_result do |hit,event|
-      return_results[event] = hit.score
+    if(Settings.elasticsearch_enabled)
+      search_results = QuestionsIndex.not_rejected.public_questions.similar_to_question(self).limit(count)
+      search_results.each do |indexed_question|
+        if(db_question = self.class.find_by_id(indexed_question.id))
+          return_results[db_question] = indexed_question._score
+        end
+      end
     end
     return_results
   end
