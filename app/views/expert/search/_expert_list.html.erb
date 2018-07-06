@@ -1,9 +1,7 @@
-<div class="col-md-12">
- 
-  <% @experts.each do |expert| %>
-    <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %> 
+<%- @experts.each do |indexed_expert| -%>
+  <%- if(expert = User.find_by_id(indexed_expert.id)) -%>
+    <p><%= link_expert_user_avatar(expert, :thumb) %> <%= link_expert_user(expert) %>
       <p class="downplay">Last active: <%= get_last_active_time(expert) %></p>
-    </p>  
-  <% end %>
-  
-</div>
+    </p>
+  <%- end -%>
+<%- end -%>

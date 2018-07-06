@@ -11,7 +11,7 @@
   <% if @user_email == true && @user_email_id.present? %>
     <li><%= link_to "Questions from '#{params[:q]}'", expert_user_submitted_path(:id => @user_email_id) %></li>
   <% elsif @user_email == true %>
-    <li class="disabled"><a href="#"><%= "No questions found from '#{params[:q]}'" %></a></li> 
+    <li class="disabled"><a href="#"><%= "No questions found from '#{params[:q]}'" %></a></li>
   <% end %>
 </ul>
 
@@ -22,7 +22,7 @@
     <% if !@number_passed %>
       <p><%= link_to 'view all', expert_search_questions_path(:q => params[:q]) %></p>
     <% end %>
-    <%= render :partial => 'question_list', :locals => {:paginate_questions => false, :title => ""} %>
+    <%= render :partial => 'question_list' -%>
   <% else %>
     <h3>No results</h3>
   <% end %>
@@ -36,7 +36,7 @@
     <% if !@number_passed %>
       <p><%= link_to 'View all', expert_search_experts_path(:q => params[:q]) %></p>
     <% end %>
-    <%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
+    <%= render :partial => 'expert_list' -%>
   <% else %>
     <h3>No results</h3>
   <% end %>
@@ -50,7 +50,7 @@
     <% if !@number_passed %>
       <p><%= link_to 'View all', expert_search_groups_path(:q => params[:q]) %></p>
     <% end %>
-    <%= render :partial => 'group_list', :locals => {:paginate_groups => false, :title => ""} %>
+    <%= render :partial => 'group_list' -%>
     <% else %>
       <h3>No results</h3>
     <% end %>

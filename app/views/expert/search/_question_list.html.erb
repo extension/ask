@@ -1,15 +1,5 @@
-<h1><%= title %></h1>
-
-<div id="main" class="col-md-12">
-  <% if !defined?(paginate_questions) || paginate_questions != false %>
-    <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.size %> of <%= @questions.total_entries %></strong></p>
-  <% end %>
-  
-  <% @questions.each do |question| %>
+<%- @questions.each do |indexed_question| -%>
+  <%- if(question = Question.find_by_id(indexed_question.id)) -%>
     <%= render :partial => 'expert/shared/full_question', :locals => {:question => question, :suppress_single_badges => true} %>
-  <% end %>
-  
-  <% if !defined?(paginate_questions) || paginate_questions != false %>
-  <%= paginate @questions %>
-  <% end %>
-</div>
+  <%- end -%>
+<%- end -%>

@@ -33,17 +33,7 @@ class SelectdataController < ApplicationController
   end
 
   def experts
-    expert_search = User.search do
-              fulltext(params[:q]) do
-                fields(:name)
-                fields(:login)
-              end
-              with :unavailable, false
-              with :kind, 'User'
-              order_by :last_activity_at, :desc
-              paginate :page => 1, :per_page => 10
-            end
-    @experts = expert_search.results
+    @experts = UsersIndex.available.name_or_login_search(params[:q]).order(last_activity_at: :desc).load
     token_hash = @experts.collect{|expert| {id: expert.id, text: expert.name}}
     render(json: token_hash)
   end

@@ -60,28 +60,8 @@ class AjaxController < ApplicationController
   def experts
     if params[:term]
       search_term = params[:term]
-
-      groups_solr = Group.search do
-                      fulltext(params[:term]) do
-                        fields(:name)
-                      end
-                      with :group_active, true
-                      paginate :page => 1, :per_page => 9
-                    end
-      groups = groups_solr.results
-
-      experts_solr = User.search do
-                fulltext(params[:term]) do
-                  fields(:name)
-                  fields(:login)
-                end
-                with :unavailable, false
-                with :kind, 'User'
-                order_by :last_activity_at, :desc
-                paginate :page => 1, :per_page => 18 - groups.size
-              end
-      experts = experts_solr.results
-
+      groups = GroupsIndex.active_groups.name_search(params[:term]).limit(9).load
+      experts = UsersIndex.available.name_or_login_search(params[:term]).limit(18 - groups.size).load
     else
       # this conditional should not be triggered during normal app usage, but
       # return something for testing

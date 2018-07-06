@@ -1,8 +1,8 @@
 <h1><%= @list_title %></h1>
 
-<p>Displaying <strong><%= @experts.offset + 1 %>-<%= @experts.offset + @experts.size %> of <%= @experts.total_entries %></strong></p>
-<%= paginate @experts %>
-
-<%= render :partial => 'expert_list', :locals => {:paginate_experts => false, :title => ""} %>
-
-<%= paginate @experts %>
+<div id="main" class="col-md-12">
+  <p>Displaying <strong><%= @experts.offset_value + 1 %>-<%= @experts.offset_value + @experts.size %> of <%= @experts.total_entries %></strong></p>
+  <%= paginate @experts %>
+  <%= render :partial => 'expert_list' -%>
+  <%= paginate @experts %>
+</div>

@@ -1,7 +1,5 @@
-<div class="col-md-12">
-
-  <% @groups.each do |group| %>
+<%- @groups.each do |indexed_group| -%>
+  <%- if(group = Group.find_by_id(indexed_group.id)) -%>
     <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %> <%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
-  <% end %>
-
-</div>
+  <%- end -%>
+<%- end -%>
