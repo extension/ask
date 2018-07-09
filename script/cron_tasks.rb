@@ -78,7 +78,6 @@ class CronTasks < Thor
         # merely updating the account should trigger solr
         u.update_attributes({needs_search_update: false})
       end
-      Sunspot.commit
     end
 
   end
