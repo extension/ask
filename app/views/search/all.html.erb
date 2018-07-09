@@ -1,25 +1,26 @@
-<div class="col-md-8">  
+<div class="col-md-8">
   <h1><%= @list_title %></h1>
 
   <div class="search_section">
     <h2>Questions <small>(with '<%= params[:q] %>' in the title, question or responses.)</small></h2>
 
 
-    <% if @questions.total_entries > 0 %>
-      <p>Displaying <strong><%= @questions.offset + 1 %>-<%= @questions.offset + @questions.size %> of <%= @questions.total_entries %></strong></p>
+    <% if @questions and @questions.total_count > 0 %>
+      <p>Displaying <strong><%= @questions.offset_value + 1 %>-<%= @questions.offset_value + @questions.size %> of <%= @questions.total_count %></strong></p>
       <%= paginate @questions %>
-      
-      <% @questions.each do |question| %>
-        <%= render :partial => 'home/full_public_question', :locals => {:question => question} %>
+
+      <% @questions.each do |indexed_question| %>
+        <%- if(question = Question.find_by_id(indexed_question.id)) -%>
+          <%= render :partial => 'home/full_public_question', :locals => {:question => question} %>
+        <%- end -%>
       <% end %>
 
       <%= paginate @questions %>
     <% else %>
       <p>There are currently no questions with these search terms.</p>
     <% end %>
-  </div>  
+  </div>
 </div>
 
 <div class="col-md-3 col-md-offset-1">
 </div>
-

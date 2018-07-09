@@ -41,31 +41,16 @@ class Expert::SearchController < ApplicationController
         @user_email_id = nil
       end
 
-      questions = Question.search do
-                    fulltext(params[:q])
-                     without(:status_state, Question::STATUS_REJECTED)
-                    paginate :page => 1, :per_page => 10
-                  end
-      @questions = questions.results
-
-      experts = User.search do
-                fulltext(params[:q]) do
-                  fields(:name)
-                  fields(:bio)
-                  fields(:login)
-                end
-                with :unavailable, false
-                with :kind, 'User'
-                order_by :last_activity_at, :desc
-                paginate :page => 1, :per_page => 10
-              end
-      @experts = experts.results
-
-      groups = Group.search do
-                 fulltext(params[:q])
-                 paginate :page => 1, :per_page => 10
-               end
-      @groups = groups.results
+      limit_to_count = 10
+      if(Settings.elasticsearch_enabled)
+        @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(limit_to_count).load
+        @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(limit_to_count).order(last_activity_at: :desc).load
+        @groups = GroupsIndex.fulltextsearch(params[:q]).limit(limit_to_count).load
+      else
+        @questions = Question.not_rejected.pattern_search(params[:q]).limit(limit_to_count)
+        @experts = User.exid_holder.not_unavailable.pattern_search(params[:q]).limit(limit_to_count).order(last_activity_at: :desc)
+        @groups = Group.where(group_active: true).pattern_search(params[:q]).limit(limit_to_count)
+      end
     end
 
     render :action => 'index'
@@ -81,12 +66,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search on questions for '#{params[:q]}'"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    questions = Question.search do
-                  fulltext(params[:q])
-                  without(:status_state, Question::STATUS_REJECTED)
-                  paginate :page => params[:page], :per_page => 15
-                end
-    @questions = questions.results
+    if(Settings.elasticsearch_enabled)
+      @questions = QuestionsIndex.not_rejected.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    else
+      @questions = Question.not_rejected.pattern_search(params[:q]).limit(15).page(params[:page])
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -100,17 +84,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Experts with '#{params[:q]}' in the name or bio"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    experts = User.search do
-              with :unavailable, false
-              with :kind, 'User'
-              order_by :last_activity_at, :desc
-              fulltext(params[:q]) do
-                fields(:name)
-                fields(:bio)
-              end
-              paginate :page => params[:page], :per_page => 15
-            end
-    @experts = experts.results
+    if(Settings.elasticsearch_enabled)
+      @experts = UsersIndex.available.fulltextsearch(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page]).load
+    else
+      @experts = User.exid_holder.not_unavailable.pattern_search(params[:q]).limit(15).order(last_activity_at: :desc).page(params[:page])
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 
@@ -124,11 +102,11 @@ class Expert::SearchController < ApplicationController
 
     @list_title = "Search for Groups with '#{params[:q]}' in the name or description"
     params[:page].present? ? (@page_title = "#{@list_title} - Page #{params[:page]}") : (@page_title = @list_title)
-    groups = Group.search do
-               fulltext(params[:q])
-               paginate :page => params[:page], :per_page => 15
-             end
-    @groups = groups.results
+    if(Settings.elasticsearch_enabled)
+      @groups = GroupsIndex.fulltextsearch(params[:q]).limit(15).page(params[:page]).load
+    else
+      @groups = Group.where(group_active: true).pattern_search(params[:q]).page(params[:page]).per(15)
+    end
     @page_title = "Search on questions for '#{params[:q]}'"
   end
 

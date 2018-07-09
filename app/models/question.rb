@@ -54,15 +54,10 @@ class Question < ActiveRecord::Base
   # remove extra whitespace on these attributes
   auto_strip_attributes :submitter_email, :submitter_firstname, :submitter_lastname, :squish => true
 
-  # sunspot/solr search
-  searchable :auto_index => false do
-    text :title, more_like_this: true
-    text :body, more_like_this: true
-    text :response_list, more_like_this: true
-    integer :status_state
-    boolean :is_private
+  # elasticsearch
+  if(Settings.elasticsearch_enabled)
+    update_index('questions#question') { self }
   end
-
 
   ## constants
   TITLE_MAX_LENGTH = 100
@@ -206,6 +201,23 @@ class Question < ActiveRecord::Base
   scope :evaluation_eligible, lambda { where("questions.created_at >= ?",Time.parse(EVALUATION_ELIGIBLE)).where(evaluation_sent: true) }
   scope :demographic_eligible, lambda { where("questions.created_at >= ?",Time.parse(DEMOGRAPHIC_ELIGIBLE)).where(evaluation_sent: true) }
 
+  # only as a search fallback if elasticsearch isn't available - it's going to be sooooo slloooooowwww
+  scope :pattern_search, lambda {|searchterm, type = nil|
+    # remove any leading * to avoid borking mysql
+    # remove any '\' characters because it's WAAAAY too close to the return key
+    # strip '+' and '?' characters because it's causing a repetition search error
+    # strip parens '()' to keep it from messing up mysql query
+    sanitizedsearchterm = searchterm.gsub(/\\/,'').gsub(/^\*/,'$').gsub(/\+/,'').gsub(/\(/,'').gsub(/\)/,'').gsub(/\[/,'').gsub(/\]/,'').gsub(/\?/,'').strip
+    if sanitizedsearchterm == ''
+      return {:conditions => 'false'}
+    end
+
+    if type.nil?
+      where("body rlike ? or title rlike ?", sanitizedsearchterm,sanitizedsearchterm)
+    elsif type == 'prefix'
+      where("body rlike ? or title rlike ?", "^#{sanitizedsearchterm}","^#{sanitizedsearchterm}")
+    end
+  }
 
   ## validations
   validates :body, :presence => true
@@ -524,32 +536,27 @@ class Question < ActiveRecord::Base
 
   # return a list of similar articles using sunspot
   def similar_questions(count = 4)
-    search_results = self.more_like_this do
-      without(:status_state, STATUS_REJECTED)
-      paginate(:page => 1, :per_page => count)
-      adjust_solr_params do |params|
-        params[:fl] = 'id,score'
-      end
-    end
     return_results = {}
-    search_results.each_hit_with_result do |hit,event|
-      return_results[event] = hit.score
+    if(Settings.elasticsearch_enabled)
+      search_results = QuestionsIndex.not_rejected.similar_to_question(self).limit(count)
+      search_results.each do |indexed_question|
+        if(db_question = self.class.find_by_id(indexed_question.id))
+          return_results[db_question] = indexed_question._score
+        end
+      end
     end
     return_results
   end
 
   def public_similar_questions(count = 4)
-    search_results = self.more_like_this do
-      with(:is_private, false)
-      without(:status_state, STATUS_REJECTED)
-      paginate(:page => 1, :per_page => count)
-      adjust_solr_params do |params|
-        params[:fl] = 'id,score'
-      end
-    end
     return_results = {}
-    search_results.each_hit_with_result do |hit,event|
-      return_results[event] = hit.score
+    if(Settings.elasticsearch_enabled)
+      search_results = QuestionsIndex.not_rejected.public_questions.similar_to_question(self).limit(count)
+      search_results.each do |indexed_question|
+        if(db_question = self.class.find_by_id(indexed_question.id))
+          return_results[db_question] = indexed_question._score
+        end
+      end
     end
     return_results
   end

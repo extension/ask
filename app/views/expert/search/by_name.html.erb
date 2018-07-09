@@ -1,8 +1,0 @@
-<% @experts.each do |expert| %>
-    <p>
-     <%= link_to expert_user_path(expert) do %>
-     <%= link_expert_user_avatar(expert, :thumb) %> <%= link_to expert.name, expert_user_path(expert) %>
-     <%= link_to "Assign", assign_expert_question_path(:id => @question.id, :assignee_id => expert.id), :method => :post, :class => "btn btn-primary" %>
-     <% end %>
-    </p>
-<% end %>

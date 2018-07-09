@@ -1,8 +1,8 @@
 <h1><%= @list_title %></h1>
 
-<p>Displaying <strong><%= @groups.offset + 1 %>-<%= @groups.offset + @groups.size %> of <%= @groups.total_entries %></strong></p>
-<%= paginate @groups %>
-
-<%= render :partial => 'group_list', :locals => {:paginate_experts => false, :title => ""} %>
-
-<%= paginate @groups %>
+<div id="main" class="col-md-12">
+  <p>Displaying <strong><%= @groups.offset_value + 1 %>-<%= @groups.offset_value + @groups.size %> of <%= @groups.total_count %></strong></p>
+  <%= paginate @groups %>
+  <%= render :partial => 'group_list' -%>
+  <%= paginate @groups %>
+</div>

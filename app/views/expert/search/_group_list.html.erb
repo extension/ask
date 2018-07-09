@@ -1,7 +1,3 @@
-<div class="col-md-12">
-
-  <% @groups.each do |group| %>
-    <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %> <%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
-  <% end %>
-
-</div>
+<%- @groups.each do |group| -%>
+  <p><span class="<%= !group.group_active? ? "inactive_group" : "active" %>"><%= link_public_group_avatar(group, :thumb) %> <%= link_to group.name, expert_group_path(group) %> <%= !group.group_active? ? "- Inactive Group" : "" %></span></p>
+<%- end -%>

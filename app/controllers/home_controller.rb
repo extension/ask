@@ -31,6 +31,7 @@ class HomeController < ApplicationController
   end
 
   def about
+    @locations_with_primary_group = Location.displaylist.joins(:groups).where("group_locations.is_primary = 1").uniq.all
   end
 
   def locations

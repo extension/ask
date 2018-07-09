@@ -2,14 +2,38 @@
   <h1 class="article_title">Welcome to Ask an Expert</h1>
 
     <div class="main_body">
-      <p>Ask an Expert has always offered one-to-one expert answers from Cooperative Extension/University staff and volunteers from across the United States. The latest version expands that one-to-one relationship via the ability to make questions and answers publicly available, on an opt-in basis.</p>
+      <p>Ask an Expert offers one-to-one expert answers from Cooperative Extension/University staff and volunteers within participating Land-Grant institutions from across the United States.</p>
     </div>
 
-  <h2>Contact Us</h2>
-  <p><%= link_to image_tag("Ask_An_Expert_logo_color.png", :class => "ask-an-expert-button", :alt =>"Ask an Expert"), ask_group_path(Group::EXTENSION_SUPPORT_ID), :title => "One-to-one answers from a network of experts at universities across America." %></p>
+    <div class="spaced_out">
+      <h3>Do you have a question for our Experts?</h3>
+      <p><%= link_to 'Ask a Question', ask_index_path(), :class => "btn orange lg" %></p>
+      <p>If you are located within one of the following states, you can <%= link_to 'Ask a Question', ask_index_path() -%> to your local institution.</p>
+      <p>
+        <%- @locations_with_primary_group.each do |pgloc| -%>
+          <%= link_to pgloc.name, ask_path(pgloc.id) -%>,
+        <%- end -%>
+      </p>
+    </div>
 
-  <% if !current_user %>
-    <p>If you are a part of Cooperative Extension and have an eXtensionID, please <%= link_to("sign in", '/auth/people' )%>.</p>
-  <% end %>
+    <div class="spaced_out">
+  <h3>Not a resident of a participating state?</h3>
+  <p><%= link_to 'Browse National Subject Areas', 'https://articles.extension.org/ask-an-expert', :class => "btn orange lg" %></p>
+  <p>If your state is not participating in Ask an Expert you can <%= link_to 'browse our national subject areas', 'https://articles.extension.org/ask-an-expert' -%>.</p>
+</div>
+
+  <div class="spaced_out">
+  <h3>Need technical support with the Ask an Expert website?</h3>
+  <p>We'd love to help! If you need <strong>technical support</strong> with the Ask an Expert website, email us a bug/issue report at <a href="mailto:contact-us@extension.org">contact-us@extension.org</a></p>
+
+  <p>A great bug/issue report includes:
+    <ul>
+      <li>What you wanted to do. (As much specific detail as possible!)</li>
+      <li>What you expected to happen.</li>
+      <li>What actually happened</li>
+      <li>Including a screen capture of any error messages, or the browser window you see is fantastic!</li>
+    </ul>
+  </p>
+  </div>
 
 </div>

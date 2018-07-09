@@ -91,19 +91,6 @@
 <!-- </div> -->
 
 <script class="code" type="text/javascript">
-/* Append the function to the "document ready" chain */
-jQuery(function($) {
-  /* when the #expert search form submits */
-  $("#expert_search_by_name").submit(function() {
-	/* stop form from submitting normally */
-	event.preventDefault();
-    /* make a call to search experts and replace expert result contents */
-    $.post('<%= expert_search_by_name_path %>', { expert_search: $("#expert_name").val(), question_id: <%= @question.id %>}, function(data) {
-      $("#expert_search_results").html(data);
-    });
-  });
-})
-
     // create an instance of autocomplete plus a hack for using the 'enter' key instead of direct selection
 		$("#expert_name").autocomplete({
       source: "/ajax/experts",
