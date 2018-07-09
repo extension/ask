@@ -65,7 +65,7 @@ class AjaxController < ApplicationController
         experts = UsersIndex.available.name_or_login_search(params[:term]).limit(18 - groups.size).load.to_a
       else
         groups = Group.where(group_active: true).pattern_search(params[:term]).limit(9)
-        experts = User.exid_holder.not_away.not_unavailable.pattern_search(params[:term]).limit(18 - groups.size)
+        experts = User.exid_holder.not_unavailable.pattern_search(params[:term]).limit(18 - groups.size)
       end
     else
       # this conditional should not be triggered during normal app usage, but
