@@ -124,7 +124,7 @@ class Response < ActiveRecord::Base
   end
 
   def index_parent_question
-    Sunspot.index(self.question)
+    QuestionsIndex::Question.import self.question
   end
 
   def update_question_data
