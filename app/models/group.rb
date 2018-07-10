@@ -108,7 +108,7 @@ class Group < ActiveRecord::Base
   #  'invited' => 'Group Invitation'}
 
   QUESTION_WRANGLER_GROUP_ID = 38
-  EXTENSION_SUPPORT_ID = 1278
+  EXTENSION_SUPPORT_GROUP_ID = 1278
   ORPHAN_GROUP_ID = 1
 
   # hardcoded for widget layout difference
