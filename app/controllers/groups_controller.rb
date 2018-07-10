@@ -43,9 +43,9 @@ class GroupsController < ApplicationController
 
   def ask
     @group = Group.find(params[:id])
-    # redirect if question wrangler group
 
-    if(@group.id == Group::QUESTION_WRANGLER_GROUP_ID)
+    # redirect if question wrangler group or extension support group
+    if(@group.id == Group::QUESTION_WRANGLER_GROUP_ID or @group.id == Group::EXTENSION_SUPPORT_GROUP_ID)
       return redirect_to(ask_index_path)
     end
 
