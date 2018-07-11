@@ -31,11 +31,7 @@ class WidgetController < ApplicationController
     @question.images.build
 
     @host_name = request.host_with_port
-    if(@group.is_bonnie_plants?)
-      return render(:template => 'widget/bonnie_plants', :layout => false)
-    else
-      return render :layout => false
-    end
+    return render :layout => false
   end
 
   def js_widget
@@ -68,11 +64,7 @@ class WidgetController < ApplicationController
     end
 
     @host_name = request.host_with_port
-    if(@group.is_bonnie_plants?)
-      return render(:template => 'widget/bonnie_plants', :layout => false)
-    else
-      return render :layout => false
-    end
+    return render :layout => false
   end
 
   def create_from_widget

@@ -25,7 +25,7 @@ class PublicMailer < BaseMailer
         @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
       end
 
-      set_from_address_if_bonnie_plants
+      @from_address = Settings.email_from_address
       return_email = mail(from: @from_address, to: @user.email, subject: @subject)
 
       if(@mailer_cache)
@@ -54,7 +54,7 @@ class PublicMailer < BaseMailer
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        set_from_address_if_bonnie_plants
+        @from_address = Settings.email_from_address
         return_email = mail(from: @from_address, to: @user.email, subject: @subject)
 
         if(@mailer_cache)
@@ -83,7 +83,7 @@ class PublicMailer < BaseMailer
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        set_from_address_if_bonnie_plants
+        @from_address = Settings.email_from_address
         return_email = mail(from: @from_address, to: @user.email, subject: @subject)
 
         if(@mailer_cache)
@@ -112,7 +112,7 @@ class PublicMailer < BaseMailer
           @mailer_cache = MailerCache.create(user: @user, cacheable: @group)
         end
 
-        set_from_address_if_bonnie_plants
+        @from_address = Settings.email_from_address
         return_email = mail(from: @from_address, to: @user.email, subject: @subject)
 
         if(@mailer_cache)
@@ -183,13 +183,5 @@ class PublicMailer < BaseMailer
   end
 
   private
-
-  def set_from_address_if_bonnie_plants
-    if @question.assigned_group.present? && @question.assigned_group.is_bonnie_plants?
-      @from_address = %("Bonnie Plants Ask an Expert" <aae-notify@extension.org>)
-    else
-      @from_address = Settings.email_from_address
-    end
-  end
 
 end

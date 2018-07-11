@@ -111,26 +111,9 @@ class Group < ActiveRecord::Base
   EXTENSION_SUPPORT_GROUP_ID = 1278
   ORPHAN_GROUP_ID = 1
 
-  # hardcoded for widget layout difference
-  BONNIE_PLANTS_GROUP = '4856a994f92b2ebba3599de887842743109292ce'
-
-  # hardcoded for widget layout differences
-  AUSTRALIAN_GROUPS = [1888,1889,1890]
-
-  # hardcoded for support purposes
-  SUPPORT_WIDGET_FINGERPRINT = '7ae729bf767d0b3165ddb2b345491f89533a7b7b'
-
   # attr_writer override for description to scrub html
   def description=(descriptioncontent)
     write_attribute(:description, self.cleanup_html(descriptioncontent))
-  end
-
-  def self.support_group
-    self.find_by_widget_fingerprint(SUPPORT_WIDGET_FINGERPRINT)
-  end
-
-  def is_bonnie_plants?
-    (self.widget_fingerprint == BONNIE_PLANTS_GROUP)
   end
 
   def joined
@@ -257,10 +240,6 @@ class Group < ActiveRecord::Base
       list = list - users_to_exclude
     end
     return list
-  end
-
-  def is_australian?
-    AUSTRALIAN_GROUPS.include?(self.id)
   end
 
   def will_accept_question_location(question)

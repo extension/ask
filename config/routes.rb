@@ -266,8 +266,6 @@ Aae::Application.routes.draw do
   match "ajax/:action", to: "ajax", :via => [:get, :post]
 
   ### Widget iFrame ###
-  # route for existing bonnie_plants widget for continued operation.
-  match 'widget/bonnie_plants/tracking/:fingerprint' => "widget#index", :via => :get
   # route for current url structure for accessing a widget
   match 'widget/tracking/:fingerprint' => "widget#index", :via => :get, :as => 'group_widget'
   # route for js loaded widget
