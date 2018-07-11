@@ -93,13 +93,11 @@
     <% if @group.widget_public_option %>
 
 				<div class="checkbox">
-         <label for="is_public">
-         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
-         Share my question on Ask an Expert
-  	      <span class="help-block">Sharing your question may help others learn from the answer.</span>
-         </label>
-			</div>
-
+					<label for="is_public">
+						<%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
+						<span class="help-block">Share your question with the public at ask.extension.org so others can learn from the answer.</span>
+					</label>
+				</div>
      <% end %>
 
      <%- if current_user and current_user.email.present? -%>

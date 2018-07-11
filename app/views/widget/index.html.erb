@@ -115,11 +115,10 @@
     <% if @group.widget_public_option %>
        <fieldset>
        <p>
-         <label for="is_public">
-         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %>
-         Share my question on Ask an Expert
-  	      <span><em>Sharing your question may help others learn from the answer.</em></span>
-         </label>
+			 <label for="is_public">
+         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
+         <span><em>Share your question with the public at ask.extension.org so others can learn from the answer.</em></span>
+       </label>	 			 
        </p>
        </fieldset>
      <% end %>
