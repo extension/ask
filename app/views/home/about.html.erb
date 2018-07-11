@@ -8,7 +8,7 @@
     <div class="spaced_out">
       <h3>Do you have a question for our Experts?</h3>
       <p><%= link_to 'Ask a Question', ask_index_path(), :class => "btn orange lg" %></p>
-      <p>If you are located within one of the following states, you can <%= link_to 'Ask a Question', ask_index_path() -%> to your local institution.</p>
+      <p>If you are located within one of the following states, you can <%= link_to 'Ask a Question', ask_index_path() -%> of your local institution.</p>
       <p>
         <%- @locations_with_primary_group.each do |pgloc| -%>
           <%= link_to pgloc.name, ask_path(pgloc.id) -%>,

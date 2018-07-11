@@ -157,15 +157,6 @@ class QuestionsController < ApplicationController
         if current_user and current_user.email.present?
           @submitter = current_user
         else
-          # Need to check with Bonnie Plants before removing email confirmation option from their widget. In the meantime, handle it as an optional field
-          @email_confirmation = params[:email_confirmation].present? ? params[:email_confirmation].strip : params[:question][:submitter_email].strip
-
-          # make sure email and confirmation email match up
-          if params[:question][:submitter_email].strip != @email_confirmation.strip
-            @argument_errors = "Email address does not match the confirmation email address."
-            raise ArgumentError
-          end
-
           if !(@submitter = User.find_by_email(params[:question][:submitter_email].strip))
             @submitter = User.new({:email => params[:question][:submitter_email].strip, :kind => 'PublicUser'})
             if !@submitter.valid?
@@ -238,14 +229,10 @@ class QuestionsController < ApplicationController
           end
         end
 
-        if(@group.is_bonnie_plants?)
-          return render(:template => 'widget/bonnie_plants', :layout => false)
+        if params[:widget_type] == "js_widget"
+          return render(:template => 'widget/js_widget', :layout => false)
         else
-          if params[:widget_type] == "js_widget"
-            return render(:template => 'widget/js_widget', :layout => false)
-          else
-            return render(:template => 'widget/index', :layout => false)
-          end
+          return render(:template => 'widget/index', :layout => false)
         end
       rescue Exception => e
         notify_honeybadger(e)
@@ -259,14 +246,10 @@ class QuestionsController < ApplicationController
           end
         end
 
-        if(@group.is_bonnie_plants?)
-          return render(:template => 'widget/bonnie_plants', :layout => false)
+        if params[:widget_type] == "js_widget"
+          return render(:template => 'widget/js_widget', :layout => false)
         else
-          if params[:widget_type] == "js_widget"
-            return render(:template => 'widget/js_widget', :layout => false)
-          else
-            return render(:template => 'widget/index', :layout => false)
-          end
+          return render(:template => 'widget/index', :layout => false)
         end
       end
     else
