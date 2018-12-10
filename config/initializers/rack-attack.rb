@@ -6,6 +6,10 @@ class Rack::Attack
     req.user_agent =~ regex
   end
 
+  blacklist('Chinese Spam Bots') do |req|
+  	req.post? && req.params['fingerprint'] == 'f27f2408790556f17a5265c33fcca10d451e01fc'
+	end
+
 end
 
 # Rack::Attack.blacklisted_response = lambda do |env|
