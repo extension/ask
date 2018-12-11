@@ -6,8 +6,8 @@ class Rack::Attack
     req.user_agent =~ regex
   end
 
-  blacklist('Chinese Spam Bots') do |req|
-  	req.post? && req.params['fingerprint'] == 'f27f2408790556f17a5265c33fcca10d451e01fc'
+  blacklist('Additional honey pot') do |req|
+  	req.post? && !req.params['ask_expert_required'].blank?
 	end
 
 end
