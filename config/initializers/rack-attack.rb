@@ -7,8 +7,9 @@ class Rack::Attack
   end
 
   blacklist('Additional honey pot') do |req|
-  	req.post? && !req.params['ask_expert_required'].blank?
-  	req.post? && !req.params['ask_expert_required']
+  	# req.post? && !req.params['ask_expert_required'].blank?
+  	# req.post? && !req.params['ask_expert_required'] #verified...this stops submission if ask_expert_required not present (I'm just removing the div id="ask_expert_required_18804045" from the view)
+  	req.post? && (!req.params['ask_expert_required'].blank? || !req.params['ask_expert_required'])
 	end
 
 end
