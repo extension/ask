@@ -7,7 +7,7 @@ class Rack::Attack
   end
 
   blacklist('Additional honey pot') do |req|
-  	req.post? && !req.params['ask_expert_required'].blank?
+  	req.post? &&  req.params['authenticity_token'] == 'Gax3gRkeOaAYdtgXHYbt98B+RYdDvide6Fsb1HHhclc='
 	end
 
 end
