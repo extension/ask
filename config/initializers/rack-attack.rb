@@ -7,7 +7,9 @@ class Rack::Attack
   end
 
   blacklist('Additional honey pot') do |req|
-  	req.post? && !req.params['ask_expert_required'].blank?
+  	#if params['ask_expert_required'] is blank OR if the param does not exist in the question form 
+  	#then we block
+  	req.post? && (!req.params['ask_expert_required'].blank? || !req.params['ask_expert_required'])
 	end
 
 end

@@ -14,6 +14,7 @@
        #myForm {margin:0; border: 1px solid #888;padding: .5em 1em 0;background: #eee;}
        h1 {margin:0;padding:0;float:right;height: 40px;width: 98px;text-indent:-3000px;background: transparent url('<%= (request.ssl? ? 'https' : 'http' ) + "://#{@host_name}/#{asset_path('ex_logo_micro_wR.png')}" %>') 0 0 no-repeat; background-size: 98px 40px;}
        h1 a {display:block;height:40px;}
+       h1 a {display:block;height:40px;}
        h2 {margin:0 0 .25em;font-size: 1.7em;line-height:100%;font-weight: normal;color:#000;}
 
        #myFormOutput p {margin: 1em 0;color:#008000;font-weight: bold;font-size:1.3em;}
@@ -46,6 +47,7 @@
 
     <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
     <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
+    <div id="ask_expert_required_18804045"><style media="screen" scoped="scoped" type="text/css">#ask_expert_required_18804045 { display:none; }</style><label for="ask_expert_required">Keep this field empty</label><input id="ask_expert_required" name="ask_expert_required" type="text" /></div>
 
     <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
     <h2>Ask an Expert</h2>
@@ -118,7 +120,7 @@
 			 <label for="is_public">
          <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
          <span><em>Share your question with the public at ask.extension.org so others can learn from the answer.</em></span>
-       </label>	 			 
+       </label>
        </p>
        </fieldset>
      <% end %>
