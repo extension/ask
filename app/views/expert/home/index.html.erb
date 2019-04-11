@@ -155,11 +155,9 @@
   <% end %>
   </div>
   <div id="last_30_days" class="formy">
-    <h2>Ask an Expert Overview</h2>
-    <h3><%= link_to "#{@all_unanswered_questions_count} Questions Need an Answer", expert_questions_path(:status => "unanswered") %></h3>
-    <p><%= link_to "View Reports", expert_reports_home_path() %></p>
     <p><%= link_to "Recent Activity", expert_home_recent_activity_path() %></p>
     <p><%= link_to "View Locations", expert_locations_path -%></p>
+    <p><%= link_to "View Reports", expert_reports_home_path() %> (Loads slow)</p>
   </div>
 
 </div>

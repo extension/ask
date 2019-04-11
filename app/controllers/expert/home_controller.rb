@@ -24,15 +24,11 @@ class Expert::HomeController < ApplicationController
     @tags_with_open_questions = @user.get_tags_with_open_questions
 
     @my_groups = @user.group_memberships.except(:order).find(:all, :select => "groups.*", :joins => "LEFT JOIN questions on groups.id = questions.assigned_group_id", :group => "groups.id", :order => "COUNT(IF(questions.status_state = #{Question::STATUS_SUBMITTED}, questions.id, NULL)) DESC, groups.name")
-    @all_unanswered_questions_count = Question.submitted.not_rejected.count
     @oldest_assigned_question = @user.open_questions.order('created_at ASC').first
     @questions_assigned_to_expert_count = @user.open_questions.length
 
     @date = DateTime.now
     @year_month = User.year_month_string(Date.today.year,Date.today.month)
-
-    # @number_of_questions_asked = Question.cached_asked_for_year_month(@year_month)
-    # @number_of_questions_answered = Question.cached_answered_for_year_month(@year_month)
 
     @assigned = @user.assigned_list_for_year_month(@year_month)
     @answered = @user.answered_list_for_year_month(@year_month)
