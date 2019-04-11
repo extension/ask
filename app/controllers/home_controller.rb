@@ -9,8 +9,8 @@ class HomeController < ApplicationController
   before_filter :set_format, :only => [:about, :index]
 
   def index
-    @answered_questions = Question.public_visible_answered.page(params[:page]).order('created_at DESC')
-    @recent_photo_questions = Question.public_visible_with_images_answered.order('questions.created_at DESC').limit(6)
+    @answered_questions = Question.public_visible_answered.page(params[:page]).order('created_at DESC').limit(10)
+    
   end
 
   def unanswered
