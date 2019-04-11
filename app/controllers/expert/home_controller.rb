@@ -7,7 +7,7 @@
 class Expert::HomeController < ApplicationController
   layout 'expert'
   before_filter :signin_required
-  
+
 
   def index
     @user = current_user
@@ -31,8 +31,8 @@ class Expert::HomeController < ApplicationController
     @date = DateTime.now
     @year_month = User.year_month_string(Date.today.year,Date.today.month)
 
-    @number_of_questions_asked = Question.cached_asked_for_year_month(@year_month)
-    @number_of_questions_answered = Question.cached_answered_for_year_month(@year_month)
+    # @number_of_questions_asked = Question.cached_asked_for_year_month(@year_month)
+    # @number_of_questions_answered = Question.cached_answered_for_year_month(@year_month)
 
     @assigned = @user.assigned_list_for_year_month(@year_month)
     @answered = @user.answered_list_for_year_month(@year_month)
