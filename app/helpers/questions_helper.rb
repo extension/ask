@@ -1,6 +1,10 @@
 module QuestionsHelper
 
   def stringify_question_event(q_event, show_question_id=false)
+    if !q_event.recipient
+      q_event.recipient = User.find 1
+    end
+
     if q_event.initiator.present? && (q_event.initiator.id == User.system_user_id)
       initiator_full_name = "System"
     elsif q_event.initiator
