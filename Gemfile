@@ -135,6 +135,10 @@ gem 'invisible_captcha'
 # bot detection
 gem 'voight_kampff'
 
+#New Relic
+gem 'newrelic_rpm'
+
+
 group :development do
   # require the powder gem
   gem 'powder'
