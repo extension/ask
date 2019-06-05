@@ -151,6 +151,7 @@ GEM
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
     netrc (0.11.0)
+    newrelic_rpm (6.4.0.356)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     omniauth (1.4.2)
@@ -312,6 +313,7 @@ DEPENDENCIES
   loofah
   meta_request
   mysql2
+  newrelic_rpm
   nokogiri
   omniauth (~> 1.0)
   omniauth-openid
