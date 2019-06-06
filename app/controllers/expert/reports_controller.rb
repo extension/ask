@@ -407,7 +407,4 @@ class Expert::ReportsController < ApplicationController
     return render :layout => 'export'
   end
 
-  def temporary_reports_page
-  end
-
 end
