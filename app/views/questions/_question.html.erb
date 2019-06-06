@@ -228,15 +228,6 @@
   </aside>
   <% end %>
 
-  <% if @question.public_similar_questions.count > 0 %>
-  <aside>
-    <h4 class="subhead_style">Related Questions</h4>
-    <% @question.public_similar_questions.each do |question,score| %>
-      <p><%= link_to(question.title.html_safe, question_path(question.id), :class => "muted_link") %></p>
-    <% end %>
-  </aside>
-  <% end %>
-
 </div>
 
 <script class="code" type="text/javascript">
