@@ -29,7 +29,6 @@
 /capatross_logs
 /config/capatross.local.yml
 /config/sunspot.yml
-/config/newrelic.yml
 
 # asset cache
 /.sass-cache
