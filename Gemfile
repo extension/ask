@@ -14,7 +14,7 @@ group :assets do
 end
 
 # xml parsing
-gem 'nokogiri'
+gem 'nokogiri', "~> 1.10.4"
 
 # jquery
 gem 'jquery-rails'
@@ -74,7 +74,7 @@ gem 'honeybadger'
 gem "auto_strip_attributes", "~> 2.0"
 
 # html scrubbing
-gem "loofah"
+gem "loofah", '~> 2.3.0'
 
 # htmlentities conversion
 gem "htmlentities"
