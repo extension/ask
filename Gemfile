@@ -74,7 +74,7 @@ gem 'honeybadger'
 gem "auto_strip_attributes", "~> 2.0"
 
 # html scrubbing
-gem "loofah", '~> 2.3.0'
+gem "loofah", '~> 2.3.1'
 
 # htmlentities conversion
 gem "htmlentities"
