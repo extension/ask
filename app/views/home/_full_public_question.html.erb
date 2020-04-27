@@ -31,14 +31,6 @@
         <% end %>
       <% end %>
 
-      <%- cached_tag_hash = question.cached_tags -%>
-      <% if !cached_tag_hash.blank? %>
-        <% cached_tag_hash.each do |tag_id,tag_name| %>
-          <% if tag_name != "front page" %>
-            <span class="tag tag-topic"><%= link_to tag_name, questions_by_tag_path(:name => tag_name) %></span>
-          <% end %>
-        <% end %>
-      <% end %>
       <span class="smallish text-muted"><%= time_ago_in_words(question.created_at) %> ago</span>
 
 
