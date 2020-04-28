@@ -20,12 +20,12 @@ class QuestionsController < ApplicationController
 
     analytics_url = []
 
-    if @question.tags.length != 0
-      analytics_url = ["|tags"] + @question.tags.map(&:name)
-      tracker do |t|
-        t.google_tag_manager :push, { pageAttributes: @question.tags.map(&:name) }
-      end
-    end
+    # if @question.tags.length != 0
+    #   analytics_url = ["|tags"] + @question.tags.map(&:name)
+    #   tracker do |t|
+    #     t.google_tag_manager :push, { pageAttributes: @question.tags.map(&:name) }
+    #   end
+    # end
 
     question_resolves_with_resolver = @question.question_events.where('event_state = 2').includes(:initiator)
 
