@@ -10,7 +10,7 @@ class QuestionsController < ApplicationController
   before_filter :set_format, :only => [:show, :submitter_view]
 
   def index
-    @recent_questions = filtered_questions.public_visible
+    # @recent_questions = filtered_questions.public_visible
   end
 
   def show
