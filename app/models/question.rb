@@ -126,11 +126,10 @@ class Question < ActiveRecord::Base
   you've made a request is not yet fully staffed by eXtension experts
   and therefore we cannot provide you with a timely answer. Instead,
   if you live in the United States, please consider contacting the
-  Cooperative Extension office closest to you. Simply go to
-  http://articles.extension.org, drop in your zip code and choose the
-  office that is most convenient for you.  We apologize that we
-  can't help you right now,  but please come back to eXtension to
-  check in as we grow and add experts.
+  Cooperative Extension office closest to you. You can find your location
+  Extension institution here: https://extension.org/membership/current/.
+  We apologize that we can't help you right now,  but please come back to
+  eXtension to check in as we grow and add experts.
   END_TEXT
 
   # reporting scopes
