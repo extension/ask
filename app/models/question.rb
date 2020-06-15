@@ -1124,13 +1124,6 @@ class Question < ActiveRecord::Base
     self.status_state != STATUS_REJECTED
   end
 
-  def create_evaluation_notification
-    if(self.is_answered? and !self.submitter.answered_evaluation_for_question?(self) and self.assigned_group.send_evaluation)
-      Notification.create(notifiable: self, created_by: self.submitter.id, recipient_id: self.submitter.id, notification_type: Notification::AAE_PUBLIC_EVALUATION_REQUEST, delivery_time: 1.minute.from_now )
-    end
-  end
-
-
 
   def response_time(initial_only = false)
     response_count = self.responses.expert.count

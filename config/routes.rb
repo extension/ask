@@ -299,19 +299,12 @@ Aae::Application.routes.draw do
   end
 
   # evaluation
-  match "evaluation/answer_evaluation", to: "evaluation#answer_evaluation", via: [:post], as: 'answer_evaluation'
-  match "evaluation/answer_demographic", to: "evaluation#answer_demographic", via: [:post], as: 'answer_demographic'
-  match "evaluation/question/:id", to: "evaluation#question", via: [:get], as: 'evaluation_form'
-  match "evaluation/view/:fingerprint" => "evaluation#view", :requirements => { :fingerprint => /[[:xdigit:]]+/ }, :via => [:get], :as => 'view_evaluation'
-  match "evaluation/authorize" => "evaluation#authorize", via: [:post], :as => 'authorize_evaluation'
-  match "evaluation/example" => "evaluation#example", via: [:get], :as => 'example_evaluation'
-  match "evaluation/thanks" => "evaluation#thanks", via: [:get], :as => 'evaluation_thanks'
 
   # feeds
   match "feeds/answered_questions", :via => :get, :defaults => { :format => 'xml' }
 
   # wildcard
-  match "evaluation/:action", to: "evaluation", :via => [:get, :post]
+  match "evaluation/*path", to: "evaluation#notice", :via => [:get, :post]
 
   # reports
   match "reports/expert/:id", to: "reports#expert", :via => [:get], as: 'expert_report'
