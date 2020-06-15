@@ -16,8 +16,7 @@ class CronTasks < Thor
   # and pulling out "load_rails" but that seems like
   # overkill - so just add additional tasks here
   # that are allowed to run individually
-  RUNNABLE_TASKS = ['create_evaluation_notifications',
-                    'create_daily_summary_notification',
+  RUNNABLE_TASKS = ['create_daily_summary_notification',
                     'create_daily_handling_reminder_notification',
                     'create_daily_away_reminder_notification',
                     'clean_up_mailer_caches',
@@ -33,19 +32,6 @@ class CronTasks < Thor
         ENV["RAILS_ENV"] = environment
       end
       require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-    end
-
-    def create_evaluation_notifications
-      notification_count = 0
-      question_count = 0
-
-      Question.evaluation_pool.each do |question|
-        question_count += 1
-        if(notification = question.create_evaluation_notification)
-          notification_count += 1
-        end
-      end
-      puts "Created #{notification_count} evaluation request notifications for the #{question_count} questions closed #{Settings.days_closed_for_evaluation} days ago"
     end
 
     def create_daily_summary_notification
@@ -82,19 +68,10 @@ class CronTasks < Thor
 
   end
 
-
-  desc "evaluation_notifications", "Create evaluation request notifications for the closed questions"
-  method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
-  def evaluation_notifications
-    load_rails(options[:environment])
-    create_evaluation_notifications
-  end
-
   desc "daily", "All daily cron tasks"
   method_option :environment,:default => 'production', :aliases => "-e", :desc => "Rails environment"
   def daily
     load_rails(options[:environment])
-    create_evaluation_notifications
     create_daily_summary_notification
     create_daily_handling_reminder_notification
     create_daily_away_reminder_notification
