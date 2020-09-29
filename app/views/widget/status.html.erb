@@ -5,10 +5,22 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>eXtension: Ask an Expert</title>
+	<%= stylesheet_link_tag    "public", :media => "all" %>
+	<style type="text/css" media="screen">
+		body {background:none;}
+		.feedback-block {background: #e5e5e5; padding:.5em 1em; margin:1em;}
+		.feedback-block.warning {background:yellow;}
+		.feedback-block.notice {background:#5cb85c; color:#fff;}
+		.well {margin-bottom:0;}
+		.aae-logo {padding:10px; background-color:#fff;}
+		#app_location {background: yellow; padding: 1em; margin-bottom: 1em;}
+		img {float: none !important;}
+	</style>
 </head>
 
 <body>
-  <p><%= @status_message %></p>
+	<%= image_tag "aae_logo.png", :class => "widget-aae-logo", :alt => "eXtension" %>
+  <h2><%= @status_message %></h2>
 </body>
 
 </html>
