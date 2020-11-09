@@ -96,7 +96,8 @@
     <div id="tags_prompt">Hi there! We know you've got expertise. Why not tell us about it by adding some tags? That helps the rest of us know what kind of questions you want to answer. Please add a few in your <%= link_to 'settings', expert_settings_tags_path() %>. Thanks!</div>
   <% end %>
 
-  <div id="ask_extension_prompt">We are moving forward with migrating all experts and groups at this time. <a href="https://askhelp.extension.org/getting-started/?utm_source=ask_extension&utm_medium=banner&utm_campaign=claim_account">Please claim your account by <strong>November 1.</strong></a></div>
+  <div id="ask_extension_prompt">All experts and groups need to migrate to the new platform. <a href="https://askhelp.extension.org/getting-started/?utm_source=ask_extension&utm_medium=banner&utm_campaign=claim_account"><strong>Please claim your account now.</strong></a>
+    <p>Ask a Question widgets have been disabled. Direct question submission on this site will be disabled in the next month.</div>
 
   <%- if @override_rows.present? and @override_rows -%>
     <%= yield %>
