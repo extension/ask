@@ -13,23 +13,12 @@
 		.well {margin-bottom:0;}
 		.aae-logo {padding:10px; background-color:#fff;}
 		#app_location {background: yellow; padding: 1em; margin-bottom: 1em;}
+		h3, h4 {margin-bottom: 1em !important;}
+	}
 	</style>
 </head>
 
 <body>
-
-    <%= form_for @question, :html => {:multipart => true, :id => "myForm", :class => "form-stacked no_m_t well"} do |f| %>
-    <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
-		<%= hidden_field_tag(:widget_type, "js_widget") %>
-		<%= hidden_field_tag(:widget_parent_url, @widget_parent_url) %>
-
-    <div id="ask_expert_required_18804045"><style media="screen" scoped="scoped" type="text/css">#ask_expert_required_18804045 { display:none; }</style><label for="ask_expert_required">Keep this field empty</label><input id="ask_expert_required" name="ask_expert_required" type="text" /></div>
-
-		<div class="widget-logos">
-			<%= image_tag "cooperative_extension_500w.png", :class => "widget-coopex-logo", :alt => "eXtension" %>
-			<%= image_tag "aae_logo.png", :class => "widget-aae-logo", :alt => "eXtension" %>
-			<br class="clearing" />
-		</div>
 
 		<%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
 			<div id="app_location" class="demo">
@@ -37,97 +26,12 @@
 			</div>
 		<% end %>
 
-    <% flash_names = [:notice, :warning, :message, :error]
-          flash_names.each do |flash_type|
-             if flash[flash_type] %>
-                <div class='feedback-block <%= flash[:notice]? "notice" : "warning" %>'>
-                    <p><%= flash[flash_type] %></p>
-                </div>
-            <% end %>
-    <% end %>
+		<h3>You are seeing this message because Ask an Expert is transitioning to a new platform this fall and this widget needs to be updated.</h3>
+		<h4>If you are the site owner and need help implementing the new widget, please visit <a target="_parent" href="https://askhelp.extension.org/">askhelp.extension.org</a>.</h4>
+		<p>If you want to ask a question, you can visit the new site and ask your question to the <strong><%= @group.name -%> group</strong> at <a target="_parent" href="https://ask2.extension.org/">ask2.extension.org</a>.</p>
 
-		<p>
-			<%= f.label :title, 'Give your question a title' %>
-			<%= f.text_field :title, {:maxlength => Question::TITLE_MAX_LENGTH, :type => "text", :class => "form-control required"} %>
-		</p>
-
-		<p>
-			<%= f.label :body, "Question" %>
-			<%= f.text_area :body, :rows => 6, :class => "form-control required wysiwyg" %>
-		</p>
-
-
-        <p>
-          <label>Location and County
-            <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : @group.widget_location_id)) %>
-          </label>
-        </p>
-
-        <p id="county_list">
-          <% if (current_location && current_location.counties.size > 0 ) || (@group.widget_location &&  @group.widget_location.counties.size > 0) %>
-            <label>
-              	<%= f.select(:county_id,
-                options_for_select(get_county_options(current_location || @group.widget_location), current_county.present? ? current_county.id : @group.widget_county_id)) %>
-            </label>
-          <% end %>
-        </p>
-
-      <div class="image-upload-wrapper">
-      <label>Image (optional)</label>
-      <p><em>You can upload .jpg .png or .gif.</em></p>
-
-      <%= f.fields_for :images do |image_form| %>
-          <p class="image-upload">
-            <%= image_form.file_field :attachment %>
-          </p>
-      <% end %>
-    </div>
-
-    <%- if !current_user or !current_user.email.present? -%>
-    <p>
-        <label for="email">Email
-        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
-        </label>
-    </p>
-    <%- end -%>
-
-
-    <% if @group.widget_public_option %>
-
-				<div class="checkbox">
-					<label for="is_public">
-						<%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
-						<span class="help-block">Share your question with the public at ask.extension.org so others can learn from the answer.</span>
-					</label>
-				</div>
-     <% end %>
-
-     <%- if current_user and current_user.email.present? -%>
-        <p>Your answer will be sent to <%= current_user.email %></p>
-      <% end %>
-
-		<p><%= submit_tag "Submit your Question", :id => "ask_submit", :data_disable_with => "Submitting...", :class => "btn btn-primary btn-orange btn-lg" %></p>
 
 		<p class="text-muted text-italic text-legal"><small>By submitting a question, you agree to the eXtension <%= link_to "Terms of Use", "https://extension.org/terms-of-use/", :target => "_blank" %>.</small></p>
-
-    <% end %>
-
-    <script class="code" type="text/javascript">
-      $(document).ready(function () {
-
-        $("#question_location_id").change(function() {
-          var location_id = $('select#question_location_id :selected').val();
-          if(location_id == "") {
-            $("#county_list").html("");
-          } else {
-            jQuery.get('/widget/get_counties/' + location_id, function(data){
-                $("#county_list").html(data);
-            })
-          }
-          return false;
-        });
-      });
-    </script>
 
 </body>
 </html>
