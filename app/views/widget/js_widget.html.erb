@@ -6,7 +6,8 @@
 	<%= javascript_include_tag "application" %>
 	<%= stylesheet_link_tag    "public", :media => "all" %>
 	<style type="text/css" media="screen">
-		body {background:none;}
+		body {background: #fdff8d;
+		padding: 1em 2em;}
 		.feedback-block {background: #e5e5e5; padding:.5em 1em; margin:1em;}
 		.feedback-block.warning {background:yellow;}
 		.feedback-block.notice {background:#5cb85c; color:#fff;}
@@ -29,9 +30,6 @@
 		<h3>You are seeing this message because Ask an Expert is transitioning to a new platform this fall and this widget needs to be updated.</h3>
 		<h4>If you are the site owner and need help implementing the new widget, please visit <a target="_parent" href="https://askhelp.extension.org/">askhelp.extension.org</a>.</h4>
 		<p>If you want to ask a question, you can visit the new site and ask your question to the <strong><%= @group.name -%> group</strong> at <a target="_parent" href="https://ask2.extension.org/">ask2.extension.org</a>.</p>
-
-
-		<p class="text-muted text-italic text-legal"><small>By submitting a question, you agree to the eXtension <%= link_to "Terms of Use", "https://extension.org/terms-of-use/", :target => "_blank" %>.</small></p>
 
 </body>
 </html>
