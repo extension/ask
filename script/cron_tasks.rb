@@ -74,7 +74,7 @@ class CronTasks < Thor
     load_rails(options[:environment])
     create_daily_summary_notification
     create_daily_handling_reminder_notification
-    create_daily_away_reminder_notification
+    # create_daily_away_reminder_notification
     clean_up_mailer_caches
     clean_up_notifications
   end
