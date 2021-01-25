@@ -42,6 +42,8 @@ class GroupsController < ApplicationController
 
 
   def ask
+    return redirect_to ask_index_url
+    
     @group = Group.find(params[:id])
 
     # redirect if question wrangler group or extension support group

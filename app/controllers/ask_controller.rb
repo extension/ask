@@ -11,6 +11,8 @@ class AskController < ApplicationController
   end
 
   def show
+    return redirect_to ask_index_url
+
     if(params[:id] and params[:id].length == 32)
       return redirect_to(submitter_view_url(fingerprint: params[:id]))
     end
