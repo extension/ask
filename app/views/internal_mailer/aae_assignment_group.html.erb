@@ -2,6 +2,9 @@
 
 <tr>
   <td class="content padding">
+    <h3 class="last-call">PLEASE READ: This is one of the last questions in the old Ask an Expert system. New questions will all be in the new Ask Extension system.</h3>
+    <h3>Please answer or close this question.</h3>
+    <p>Thanks for your help!</p>
     <% if @question.assigned_group %>
       <h3><%= get_avatar_for_group(@question.assigned_group, :thumb, false, false) %> <%= link_expert_group(@question.assigned_group) %> Has a New Question.</h3>
     <% end %>
