@@ -142,7 +142,7 @@ GEM
       railties
     method_source (0.8.1)
     mime-types (1.25.1)
-    mini_portile2 (2.4.0)
+    mini_portile2 (2.5.0)
     multi_json (1.14.1)
     multipart-post (2.0.0)
     mysql2 (0.3.21)
@@ -156,8 +156,9 @@ GEM
     netrc (0.11.0)
     newrelic_rpm (6.4.0.356)
     nio4r (2.5.2)
-    nokogiri (1.10.9)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.11.0)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     omniauth (1.4.2)
       hashie (>= 1.2, < 4)
       rack (>= 1.0, < 3)
@@ -187,6 +188,7 @@ GEM
       nio4r (~> 2.0)
     quiet_assets (1.0.1)
       railties (~> 3.1)
+    racc (1.5.2)
     rack (1.4.7)
     rack-attack (4.3.0)
       rack
@@ -326,7 +328,7 @@ DEPENDENCIES
   meta_request
   mysql2
   newrelic_rpm
-  nokogiri (~> 1.10.4)
+  nokogiri (~> 1.11.0)
   omniauth (~> 1.0)
   omniauth-openid
   outfielding-jqplot-rails

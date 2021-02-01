@@ -14,7 +14,7 @@ group :assets do
 end
 
 # xml parsing
-gem 'nokogiri', "~> 1.10.4"
+gem 'nokogiri', "~> 1.11.0"
 
 # jquery
 gem 'jquery-rails'
