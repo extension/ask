@@ -2,8 +2,9 @@
 
 <tr>
   <td class="content padding">
-    <h3>You have a new Ask an Expert Question</h3>
-    <p>Please <%= link_to("answer", expert_question_url(@question), :class => "action") -%> or <%= link_to "reassign", reassign_expert_question_url(@question, :visit_source => "email_reassign_link"), :class => "action" %> as soon as possible. Thanks for your help!</p>
+    <h3 class="last-call">PLEASE READ: This is one of the last questions submitted to the old Ask an Expert system. New questions will all be in the new Ask Extension system.</h3>
+    <h3>Please answer or close this question.</h3>
+    <p>Thanks for your help!</p>
 
     <p class="button"><%= link_to(image_tag("#{ssl_root_url}assets/email_view_the_question.png", alt: "View the Question", width: "245"), expert_question_url(@question)) -%></p>
   </td>
