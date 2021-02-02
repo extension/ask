@@ -1,162 +1,35 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>eXtension: Ask an Expert</title>
-    <style type="text/css" media="screen">
-        <!--
-       body {font-size: 62.5%;}
-       body, html {margin:0; font-family: "Arial", "sans-serif"; color: #222; line-height:120%; background:transparent;}
-       p {font-size:1.2em;line-height:1.3em;margin:0 0 .1em;}
-
-       #myForm {margin:0; border: 1px solid #888;padding: .5em 1em 0;background: #eee;}
-       h1 {margin:0;padding:0;float:right;height: 40px;width: 98px;text-indent:-3000px;background: transparent url('<%= (request.ssl? ? 'https' : 'http' ) + "://#{@host_name}/#{asset_path('ex_logo_micro_wR.png')}" %>') 0 0 no-repeat; background-size: 98px 40px;}
-       h1 a {display:block;height:40px;}
-       h1 a {display:block;height:40px;}
-       h2 {margin:0 0 .25em;font-size: 1.7em;line-height:100%;font-weight: normal;color:#000;}
-
-       #myFormOutput p {margin: 1em 0;color:#008000;font-weight: bold;font-size:1.3em;}
-       #myFormOutput p#red {color: #ff0000;}
-
-       fieldset {margin: 1em 0 .5em;border:0;padding:0;color:#666;}
-       textarea, input, select {width: 95%;margin: 0 0 7px;}
-       input, select {max-width: 20em;}
-       input, textarea {padding: .15em .3em;}
-       p.submit input {width:auto; margin-bottom:4px;}
-       label {clear: both;display: block;margin-bottom:.3em;font-weight: bold;font-size:1.2em; color:#000;}
-       label small {color:#555; font-weight:normal; font-size:.9em;}
-       span {line-height: 100%;display: block;font-weight:normal;color: #888;}
-       label .checkbox {float:left; width:auto; margin-right:1em;}
-        .label {float:left;}
-       #flash_notice {float:left; padding:6px; margin:10px 0; font-size:12px; color:#fff;}
-       #flash_notice.notice {background:#5cb85c;}
-       #flash_notice.warning {background:#a94442;}
-       #app_location {background:yellow; padding:1em; margin-bottom:1em;}
-       fieldset {margin:1em 0 2em;}
-       .text-italic {font-style:italic;}
-       .text-legal {line-height:1.2em;}
-       	-->
-        </style>
-
-        <%= javascript_include_tag "application" %>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>eXtension: Ask an Expert</title>
+	<%= javascript_include_tag "application" %>
+	<%= stylesheet_link_tag    "public", :media => "all" %>
+	<style type="text/css" media="screen">
+		body {background: #fdff8d;
+		padding: 1em 2em;}
+		.feedback-block {background: #e5e5e5; padding:.5em 1em; margin:1em;}
+		.feedback-block.warning {background:yellow;}
+		.feedback-block.notice {background:#5cb85c; color:#fff;}
+		.well {margin-bottom:0;}
+		.aae-logo {padding:10px; background-color:#fff;}
+		#app_location {background: yellow; padding: 1em; margin-bottom: 1em;}
+		h3, h4 {margin-bottom: 1em !important;}
+	}
+	</style>
 </head>
 
 <body>
 
-    <%= form_for @question, :html => {:multipart => true, :id => "myForm"} do |f| %>
-    <%= hidden_field_tag(:fingerprint, @group.widget_fingerprint) %>
-    <div id="ask_expert_required_18804045"><style media="screen" scoped="scoped" type="text/css">#ask_expert_required_18804045 { display:none; }</style><label for="ask_expert_required">Keep this field empty</label><input id="ask_expert_required" name="ask_expert_required" type="text" /></div>
+		<%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
+			<div id="app_location" class="demo">
+				<p>You are viewing a <strong><%= Settings.app_location.upcase %></strong> Question form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Question form.</p>
+			</div>
+		<% end %>
 
-    <h1><a href="http://www.extension.org/" target="_blank">eXtension</a></h1>
-    <h2>Ask an Expert</h2>
-
-    <div class="grid_16" id="content_area">
-    <% flash_names = [:notice, :warning, :message, :error]
-          flash_names.each do |flash_type|
-             if flash[flash_type] %>
-                <div id='flash_notice' class='<%= flash[:notice]? "notice" : "warning" %>'>
-                    <p><%= flash[flash_type] %></p>
-                </div>
-            <% end %>
-    <% end %>
-    </div><!-- .grid_16 -->
-
-    <% if @group.widget_show_title %>
-    <p>
-      <label for="title">Give your question a title
-      <%= f.text_field(:title, { :type => "text", :maxlength => Question::TITLE_MAX_LENGTH }) %>
-      </label>
-    </p>
-    <% end %>
-
-    <p>
-      <label for="question">Question
-      <%= f.text_area :body, :rows => 4  %>
-      </label>
-    </p>
-
-        <p>
-          <label>Location and County
-            <%= f.select(:location_id, options_for_select(get_location_options, current_location.present? ? current_location.id : @group.widget_location_id)) %>
-          </label>
-        </p>
-
-        <p id="county_list">
-          <% if (current_location && current_location.counties.size > 0 ) || (@group.widget_location &&  @group.widget_location.counties.size > 0) %>
-            <label>
-              	<%= f.select(:county_id,
-                options_for_select(get_county_options(current_location || @group.widget_location), current_county.present? ? current_county.id : @group.widget_county_id)) %>
-            </label>
-          <% end %>
-        </p>
-
-      <div class="image-upload-wrapper">
-      <label>Image (optional)</label>
-      <p><em>You can upload .jpg .png or .gif.</em></p>
-
-      <%= f.fields_for :images do |image_form| %>
-          <p class="image-upload">
-            <%= image_form.file_field :attachment %>
-          </p>
-      <% end %>
-    </div>
-
-    <br />
-
-    <%- if !current_user or !current_user.email.present? -%>
-    <p>
-        <label for="email">Email
-        <%= f.text_field(:submitter_email, { :type => "email", :autocapitalize => "off" }) %>
-        </label>
-    </p>
-    <%- end -%>
-
-
-    <% if @group.widget_public_option %>
-       <fieldset>
-       <p>
-			 <label for="is_public">
-         <%= check_box_tag :is_public, "1", false, :class => "checkbox" %> Make it public
-         <span><em>Share your question with the public at ask.extension.org so others can learn from the answer.</em></span>
-       </label>
-       </p>
-       </fieldset>
-     <% end %>
-
-     <%- if (Settings.app_location == 'demo') || (Settings.app_location == 'dev') %>
-       <div id="app_location" class="demo">
-         <p>You are viewing a <strong><%= Settings.app_location.upcase %></strong>Question form. Questions submitted here <strong>will not be answered</strong>. The owner of this page needs to update to the live Question form.</p>
-       </div>
-     <% end %>
-
-     <%- if current_user and current_user.email.present? -%>
-        <p>Your answer will be sent to <%= current_user.email %></p>
-      <% end %>
-
-    <p class="submit"><%= submit_tag "Ask", :id => "ask_submit", :data_disable_with => "Submitting..." %></p>
-
-		<p class="text-muted text-italic text-legal"><small>By submitting a question, you agree to the eXtension <%= link_to "Terms of Use", "https://extension.org/terms-of-use/", :target => "_blank" %>.</small></p>
-
-    <% end %>
-
-    <script class="code" type="text/javascript">
-      $(document).ready(function () {
-
-        $("#question_location_id").change(function() {
-          var location_id = $('select#question_location_id :selected').val();
-          if(location_id == "") {
-            $("#county_list").html("");
-          } else {
-            jQuery.get('/widget/get_counties/' + location_id, function(data){
-                $("#county_list").html(data);
-            })
-          }
-          return false;
-        });
-      });
-    </script>
+		<h3>You are seeing this message because Ask an Expert is transitioning to a new platform and this widget needs to be updated.</h3>
+		<h4>If you are the site owner and need help implementing the new widget, please visit <a target="_parent" href="https://askhelp.extension.org/">askhelp.extension.org</a>.</h4>
+		<p>If you want to ask a question, you can visit the new site and ask your question to the <strong><%= @group.name -%> group</strong> at <a target="_parent" href="https://ask2.extension.org/">ask2.extension.org</a>.</p>
 
 </body>
 </html>
