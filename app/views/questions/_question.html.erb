@@ -141,25 +141,11 @@
     <% end %>
 
     <% if @authenticated_submitter && (@authenticated_submitter.id == @question.submitter_id) && (session[:question_id] == @question.id) %>
-	    <div id="submitter_followup">
-	      <p class="additional_response_toggle btn btn-primary btn-lg">Post a response to the expert</p>
-	    </div>
-	    <div id="additional_response" class="image-upload-wrapper">
-	      <h2>Post a Response to the Expert</h2>
-	      <%= form_for @response, :html => {:multipart => true, :class => "form-stacked no_m_t well"} do |r_form| %>
-          <%= r_form.text_area :body, :rows => "3", class: 'wysiwyg form-control' %>
-	        <%= hidden_field_tag :question_id, @question.id %>
-          <h3>You can include up to 3 images</h3>
-	        <p><em>You can upload .jpg .png or .gif.</em></p>
+      <div class="ask-extension-notice">
+        <h1>Additional responses can't be added to this question because Ask an Expert has transitioned to new platform with a new name: <span class="nobreak">Ask Extension</span></h1>
+        <p><a class="btn orange lg new-site-question-button" target="_parent" href="https://ask2.extension.org/?utm_source=legacy_site&utm_medium=web&utm_campaign=disabled_form">Ask a Question on the New Site</a></p>
+      </div>
 
-	        <%= r_form.fields_for :images do |image_form| %>
-			      <p class="image-upload"><%= image_form.file_field :attachment %></p>
-          <% end %>
-
-          <%= submit_tag "Post response", :class => 'btn btn-primary btn-lg' %>
-          <%= link_to_function "Cancel", "$('#additional_response').hide()" %>
-        <% end %>
-	    </div>
     <% end %>
 
   <% end %>
