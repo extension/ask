@@ -18,12 +18,13 @@ class QuestionsController < ApplicationController
     return record_not_found if !@question
 
     # redirect publicly viewable questions to Ask Extension in stages
-    # redirect roughly 85%, another 100k
-    # around question ID 670010
-    if(@question.resolved_at < '2020-08-11 00:00:00')
+    if(@question.id < 663394)
       ask2_url = "https://ask2.extension.org/kb/faq.php?id=" + @question.id.to_s
-      return redirect_to(ask2_url,:status => :moved_permanently)
+    else
+      ask2_offset = @question.id + 36606
+      ask2_url = "https://ask2.extension.org/kb/faq.php?id=" + ask2_offset.to_s
     end
+    return redirect_to(ask2_url,:status => :moved_permanently)
 
     @question_responses = @question.responses
 
