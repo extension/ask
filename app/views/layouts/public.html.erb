@@ -90,7 +90,7 @@
 
     <div class="navbar masthead">
 
-      <span class="navbar-toggle btn btn-default mobile-menu-search-btn" data-toggle="collapse" data-target="#app-navbar"><i class='fa fa-search'></i> <i class='fa fa-bars'></i></span>
+
       <%= image_tag "cooperative_extension_500w.png", :class => "coopex", :alt => "eXtension" %>
       <a class="navbar-brand ex_logo" href="/"><%= image_tag "aae_logo.png", :class => "", :alt => "eXtension" %></a>
 
@@ -99,24 +99,14 @@
 
       <div id="app-navbar" class="navbar-collapse collapse">
 
-            <%= form_tag(search_all_path, {:method => :get, id: "searchform", class: "navbar-form form-search pull-right"}) do %>
-              <div class="input-group">
-                <%= text_field_tag 'q', params[:q], :class => "form-control col-md-2", :placeholder => "Search", :id => "search_field" %>
-                <span class="input-group-btn">
-                <input type="submit" value="Go" class="btn btn-default" />
-                </span>
-              </div>
-            <% end %>
-
             <ul class="app-navbar-list list-inline pull-right app-navbar-items">
-              <li><%= link_to 'Home', root_path() %></li>
-              <li><%= link_to "About", home_about_path() %></li>
-              <li><%= link_to("Ask a Question", ask_index_path()) %></li>
+
+
 
               <% if current_user %>
                 <li><%= link_to('Logout', logout_path) %></li>
               <% else %>
-                <li><%= link_to("Sign in", '/auth/people')%></li>
+                <li><%= link_to("Expert Sign in", '/auth/people')%></li>
               <% end %>
             </ul>
 
@@ -160,7 +150,6 @@
           <li><%= link_to("Privacy","https://extension.org/privacy/")%></li>
           <li><%= link_to "Contact Us", home_about_path() %></li>
           <li><%= link_to("Terms of Use","https://extension.org/terms-of-use/")%></li>
-          <li><%= link_to("Widgets",widgets_path() )%></li>
         </ul>
         <p>&copy; <%= Time.now.utc.year %> eXtension. All rights reserved.</p>
       </footer>
@@ -168,12 +157,6 @@
 
     </div> <!-- /container -->
 
-
-<script class="code" type="text/javascript">
-  $("#icon-search").click(function() {
-    $("#searchform").submit();
-  });
-</script>
 
 
 
